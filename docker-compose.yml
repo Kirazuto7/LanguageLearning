@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"  # React Dev Server
+    volumes:
+      # Mounts your local frontend code into the container at /app
+      - ./frontend:/app
+      # This is a trick to prevent the local node_modules from overwriting
+      # the one installed in the container.
+      - /app/node_modules
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+      - backend-gradle-cache:/root/.gradle
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu] # optional
+
+volumes:
+  ollama-data:
+  backend-gradle-cache:

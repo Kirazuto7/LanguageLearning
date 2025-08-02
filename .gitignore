@@ -1,0 +1,54 @@
+# General OS and Editor files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE - VSCode
+.vscode/
+.history/
+
+# IDE - IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - Eclipse / STS
+.project
+.settings/
+.classpath
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Gradle / Spring Boot
+backend/.gradle/
+backend/build/
+hs_err_pid*
+
+# Node.js / React
+frontend/node_modules/
+frontend/build/
+frontend/coverage/
+frontend/.pnp
+frontend/.pnp.js
+
+# Environment files & Logs
+.env
+.env*
+.env*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+HELP.md
