@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
+import Mascot from './Mascot';
 
 function ChapterGenerator() {
     const [language, setLanguage] = useState('Korean');
-    const [topic, setTopic] = useState('');
+    const [level, setLevel] = useState('Beginner');
     const [generatedChapter, setGeneratedChapter] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [openSettings, setOpenSettings] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const generateChapter = async (topic) => {
         setIsLoading(true);
         setError(null);
         setGeneratedChapter(null);
-
+        
         try {
             const response = await fetch('/api/chapters/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ language, topic }),
+                body: JSON.stringify({ language, level, topic }),
             });
 
             if (!response.ok) {
@@ -27,6 +28,7 @@ function ChapterGenerator() {
             }
 
             const data = await response.json();
+            console.log('Generated Chapter:', data);
             setGeneratedChapter(data);
         } catch (err) {
             setError(err.message);
@@ -37,31 +39,6 @@ function ChapterGenerator() {
 
     return (
         <div>
-            <h1>Generate a New Language Chapter</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="language-select">Language:</label>
-                    <select id="language-select" value={language} onChange={(e) => setLanguage(e.target.value)}>
-                        <option value="Korean">Korean</option>
-                        <option value="Japanese">Japanese</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="topic-input">Chapter Topic:</label>
-                    <input
-                        id="topic-input"
-                        type="text"
-                        value={topic}
-                        onChange={(e) => setTopic(e.target.value)}
-                        placeholder="e.g., Ordering coffee"
-                        required
-                    />
-                </div>
-                <button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Generating...' : 'Generate Chapter'}
-                </button>
-            </form>
-
             {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
             {generatedChapter && (
@@ -70,6 +47,16 @@ function ChapterGenerator() {
                     {/* You would map over generatedChapter.lessons and render different components based on lesson.type */}
                 </div>
             )}
+
+            <Mascot
+                onTopicSubmit={generateChapter}
+                language={language}
+                setLanguage={setLanguage}
+                level={level}
+                setLevel={setLevel}
+                openSettings={openSettings}
+                setOpenSettings={setOpenSettings}
+            />
         </div>
     );
 }

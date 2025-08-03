@@ -3,8 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import './App.css';
-import ChapterGenerator from './components/ChapterGenerator';
-import Mascot from './components/Mascot';
+import LearnPage from './pages/LearnPage';
 
 function Home() {
   return (
@@ -23,14 +22,14 @@ function Home() {
 function App() {
   return (
     <div className="App">
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar className="custom-navbar" variant="dark" expand="lg">
         <Container>
           <Navbar.Brand as={Link} to="/">Language Learning Tools</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link as={Link} to="/">Home</Nav.Link>
-              <Nav.Link as={Link} to="/generator">Chapter Generator</Nav.Link>
+              <Nav.Link as={Link} to="/learn">Learn</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -40,9 +39,8 @@ function App() {
         <Container>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/generator" element={<ChapterGenerator />} />
+            <Route path="/learn" element={<LearnPage />} />
           </Routes>
-          <Mascot />
         </Container>
       </main>
     </div>
