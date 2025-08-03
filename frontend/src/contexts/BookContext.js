@@ -76,17 +76,48 @@ export const BookProvider = ({ children }) => {
             return;
         }
 
-        const newPages = chapterData.lessons.map((lesson, index) => (
-            <BookPage key={`lesson-${index}`} pageNumber={index + 1} isRightPage={(index + 1) % 2 !== 0}>
-                {/* The lesson data is an object. Displaying as raw JSON for now. */}
-                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '12px' }}>
-                    {JSON.stringify(lesson, null, 2)}
-                </pre>
+        // Create a title page
+        const titlePage = (
+            <BookPage key="title-page" pageNumber={1} isRightPage={false}>
+                <div className="text-center" style={{ paddingTop: '100px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <h1>{chapterData.title}</h1>
+                    <h3 className="text-muted mt-3">{chapterData.nativeTitle}</h3>
+                </div>
             </BookPage>
-        ));
+        );
+
+        // Create pages for each lesson from the API response
+        const lessonPages = chapterData.lessons.map((lesson, index) => {
+            let content;
+            switch (lesson.type) {
+                case 'vocabulary':
+                    content = (
+                        <div>
+                            <h4 className="text-center mb-4">{lesson.title}</h4>
+                            <table className="table table-striped">
+                                <tbody>
+                                    {lesson.items.map((item, itemIndex) => (
+                                        <tr key={itemIndex}>
+                                            <td><strong>{item.word}</strong></td>
+                                            <td><em>{item.romanization}</em></td>
+                                            <td>{item.translation}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    );
+                    break;
+                default:
+                    content = <p>Unsupported lesson type: {lesson.type}</p>;
+            }
+            return <BookPage key={`lesson-${index}`} pageNumber={index + 2} isRightPage={(index + 2) % 2 !== 0}>{content}</BookPage>;
+        });
+
+        const allNewPages = [titlePage, ...lessonPages];
 
         setTitle(chapterData.title || 'Generated Book');
-        setPages(newPages);
+        setPages(allNewPages);
     }, []);
 
     const value = { pages, title, processChapter };
