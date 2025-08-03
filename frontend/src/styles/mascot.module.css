@@ -95,6 +95,19 @@
     z-index: 1001;
 }
 
+.settingsCard {
+    background-color: black;
+    color: rgb(244, 154, 154);
+    border-color: rgb(244, 154, 154);
+}
+
+.settingsCard :global(.card-header) {
+    background-color: black;
+    color: rgb(244, 154, 154);
+    border-bottom: 1px solid rgb(244, 154, 154) !important;
+}
+
+
 .textInput {
     width: 100%;
     height: 36px;
