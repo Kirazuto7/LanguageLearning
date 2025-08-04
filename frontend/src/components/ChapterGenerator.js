@@ -12,7 +12,6 @@ function ChapterGenerator() {
     const generateChapter = async (topic) => {
         setIsLoading(true);
         setError(null);
-        processChapter(null); // Clear previous book pages
         
         try {
             const response = await fetch('/api/chapters/generate', {

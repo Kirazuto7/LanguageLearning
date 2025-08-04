@@ -4,6 +4,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import './App.css';
 import LearnPage from './pages/LearnPage';
+import { useBookManager } from './hooks/useBookManager';
+import { BookProvider } from './contexts/BookContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 function Home() {
   return (
@@ -20,30 +23,37 @@ function Home() {
 }
 
 function App() {
-  return (
-    <div className="App">
-      <Navbar className="custom-navbar" variant="dark" expand="lg">
-        <Container>
-          <Navbar.Brand as={Link} to="/">Language Learning Tools</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link as={Link} to="/">Home</Nav.Link>
-              <Nav.Link as={Link} to="/learn">Learn</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
 
-      <main className="mt-4">
-        <Container>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/learn" element={<LearnPage />} />
-          </Routes>
-        </Container>
-      </main>
-    </div>
+  const bookManager = useBookManager();
+
+  return (
+    <LanguageProvider>
+      <BookProvider {...bookManager}>
+        <div className="App">
+          <Navbar className="custom-navbar" variant="dark" expand="lg">
+            <Container>
+              <Navbar.Brand as={Link} to="/">Language Learning Tools</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                  <Nav.Link as={Link} to="/">Home</Nav.Link>
+                  <Nav.Link as={Link} to="/learn">Learn</Nav.Link>
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
+
+          <main className="mt-4">
+            <Container>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/learn" element={<LearnPage />} />
+              </Routes>
+            </Container>
+          </main>
+        </div>
+      </BookProvider>
+    </LanguageProvider>
   );
 }
 

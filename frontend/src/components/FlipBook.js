@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React from 'react';
 import styles from '../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -7,14 +7,12 @@ import { useBook } from '../contexts/BookContext';
 function FlipBook() {
     const { level, languageName } = useLanguage();
     const { pages } = useBook();
-
     return (
         <div className={styles.bookContainer}>
             <div className={styles.bookBinding}></div>
 
             <HTMLFlipBook 
                 key={pages.length + JSON.stringify(pages.map(p => p.key || ''))}
-                className={styles['main-pages']}
                 width={450} height={600}
                 showCover={true}>
 
