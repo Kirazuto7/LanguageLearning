@@ -9,6 +9,9 @@ services:
       # This is a trick to prevent the local node_modules from overwriting
       # the one installed in the container.
       - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
 
   backend:
     build: ./backend
@@ -26,6 +29,14 @@ services:
         condition: service_healthy
       ollama:
         condition: service_healthy
+    healthcheck:
+      # This check requires curl to be installed in the backend container.
+      # It polls the Spring Boot Actuator health endpoint.
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   ollama:
     build:

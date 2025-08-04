@@ -14,7 +14,8 @@ function FlipBook() {
             <HTMLFlipBook 
                 key={pages.length + JSON.stringify(pages.map(p => p.key || ''))}
                 width={450} height={600}
-                showCover={true}>
+                showCover={true}
+                drawShadow={true}>
 
                 {/* Cover Page */}
                 <div className={`${styles.cover}`}>

@@ -1,7 +1,11 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.0' // Using a recent Spring Boot version
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.2.7'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+ext {
+	set('springAiVersion', "1.0.3")
 }
 
 group = 'com.example'
@@ -13,13 +17,19 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' } // Needed for Spring AI milestone releases
+	maven { url 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
 }
-
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+	}
+}
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M1'
+	// The version is managed by the Spring AI BOM
+	implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// Add Lombok
 	compileOnly 'org.projectlombok:lombok'
