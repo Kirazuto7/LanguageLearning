@@ -111,13 +111,13 @@ export const BookProvider = ({ children }) => {
                 default:
                     content = <p>Unsupported lesson type: {lesson.type}</p>;
             }
-            return <BookPage key={`lesson-${index}`} pageNumber={index + 2} isRightPage={(index + 2) % 2 !== 0}>{content}</BookPage>;
+            return <BookPage key={`lesson-${lesson.title}-${index}`} pageNumber={index + 2} isRightPage={(index + 2) % 2 === 0}>{content}</BookPage>;
         });
 
         const allNewPages = [titlePage, ...lessonPages];
 
         setTitle(chapterData.title || 'Generated Book');
-        setPages(allNewPages);
+        setPages(prevPages => [...prevPages, ...allNewPages]);
     }, []);
 
     const value = { pages, title, processChapter };

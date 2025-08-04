@@ -29,15 +29,8 @@ dependencies {
 	// DevTools for hot-reloading
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	// Testing
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.projectreactor:reactor-test'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
-
- jar {
+jar {
         archiveFileName = 'languagelearning.jar'
 }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styles from '../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -13,6 +13,7 @@ function FlipBook() {
             <div className={styles.bookBinding}></div>
 
             <HTMLFlipBook 
+                key={pages.length + JSON.stringify(pages.map(p => p.key || ''))}
                 className={styles['main-pages']}
                 width={450} height={600}
                 showCover={true}>
@@ -24,8 +25,10 @@ function FlipBook() {
                 </div>
                 
                 {/* Book Pages */}
-                {pages}
-
+                {pages.map((page) =>
+                   page
+                )}
+                
                 {/* Back Cover Page */}
                 <div className={styles.cover}>
                     <h2 className="mt-5 text-center">The End</h2>

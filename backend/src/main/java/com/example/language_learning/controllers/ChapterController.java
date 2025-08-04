@@ -23,6 +23,6 @@ public class ChapterController {
 
         // Return the Mono directly. Spring WebFlux will subscribe and handle the response.
         return chapterService.generateChapter(request)
-                .doOnNext(chapterResponse -> System.out.println("Generated chapter: " + chapterResponse.getTitle()));
+            .doOnNext(chapterResponse -> System.out.println("Generated chapter: " + chapterResponse.getTitle()));
     }
 }
