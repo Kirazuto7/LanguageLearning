@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import BookPage from '../components/BookPage';
 import VocabularyLesson from '../components/lessons/VocabularyLesson';
 import InitialLeftPage from '../components/InitialLeftPage';
@@ -12,8 +12,16 @@ const initialPages = [
 export const useBookManager = () => {
     const [pages, setPages] = useState(initialPages);
     const [title, setTitle] = useState('');
+    //const [startPageNumber, setStartPageNumber] = useState(1);
+    const startPageNumberRef = useRef(1);
+
+    useEffect(() => {
+        // Keep track of the previous page number before the effect updates for the next page
+        startPageNumberRef.current = pages.length;
+    }, [pages])
 
     const processChapter = useCallback((chapterData) => {
+        
         // If the data is empty, reuse the initial state
         if (!chapterData || !chapterData.lessons || chapterData.lessons.length === 0) {
             setTitle('');
@@ -22,17 +30,18 @@ export const useBookManager = () => {
         }
 
         setTitle(chapterData.title || 'Generated Book');
+        
         setPages(prevPages => {
             // If the book is in its initial state, replace it. Otherwise append
             // It correctly identifies the initial state as long as the first page has this key.
-            const isInitialState = prevPages.length > 0 && prevPages[0].key === 'initial-1';
+            const isInitialState = prevPages.length === 0 || (prevPages.length > 0 && prevPages[0].key === 'initial-1');
             const basePages = isInitialState ? [] : prevPages;
-            const startPageNumber = basePages.length + 1;
-
+            const newStartPageNumber = basePages.length + 1;
+            
             // Create a title page with correct new page number
             const titlePage = (
                 // A right page has an even number. Page 1 should be a left page.
-                <BookPage key={`page-${startPageNumber}`} pageNumber={startPageNumber} isRightPage={startPageNumber % 2 === 0}>
+                <BookPage key={`page-${newStartPageNumber }`} pageNumber={newStartPageNumber } isRightPage={newStartPageNumber  % 2 === 0}>
                     <div className="text-center" style={{ paddingTop: '100px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}> 
                         <h1>{chapterData.title}</h1>
                         <h3 className="text-muted mt-3">{chapterData.nativeTitle}</h3>
@@ -42,7 +51,7 @@ export const useBookManager = () => {
 
             // Create pages for each lesson with continuous page numbering
             const lessonPages = chapterData.lessons.map((lesson, index) => {
-                const pageNumber = startPageNumber + 1 + index;
+                const pageNumber = newStartPageNumber  + 1 + index;
                 let content;
 
                 switch (lesson.type) {
@@ -57,9 +66,9 @@ export const useBookManager = () => {
       
             return [...basePages, titlePage, ...lessonPages];
         }); // This closes the setPages updater function.
-
+            
     }, []); // This closes the useCallback hook.
 
     // Return the state and the function to update it.
-    return { pages, title, processChapter };
+    return { pages, title, startPageNumberRef,processChapter };
 };

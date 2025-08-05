@@ -29,6 +29,7 @@ function ChapterGenerator() {
             const data = await response.json();
             console.log('Generated Chapter:', data);
             processChapter(data);
+            
         } catch (err) {
             setError(err.message);
         } finally {

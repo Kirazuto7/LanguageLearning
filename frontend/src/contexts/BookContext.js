@@ -11,9 +11,9 @@ export const useBook = () => {
  * This provider now gets its value from a higher-level component,
  * which uses the useBookManager hook to manage the state.
  */
-export const BookProvider = ({ children, pages, title, processChapter }) => {
+export const BookProvider = ({ children, pages, title, startPageNumberRef, processChapter }) => {
     return (
-        <BookContext.Provider value={{ pages, title, processChapter }}>
+        <BookContext.Provider value={{ pages, title, startPageNumberRef, processChapter }}>
             {children}
         </BookContext.Provider>
     );
