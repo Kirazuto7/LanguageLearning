@@ -24,8 +24,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	// The version is managed by the Spring AI BOM
+	implementation 'org.springframework.ai:spring-ai-core'
 	implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M1'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	implementation 'org.springframework.boot.spring-boot-starter-data-jpa'
+	implementation 'org.postgresql:postgresql'
 
 	// Add Lombok
 	compileOnly 'org.projectlombok:lombok'

@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lesson {
-    private String type;
-    private String title;
-    private List<VocabularyItem> items;
+public class VocabularyItemDTO {
+    private String word;
+    private String romanization;
+    private String translation;
 }
