@@ -1,9 +1,11 @@
 package com.example.language_learning.entity;
 import java.util.List;
 
-import org.antlr.v4.runtime.Vocabulary;
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

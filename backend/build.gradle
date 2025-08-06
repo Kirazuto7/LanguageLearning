@@ -13,7 +13,7 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
+	maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
 }
 dependencyManagement {
 	imports {
@@ -28,12 +28,12 @@ dependencies {
 	implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M1'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-	implementation 'org.springframework.boot.spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql'
 
 	// Add Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.32' // latest as of 2025
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
 	// DevTools for hot-reloading
@@ -43,4 +43,8 @@ dependencies {
 
 jar {
         archiveFileName = 'languagelearning.jar'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
 }

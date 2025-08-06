@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import com.example.language_learning.entity.VocabularyItem;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
