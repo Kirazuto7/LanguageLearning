@@ -1,18 +1,20 @@
 package com.example.language_learning.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
-
-import com.example.language_learning.entity.VocabularyItem;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LessonDTO {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type",
+        visible = true)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = VocabularyLessonDTO.class, name = "vocabulary")
+})
+public abstract class LessonDTO {
+    private Long id;
     private String type;
     private String title;
-    private List<VocabularyItem> items;
 }

@@ -1,6 +1,6 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.ChapterResponse;
+import com.example.language_learning.dto.ChapterDTO;
 import com.example.language_learning.dto.GenerationRequest;
 
 import org.slf4j.Logger;
@@ -26,14 +26,14 @@ public class AIService {
                 .build();
     }
 
-    public Mono<ChapterResponse> generateChapter(GenerationRequest request) {
-        var outputParser = new BeanOutputConverter<>(ChapterResponse.class);
-        String prompt = "Generate a language learning chapter about {topic} for a {level} level student of {language}.";
+    public Mono<ChapterDTO> generateChapter(GenerationRequest request) {
+        var outputParser = new BeanOutputConverter<>(ChapterDTO.class);
+        String prompt = "Generate a language learning chapter about {topic} for a {difficulty} level student of {language}.";
 
         return chatClient.prompt()
                 .user(p -> p.text(prompt)
                         .param("language", request.getLanguage())
-                        .param("level", request.getLevel())
+                        .param("difficulty", request.getDifficulty())
                         .param("topic", request.getTopic()))
                 .stream()
                 .content()

@@ -2,7 +2,8 @@ package com.example.language_learning.controllers;
 
 import java.util.List;
 
-import com.example.language_learning.dto.ChapterResponse;
+
+import com.example.language_learning.dto.ChapterDTO;
 import com.example.language_learning.dto.GenerationRequest;
 import com.example.language_learning.services.ChapterService;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -28,9 +30,9 @@ public class ChapterController {
     private final ChapterService chapterService;
 
     @PostMapping("/generate")
-    public Mono<ChapterResponse> generateChapter(@RequestBody GenerationRequest request) {
+    public Mono<ChapterDTO> generateChapter(@RequestBody GenerationRequest request) {
         logger.info("Received request to generate chapter for language: {} with level: {} and topic: {}",
-                request.getLanguage(), request.getLevel(), request.getTopic());
+                request.getLanguage(), request.getDifficulty(), request.getTopic());
 
         // Return the Mono directly. Spring WebFlux will subscribe and handle the response.
         return chapterService.generateChapter(request)
@@ -38,7 +40,7 @@ public class ChapterController {
     }
 
     @GetMapping("/load")
-    public Mono<List<ChapterResponse>> loadChapters() {
+    public Mono<List<ChapterDTO>> loadBook() {
         return null;
     }
 }

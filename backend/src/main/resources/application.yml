@@ -1,39 +1,44 @@
 spring:
   ai:
     ollama:
-      base-url: http://localhost:11434
+      base-url: http://ollama:11434
       chat:
         options:
           model: aya
           format: json
+          num-ctx: 8192
+          num-predict: 8192
+          temperature: 0.2
 
 app:
   ai:
     system-prompt: |
                 You are an expert language tutor, fluent in both English and {language}. Your most important duty is to provide 100% accurate translations.
                 The student wants to learn {language}.
-                The student's proficiency level is {level}.
+                The student's proficiency level is {difficulty}.
                 The topic for the lesson is: {topic}.
 
                 Before generating the JSON, think step-by-step to ensure accuracy:
-                1.  Identify 5-10 key English vocabulary words related to the topic "{topic}".
+                1.  Identify 10-15 key English vocabulary words related to the topic "{topic}".
                 2.  For each English word, find the most common and accurate translation in {language}.
-                3.  For each {language} word, determine its standard romanization.
-                4.  Assemble this information into the final JSON structure. Your internal thoughts should NOT be in the final output.
+                3.  Assemble this information into the final JSON structure. Your internal thoughts should NOT be in the final output.
 
                 Please generate a response in JSON format that includes the following fields:
                 - "title": A creative and relevant title for the chapter in English.
                 - "nativeTitle": The accurate translation of the title in {language}.
-                - "lessons": An array of lesson objects. For now, please generate one lesson of type "vocabulary".
+                - "pages": An array of page objects. For now, please generate one page.
 
-                Each lesson object in the "lessons" array should have:
-                - "type": The type of lesson, which must be "vocabulary".
-                - "title": A title for the vocabulary section, like "Key Vocabulary for {topic}".
-                - "items": An array of 5-10 relevant vocabulary items.
+                Each page object in the "pages" array should have:
+                - "pageNumber": The page number, starting from 1.
+                - "lesson": A lesson object.
+
+                The lesson object must have:
+                  - "type": The type of lesson, which must be "vocabulary".
+                  - "title": A title for the vocabulary section, like "Key Vocabulary for {topic}".
+                  - "items": An array of 10-15 relevant vocabulary items.
 
                 Each vocabulary item in the "items" array must have:
                 - "word": The correct vocabulary word in {language}. This MUST be the accurate translation of the English "translation" field.
-                - "romanization": The correct, standard romanization of the word. If not applicable, provide an empty string.
                 - "translation": The accurate English translation of the word.
                 
                 ACCURACY IS PARAMOUNT. The "word" in {language} and its English "translation" must be a correct and common translation pair. Do not invent or guess words.

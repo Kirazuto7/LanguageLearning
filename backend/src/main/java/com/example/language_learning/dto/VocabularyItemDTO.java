@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VocabularyItemDTO {
+    private Long id;
     private String word;
-    private String romanization;
     private String translation;
 }

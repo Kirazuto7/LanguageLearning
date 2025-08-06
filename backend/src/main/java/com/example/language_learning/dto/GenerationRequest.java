@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class GenerationRequest {
     private String language;
-    private String level;
+    private String difficulty;
     private String topic;
 }
