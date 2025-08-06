@@ -1,0 +1,75 @@
+# ===================================================================
+# Root .gitignore for LanguageLearning project
+# ===================================================================
+
+.env
+
+# IDE specific files
+# ===================================================================
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Eclipse
+.classpath
+.project
+.settings/
+*.class
+
+# Backend (Springboot)
+# ===================================================================
+
+# Gradle
+/backend/build/
+/backend/.gradle/
+/backend/bin/
+
+# Maven
+/backend/target/
+/backend/.mvn/
+
+# Compiled output
+/backend/*.jar
+/backend/*.war
+/backend/*.ear
+
+# Logs
+/backend/*.log
+/backend/hs_err_pid*
+
+# Frontend (React)
+# ===================================================================
+
+# Dependencies
+/frontend/node_modules/
+/frontend/.pnp
+/frontend/.pnp.js
+/frontend/.pnp.loader.mjs
+
+# Build output
+/frontend/build/
+
+# Testing
+/frontend/coverage/
+
+# Local environment variables
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.test.local
+/frontend/.env.production.local
+
+# Logs
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+
+# Misc
+/frontend/.DS_Store

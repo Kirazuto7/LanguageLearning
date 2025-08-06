@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.7'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+repositories {
+	mavenCentral()
+	maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
+}
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0-M1"
+	}
+}
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// The version is managed by the Spring AI BOM
+	implementation 'org.springframework.ai:spring-ai-core'
+	implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M1'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.postgresql:postgresql'
+
+	// Add Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.32' // latest as of 2025
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	// DevTools for hot-reloading
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+}
+
+jar {
+        archiveFileName = 'languagelearning.jar'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
+}

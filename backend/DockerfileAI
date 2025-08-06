@@ -1,0 +1,20 @@
+# ---------- Stage 1: Pull aya model ----------
+FROM ollama/ollama:latest AS model-puller
+
+# Start server in background to allow pull
+RUN ollama serve & \
+    sleep 5 && \
+    ollama pull aya
+
+# ---------- Stage 2: Runtime container ----------
+FROM ollama/ollama:latest
+
+# Copy pulled model from previous stage
+COPY --from=model-puller /root/.ollama /root/.ollama
+
+# Expose the port
+EXPOSE 11434
+
+# Start the server
+CMD ["serve"]
+
