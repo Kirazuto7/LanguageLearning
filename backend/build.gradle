@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.7'
-	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.springframework.boot' version '3.4.8'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
@@ -13,22 +13,23 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
+	//maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
 }
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0-M1"
+		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0"
 	}
 }
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	// The version is managed by the Spring AI BOM
-	implementation 'org.springframework.ai:spring-ai-core'
-	implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M1'
+	//implementation 'org.springframework.ai:spring-ai-client-chat'
+	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql'
 
 	// Add Lombok

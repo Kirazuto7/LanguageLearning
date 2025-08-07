@@ -8,7 +8,7 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('Korean');
-    const [level, setLevel] = useState('Beginner');
+    const [difficulty, setDifficulty] = useState('Beginner');
 
     const languageMap = {
         'Korean': '한국어',
@@ -22,8 +22,8 @@ export const LanguageProvider = ({ children }) => {
     const value = {
         language,
         setLanguage,
-        level,
-        setLevel,
+        difficulty,
+        setDifficulty,
         languageName,
     };
 

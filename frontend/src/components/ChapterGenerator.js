@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useBook } from '../contexts/BookContext';
 
 function ChapterGenerator() {
-    const { language, level } = useLanguage();
+    const { language, difficulty } = useLanguage();
     const { processChapter } = useBook();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -19,7 +19,7 @@ function ChapterGenerator() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ language, level, topic }),
+                body: JSON.stringify({ language, difficulty, topic }),
             });
 
             if (!response.ok) {

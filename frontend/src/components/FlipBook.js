@@ -5,7 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useBook } from '../contexts/BookContext';
 
 function FlipBook() {
-    const { level, languageName } = useLanguage();
+    const { difficulty, languageName } = useLanguage();
     const { pages, startPageNumberRef } = useBook();
     const flipBook = useRef(null);
     
@@ -33,7 +33,7 @@ function FlipBook() {
 
                 {/* Cover Page */}
                 <div className={`${styles.cover}`}>
-                    <h2 className="mt-5 text-center">{level}</h2>
+                    <h2 className="mt-5 text-center">{difficulty}</h2>
                     <h2 className="mt-5 text-center">{languageName}</h2>
                 </div>
                 

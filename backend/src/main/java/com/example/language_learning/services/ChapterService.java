@@ -32,7 +32,8 @@ public class ChapterService {
                         .mapToInt(Page::getPageNumber)
                         .max()
                         .orElse(0);
-
+                System.out.println("Next chapter number: " + nextChapterNumber);
+                System.out.println("Last Page Number: " + lastPageNumber);
                 return aiService.generateChapter(request)
                         .map(chapterDto -> {
                             Chapter newChapter = mapper.toEntity(chapterDto);
@@ -42,7 +43,7 @@ public class ChapterService {
                             for (Page page : newChapter.getPages()) {
                                 page.setPageNumber(lastPageNumber + page.getPageNumber());
                             }
-
+                            System.out.println(newChapter);
                             book.getChapters().add(newChapter);
                             Book savedBook = bookRepository.save(book);
 

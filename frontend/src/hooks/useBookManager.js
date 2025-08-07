@@ -21,7 +21,7 @@ export const useBookManager = () => {
     }, [pages])
 
     const processChapter = useCallback((chapterData) => {
-        
+        console.log(chapterData);
         // If the data is empty, reuse the initial state
         if (!chapterData || !chapterData.lessons || chapterData.lessons.length === 0) {
             setTitle('');

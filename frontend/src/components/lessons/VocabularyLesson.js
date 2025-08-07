@@ -13,7 +13,6 @@ const VocabularyLesson = ({ lesson }) => {
                     {lesson.items.map((item, itemIndex) => (
                         <tr key={`${item.word}-${itemIndex}`}>
                             <td><strong>{item.word}</strong></td>
-                            <td><em>{item.romanization}</em></td>
                             <td>{item.translation}</td>
                         </tr>
                     ))}

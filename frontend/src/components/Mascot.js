@@ -193,7 +193,7 @@ function InputField({onSend}) {
 function Mascot({
     onTopicSubmit
 }) {
-    const { language, level } = useLanguage();
+    const { language, difficulty } = useLanguage();
     const [skip, setSkip] = useState(false);
     const [speech, setSpeech] = useState(`Let's learn ${language}! What should our first topic be? 😄`);
     const [openSettings, setOpenSettings] = useState(false);

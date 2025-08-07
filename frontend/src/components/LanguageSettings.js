@@ -7,7 +7,7 @@ function LanguageSettings({
     openSettings,
     setOpenSettings
 }) {
-    const { language, setLanguage, level, setLevel } = useLanguage();
+    const { language, setLanguage, difficulty, setDifficulty } = useLanguage();
     const settingsRef = useRef(null);
 
     useEffect(() => {
@@ -52,7 +52,7 @@ function LanguageSettings({
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="level-select" className="form-label">Proficiency Level:</label>
-                                        <select id="level-select" className="form-select" value={level} onChange={(e) => setLevel(e.target.value)}>
+                                        <select id="level-select" className="form-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
                                             <option value="Beginner">Beginner</option>
                                             <option value="Pre-Intermediate">Pre-Intermediate</option>
                                             <option value="Intermediate">Intermediate</option>
