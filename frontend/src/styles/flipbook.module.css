@@ -1,11 +1,23 @@
 .cover {
-    background-color: black;
-    color: rgb(255, 179, 179);
-    border: 1px solid black;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
+    background-color: #4B014B;
+    border-left: 10px solid #ff69b4; /* binding */
+    color: #ffe0f0;
+    box-shadow: 0 0 20px #ff69b4;
+}
+
+.backcover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #4B014B;
+    border-right: 10px solid #ff69b4; /* binding */
+    color: #ffe0f0;
+    box-shadow: 0 0 20px #ff69b4;
 }
 
 .bookContainer {
@@ -41,4 +53,12 @@
     pointer-events: none;
 }
 
-
+.book-title {
+    font-size: 3em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Georgia', serif;
+    line-height: 1.2;
+}

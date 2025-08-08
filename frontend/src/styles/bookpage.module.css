@@ -11,19 +11,21 @@
 .left-active-page {
     border-radius: 0 4px 4px 0;
     border-right: none;
-    /* The transform properties are removed to avoid conflict with react-pageflip */
-    box-shadow: 
+    
+    /*box-shadow: 
         2px 0 10px rgba(0,0,0,0.15),
-        inset -3px 0 6px rgba(0,0,0,0.05);
+        inset -3px 0 6px rgba(0,0,0,0.05);*/
+    box-shadow: 0 0 20px #ff69b4;
 }
 
 .right-active-page {
     border-radius: 4px 0 0 4px;
     border-left: none;
-    /* The transform properties are removed to avoid conflict with react-pageflip */
-    box-shadow: 
+    
+    /*box-shadow: 
         -2px 0 10px rgba(0,0,0,0.15),
-        inset 3px 0 6px rgba(0,0,0,0.05);
+        inset 3px 0 6px rgba(0,0,0,0.05);*/
+    box-shadow: 0 0 20px #ff69b4;
 }
 
 .page-content {
