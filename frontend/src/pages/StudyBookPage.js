@@ -1,9 +1,9 @@
 import ChapterGenerator from "../components/ChapterGenerator";
-import FlipBook from "../components/FlipBook";
+import FlipBook from "../components/studybook/FlipBook";
 import React from 'react';
 
 
-function LearnPage() {
+function StudyBookPage() {
     return (
         <div>
             <FlipBook />
@@ -12,4 +12,4 @@ function LearnPage() {
     );
 }
 
-export default LearnPage;
+export default StudyBookPage;

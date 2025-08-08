@@ -1,8 +1,8 @@
 import React, {useRef, useEffect} from 'react';
-import styles from '../styles/flipbook.module.css';
+import styles from '../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
-import { useLanguage } from '../contexts/LanguageContext';
-import { useBook } from '../contexts/BookContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { useBook } from '../../contexts/BookContext';
 
 function FlipBook() {
     const { difficulty, languageName } = useLanguage();

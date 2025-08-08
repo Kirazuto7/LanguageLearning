@@ -83,7 +83,7 @@
 
 .settingsButton, .settingsButton:hover{
     background-color: black;
-    color: rgb(244, 154, 154);
+    padding: 5px 10px !important;
     border: none;
 }
 
@@ -131,13 +131,7 @@
     padding: 0 20px;
     border-radius: 8px;
     border: none;
-    background-color: black;
-    color: rgb(244, 154, 154);
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.send-button:hover {
-    background-color: #008899;
 }

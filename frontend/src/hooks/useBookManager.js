@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import BookPage from '../components/BookPage';
+import BookPage from '../components/studybook/BookPage';
 import VocabularyLesson from '../components/lessons/VocabularyLesson';
-import InitialLeftPage from '../components/InitialLeftPage';
-import InitialRightPage from '../components/InitialRightPage';
+import InitialLeftPage from '../components/studybook/InitialLeftPage';
+import InitialRightPage from '../components/studybook/InitialRightPage';
 
 const initialPages = [
     <BookPage key="initial-1" pageNumber={1} isRightPage={false}><InitialLeftPage /></BookPage>,
@@ -23,7 +23,7 @@ export const useBookManager = () => {
     const processChapter = useCallback((chapterData) => {
         console.log(chapterData);
         // If the data is empty, reuse the initial state
-        if (!chapterData || !chapterData.lessons || chapterData.lessons.length === 0) {
+        if (!chapterData || !chapterData.pages || chapterData.pages.length === 0) {
             setTitle('');
             setPages(initialPages);
             return;
