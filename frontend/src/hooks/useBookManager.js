@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import BookPage from '../components/BookPage';
+import BookPage from '../components/studybook/BookPage';
 import VocabularyLesson from '../components/lessons/VocabularyLesson';
-import InitialLeftPage from '../components/InitialLeftPage';
-import InitialRightPage from '../components/InitialRightPage';
+
 
 const initialPages = [
-    <BookPage key="initial-1" pageNumber={1} isRightPage={false}><InitialLeftPage /></BookPage>,
-    <BookPage key="initial-2" pageNumber={2} isRightPage={true}><InitialRightPage /></BookPage>
+    // Load any initial pages from the database
 ];
 
 export const useBookManager = () => {
@@ -23,7 +21,7 @@ export const useBookManager = () => {
     const processChapter = useCallback((chapterData) => {
         console.log(chapterData);
         // If the data is empty, reuse the initial state
-        if (!chapterData || !chapterData.lessons || chapterData.lessons.length === 0) {
+        if (!chapterData || !chapterData.pages || chapterData.pages.length === 0) {
             setTitle('');
             setPages(initialPages);
             return;
@@ -32,10 +30,7 @@ export const useBookManager = () => {
         setTitle(chapterData.title || 'Generated Book');
         
         setPages(prevPages => {
-            // If the book is in its initial state, replace it. Otherwise append
-            // It correctly identifies the initial state as long as the first page has this key.
-            const isInitialState = prevPages.length === 0 || (prevPages.length > 0 && prevPages[0].key === 'initial-1');
-            const basePages = isInitialState ? [] : prevPages;
+            const basePages = prevPages;
             const newStartPageNumber = basePages.length + 1;
             
             // Create a title page with correct new page number

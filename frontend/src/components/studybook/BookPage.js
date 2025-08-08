@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../styles/bookpage.module.css';
+import styles from '../../styles/bookpage.module.css';
 
 const BookPage = React.forwardRef(({ pageNumber, children, isRightPage = true }, ref) => {
   const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-active-page'];
