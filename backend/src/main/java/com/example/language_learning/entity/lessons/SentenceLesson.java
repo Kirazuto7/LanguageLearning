@@ -1,5 +1,6 @@
-package com.example.language_learning.entity;
+package com.example.language_learning.entity.lessons;
 
+import com.example.language_learning.entity.models.Sentence;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SentenceLesson extends Lesson{
+public class SentenceLesson extends Lesson {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "sentence_lesson_id")
     private List<Sentence> sentences;

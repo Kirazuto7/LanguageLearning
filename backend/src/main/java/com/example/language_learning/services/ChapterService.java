@@ -2,17 +2,14 @@ package com.example.language_learning.services;
 
 import com.example.language_learning.dto.ChapterDTO;
 import com.example.language_learning.requests.ChapterGenerationRequest;
-import com.example.language_learning.entity.Book;
-import com.example.language_learning.entity.Chapter;
-import com.example.language_learning.entity.Page;
-import com.example.language_learning.repositories.BookRepository;
+import com.example.language_learning.entity.models.Book;
+import com.example.language_learning.entity.models.Chapter;
+import com.example.language_learning.entity.models.Page;
 import com.example.language_learning.mapper.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor

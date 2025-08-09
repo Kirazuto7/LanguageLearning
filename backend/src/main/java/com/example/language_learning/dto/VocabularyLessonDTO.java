@@ -10,5 +10,5 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class VocabularyLessonDTO extends LessonDTO {
-    private List<VocabularyItemDTO> items;
+    private List<VocabularyDTO> items;
 }

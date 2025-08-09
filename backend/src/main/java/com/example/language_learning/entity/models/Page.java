@@ -1,5 +1,6 @@
-package com.example.language_learning.entity;
+package com.example.language_learning.entity.models;
 
+import com.example.language_learning.entity.lessons.Lesson;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
