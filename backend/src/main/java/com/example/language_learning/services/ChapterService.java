@@ -1,7 +1,7 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.ChapterDTO;
-import com.example.language_learning.dto.GenerationRequest;
+import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.entity.Book;
 import com.example.language_learning.entity.Chapter;
 import com.example.language_learning.entity.Page;
@@ -18,13 +18,13 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class ChapterService {
 
-    private final BookRepository bookRepository;
+    private final BookService bookService;
     private final AIService aiService;
     private final DtoMapper mapper;
 
     @Transactional
-    public Mono<ChapterDTO> generateChapter(GenerationRequest request) {
-        return Mono.fromCallable(() -> findOrCreateBook(request))
+    public Mono<ChapterDTO> generateChapter(ChapterGenerationRequest request) {
+        return Mono.fromCallable(() -> bookService.findOrCreateBook(request.getLanguage(), request.getDifficulty()))
             .flatMap(book -> {
                 int nextChapterNumber = book.getChapters().size() + 1;
                 int lastPageNumber = book.getChapters().stream()
@@ -45,7 +45,7 @@ public class ChapterService {
                             }
                             System.out.println(newChapter);
                             book.getChapters().add(newChapter);
-                            Book savedBook = bookRepository.save(book);
+                            Book savedBook = bookService.save(book);
 
                             // Return the DTO of the newly saved chapter
                             return mapper.toDto(savedBook.getChapters().get(savedBook.getChapters().size() - 1));
@@ -53,11 +53,5 @@ public class ChapterService {
             });
     }
 
-    private Book findOrCreateBook(GenerationRequest request) {
-        return bookRepository.findByLanguageAndDifficulty(request.getLanguage(), request.getDifficulty())
-                .orElseGet(() -> {
-                    Book newBook = new Book(null, String.format("%s for %s learners", request.getLanguage(), request.getDifficulty()), request.getDifficulty(), request.getLanguage(), new ArrayList<>());
-                    return bookRepository.save(newBook);
-                });
-    }
+
 }

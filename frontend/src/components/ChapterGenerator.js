@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Mascot from './Mascot';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../contexts/LanguageSettingsContext';
 import { useBook } from '../contexts/BookContext';
 
 function ChapterGenerator() {

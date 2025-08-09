@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import styles from '../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageSettingsContext';
 import { useBook } from '../../contexts/BookContext';
 import BehindCoverPage from './BehindCoverPage';
 import InstructionsPage from './InstructionsPage';
@@ -9,12 +9,12 @@ import InstructionsPage from './InstructionsPage';
 
 function FlipBook() {
     const { difficulty, languageName } = useLanguage();
-    const { pages, startPageNumberRef } = useBook();
+    const { pages } = useBook();
     const flipBook = useRef(null);
     
     const onInit = () => {
         console.log("Init");
-        flipBook.current.pageFlip().flip(startPageNumberRef.current);
+        //flipBook.current.pageFlip().flip(startPageNumberRef.current);
     }
 
     const onUpdate = () => {
@@ -44,7 +44,7 @@ function FlipBook() {
                 <InstructionsPage/>
                 
                 {/* Book Pages */}
-                {pages.map((page) => page)}
+                {pages && pages.map((page) => page)}
                 
                 {/* Back Cover Page */}
                 <div className={styles.backcover}>
