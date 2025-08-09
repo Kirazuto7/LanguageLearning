@@ -7,7 +7,7 @@ import React from 'react';
 const VocabularyLesson = ({ lesson }) => {
     return (
         <div>
-            <h4 className="text-center mb-4">{lesson.title}</h4>
+            <h5 className="text-center mb-4">{lesson.title}</h5>
             <table className="table table-striped">
                 <tbody>
                     {lesson.items.map((item, itemIndex) => (

@@ -1,12 +1,12 @@
 import React, { createContext, useState, useContext } from 'react';
 
-const LanguageContext = createContext();
+const LanguageSettingsContext = createContext();
 
 export const useLanguage = () => {
-    return useContext(LanguageContext);
+    return useContext(LanguageSettingsContext);
 };
 
-export const LanguageProvider = ({ children }) => {
+export const LanguageSettingsProvider = ({ children }) => {
     const [language, setLanguage] = useState('Korean');
     const [difficulty, setDifficulty] = useState('Beginner');
 
@@ -28,8 +28,8 @@ export const LanguageProvider = ({ children }) => {
     };
 
     return (
-        <LanguageContext.Provider value={value}>
+        <LanguageSettingsContext.Provider value={value}>
             {children}
-        </LanguageContext.Provider>
+        </LanguageSettingsContext.Provider>
     );
 };

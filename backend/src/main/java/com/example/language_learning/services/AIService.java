@@ -1,7 +1,7 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.ChapterDTO;
-import com.example.language_learning.dto.GenerationRequest;
+import com.example.language_learning.requests.ChapterGenerationRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,6 @@ import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
-import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -28,7 +27,7 @@ public class AIService {
         this.chatClient = chatClient;
     }
 
-    public Mono<ChapterDTO> generateChapter(GenerationRequest request) {
+    public Mono<ChapterDTO> generateChapter(ChapterGenerationRequest request) {
 
         var outputParser = new BeanOutputConverter<>(ChapterDTO.class);
         String initialPrompt = "Generate a language learning chapter about {topic} for a {difficulty} level student of {language}.";
