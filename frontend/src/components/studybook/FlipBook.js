@@ -5,21 +5,34 @@ import { useLanguage } from '../../contexts/LanguageSettingsContext';
 import { useBook } from '../../contexts/BookContext';
 import BehindCoverPage from './BehindCoverPage';
 import InstructionsPage from './InstructionsPage';
-
+import TableOfContentsPage from './TableOfContentsPage';
 
 function FlipBook() {
     const { difficulty, languageName } = useLanguage();
-    const { pages } = useBook();
+    const { pages, chapters } = useBook();
     const flipBook = useRef(null);
     
     const onInit = () => {
         console.log("Init");
-        //flipBook.current.pageFlip().flip(startPageNumberRef.current);
     }
 
     const onUpdate = () => {
         console.log("Update");
     }
+
+    const navigateToPage = (pageNumber) => {
+        if(flipBook.current) {
+            flipBook.current.pageFlip().flip(pageNumber); // Excluding the first 2 pages
+        }
+    }
+
+    const tocPage = (
+        <TableOfContentsPage
+            key="toc"
+            chapters={chapters}
+            onNavigate={navigateToPage}
+        />
+    );
 
     return (
         <div className={styles.bookContainer}>
@@ -41,7 +54,7 @@ function FlipBook() {
                 </div>
 
                 <BehindCoverPage/>
-                <InstructionsPage/>
+                <InstructionsPage>{tocPage}</InstructionsPage>
                 
                 {/* Book Pages */}
                 {pages && pages.map((page) => page)}

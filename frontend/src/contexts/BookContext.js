@@ -16,7 +16,7 @@ export const useBook = () => {
  */
 export const BookProvider = ({ children }) => {
     const { language, difficulty } = useLanguage();
-    const { pages, title, processChapter } = useBookManager(language, difficulty);
+    const { pages, title, chapters, processChapter } = useBookManager(language, difficulty);
 
     // Memoize the context value to prevent unnecessary re-renders of consumers.
     // The value object will only be recreated if one of its dependencies changes.
@@ -24,6 +24,7 @@ export const BookProvider = ({ children }) => {
     const value = useMemo(() => ({
         pages,
         title,
+        chapters, 
         processChapter
     }), [pages, title, processChapter]);
 

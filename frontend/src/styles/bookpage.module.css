@@ -109,3 +109,15 @@
 .right-active-page .page-number {
     right: 40px;
 }
+
+.toc-dots {
+    flex: 1;
+    border-bottom: 2px dotted blue;
+    margin: 0 0.5rem;
+}
+
+.toc-page-number {
+    margin-left: auto;
+    padding-left: 0.5rem;
+    background-color: white;
+}
