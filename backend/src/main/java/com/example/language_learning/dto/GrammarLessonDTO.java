@@ -12,5 +12,5 @@ import java.util.List;
 public class GrammarLessonDTO extends LessonDTO {
     private String grammarConcept;
     private String explanation;
-    private List<String> examples;
+    private List<SentenceDTO> exampleSentences;
 }

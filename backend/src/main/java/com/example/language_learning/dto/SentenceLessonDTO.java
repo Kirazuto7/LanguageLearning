@@ -10,6 +10,5 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SentenceLessonDTO extends LessonDTO {
-    private List<ExampleSentenceDTO> exampleSentences;
     private List<SentenceDTO> sentences;
 }

@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SentenceDTO {
     private Long id;
     private String sentence;
+    private String translation;
 }
