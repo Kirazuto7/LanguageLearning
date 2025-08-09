@@ -1,9 +1,9 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.requests;
 
 import lombok.Data;
 
 @Data
-public class GenerationRequest {
+public class ChapterGenerationRequest {
     private String language;
     private String difficulty;
     private String topic;

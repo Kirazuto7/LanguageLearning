@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
 import Styles from '../styles/mascot.module.css';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../contexts/LanguageSettingsContext';
 
 function LanguageSettings({
     openSettings,
