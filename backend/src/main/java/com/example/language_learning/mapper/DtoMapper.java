@@ -1,11 +1,6 @@
 package com.example.language_learning.mapper;
 
-import com.example.language_learning.dto.BookDTO;
-import com.example.language_learning.dto.ChapterDTO;
-import com.example.language_learning.dto.LessonDTO;
-import com.example.language_learning.dto.PageDTO;
-import com.example.language_learning.dto.VocabularyItemDTO;
-import com.example.language_learning.dto.VocabularyLessonDTO;
+import com.example.language_learning.dto.*;
 import com.example.language_learning.entity.*;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +10,10 @@ import java.util.stream.Collectors;
 @Component
 public class DtoMapper {
 
-    // Book Mapper
+    /* ***************** */
+    /* ** Book Mapper ** */
+    /* ***************** */
+
     public Book toEntity(BookDTO dto) {  
         Book book = new Book();
         book.setId(dto.getId());
@@ -41,7 +39,10 @@ public class DtoMapper {
     }
 
 
-    // Chapter Mapper
+    /* ******************** */
+    /* ** Chapter Mapper ** */
+    /* ******************** */
+
     public Chapter toEntity(ChapterDTO dto) {
         Chapter chapter = new Chapter();
         chapter.setId(dto.getId());
@@ -66,7 +67,10 @@ public class DtoMapper {
         return dto;
     }
 
-    // Page Mapper
+    /* ***************** */
+    /* ** Page Mapper ** */
+    /* ***************** */
+
     public Page toEntity(PageDTO dto) {
         Page page = new Page();
         page.setId(dto.getId());
@@ -87,10 +91,12 @@ public class DtoMapper {
         return dto;
     }
 
-    // Lesson Mapper
+    /* ******************* */
+    /* ** Lesson Mapper ** */
+    /* ******************* */
+
     public Lesson toEntity(LessonDTO dto) {
-        if (dto instanceof VocabularyLessonDTO) {
-            VocabularyLessonDTO vocabDto = (VocabularyLessonDTO) dto;
+        if (dto instanceof VocabularyLessonDTO vocabDto) {
             VocabularyLesson lesson = new VocabularyLesson();
             lesson.setId(vocabDto.getId());
             lesson.setTitle(vocabDto.getTitle());
@@ -100,13 +106,22 @@ public class DtoMapper {
             }
             return lesson;
         }
+        else if(dto instanceof SentenceLessonDTO sentenceLessonDTO) {
+            SentenceLesson lesson = new SentenceLesson();
+            lesson.setId(sentenceLessonDTO.getId());
+            lesson.setTitle(sentenceLessonDTO.getTitle());
+            lesson.setType(sentenceLessonDTO.getType());
+            if (sentenceLessonDTO.getSentences() != null) {
+                lesson.setSentences(sentenceLessonDTO.getSentences().stream().map(this::toEntity).collect(Collectors.toList()));
+            }
+            return lesson;
+        }
         // Add other lesson types here in the future
         throw new IllegalArgumentException("Unknown lesson DTO type: " + dto.getClass().getSimpleName());
     }
 
     public LessonDTO toDto(Lesson entity) {
-        if (entity instanceof VocabularyLesson) {
-            VocabularyLesson vocabEntity = (VocabularyLesson) entity;
+        if (entity instanceof VocabularyLesson vocabEntity) {
             VocabularyLessonDTO dto = new VocabularyLessonDTO();
             dto.setId(vocabEntity.getId());
             dto.setTitle(vocabEntity.getTitle());
@@ -114,10 +129,20 @@ public class DtoMapper {
             dto.setItems(vocabEntity.getVocabularyItems().stream().map(this::toDto).collect(Collectors.toList()));
             return dto;
         }
+        else if(entity instanceof SentenceLesson sentenceEntity) {
+            SentenceLessonDTO dto = new SentenceLessonDTO();
+            dto.setId(sentenceEntity.getId());
+            dto.setTitle(sentenceEntity.getTitle());
+            dto.setType(sentenceEntity.getType());
+            dto.setSentences(sentenceEntity.getSentences().stream().map(this::toDto).collect(Collectors.toList()));
+        }
         throw new IllegalArgumentException("Unknown lesson entity type: " + entity.getClass().getSimpleName());
     }
 
-    // Vocabulary Item Mapper
+    /* **************************** */
+    /* ** Vocabulary Item Mapper ** */
+    /* **************************** */
+
     public VocabularyItem toEntity(VocabularyItemDTO dto) {
         VocabularyItem item = new VocabularyItem();
         item.setId(dto.getId());
@@ -130,6 +155,26 @@ public class DtoMapper {
         VocabularyItemDTO dto = new VocabularyItemDTO();
         dto.setId(entity.getId());
         dto.setWord(entity.getWord());
+        dto.setTranslation(entity.getTranslation());
+        return dto;
+    }
+
+    /* ********************* */
+    /* ** Sentence Mapper ** */
+    /* ********************* */
+
+    public Sentence toEntity(SentenceDTO dto) {
+        Sentence sentence = new Sentence();
+        sentence.setId(dto.getId());
+        sentence.setSentence(dto.getSentence());
+        sentence.setTranslation(dto.getTranslation());
+        return sentence;
+    }
+
+    public SentenceDTO toDto(Sentence entity) {
+        SentenceDTO dto = new SentenceDTO();
+        dto.setId(entity.getId());
+        dto.setSentence(entity.getSentence());
         dto.setTranslation(entity.getTranslation());
         return dto;
     }

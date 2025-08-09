@@ -26,6 +26,7 @@ public class Chapter {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "chapter_id")
+    @OrderColumn(name = "page_order")
     private List<Page> pages;
 
 }
