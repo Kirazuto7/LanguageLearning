@@ -44,11 +44,21 @@ export function useBookManager(language, difficulty) {
     // Combined pages
     const pages = useMemo(() => [...initialPages, ...newPages], [initialPages, newPages]);
 
+    // Get Chapter information for the table of contents
+    const chapterInfo = useMemo(() => {
+        if(!bookData) return [];
+        return bookData.chapters.map(chapter => ({
+            chapterNumber: chapter.chapterNumber,
+            title: chapter.title,
+            startingPageNumber: chapter.pages.length > 0 ? chapter.pages[0].pageNumber : null
+        }));
+    }, [bookData]);
+
     // Callback to retrieve new chapter data
     const processChapter = useCallback((chapterData) => {
         if(!chapterData) return;
         setNewChapters(prev => [...prev, chapterData]);
     }, []);
 
-    return { pages: pages || [], title: title || '', processChapter: processChapter || (() => {}) };
+    return { pages: pages || [], title: title || '', chapters: chapterInfo || [], processChapter: processChapter || (() => {}) };
 }
