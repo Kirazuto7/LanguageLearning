@@ -78,7 +78,7 @@ export function buildPagesFromChapters (chapters) {
         )
 
         // Loop through the page(s) data for the chapter
-        chapter.pages.forEach(page => {
+        chapter.pages.slice(1).forEach(page => {
             // Determine the page content based on the type of lesson
             let pageContent = getPageFromLessonType(page);
 
