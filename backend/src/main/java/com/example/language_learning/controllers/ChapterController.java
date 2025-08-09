@@ -1,10 +1,8 @@
 package com.example.language_learning.controllers;
 
-import java.util.List;
-
 
 import com.example.language_learning.dto.ChapterDTO;
-import com.example.language_learning.dto.GenerationRequest;
+import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.services.ChapterService;
 
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +27,7 @@ public class ChapterController {
     private final ChapterService chapterService;
 
     @PostMapping("/generate")
-    public Mono<ChapterDTO> generateChapter(@RequestBody GenerationRequest request) {
+    public Mono<ChapterDTO> generateChapter(@RequestBody ChapterGenerationRequest request) {
         logger.info("Received request to generate chapter for language: {} with level: {} and topic: {}",
                 request.getLanguage(), request.getDifficulty(), request.getTopic());
 
@@ -39,8 +36,4 @@ public class ChapterController {
             .doOnNext(chapterResponse -> logger.info("Successfully generated chapter: {}", chapterResponse.getTitle()));
     }
 
-    @GetMapping("/load")
-    public Mono<List<ChapterDTO>> loadBook() {
-        return null;
-    }
 }

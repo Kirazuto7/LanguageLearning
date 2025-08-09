@@ -1,69 +1,71 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import BookPage from '../components/studybook/BookPage';
-import VocabularyLesson from '../components/lessons/VocabularyLesson';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { buildPagesFromBookData, buildPagesFromChapters } from '../utils/buildPagesFromData';
 
+/* ----------------------------------------------------------- */
+/* --- Hook to Handle Initial Fetch && Process New Chapters--- */
+/* ----------------------------------------------------------- */
+export function useBookManager(language, difficulty) {
+    const [bookData, setBookData] = useState(null); // Book Data in JSON format
+    const [newChapters, setNewChapters] = useState([]); // New Chapters created
+    const [title, setTitle] = useState(''); // Title of the Book
+    const [generatedChapterPageNumber, setGeneratedChapterPageNumber] = useState(null);
 
-const initialPages = [
-    // Load any initial pages from the database
-];
-
-export const useBookManager = () => {
-    const [pages, setPages] = useState(initialPages);
-    const [title, setTitle] = useState('');
-    //const [startPageNumber, setStartPageNumber] = useState(1);
-    const startPageNumberRef = useRef(1);
-
+    // Makes Initial fetch for Book Data
     useEffect(() => {
-        // Keep track of the previous page number before the effect updates for the next page
-        startPageNumberRef.current = pages.length;
-    }, [pages])
-
-    const processChapter = useCallback((chapterData) => {
-        console.log(chapterData);
-        // If the data is empty, reuse the initial state
-        if (!chapterData || !chapterData.pages || chapterData.pages.length === 0) {
-            setTitle('');
-            setPages(initialPages);
+        async function fetchData() {
+        const response = await fetch('/api/book/fetch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ language, difficulty }),
+        });
+        if (!response.ok) {
+            console.log('Failed to fetch book data.');
             return;
         }
+        const data = await response.json();
+        setBookData(data);
+        setTitle(data.bookTitle || '');
+        }
 
-        setTitle(chapterData.title || 'Generated Book');
+        fetchData();
+    }, [language, difficulty])
+
+    // Array of Flipbook Component Pages using data fetched initially from the database
+    const initialPages = useMemo(() => {
+        if(!bookData) return [];
+        return buildPagesFromBookData(bookData);
+    }, [bookData]);
+
+    // Array of Flipbook Component Pages using data fetched from new chapter requests
+    const newPages = useMemo(() => {
+        if(newChapters.length === 0) return [];
+        return buildPagesFromChapters(newChapters);
+    }, [newChapters]);
+
+    // Combined pages
+    const pages = useMemo(() => [...initialPages, ...newPages], [initialPages, newPages]);
+
+    // Get Chapter information for the table of contents
+    const chapterInfo = useMemo(() => {
+        const mergedChapters = [
+            ...(bookData?.chapters || []),
+            ...newChapters
+        ];
         
-        setPages(prevPages => {
-            const basePages = prevPages;
-            const newStartPageNumber = basePages.length + 1;
-            
-            // Create a title page with correct new page number
-            const titlePage = (
-                // A right page has an even number. Page 1 should be a left page.
-                <BookPage key={`page-${newStartPageNumber }`} pageNumber={newStartPageNumber } isRightPage={newStartPageNumber  % 2 === 0}>
-                    <div className="text-center" style={{ paddingTop: '100px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}> 
-                        <h1>{chapterData.title}</h1>
-                        <h3 className="text-muted mt-3">{chapterData.nativeTitle}</h3>
-                    </div>
-                </BookPage>
-            );
+        return mergedChapters.map(chapter => ({
+            chapterNumber: chapter.chapterNumber,
+            title: chapter.title,
+            startingPageNumber: chapter.pages.length > 0 ? chapter.pages[0].pageNumber : null
+        }));
+    }, [bookData, newChapters]);
 
-            // Create pages for each lesson with continuous page numbering
-            const lessonPages = chapterData.lessons.map((lesson, index) => {
-                const pageNumber = newStartPageNumber  + 1 + index;
-                let content;
+    // Callback to retrieve new chapter data
+    const processChapter = useCallback((chapterData) => {
+        if(!chapterData) return;
+        setNewChapters(prev => [...prev, chapterData]);
+        const startingPage = chapterData.pages.length > 0 ? chapterData.pages[0].pageNumber : null;
+        setGeneratedChapterPageNumber(startingPage);
+    }, []);
 
-                switch (lesson.type) {
-                    case 'vocabulary':
-                        content = <VocabularyLesson lesson={lesson} />;
-                        break;
-                    default:
-                        content = <p>Unsupported lesson type: {lesson.type}</p>;
-                }
-                return <BookPage key={`page-${pageNumber}`} pageNumber={pageNumber} isRightPage={pageNumber % 2 === 0}>{content}</BookPage>;
-            });
-      
-            return [...basePages, titlePage, ...lessonPages];
-        }); // This closes the setPages updater function.
-            
-    }, []); // This closes the useCallback hook.
-
-    // Return the state and the function to update it.
-    return { pages, title, startPageNumberRef,processChapter };
-};
+    return { pages: pages || [], title: title || '', chapters: chapterInfo || [], processChapter: processChapter || (() => {}), generatedChapterPageNumber };
+}

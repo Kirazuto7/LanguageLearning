@@ -1,25 +1,41 @@
 import React, {useRef, useEffect} from 'react';
 import styles from '../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageSettingsContext';
 import { useBook } from '../../contexts/BookContext';
 import BehindCoverPage from './BehindCoverPage';
 import InstructionsPage from './InstructionsPage';
-
+import TableOfContentsPage from './TableOfContentsPage';
 
 function FlipBook() {
     const { difficulty, languageName } = useLanguage();
-    const { pages, startPageNumberRef } = useBook();
+    const { pages, chapters, generatedChapterPageNumber } = useBook();
     const flipBook = useRef(null);
     
     const onInit = () => {
-        console.log("Init");
-        flipBook.current.pageFlip().flip(startPageNumberRef.current);
+        //console.log("Init");
+        if(flipBook.current) {
+            flipBook.current.pageFlip().flip(generatedChapterPageNumber+2);
+        }
     }
 
     const onUpdate = () => {
-        console.log("Update");
+        //console.log("Update");
     }
+
+    const navigateToPage = (pageNumber) => {
+        if(flipBook.current) {
+            flipBook.current.pageFlip().flip(pageNumber); // Excluding the first 2 pages
+        }
+    }
+
+    const tocPage = (
+        <TableOfContentsPage
+            key="toc"
+            chapters={chapters}
+            onNavigate={navigateToPage}
+        />
+    );
 
     return (
         <div className={styles.bookContainer}>
@@ -41,10 +57,10 @@ function FlipBook() {
                 </div>
 
                 <BehindCoverPage/>
-                <InstructionsPage/>
+                <InstructionsPage>{tocPage}</InstructionsPage>
                 
                 {/* Book Pages */}
-                {pages.map((page) => page)}
+                {pages && pages.map((page) => page)}
                 
                 {/* Back Cover Page */}
                 <div className={styles.backcover}>
