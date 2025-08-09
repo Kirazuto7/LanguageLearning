@@ -8,6 +8,7 @@ export function useBookManager(language, difficulty) {
     const [bookData, setBookData] = useState(null); // Book Data in JSON format
     const [newChapters, setNewChapters] = useState([]); // New Chapters created
     const [title, setTitle] = useState(''); // Title of the Book
+    const [generatedChapterPageNumber, setGeneratedChapterPageNumber] = useState(null);
 
     // Makes Initial fetch for Book Data
     useEffect(() => {
@@ -46,19 +47,25 @@ export function useBookManager(language, difficulty) {
 
     // Get Chapter information for the table of contents
     const chapterInfo = useMemo(() => {
-        if(!bookData) return [];
-        return bookData.chapters.map(chapter => ({
+        const mergedChapters = [
+            ...(bookData?.chapters || []),
+            ...newChapters
+        ];
+        
+        return mergedChapters.map(chapter => ({
             chapterNumber: chapter.chapterNumber,
             title: chapter.title,
             startingPageNumber: chapter.pages.length > 0 ? chapter.pages[0].pageNumber : null
         }));
-    }, [bookData]);
+    }, [bookData, newChapters]);
 
     // Callback to retrieve new chapter data
     const processChapter = useCallback((chapterData) => {
         if(!chapterData) return;
         setNewChapters(prev => [...prev, chapterData]);
+        const startingPage = chapterData.pages.length > 0 ? chapterData.pages[0].pageNumber : null;
+        setGeneratedChapterPageNumber(startingPage);
     }, []);
 
-    return { pages: pages || [], title: title || '', chapters: chapterInfo || [], processChapter: processChapter || (() => {}) };
+    return { pages: pages || [], title: title || '', chapters: chapterInfo || [], processChapter: processChapter || (() => {}), generatedChapterPageNumber };
 }

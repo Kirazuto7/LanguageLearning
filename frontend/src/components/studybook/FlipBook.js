@@ -9,15 +9,18 @@ import TableOfContentsPage from './TableOfContentsPage';
 
 function FlipBook() {
     const { difficulty, languageName } = useLanguage();
-    const { pages, chapters } = useBook();
+    const { pages, chapters, generatedChapterPageNumber } = useBook();
     const flipBook = useRef(null);
     
     const onInit = () => {
-        console.log("Init");
+        //console.log("Init");
+        if(flipBook.current) {
+            flipBook.current.pageFlip().flip(generatedChapterPageNumber+2);
+        }
     }
 
     const onUpdate = () => {
-        console.log("Update");
+        //console.log("Update");
     }
 
     const navigateToPage = (pageNumber) => {
