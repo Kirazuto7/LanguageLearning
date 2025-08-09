@@ -1,17 +1,15 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.BookDTO;
-import com.example.language_learning.entity.Book;
+import com.example.language_learning.entity.models.Book;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.BookRepository;
 import com.example.language_learning.requests.BookRequest;
-import com.example.language_learning.requests.ChapterGenerationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package com.example.language_learning.entity;
+package com.example.language_learning.entity.models;
 import java.util.List;
 
 import jakarta.persistence.*;

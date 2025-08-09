@@ -1,5 +1,6 @@
-package com.example.language_learning.entity;
+package com.example.language_learning.entity.lessons;
 
+import com.example.language_learning.entity.models.MultipleChoice;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

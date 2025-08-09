@@ -1,4 +1,4 @@
-package com.example.language_learning.entity;
+package com.example.language_learning.entity.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,16 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="sentences")
+@Table(name = "sentence_words")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sentence {
+public class SentenceWord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String sentence;
-    private String translation;
 }

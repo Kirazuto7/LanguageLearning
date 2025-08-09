@@ -1,10 +1,12 @@
 package com.example.language_learning.mapper;
 
 import com.example.language_learning.dto.*;
-import com.example.language_learning.entity.*;
+import com.example.language_learning.entity.lessons.Lesson;
+import com.example.language_learning.entity.lessons.SentenceLesson;
+import com.example.language_learning.entity.lessons.VocabularyLesson;
+import com.example.language_learning.entity.models.*;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -14,7 +16,7 @@ public class DtoMapper {
     /* ** Book Mapper ** */
     /* ***************** */
 
-    public Book toEntity(BookDTO dto) {  
+    public Book toEntity(BookDTO dto) {
         Book book = new Book();
         book.setId(dto.getId());
         book.setBookTitle(dto.getBookTitle());
@@ -102,7 +104,7 @@ public class DtoMapper {
             lesson.setTitle(vocabDto.getTitle());
             lesson.setType(vocabDto.getType());
             if (vocabDto.getItems() != null) {
-                lesson.setVocabularyItems(vocabDto.getItems().stream().map(this::toEntity).collect(Collectors.toList()));
+                lesson.setVocabularies(vocabDto.getItems().stream().map(this::toEntity).collect(Collectors.toList()));
             }
             return lesson;
         }
@@ -126,7 +128,7 @@ public class DtoMapper {
             dto.setId(vocabEntity.getId());
             dto.setTitle(vocabEntity.getTitle());
             dto.setType(vocabEntity.getType());
-            dto.setItems(vocabEntity.getVocabularyItems().stream().map(this::toDto).collect(Collectors.toList()));
+            dto.setItems(vocabEntity.getVocabularies().stream().map(this::toDto).collect(Collectors.toList()));
             return dto;
         }
         else if(entity instanceof SentenceLesson sentenceEntity) {
@@ -143,16 +145,16 @@ public class DtoMapper {
     /* ** Vocabulary Item Mapper ** */
     /* **************************** */
 
-    public VocabularyItem toEntity(VocabularyItemDTO dto) {
-        VocabularyItem item = new VocabularyItem();
+    public Vocabulary toEntity(VocabularyDTO dto) {
+        Vocabulary item = new Vocabulary();
         item.setId(dto.getId());
         item.setWord(dto.getWord());
         item.setTranslation(dto.getTranslation());
         return item;
     }
 
-    public VocabularyItemDTO toDto(VocabularyItem entity) {
-        VocabularyItemDTO dto = new VocabularyItemDTO();
+    public VocabularyDTO toDto(Vocabulary entity) {
+        VocabularyDTO dto = new VocabularyDTO();
         dto.setId(entity.getId());
         dto.setWord(entity.getWord());
         dto.setTranslation(entity.getTranslation());
