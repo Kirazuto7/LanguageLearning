@@ -1,8 +1,8 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.ChapterDTO;
+import com.example.language_learning.dto.models.ChapterDTO;
 import com.example.language_learning.requests.ChapterGenerationRequest;
-import com.example.language_learning.entity.models.Book;
+import com.example.language_learning.entity.models.LessonBook;
 import com.example.language_learning.entity.models.Chapter;
 import com.example.language_learning.entity.models.Page;
 import com.example.language_learning.mapper.DtoMapper;
@@ -42,7 +42,7 @@ public class ChapterService {
                             }
                             System.out.println(newChapter);
                             book.getChapters().add(newChapter);
-                            Book savedBook = bookService.save(book);
+                            LessonBook savedBook = bookService.save(book);
 
                             // Return the DTO of the newly saved chapter
                             return mapper.toDto(savedBook.getChapters().get(savedBook.getChapters().size() - 1));

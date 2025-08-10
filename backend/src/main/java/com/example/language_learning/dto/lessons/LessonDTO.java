@@ -1,4 +1,4 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.dto.lessons;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

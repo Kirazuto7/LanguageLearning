@@ -18,6 +18,4 @@ public class KoreanWord extends Word {
     private String hangeul;
     @Column(nullable = true)
     private String hanja;
-    @Column(nullable = true)
-    private String romaja;
 }

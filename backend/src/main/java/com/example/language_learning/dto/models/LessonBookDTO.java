@@ -1,4 +1,4 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.dto.models;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookDTO {
+public class LessonBookDTO {
     private Long id;
     private String bookTitle;
     private String difficulty;
