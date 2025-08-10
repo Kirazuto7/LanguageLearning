@@ -1,5 +1,6 @@
 package com.example.language_learning.dto.lessons;
 
+import com.example.language_learning.dto.models.PageDTO;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
@@ -20,4 +21,5 @@ public abstract class LessonDTO {
     private Long id;
     private String type;
     private String title;
+    private PageDTO page;
 }

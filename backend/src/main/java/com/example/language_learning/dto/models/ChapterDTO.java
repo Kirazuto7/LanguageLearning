@@ -19,13 +19,5 @@ public class ChapterDTO {
     private String title;
     private String nativeTitle;
     private List<PageDTO> pages;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PageDTO {
-        private Long id;
-        private int pageNumber;
-        private LessonDTO lesson;
-    }
+    private LessonBookDTO lessonBook;
 }
