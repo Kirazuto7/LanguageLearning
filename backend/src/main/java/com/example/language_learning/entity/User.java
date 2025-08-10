@@ -29,4 +29,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LessonBook> lessonBookList;
+
+    public void addLessonBook(LessonBook lessonBook) {
+        lessonBookList.add(lessonBook);
+        lessonBook.setUser(this);
+    }
 }

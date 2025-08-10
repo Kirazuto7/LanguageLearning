@@ -33,4 +33,8 @@ public class Chapter {
     @JoinColumn(name = "book_id")
     private LessonBook lessonBook;
 
+    public void addPage(Page page) {
+        pages.add(page);
+        page.setChapter(this);
+    }
 }

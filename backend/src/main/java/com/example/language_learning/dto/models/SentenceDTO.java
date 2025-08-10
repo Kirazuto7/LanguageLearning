@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class SentenceDTO {
     private Long id;
-    private List<SentenceWordDTO> words;
+    private List<WordDTO> words;
     private String translation;
 }

@@ -1,6 +1,7 @@
 package com.example.language_learning.entity.models;
 
 import com.example.language_learning.entity.lessons.Lesson;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Page {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id")
+    @JsonBackReference
     private Chapter chapter;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
