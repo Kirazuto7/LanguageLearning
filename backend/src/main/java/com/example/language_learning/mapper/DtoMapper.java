@@ -62,6 +62,7 @@ public class DtoMapper {
         chapter.setChapterNumber(dto.getChapterNumber());
         chapter.setTitle(dto.getTitle());
         chapter.setNativeTitle(dto.getNativeTitle());
+        chapter.setLessonBook(toEntity(dto.getLessonBook()));
         if (dto.getPages() != null) {
             chapter.setPages(dto.getPages().stream().map(this::toEntity).collect(Collectors.toList()));
         }
@@ -74,6 +75,7 @@ public class DtoMapper {
         dto.setChapterNumber(entity.getChapterNumber());
         dto.setTitle(entity.getTitle());
         dto.setNativeTitle(entity.getNativeTitle());
+        dto.setLessonBook(toDto(entity.getLessonBook()));
         if (entity.getPages() != null) {
             dto.setPages(entity.getPages().stream().map(this::toDto).collect(Collectors.toList()));
         }
@@ -84,20 +86,22 @@ public class DtoMapper {
     /* ** Page Mapper ** */
     /* ***************** */
 
-    public Page toEntity(ChapterDTO.PageDTO dto) {
+    public Page toEntity(PageDTO dto) {
         Page page = new Page();
         page.setId(dto.getId());
         page.setPageNumber(dto.getPageNumber());
+        page.setChapter(toEntity(dto.getChapter()));
         if (dto.getLesson() != null) {
             page.setLesson(toEntity(dto.getLesson()));
         }
         return page; 
     }
 
-    public ChapterDTO.PageDTO toDto(Page entity) {
-        ChapterDTO.PageDTO dto = new ChapterDTO.PageDTO();
+    public PageDTO toDto(Page entity) {
+        PageDTO dto = new PageDTO();
         dto.setId(entity.getId());
         dto.setPageNumber(entity.getPageNumber());
+        dto.setChapter(toDto(entity.getChapter()));
         if (entity.getLesson() != null) {
             dto.setLesson(toDto(entity.getLesson()));
         }
@@ -114,6 +118,8 @@ public class DtoMapper {
             lesson.setId(vocabDto.getId());
             lesson.setTitle(vocabDto.getTitle());
             lesson.setType(vocabDto.getType());
+            if(vocabDto.getPage() != null)
+                lesson.setPage(toEntity(vocabDto.getPage()));
             if (vocabDto.getVocabularies() != null) {
                 lesson.setVocabularies(vocabDto.getVocabularies().stream().map(this::toEntity).collect(Collectors.toList()));
             }
@@ -124,6 +130,8 @@ public class DtoMapper {
             lesson.setId(sentenceLessonDTO.getId());
             lesson.setTitle(sentenceLessonDTO.getTitle());
             lesson.setType(sentenceLessonDTO.getType());
+            if(sentenceLessonDTO.getPage() != null)
+                lesson.setPage(toEntity(sentenceLessonDTO.getPage()));
             if (sentenceLessonDTO.getSentences() != null) {
                 lesson.setSentences(sentenceLessonDTO.getSentences().stream().map(this::toEntity).collect(Collectors.toList()));
             }
@@ -136,6 +144,8 @@ public class DtoMapper {
             lesson.setType(grammarLessonDTO.getType());
             lesson.setGrammarConcept(grammarLessonDTO.getGrammarConcept());
             lesson.setExplanation(grammarLessonDTO.getExplanation());
+            if(grammarLessonDTO.getPage() != null)
+                lesson.setPage(toEntity(grammarLessonDTO.getPage()));
             if(grammarLessonDTO.getExampleSentences() != null) {
                 lesson.setExamples(grammarLessonDTO.getExampleSentences().stream().map(this::toEntity).collect(Collectors.toList()));
             }
@@ -147,9 +157,12 @@ public class DtoMapper {
             lesson.setTitle(readingComprehensionLessonDTO.getTitle());
             lesson.setType(readingComprehensionLessonDTO.getType());
             lesson.setStory(readingComprehensionLessonDTO.getStory());
+            if(readingComprehensionLessonDTO.getPage() != null)
+                lesson.setPage(toEntity(readingComprehensionLessonDTO.getPage()));
             if(readingComprehensionLessonDTO.getQuestions() != null) {
                 lesson.setQuestions(readingComprehensionLessonDTO.getQuestions().stream().map(this::toEntity).collect(Collectors.toList()));
             }
+            return lesson;
         }
         // Add other lesson types here in the future
         throw new IllegalArgumentException("Unknown lesson DTO type: " + dto.getClass().getSimpleName());
@@ -161,6 +174,8 @@ public class DtoMapper {
             dto.setId(vocabEntity.getId());
             dto.setTitle(vocabEntity.getTitle());
             dto.setType(vocabEntity.getType());
+            if(vocabEntity.getPage() != null)
+                dto.setPage(toDto(vocabEntity.getPage()));
             dto.setVocabularies(vocabEntity.getVocabularies().stream().map(this::toDto).collect(Collectors.toList()));
             return dto;
         }
@@ -169,6 +184,8 @@ public class DtoMapper {
             dto.setId(sentenceEntity.getId());
             dto.setTitle(sentenceEntity.getTitle());
             dto.setType(sentenceEntity.getType());
+            if(sentenceEntity.getPage() != null)
+                dto.setPage(toDto(sentenceEntity.getPage()));
             dto.setSentences(sentenceEntity.getSentences().stream().map(this::toDto).collect(Collectors.toList()));
             return dto;
         }
@@ -179,6 +196,8 @@ public class DtoMapper {
             dto.setType(grammarEntity.getType());
             dto.setGrammarConcept(grammarEntity.getGrammarConcept());
             dto.setExplanation(grammarEntity.getExplanation());
+            if(grammarEntity.getPage() != null)
+                dto.setPage(toDto(grammarEntity.getPage()));
             if(grammarEntity.getExamples() != null) {
                 dto.setExampleSentences(grammarEntity.getExamples().stream().map(this::toDto).collect(Collectors.toList()));
             }
@@ -190,6 +209,8 @@ public class DtoMapper {
             dto.setTitle(readingComprehensionLesson.getTitle());
             dto.setType(readingComprehensionLesson.getType());
             dto.setStory(readingComprehensionLesson.getStory());
+            if(readingComprehensionLesson.getPage() != null)
+                dto.setPage(toDto(readingComprehensionLesson.getPage()));
             if(readingComprehensionLesson.getQuestions() != null) {
                 dto.setQuestions(readingComprehensionLesson.getQuestions().stream().map(this::toDto).collect(Collectors.toList()));
             }

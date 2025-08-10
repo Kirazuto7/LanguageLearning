@@ -26,8 +26,7 @@ public class LessonBook {
     private String difficulty;
     private String language;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "book_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonBook")
     @OrderColumn(name = "chapter_order")
     private List<Chapter> chapters;
 

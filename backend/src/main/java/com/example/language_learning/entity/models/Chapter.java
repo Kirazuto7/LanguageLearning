@@ -1,6 +1,7 @@
 package com.example.language_learning.entity.models;
 import java.util.List;
 
+import com.example.language_learning.entity.lessons.Lesson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,9 +25,12 @@ public class Chapter {
     private String title;
     private String nativeTitle;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "chapter_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "chapter")
     @OrderColumn(name = "page_order")
     private List<Page> pages;
+
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private LessonBook lessonBook;
 
 }
