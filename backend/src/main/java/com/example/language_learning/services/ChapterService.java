@@ -21,7 +21,7 @@ public class ChapterService {
 
     @Transactional
     public Mono<ChapterDTO> generateChapter(ChapterGenerationRequest request) {
-        return Mono.fromCallable(() -> bookService.findOrCreateBook(request.getLanguage(), request.getDifficulty()))
+        return Mono.fromCallable(() -> bookService.findOrCreateBook(request.getLanguage(), request.getDifficulty(), request.getUserId()))
             .flatMap(book -> {
                 int nextChapterNumber = book.getChapters().size() + 1;
                 int lastPageNumber = book.getChapters().stream()

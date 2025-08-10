@@ -28,6 +28,7 @@ public class Sentence {
     )
     @OrderBy("wordIndex ASC")
     private List<SentenceWord> words;
+    private String text;
     private String translation; // English translation of the entire sentence
 
     public void addWord(SentenceWord sentenceWord) {

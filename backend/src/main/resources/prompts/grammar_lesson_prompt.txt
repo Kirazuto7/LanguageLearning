@@ -1,0 +1,48 @@
+The student wants to learn {language} at a {difficulty} level.
+The general topic for the lesson is: {topic}.
+
+Before generating the JSON, think step-by-step to ensure accuracy:
+1.  Based on the student's {difficulty} level, identify a single, fundamental grammar concept that is relevant to the topic "{topic}".
+2.  Create a clear, concise explanation for this chosen grammar concept.
+3.  Create 5-7 example sentences in {language} that use the grammar concept and are related to the topic.
+4.  Provide an accurate English translation for each example sentence.
+5.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+
+Please generate a single JSON object for a "lesson" with the following fields:
+  - "type": The type of lesson, which MUST be "grammar".
+  - "title": A title for the grammar section, like "Grammar for {topic}".
+  - "grammarConcept": The name of the specific grammar concept you have chosen to teach. This should NOT be the same as the general {topic}.
+  - "explanation": A clear explanation of the grammar rule in English.
+  - "exampleSentences": An array of 5-7 example sentence objects.
+
+Each sentence object in the "exampleSentences" array must have:
+- "text": The full example sentence as a single string in {language}.
+- "translation": The accurate English translation of the entire sentence.
+- "words": An array of word objects that make up the sentence in {language}.
+
+Each word object in the "words" array is polymorphic and MUST have:
+- "type": A string indicating the language. Use "{language}" for this value (e.g., "korean", "japanese").
+- "translation": The accurate English translation of the individual word.
+- Language-specific fields:
+  - If {language} is "korean", include "hangeul" and "hanja" (if applicable).
+  - If {language} is "japanese", include "hiragana", "kanji", "katakana" (if applicable), and "romaji" (if applicable).
+
+EXAMPLE of the complete JSON object for a Korean lesson with topic="daily routine" and difficulty="beginner":
+{
+  "type": "grammar",
+  "title": "Grammar for Daily Routines",
+  "grammarConcept": "Present Tense (아요/어요)",
+  "explanation": "To speak in the present tense, you attach 아요 or 어요 to the verb stem. If the last vowel of the stem is ㅏ or ㅗ, you use 아요. For all other vowels, you use 어요. For verbs ending in 하다, it becomes 해요.",
+  "exampleSentences": [
+    {
+      "text": "저는 아침에 커피를 마셔요.",
+      "translation": "I drink coffee in the morning.",
+      "words": [
+        { "type": "korean", "translation": "I", "hangeul": "저는", "hanja": null },
+        { "type": "korean", "translation": "in the morning", "hangeul": "아침에", "hanja": null },
+        { "type": "korean", "translation": "coffee", "hangeul": "커피를", "hanja": null },
+        { "type": "korean", "translation": "drink", "hangeul": "마셔요", "hanja": null }
+      ]
+    }
+  ]
+}

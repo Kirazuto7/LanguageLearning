@@ -17,11 +17,6 @@ public class Config {
         return builder.defaultSystem(systemPrompt).build();
     }
 
-    /*@Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }*/
-
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
