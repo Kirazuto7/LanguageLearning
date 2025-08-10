@@ -2,6 +2,7 @@ package com.example.language_learning.dto.models;
 
 import java.util.List;
 
+import com.example.language_learning.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class LessonBookDTO {
     private String difficulty;
     private String language;
     private List<ChapterDTO> chapters;
+    private UserDTO user;
 }
