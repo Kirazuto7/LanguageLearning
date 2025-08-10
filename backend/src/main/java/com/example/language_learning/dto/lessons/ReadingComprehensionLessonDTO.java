@@ -1,5 +1,6 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.dto.lessons;
 
+import com.example.language_learning.dto.models.MultipleChoiceDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ReadingComprehensionLessonDTO extends LessonDTO{
+public class ReadingComprehensionLessonDTO extends LessonDTO {
     private String story;
     private List<MultipleChoiceDTO> questions;
 }

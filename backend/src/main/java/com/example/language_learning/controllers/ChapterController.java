@@ -1,7 +1,7 @@
 package com.example.language_learning.controllers;
 
 
-import com.example.language_learning.dto.ChapterDTO;
+import com.example.language_learning.dto.models.ChapterDTO;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.services.ChapterService;
 

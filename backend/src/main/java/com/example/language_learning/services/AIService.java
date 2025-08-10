@@ -1,6 +1,6 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.ChapterDTO;
+import com.example.language_learning.dto.models.ChapterDTO;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
 import org.slf4j.Logger;

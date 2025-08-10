@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "books")
+@Table(name = "lesson_books")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+public class LessonBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
