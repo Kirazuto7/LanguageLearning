@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends JpaRepository<LessonBook, Long> {
+public interface LessonBookRepository extends JpaRepository<LessonBook, Long> {
     Optional<LessonBook> findByLanguageAndDifficulty(String language, String difficulty);
 }
 

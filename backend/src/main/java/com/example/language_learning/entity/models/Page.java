@@ -25,6 +25,7 @@ public class Page {
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
-    @OneToOne(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 }

@@ -17,7 +17,6 @@ public abstract class Lesson {
     private String type;
     private String title;
 
-    @OneToOne
-    @JoinColumn(name = "page_id")
+    @OneToOne(mappedBy = "lesson")
     private Page page;
 }

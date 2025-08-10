@@ -33,4 +33,9 @@ public class LessonBook {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void addChapter(Chapter chapter) {
+        chapters.add(chapter);
+        chapter.setLessonBook(this);
+    }
 }
