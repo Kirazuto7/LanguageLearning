@@ -28,7 +28,15 @@ public class AIService {
     }
 
     public Mono<ChapterDTO> generateChapter(ChapterGenerationRequest request) {
-
+        String promptStarter = """
+                Please generate a response in JSON format that includes the following fields:
+                - "title": A creative and relevant title for the chapter in English.
+                - "nativeTitle": The accurate translation of the title in {language}.
+                - "pages": An array of page objects. For now, please generate one page.
+                
+                Each page object in the "pages" array should have:
+                - "pageNumber": The page number, starting from 1.
+                - "lesson": A lesson object.""";
         var outputParser = new BeanOutputConverter<>(ChapterDTO.class);
         String initialPrompt = "Generate a language learning chapter about {topic} for a {difficulty} level student of {language}.";
         PromptTemplate promptTemplate = new PromptTemplate(initialPrompt);

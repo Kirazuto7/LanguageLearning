@@ -13,5 +13,6 @@ import java.util.List;
 public class SentenceDTO {
     private Long id;
     private List<WordDTO> words;
+    private String text;
     private String translation;
 }

@@ -7,4 +7,5 @@ public class ChapterGenerationRequest {
     private String language;
     private String difficulty;
     private String topic;
+    private Long userId;
 }

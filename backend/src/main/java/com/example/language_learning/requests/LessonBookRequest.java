@@ -6,4 +6,5 @@ import lombok.Data;
 public class LessonBookRequest {
     private String language;
     private String difficulty;
+    private Long userId;
 }
