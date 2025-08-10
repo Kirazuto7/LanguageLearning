@@ -2,6 +2,7 @@ package com.example.language_learning.entity.models;
 
 import java.util.List;
 
+import com.example.language_learning.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,4 +30,8 @@ public class LessonBook {
     @JoinColumn(name = "book_id")
     @OrderColumn(name = "chapter_order")
     private List<Chapter> chapters;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
