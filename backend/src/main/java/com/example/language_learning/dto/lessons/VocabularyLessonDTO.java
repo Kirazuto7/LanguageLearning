@@ -1,5 +1,6 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.dto.lessons;
 
+import com.example.language_learning.dto.models.VocabularyWordDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -10,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class VocabularyLessonDTO extends LessonDTO {
-    private List<VocabularyItemDTO> items;
+    private List<VocabularyWordDTO> vocabularies;
 }

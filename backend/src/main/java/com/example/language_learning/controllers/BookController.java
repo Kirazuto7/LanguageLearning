@@ -1,7 +1,7 @@
 package com.example.language_learning.controllers;
 
-import com.example.language_learning.dto.BookDTO;
-import com.example.language_learning.requests.BookRequest;
+import com.example.language_learning.dto.models.LessonBookDTO;
+import com.example.language_learning.requests.LessonBookRequest;
 import com.example.language_learning.services.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping("/fetch")
-    public Mono<BookDTO> fetchBook(@RequestBody BookRequest fetchRequest) {
+    public Mono<LessonBookDTO> fetchBook(@RequestBody LessonBookRequest fetchRequest) {
         return bookService.fetchBook(fetchRequest);
     }
 }
