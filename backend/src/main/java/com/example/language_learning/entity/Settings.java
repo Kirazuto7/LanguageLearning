@@ -1,7 +1,6 @@
 package com.example.language_learning.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Settings {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
