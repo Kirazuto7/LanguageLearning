@@ -30,4 +30,12 @@ public class Page {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
+
+    public Page(int pageNumber, Lesson lesson) {
+        this.pageNumber = pageNumber;
+        this.lesson = lesson;
+        if(lesson != null) {
+            lesson.setPage(this);
+        }
+    }
 }

@@ -1,0 +1,41 @@
+The student wants to learn {language} at a {difficulty} level.
+The general topic for the lesson is: {topic}.
+
+Before generating the JSON, think step-by-step to ensure accuracy:
+1.  Write a short, simple story (3-5 sentences) in {language} related to the topic "{topic}" that is appropriate for a {difficulty} learner.
+2.  Create 3-4 multiple-choice questions in English that test the user's comprehension of the story.
+3.  For each question, provide the correct answer and 2-3 plausible but incorrect options. The answers and options should be in English.
+4.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+
+Please generate a single JSON object for a "lesson" with the following fields:
+  - "type": The type of lesson, which MUST be "reading_comprehension".
+  - "title": A title for the lesson, like "Reading Practice: {topic}".
+  - "story": The short story you generated in {language}.
+  - "questions": An array of 3-4 question objects.
+
+Each question object in the "questions" array must have:
+- "questionType": This MUST be "MULTIPLE_CHOICE".
+- "questionText": The comprehension question in English.
+- "answer": The correct answer in English.
+- "options": An array of strings containing the correct answer and 2-3 incorrect options, all in English.
+
+EXAMPLE of the complete JSON object for a Korean lesson with topic="a day at the park" and difficulty="beginner":
+{
+  "type": "reading_comprehension",
+  "title": "Reading Practice: A Day at the Park",
+  "story": "민준은 공원에 갔습니다. 그는 큰 나무 아래에 앉았습니다. 그는 책을 읽고 음악을 들었습니다. 날씨가 아주 좋았습니다.",
+  "questions": [
+    {
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Where did Minjun go?",
+      "answer": "To the park",
+      "options": ["To the park", "To the library", "To school"]
+    },
+    {
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What did Minjun do under the tree?",
+      "answer": "Read a book and listened to music",
+      "options": ["Read a book and listened to music", "Ate lunch", "Played soccer"]
+    }
+  ]
+}

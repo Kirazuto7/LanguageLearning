@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,13 +15,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReadingComprehensionLesson extends Lesson {
     private String story;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "question_order")
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
 
     public void addQuestion(Question question) {
         this.questions.add(question);

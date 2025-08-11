@@ -1,5 +1,6 @@
 package com.example.language_learning.entity.lessons;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.language_learning.entity.models.VocabularyWord;
@@ -15,11 +16,10 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class VocabularyLesson extends Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VocabularyWord> vocabularies;
+    private List<VocabularyWord> vocabularies = new ArrayList<>();
 
     public void addVocabulary(VocabularyWord vocabularyWord) {
         vocabularies.add(vocabularyWord);

@@ -1,13 +1,13 @@
 package com.example.language_learning.entity.lessons;
 
 import com.example.language_learning.entity.models.Question;
-import com.example.language_learning.entity.models.Sentence;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,14 +15,13 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class PracticeLesson extends Lesson {
 
     @Column(columnDefinition = "TEXT")
     private String instructions; // e.g., "Use the vocabulary you've learned to complete the exercises."
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
 
     public void addQuestion(Question question) {
         this.questions.add(question);
