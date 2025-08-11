@@ -1,20 +1,19 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.dto.languages;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
-
-@Data
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
         property = "type",
         visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = VocabularyLessonDTO.class, name = "vocabulary")
+        @JsonSubTypes.Type(value = KoreanWordDTO.class, name = "korean"),
+        @JsonSubTypes.Type(value = JapaneseWordDTO.class, name = "japanese")
 })
-public abstract class LessonDTO {
+@Data
+public abstract class WordDTO {
     private Long id;
-    private String type;
-    private String title;
+    private String translation;
 }

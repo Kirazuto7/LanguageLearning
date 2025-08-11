@@ -1,0 +1,42 @@
+The student wants to learn {language} at a {difficulty} level.
+The general topic for the lesson is: {topic}.
+
+Before generating the JSON, think step-by-step to ensure accuracy:
+1.  Identify 5-7 key vocabulary words related to the topic "{topic}" that are appropriate for a {difficulty} learner.
+2.  Create 3-4 "fill-in-the-blank" sentences. Each sentence should use one of the key vocabulary words. The sentence should have a blank `____` where the word should go.
+3.  For each "fill-in-the-blank" sentence, provide the correct answer (the missing word) and 2-3 plausible but incorrect options.
+4.  Create 2-3 "free-form" writing prompts that encourage the student to use the vocabulary and concepts they've learned to write their own sentence.
+5.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+
+Please generate a single JSON object for a "lesson" with the following fields:
+  - "type": The type of lesson, which MUST be "practice".
+  - "title": A title for the lesson, like "Practice Exercises for {topic}".
+  - "instructions": A short instructional text, like "Use the vocabulary and grammar you've learned to complete the following exercises."
+  - "questions": An array of 5-7 question objects.
+
+Each question object in the "questions" array must have:
+- "questionType": Either "FILL_IN_THE_BLANK" or "FREE_FORM".
+- "questionText": The full prompt or the sentence with a blank.
+- "answer": For "FILL_IN_THE_BLANK" questions, this is the correct word. For "FREE_FORM" questions, this should be null.
+- "options": For "FILL_IN_THE_BLANK" questions, this is an array of strings containing the correct answer and 2-3 incorrect options. For "FREE_FORM" questions, this should be null or an empty array.
+
+EXAMPLE of the complete JSON object for a Korean lesson with topic="travel" and difficulty="beginner":
+{
+  "type": "practice",
+  "title": "Practice Exercises for Travel",
+  "instructions": "Use the vocabulary and grammar you've learned to complete the following exercises.",
+  "questions": [
+    {
+      "questionType": "FILL_IN_THE_BLANK",
+      "questionText": "공항에 가려면 ________을 타야 해요.",
+      "answer": "버스",
+      "options": ["버스", "호텔", "음식"]
+    },
+    {
+      "questionType": "FREE_FORM",
+      "questionText": "Write a sentence about where you want to travel next.",
+      "answer": null,
+      "options": []
+    }
+  ]
+}

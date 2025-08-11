@@ -1,7 +1,8 @@
-package com.example.language_learning.dto;
+package com.example.language_learning.dto.models;
 
 import java.util.List;
 
+import com.example.language_learning.dto.lessons.LessonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,5 @@ public class ChapterDTO {
     private String title;
     private String nativeTitle;
     private List<PageDTO> pages;
+    private LessonBookDTO lessonBook;
 }
