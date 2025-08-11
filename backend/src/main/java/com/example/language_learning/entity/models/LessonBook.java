@@ -1,5 +1,6 @@
 package com.example.language_learning.entity.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.language_learning.entity.User;
@@ -15,7 +16,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class LessonBook {
 
     @Id
@@ -28,7 +28,7 @@ public class LessonBook {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonBook")
     @OrderColumn(name = "chapter_order")
-    private List<Chapter> chapters;
+    private List<Chapter> chapters = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")

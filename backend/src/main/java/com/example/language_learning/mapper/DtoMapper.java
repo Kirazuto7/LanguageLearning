@@ -370,13 +370,13 @@ public class DtoMapper {
         Question entity = new Question(dto.getQuestionType(), dto.getQuestionText());
         entity.setAnswer(dto.getAnswer());
         entity.setOptions(dto.getOptions());
-        // The parent Lesson is set by the parent's mapper or service, not here.
         return entity;
     }
 
     public QuestionDTO toDto(Question entity) {
         if (entity == null) return null;
         QuestionDTO dto = new QuestionDTO();
+        dto.setId(entity.getId());
         dto.setQuestionType(entity.getQuestionType());
         dto.setQuestionText(entity.getQuestionText());
         dto.setAnswer(entity.getAnswer());

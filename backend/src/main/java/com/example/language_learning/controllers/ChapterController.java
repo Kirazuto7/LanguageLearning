@@ -31,8 +31,7 @@ public class ChapterController {
         logger.info("Received request to generate chapter for language: {} with level: {} and topic: {}",
                 request.getLanguage(), request.getDifficulty(), request.getTopic());
 
-        // Return the Mono directly. Spring WebFlux will subscribe and handle the response.
-        return chapterService.generateChapter(request)
+        return chapterService.generateNewChapter(request)
             .doOnNext(chapterResponse -> logger.info("Successfully generated chapter: {}", chapterResponse.getTitle()));
     }
 

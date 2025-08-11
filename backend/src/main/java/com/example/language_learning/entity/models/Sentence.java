@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,7 +16,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Sentence {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class Sentence {
             orphanRemoval = true
     )
     @OrderBy("wordIndex ASC")
-    private List<SentenceWord> words;
+    private List<SentenceWord> words = new ArrayList<>();
     private String text;
     private String translation; // English translation of the entire sentence
 

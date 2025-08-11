@@ -5,6 +5,7 @@ import java.util.List;
 
 @Data
 public class QuestionDTO {
+    private Long id;
     private String questionType;
     private String questionText;
     private String answer;

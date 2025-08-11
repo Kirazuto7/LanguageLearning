@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,12 +15,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class GrammarLesson extends Lesson {
     private String grammarConcept;
     private String explanation;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "grammar_lesson_id")
-    private List<Sentence> examples;
+    private List<Sentence> examples = new ArrayList<>();
 
 }
