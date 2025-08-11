@@ -3,16 +3,21 @@ import { Button, Collapse } from 'react-bootstrap';
 import Styles from '../styles/mascot.module.css';
 import { useLanguage } from '../contexts/LanguageSettingsContext';
 
-function LanguageSettings({
+interface LanguageSettingsProps {
+    openSettings: boolean,
+    setOpenSettings: (open: boolean) => void;
+}
+
+const LanguageSettings: React.FC<LanguageSettingsProps> = ({
     openSettings,
     setOpenSettings
-}) {
+}) => {
     const { language, setLanguage, difficulty, setDifficulty } = useLanguage();
-    const settingsRef = useRef(null);
+    const settingsRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        function handleClickOutside(event) {
-            if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        function handleClickOutside(event: MouseEvent) {
+            if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
                 setOpenSettings(false);
             }
         }
@@ -22,7 +27,7 @@ function LanguageSettings({
             // Unbind the event listener on clean up
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [settingsRef, setOpenSettings]);
+    }, [setOpenSettings]);
 
     return (
         <div className={Styles.settingsContainer} ref={settingsRef}>
