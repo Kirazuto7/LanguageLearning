@@ -6,7 +6,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import StudyBookPage from './pages/StudyBookPage';
 
-function App() {
+const App: React.FC = () => {
 
   return (
       <div className="App">

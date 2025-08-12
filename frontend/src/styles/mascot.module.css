@@ -27,38 +27,6 @@
     justify-content: center;
 }
 
-.speechBubbleContainer {
-    position: relative;
-    margin-right: 20px;
-}
-
-.speechBubble {
-    position: relative;
-    background: rgb(244, 154, 154);
-    color: black;
-    border-radius: .4em;
-    padding: 12px 16px;
-    min-width: 120px;
-    max-width: 220px;
-    min-height: 30px;
-    word-wrap: break-word;
-}
-
-/* Speech Bubble Tail */
-.speechBubble:after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    width: 0;
-    height: 0;
-    border: 20px solid transparent;
-    border-left-color: rgb(244, 154, 154);
-    border-right: 0;
-    margin-top: -20px;
-    margin-right: -20px;
-}
-
 .inputArea {
     display: flex;
     flex-grow: 1;

@@ -1,9 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, FormEventHandler} from 'react';
 import Styles from '../styles/mascot.module.css';
 import LanguageSettings from './LanguageSettings';
 import { useLanguage } from '../contexts/LanguageSettingsContext';
 
-function MascotCharacter({skip}) {
+interface MascotCharacterProps {
+    skip: boolean;
+}
+
+const MascotCharacter: React.FC<MascotCharacterProps> = ({skip}) => {
     return(
         <div id={Styles.mascotCharacter} className={`svg-container${skip ? ' ' + Styles.skip : ''}`}><div className="max-w-full max-h-full" role="img" aria-label=" a young and cute korean girl svg with named component ids">
             <svg preserveAspectRatio="xMidYMid meet" version="1.1" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}} viewBox="0 0 2048 2048" width="120" height="120">
@@ -63,7 +67,11 @@ function MascotCharacter({skip}) {
     )
 }
 
-function Blackboard({text}) {
+interface BlackboardProps {
+  text: string;
+}
+
+const Blackboard: React.FC<BlackboardProps> = ({text}) => {
     return(
       <div className="relative" style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))' }}>
         <svg width="280" height="200" viewBox="0 0 220 160">
@@ -123,7 +131,6 @@ function Blackboard({text}) {
           {/* Main text element using foreignObject for wrapping */}
           <foreignObject x="20" y="16" width="180" height="112" filter="url(#chalkGlow)">
             <div 
-              xmlns="http://www.w3.org/1999/xhtml"
               style={{
                 color: 'white',
                 fontFamily: "'Courier New', monospace",
@@ -157,20 +164,16 @@ function Blackboard({text}) {
     )
 }
 
-function SpeechBubble({ text }) {
-    return(
-        <div className={Styles.speechBubbleContainer}>
-            <div id={Styles.speechBubble} className={Styles.speechBubble}>{text}</div>
-        </div>
-    )
+interface InputFieldProps {
+  onSend: (value:string) => void;
+  disabled?: boolean;
 }
+const InputField: React.FC<InputFieldProps> = ({onSend, disabled = false }) => {
+    const [inputValue, setInputValue] = useState<string>('');
 
-function InputField({onSend}) {
-    const [inputValue, setInputValue] = useState('');
-
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(onSend && inputValue.trim()) {
+        if(onSend && inputValue.trim() && !disabled) {
             onSend(inputValue);
             setInputValue('');
         }
@@ -185,25 +188,32 @@ function InputField({onSend}) {
                 className={Styles.textInput}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
+                disabled={disabled}
             />
-            <button type="submit" id={Styles.sendButton} className={`${Styles.sendButton} btn btn-primary`}>Send</button>
+            <button type="submit" id={Styles.sendButton} className={`${Styles.sendButton} btn btn-primary`} disabled={disabled}>
+                {disabled ? 'Generating...' : 'Send'}
+            </button>
         </form>
     )
 }
-function Mascot({
-    onTopicSubmit
-}) {
-    const { language, difficulty } = useLanguage();
-    const [skip, setSkip] = useState(false);
-    const [speech, setSpeech] = useState(`Let's learn ${language}! What should our first topic be? 😄`);
-    const [openSettings, setOpenSettings] = useState(false);
+
+interface MascotProps {
+    onTopicSubmit: (topic: string) => void;
+    isLoading?: boolean;
+}
+
+const Mascot: React.FC<MascotProps> = ({ onTopicSubmit, isLoading = false }) => {
+    const { language } = useLanguage();
+    const [skip, setSkip] = useState<boolean>(false);
+    const [speech, setSpeech] = useState<string>(`Let's learn ${language}! What should our first topic be? 😄`);
+    const [openSettings, setOpenSettings] = useState<boolean>(false);
 
     useEffect(() => {
         // When the language is changed in settings, update the mascot's speech.
         setSpeech(`Let's learn ${language}! What should our first topic be? 😄`);
     }, [language]);
 
-    const handleSendButton = (topic) => {
+    const handleSendButton = (topic: string) => {
         setSkip(true);
         setTimeout(() => {
             setSkip(false);
@@ -228,7 +238,7 @@ function Mascot({
                 </div>
             </div>
             <div className={`${Styles.inputRow} mt-3`}>
-                <InputField onSend={handleSendButton}/>
+                <InputField onSend={handleSendButton} disabled={isLoading} />
                 <LanguageSettings openSettings={openSettings}
                     setOpenSettings={setOpenSettings}
                 />

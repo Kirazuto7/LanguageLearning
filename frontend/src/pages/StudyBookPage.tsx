@@ -2,8 +2,9 @@ import ChapterGenerator from "../components/ChapterGenerator";
 import FlipBook from "../components/studybook/FlipBook";
 import React from 'react';
 
+interface StudyBookPageProps{}
 
-function StudyBookPage() {
+const StudyBookPage: React.FC<StudyBookPageProps> = () => {
     return (
         <div>
             <FlipBook />

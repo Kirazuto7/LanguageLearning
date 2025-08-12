@@ -1,20 +1,30 @@
 import styles from '../../styles/bookpage.module.css';
+import { ChapterDTO } from '../../types/dto';
+
+export interface TocChapter {
+    chapterNumber: number;
+    title: string;
+    displayPageNumber: number;
+    navigationPageIndex: number;
+}
+
+interface TableOfContentsPageProps {
+    chapters: TocChapter[],
+    onNavigate: (pageIndex: number) => void
+}
 /**
  * Renders the table of contents navigation page.
  */        
-const TableOfContentsPage = (({ chapters = [], onNavigate }) => {
-
-  // The outer div is for the library. It gets the ref.
-  // The inner div is for our styles.
+const TableOfContentsPage: React.FC<TableOfContentsPageProps> = (({ chapters = [], onNavigate }) => {
     return (
         <div>
             <h1>Table of Contents</h1>
             <ul>
                 {
-                    chapters.map(({chapterNumber, title, startingPageNumber}) => (
+                    chapters.map(({chapterNumber, title, displayPageNumber, navigationPageIndex}) => (
                         <li key={chapterNumber} style={{margin: '10px 0', listStyle: 'none'}}>
                             <button
-                                onClick={() => onNavigate(startingPageNumber)}
+                                onClick={() => onNavigate(navigationPageIndex)}
                                 style={{
                                 cursor: 'pointer',
                                 background: 'none',
@@ -29,7 +39,7 @@ const TableOfContentsPage = (({ chapters = [], onNavigate }) => {
                                     <div className="d-flex justify-content-between w-100 ">
                                         <span className={styles['toc-title']}>{title}</span>
                                         <span className={styles['toc-dots']}></span>
-                                        <span className={styles['toc-page-number']}>{startingPageNumber}</span>
+                                        <span className={styles['toc-page-number']}>{displayPageNumber}</span>
                                     </div>
                                 </div>
                             </button>
