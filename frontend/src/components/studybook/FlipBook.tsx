@@ -1,21 +1,25 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef} from 'react';
 import styles from '../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import { useLanguage } from '../../contexts/LanguageSettingsContext';
 import { useBook } from '../../contexts/BookContext';
 import BehindCoverPage from './BehindCoverPage';
-import InstructionsPage from './InstructionsPage';
-import TableOfContentsPage from './TableOfContentsPage';
+import TableOfContentsPage, { TocChapter } from './TableOfContentsPage';
+import BookPage from './BookPage';
+import { ChapterDTO } from '../../types/dto';
 
-function FlipBook() {
+interface PageFlipAPI {
+    flip: (pageIndex: number, corner?: string) => void;
+}
+
+const FlipBook: React.FC = () => {
     const { difficulty, languageName } = useLanguage();
     const { pages, chapters, generatedChapterPageNumber } = useBook();
-    const flipBook = useRef(null);
+    const flipBook = useRef<React.ElementRef<typeof HTMLFlipBook> | null>(null);
     
     const onInit = () => {
-        //console.log("Init");
-        if(flipBook.current) {
-            flipBook.current.pageFlip().flip(generatedChapterPageNumber+2);
+        if(flipBook.current && generatedChapterPageNumber > 0) {
+            (flipBook.current.pageFlip() as PageFlipAPI).flip(generatedChapterPageNumber+2);
         }
     }
 
@@ -23,26 +27,31 @@ function FlipBook() {
         //console.log("Update");
     }
 
-    const navigateToPage = (pageNumber) => {
+    const navigateToPage = (pageIndex: number) => {
         if(flipBook.current) {
-            flipBook.current.pageFlip().flip(pageNumber); // Excluding the first 2 pages
+            (flipBook.current.pageFlip() as PageFlipAPI).flip(pageIndex);
         }
     }
 
-    const tocPage = (
-        <TableOfContentsPage
-            key="toc"
-            chapters={chapters}
-            onNavigate={navigateToPage}
-        />
-    );
+    const pageIndexOffset = 2;
+
+    const tocChapters: TocChapter[] = chapters.map( (chapter: ChapterDTO) => {
+        const firstPageOfChapter = chapter.pages?.[0];
+        const displayPageNumber = firstPageOfChapter?.pageNumber ?? 0;
+        return {
+            chapterNumber: chapter.chapterNumber,
+            title: chapter.title,
+            displayPageNumber: displayPageNumber,
+            navigationPageIndex: displayPageNumber > 0 ? displayPageNumber + pageIndexOffset : 0
+        }
+    });
 
     return (
         <div className={styles.bookContainer}>
             <div className={styles.bookBinding}></div>
-
+            {/*@ts-ignore*/}
             <HTMLFlipBook 
-                key={pages.length + JSON.stringify(pages.map(p => p.key || ''))}
+                key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
                 ref={flipBook}
                 width={450} height={600}
                 showCover={true}
@@ -57,10 +66,12 @@ function FlipBook() {
                 </div>
 
                 <BehindCoverPage/>
-                <InstructionsPage>{tocPage}</InstructionsPage>
+                <BookPage pageNumber={0} isRightPage={true}>
+                    <TableOfContentsPage chapters={tocChapters} onNavigate={navigateToPage} />
+                </BookPage>
                 
                 {/* Book Pages */}
-                {pages && pages.map((page) => page)}
+                {pages && pages.map((page: React.ReactElement) => page)}
                 
                 {/* Back Cover Page */}
                 <div className={styles.backcover}>

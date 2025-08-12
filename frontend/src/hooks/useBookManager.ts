@@ -1,14 +1,24 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { buildPagesFromBookData, buildPagesFromChapters } from '../utils/buildPagesFromData';
+import { LessonBookDTO, ChapterDTO } from '../types/dto';
+import React from 'react';
+
+interface BookManagerResult {
+    pages: React.ReactNode[];
+    title: string;
+    chapters: ChapterDTO[];
+    processChapter: (chapterData: ChapterDTO) => void;
+    generatedChapterPageNumber: number | null;
+}
 
 /* ----------------------------------------------------------- */
 /* --- Hook to Handle Initial Fetch && Process New Chapters--- */
 /* ----------------------------------------------------------- */
-export function useBookManager(language, difficulty) {
-    const [bookData, setBookData] = useState(null); // Book Data in JSON format
-    const [newChapters, setNewChapters] = useState([]); // New Chapters created
-    const [title, setTitle] = useState(''); // Title of the Book
-    const [generatedChapterPageNumber, setGeneratedChapterPageNumber] = useState(null);
+export function useBookManager(language: string, difficulty: string): BookManagerResult {
+    const [bookData, setBookData] = useState<LessonBookDTO | null>(null); // Book Data in JSON format
+    const [newChapters, setNewChapters] = useState<ChapterDTO[]>([]); // New Chapters created
+    const [title, setTitle] = useState<string>(''); // Title of the Book
+    const [generatedChapterPageNumber, setGeneratedChapterPageNumber] = useState<number | null>(null);
 
     // Makes Initial fetch for Book Data
     useEffect(() => {
@@ -22,7 +32,7 @@ export function useBookManager(language, difficulty) {
             console.log('Failed to fetch book data.');
             return;
         }
-        const data = await response.json();
+        const data: LessonBookDTO = await response.json();
         setBookData(data);
         setTitle(data.bookTitle || '');
         }
@@ -46,26 +56,18 @@ export function useBookManager(language, difficulty) {
     const pages = useMemo(() => [...initialPages, ...newPages], [initialPages, newPages]);
 
     // Get Chapter information for the table of contents
-    const chapterInfo = useMemo(() => {
-        const mergedChapters = [
+    const chapters = useMemo((): ChapterDTO[] => [
             ...(bookData?.chapters || []),
             ...newChapters
-        ];
-        
-        return mergedChapters.map(chapter => ({
-            chapterNumber: chapter.chapterNumber,
-            title: chapter.title,
-            startingPageNumber: chapter.pages.length > 0 ? chapter.pages[0].pageNumber : null
-        }));
-    }, [bookData, newChapters]);
+    ], [bookData, newChapters]);
 
     // Callback to retrieve new chapter data
-    const processChapter = useCallback((chapterData) => {
+    const processChapter = useCallback((chapterData: ChapterDTO) => {
         if(!chapterData) return;
         setNewChapters(prev => [...prev, chapterData]);
         const startingPage = chapterData.pages.length > 0 ? chapterData.pages[0].pageNumber : null;
         setGeneratedChapterPageNumber(startingPage);
     }, []);
 
-    return { pages: pages || [], title: title || '', chapters: chapterInfo || [], processChapter: processChapter || (() => {}), generatedChapterPageNumber };
+    return { pages, title, chapters, processChapter, generatedChapterPageNumber };
 }

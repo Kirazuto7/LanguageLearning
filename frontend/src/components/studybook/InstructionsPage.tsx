@@ -1,7 +1,10 @@
 import React from 'react';
 import styles from '../../styles/bookpage.module.css';
 
-const InstructionsPage = React.forwardRef(({children}, ref) => {
+interface InstructionsPageProps {
+    children: React.ReactNode;
+}
+const InstructionsPage = React.forwardRef<HTMLDivElement, InstructionsPageProps>(({children}, ref) => {
     return (
         <div ref={ref}>
             <div className={`${styles['active-page']} ${styles['right-active-page']}`}>
