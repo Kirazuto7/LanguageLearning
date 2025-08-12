@@ -34,8 +34,7 @@ export function useBookManager(language: string, difficulty: string): BookManage
                     body: JSON.stringify({ language, difficulty }),
                 });
                 if (!response.ok) {
-                    setError('Failed to fetch initial book data.');
-                    console.log('Failed to fetch book data.');
+                    throw new Error('Failed to fetch initial book data.');
                     return;
                 }
 
@@ -43,7 +42,7 @@ export function useBookManager(language: string, difficulty: string): BookManage
                 setBookData(data);
                 setTitle(data.bookTitle || '');
             } catch (err) {
-                    setError('An error occurred while fetching the book.');
+                    setError(err instanceof Error ? err.message :'An error occurred while fetching the book.');
                     console.error(err);
             }
         }
