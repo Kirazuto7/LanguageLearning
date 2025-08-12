@@ -18,7 +18,7 @@ const FlipBook: React.FC = () => {
     const flipBook = useRef<React.ElementRef<typeof HTMLFlipBook> | null>(null);
     
     const onInit = () => {
-        if(flipBook.current && generatedChapterPageNumber > 0) {
+        if(flipBook.current && generatedChapterPageNumber && generatedChapterPageNumber > 0) {
             (flipBook.current.pageFlip() as PageFlipAPI).flip(generatedChapterPageNumber+2);
         }
     }
@@ -50,14 +50,18 @@ const FlipBook: React.FC = () => {
         <div className={styles.bookContainer}>
             <div className={styles.bookBinding}></div>
             {/*@ts-ignore*/}
-            <HTMLFlipBook 
+            <HTMLFlipBook
                 key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
                 ref={flipBook}
                 width={450} height={600}
                 showCover={true}
                 drawShadow={true}
                 onInit={onInit}
-                onUpdate={onUpdate}>
+                onUpdate={onUpdate}
+                onFlip={() => {}}
+                onChangeState={() => {}}
+                onChangeOrientation={() => {}}
+            >
 
                 {/* Cover Page */}
                 <div className={`${styles.cover}`}>
@@ -77,7 +81,7 @@ const FlipBook: React.FC = () => {
                 <div className={styles.backcover}>
                     <h2 className={`mt-5 text-center ${styles['book-title']}`}>The End</h2>
                 </div>
-            </HTMLFlipBook> 
+            </HTMLFlipBook>
         </div>
     );
 }

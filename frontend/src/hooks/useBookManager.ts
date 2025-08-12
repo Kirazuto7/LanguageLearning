@@ -4,11 +4,13 @@ import { LessonBookDTO, ChapterDTO } from '../types/dto';
 import React from 'react';
 
 interface BookManagerResult {
-    pages: React.ReactNode[];
+    pages: React.ReactElement[];
     title: string;
     chapters: ChapterDTO[];
-    processChapter: (chapterData: ChapterDTO) => void;
+    generateChapter: (topic: string) => Promise<void>;
     generatedChapterPageNumber: number | null;
+    isLoading: boolean;
+    error: string | null;
 }
 
 /* ----------------------------------------------------------- */
@@ -19,22 +21,31 @@ export function useBookManager(language: string, difficulty: string): BookManage
     const [newChapters, setNewChapters] = useState<ChapterDTO[]>([]); // New Chapters created
     const [title, setTitle] = useState<string>(''); // Title of the Book
     const [generatedChapterPageNumber, setGeneratedChapterPageNumber] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Makes Initial fetch for Book Data
     useEffect(() => {
-        async function fetchData() {
-        const response = await fetch('/api/book/fetch', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ language, difficulty }),
-        });
-        if (!response.ok) {
-            console.log('Failed to fetch book data.');
-            return;
-        }
-        const data: LessonBookDTO = await response.json();
-        setBookData(data);
-        setTitle(data.bookTitle || '');
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/api/book/fetch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ language, difficulty }),
+                });
+                if (!response.ok) {
+                    setError('Failed to fetch initial book data.');
+                    console.log('Failed to fetch book data.');
+                    return;
+                }
+
+                const data: LessonBookDTO = await response.json();
+                setBookData(data);
+                setTitle(data.bookTitle || '');
+            } catch (err) {
+                    setError('An error occurred while fetching the book.');
+                    console.error(err);
+            }
         }
 
         fetchData();
@@ -61,7 +72,7 @@ export function useBookManager(language: string, difficulty: string): BookManage
             ...newChapters
     ], [bookData, newChapters]);
 
-    // Callback to retrieve new chapter data
+    // Internal helper function to process new chapters
     const processChapter = useCallback((chapterData: ChapterDTO) => {
         if(!chapterData) return;
         setNewChapters(prev => [...prev, chapterData]);
@@ -69,5 +80,36 @@ export function useBookManager(language: string, difficulty: string): BookManage
         setGeneratedChapterPageNumber(startingPage);
     }, []);
 
-    return { pages, title, chapters, processChapter, generatedChapterPageNumber };
+    const generateChapter = useCallback(async (topic: string) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetch('/api/chapters/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language, difficulty, topic }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to generate chapter. The server responded with an error.');
+            }
+
+            const data: ChapterDTO = await response.json();
+            processChapter(data);
+
+        } catch (err) {
+            if(err instanceof Error)
+                setError(err.message);
+            else
+                setError('An unknown error occurred.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [language, difficulty, processChapter]);
+
+    return { pages, title, chapters, generateChapter, generatedChapterPageNumber, isLoading, error };
 }
