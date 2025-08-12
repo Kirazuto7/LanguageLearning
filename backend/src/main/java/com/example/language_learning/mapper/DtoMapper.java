@@ -392,7 +392,6 @@ public class DtoMapper {
         User entity = new User();
         entity.setId(dto.getId());
         entity.setUsername(dto.getUsername());
-        entity.setPassword(dto.getPassword());
         if (dto.getSettings() != null) {
             entity.setSettings(toEntity(dto.getSettings()));
         }
@@ -406,7 +405,6 @@ public class DtoMapper {
         UserDTO dto = new UserDTO();
         dto.setId(entity.getId());
         dto.setUsername(entity.getUsername());
-        dto.setPassword(entity.getPassword());
         if (entity.getSettings() != null) {
             dto.setSettings(toDto(entity.getSettings()));
         }

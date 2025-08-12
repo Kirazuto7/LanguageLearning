@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import Mascot from './Mascot';
 import { useLanguage } from '../contexts/LanguageSettingsContext';
 import { useBook } from '../contexts/BookContext';
+import { ChapterDTO } from '../types/dto';
 
-function ChapterGenerator() {
+interface ChapterGeneratorProps {
+
+}
+
+const ChapterGenerator: React.FC<ChapterGeneratorProps> = () => {
     const { language, difficulty } = useLanguage();
     const { processChapter } = useBook();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const generateChapter = async (topic) => {
+    const generateChapter = async (topic: string) => {
         setIsLoading(true);
         setError(null);
         
@@ -23,15 +28,19 @@ function ChapterGenerator() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to generate chapter. The server responded with an error.');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to generate chapter. The server responded with an error.');
             }
 
-            const data = await response.json();
+            const data: ChapterDTO = await response.json();
             console.log('Generated Chapter:', data);
             processChapter(data);
             
         } catch (err) {
-            setError(err.message);
+            if(err instanceof Error)
+                setError(err.message);
+            else
+                setError('An unknown error occurred.');
         } finally {
             setIsLoading(false);
         }
