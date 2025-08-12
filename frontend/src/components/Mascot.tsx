@@ -166,13 +166,14 @@ const Blackboard: React.FC<BlackboardProps> = ({text}) => {
 
 interface InputFieldProps {
   onSend: (value:string) => void;
+  disabled?: boolean;
 }
-const InputField: React.FC<InputFieldProps> = ({onSend}) => {
+const InputField: React.FC<InputFieldProps> = ({onSend, disabled = false }) => {
     const [inputValue, setInputValue] = useState<string>('');
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(onSend && inputValue.trim()) {
+        if(onSend && inputValue.trim() && !disabled) {
             onSend(inputValue);
             setInputValue('');
         }
@@ -187,19 +188,21 @@ const InputField: React.FC<InputFieldProps> = ({onSend}) => {
                 className={Styles.textInput}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
+                disabled={disabled}
             />
-            <button type="submit" id={Styles.sendButton} className={`${Styles.sendButton} btn btn-primary`}>Send</button>
+            <button type="submit" id={Styles.sendButton} className={`${Styles.sendButton} btn btn-primary`} disabled={disabled}>
+                {disabled ? 'Generating...' : 'Send'}
+            </button>
         </form>
     )
 }
 
 interface MascotProps {
     onTopicSubmit: (topic: string) => void;
+    isLoading?: boolean;
 }
 
-const Mascot: React.FC<MascotProps> = ({
-    onTopicSubmit
-}) => {
+const Mascot: React.FC<MascotProps> = ({ onTopicSubmit, isLoading = false }) => {
     const { language } = useLanguage();
     const [skip, setSkip] = useState<boolean>(false);
     const [speech, setSpeech] = useState<string>(`Let's learn ${language}! What should our first topic be? 😄`);
@@ -235,7 +238,7 @@ const Mascot: React.FC<MascotProps> = ({
                 </div>
             </div>
             <div className={`${Styles.inputRow} mt-3`}>
-                <InputField onSend={handleSendButton}/>
+                <InputField onSend={handleSendButton} disabled={isLoading} />
                 <LanguageSettings openSettings={openSettings}
                     setOpenSettings={setOpenSettings}
                 />
