@@ -1,8 +1,8 @@
 import styles from '../styles/homepage.module.css';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
-
-function HomePage() {
+interface HomePageProps{}
+const HomePage: React.FC<HomePageProps> = () => {
   return (
     <Container fluid className="py-5">
     
@@ -23,7 +23,7 @@ function HomePage() {
           Let’s make language learning fun and effective together!
       </p>
     </div>
- 
+
     <div className={`${styles['glass-container']} p-5 mb-4  rounded-3`}>
       <h2 className={`${styles['collection-title']} text-center`}>Language Tools Collection</h2>
       <div className="divider mb-4"/>

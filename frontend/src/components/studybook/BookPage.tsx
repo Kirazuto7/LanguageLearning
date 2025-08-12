@@ -1,7 +1,12 @@
 import React from 'react';
 import styles from '../../styles/bookpage.module.css';
 
-const BookPage = React.forwardRef(({ pageNumber, children, isRightPage = true }, ref) => {
+interface BookPageProps {
+  pageNumber: number,
+  children: React.ReactNode,
+  isRightPage: boolean
+}
+const BookPage = React.forwardRef<HTMLDivElement, BookPageProps>(({ pageNumber, children, isRightPage = true }, ref) => {
 const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-active-page'];
 
   // The outer div is for the library. It gets the ref.
@@ -12,7 +17,7 @@ const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-a
         <div className={styles['page-content']}>
           {children}
         </div>
-        {pageNumber && <div className={styles['page-number']}>{pageNumber}</div>}
+        {pageNumber > 0 && <div className={styles['page-number']}>{pageNumber}</div>}
       </div>
     </div>
   );

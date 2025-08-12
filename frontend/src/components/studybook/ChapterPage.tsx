@@ -1,13 +1,22 @@
 import React from 'react';
 import styles from '../../styles/bookpage.module.css';
+
+interface ChapterPageProps {
+  pageNumber: number;
+  children: React.ReactNode;
+  isRightPage: boolean;
+  chapterNumber: number;
+  chapterNativeTitle: string;
+  chapterTitle: string;
+}
 /**
  * Renders the content for the first page of a chapter.
  */        
-const ChapterPage = React.forwardRef(({ pageNumber, children, isRightPage = true, chapterNumber, chapterNativeTitle, chapterTitle }, ref) => {
+const ChapterPage = React.forwardRef<HTMLDivElement, ChapterPageProps>(({ pageNumber, children, isRightPage = true, chapterNumber, chapterNativeTitle, chapterTitle }, ref) => {
 const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-active-page'];
 
   // The outer div is for the library. It gets the ref.
-  // The inner div is for our styles.
+  // The inner div is for component styling.
   return (
     <div ref={ref}>
       <div className={`${styles['active-page']} ${pageSideClass}`}>

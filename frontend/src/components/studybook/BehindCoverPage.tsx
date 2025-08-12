@@ -1,9 +1,10 @@
 import React from 'react';
 import styles from '../../styles/bookpage.module.css';
 
-// The first argument to forwardRef should be the render function (props, ref) => ...
-// The props argument is unused here, so we can name it `_props`.
-const BehindCoverPage = React.forwardRef((_props, ref) => {
+interface BehindCoverPageProps {}
+// This component is designed to be the page right behind the front cover of the book.
+// Forward Ref is necessary for the page flipping animation.
+const BehindCoverPage = React.forwardRef<HTMLDivElement, BehindCoverPageProps>((_props, ref) => {
     return (
         <div ref={ref}>
             <div className="d-flex justify-content-center align-items-center" style={{backgroundColor: '#333', width: '100%', height: '100%', boxShadow: '0 0 20px #ff69b4'}}>
