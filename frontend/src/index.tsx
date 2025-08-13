@@ -6,8 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { LanguageSettingsProvider } from './contexts/LanguageSettingsContext';
-import { BookProvider } from './contexts/BookContext';
+import { UserProvider } from './contexts/UserContext';
 
 const rootElement = document.getElementById('root');
 if(!rootElement) {
@@ -17,12 +16,15 @@ if(!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-          <LanguageSettingsProvider>
-            <BookProvider>
-              <App />
-            </BookProvider>
-          </LanguageSettingsProvider>
+        {/*
+            Enable React Router v7 future flags to opt-in to new behaviors early.StrictMode
+            - v7_startTransition: Wraps state updates in React.startTransition for better UI responsiveness.
+            - v7_relativeSplatPath: Changes how relative paths are resolved in splat routes.
+        */}
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <UserProvider>
+                <App />
+            </UserProvider>
         </BrowserRouter>
     </React.StrictMode>
 );
