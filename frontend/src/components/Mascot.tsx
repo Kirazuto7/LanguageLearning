@@ -1,4 +1,4 @@
-import React, {useState, useEffect, FormEventHandler} from 'react';
+import React, {useState, useEffect} from 'react';
 import Styles from '../styles/mascot.module.css';
 import LanguageSettings from './LanguageSettings';
 import { useLanguage } from '../contexts/LanguageSettingsContext';
