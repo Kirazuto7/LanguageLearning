@@ -24,7 +24,11 @@ public class BookService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return lessonBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty)
                 .orElseGet(() -> {
-                    LessonBook newBook = new LessonBook(null, String.format("%s for %s learners", language, difficulty), difficulty, language, new ArrayList<>(), user);
+                    LessonBook newBook = new LessonBook();
+                    newBook.setBookTitle(String.format("%s for %s learners", language, difficulty));
+                    newBook.setLanguage(language);
+                    newBook.setDifficulty(difficulty);
+                    newBook.setUser(user);
                     return lessonBookRepository.save(newBook);
                 });
     }

@@ -1,5 +1,4 @@
 import styles from '../../styles/bookpage.module.css';
-import { ChapterDTO } from '../../types/dto';
 
 export interface TocChapter {
     chapterNumber: number;
@@ -14,7 +13,7 @@ interface TableOfContentsPageProps {
 }
 /**
  * Renders the table of contents navigation page.
- */        
+ */
 const TableOfContentsPage: React.FC<TableOfContentsPageProps> = (({ chapters = [], onNavigate }) => {
     return (
         <div>

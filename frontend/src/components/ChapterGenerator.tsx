@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Mascot from './Mascot';
-import { useLanguage } from '../contexts/LanguageSettingsContext';
 import { useBook } from '../contexts/BookContext';
-import { ChapterDTO } from '../types/dto';
 
 interface ChapterGeneratorProps {}
 

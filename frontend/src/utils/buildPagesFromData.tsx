@@ -1,7 +1,7 @@
 import VocabularyLesson from "../components/lessons/VocabularyLesson";
 import BookPage from "../components/studybook/BookPage";
 import ChapterPage from "../components/studybook/ChapterPage";
-import { AnyLessonDTO, PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
+import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
 
 // Determines Page Component layout depending on the lesson type of the page
 const getPageFromLessonType = (page: PageDTO): React.ReactElement => {

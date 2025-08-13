@@ -35,7 +35,6 @@ export function useBookManager(language: string, difficulty: string): BookManage
                 });
                 if (!response.ok) {
                     throw new Error('Failed to fetch initial book data.');
-                    return;
                 }
 
                 const data: LessonBookDTO = await response.json();
