@@ -27,6 +27,10 @@ public class UserService {
                 throw new IllegalArgumentException("Username already exists");
             }
 
+            if(request.getUsername().isEmpty() || request.getPassword().isEmpty() || request.getLanguage().isEmpty() || request.getLanguage().isEmpty()) {
+                throw new IllegalArgumentException("All fields must be filled.");
+            }
+
             User user = new User();
             user.setUsername(request.getUsername());
             user.setPassword(request.getPassword());
