@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/loginpage.module.css";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { MascotCharacter, Blackboard }  from "../components/Mascot";
 import { useUser } from "../contexts/UserContext";
 import { LoginRequest, CreateUserRequest } from "../types/dto";
@@ -16,17 +17,13 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
     const { login, isLoading, error } = useUser();
 
     const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         const form = e.currentTarget;
-        if(form.checkValidity() === false) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
         setValidated(true);
-
-        const request: LoginRequest = { username, password };
-        const userData = await login(request);
-        console.log(userData);
+        if(form.checkValidity() === true) {
+            const request: LoginRequest = { username, password };
+            await login(request);
+        } 
     }
 
     return(
@@ -39,7 +36,7 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard text={isLoading ? "Logging in...Please wait. ⏳" : `Hi my name is Aya 😄. Would you like to learn a new language with me?`}/>
-                <MascotCharacter hop={isLoading ? true : false} />
+                <MascotCharacter hop={true} />
             </div>
 
             { error && <Alert variant="danger">{error}</Alert> }
@@ -74,8 +71,8 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
                 </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" id={styles['login-button']} className="d-block mx-auto mb-5">
-                Login
+            <Button type="submit" id={styles['login-button']} className="d-block mx-auto mb-5" disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Login'}
             </Button>
             <div className="divider"/>
             <div className="d-flex flex-column align-items-center">
@@ -99,16 +96,13 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
     const { register, isLoading, error } = useUser();
 
     const onRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         const form = e.currentTarget;
-        if(form.checkValidity() === false) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
         setValidated(true);
-
-        const request: CreateUserRequest = { username, password, language, difficulty };
-        const userData = await register(request);
-        console.log(userData);
+        if(form.checkValidity() === true) {
+            const request: CreateUserRequest = { username, password, language, difficulty };
+            await register(request);
+        }
     }
 
     return(
@@ -121,7 +115,7 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard text={isLoading ? "Registering...Please wait. ⏳" : `Ready to sign up? This is going to be an exciting journey!`}/>
-                <MascotCharacter hop={ isLoading ? true : false } />
+                <MascotCharacter hop={false} />
             </div>
 
             { error && <Alert variant="danger">{error}</Alert> }
@@ -199,8 +193,8 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
                 </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" id={styles['register-button']} className="d-block mx-auto mb-5">
-                Register
+            <Button type="submit" id={styles['register-button']} className="d-block mx-auto mb-5" disabled={isLoading}>
+                {isLoading ? 'Registering...' : 'Register'}
             </Button>
             <div className="divider"/>
             <div className="d-flex flex-column align-items-center">
@@ -211,7 +205,15 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
 }
 
 const LoginPage = () => {
+    const { user } = useUser();
+    const navigate = useNavigate();
     const [showRegister, setShowRegister] = useState<boolean>(false);
+
+    // After a successful login/registration, the user object in the context will be populated.
+    // This effect will then trigger, redirecting the user to the home page.
+    useEffect(() => {
+        if (user) navigate('/home');
+    }, [user, navigate]);
 
     const onShowRegister = () => {
         setShowRegister(true);

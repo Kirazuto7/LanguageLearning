@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -21,13 +22,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public Mono<UserDTO> createUser(CreateUserRequest request) {
+    public Mono<UserDTO> createUser(@RequestBody  CreateUserRequest request) {
         logger.info("Received request to create a user with username: {}", request.getUsername());
         return userService.createNewUser(request);
     }
 
     @PostMapping("/login")
-    public Mono<UserDTO> login(LoginRequest request) {
+    public Mono<UserDTO> login(@RequestBody LoginRequest request) {
         logger.info("Received request to login with username: {}", request.getUsername());
         return userService.login(request);
     }
