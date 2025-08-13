@@ -7,7 +7,7 @@
     min-width: 260px;
 }
 
-@keyframes mascotSkip {
+@keyframes mascotHop {
     0% { transform: translateY(0); }
     20% { transform: translateY(-18px); }
     40% { transform: translateY(0); }
@@ -16,8 +16,8 @@
     100% { transform: translateY(0); }
 }
 
-.skip {
-    animation: mascotSkip 0.6s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
+.hop {
+    animation: mascotHop 0.6s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
 }
 
 #mascotCharacter {

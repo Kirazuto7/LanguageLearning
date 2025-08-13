@@ -108,6 +108,21 @@ export interface ReadingComprehensionLessonDTO extends LessonDTO {
 
 export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
 
+export interface CreateUserRequest {
+    username: string;
+    password: string;
+    language: string;
+    difficulty: string;
+}
 
+export interface LoginRequest {
+    username: string;
+    password: string;
+}
 
+export interface LessonBookRequest {
+    username: string;
+    language: string;
+    difficulty: string;
+}
 

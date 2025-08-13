@@ -1,5 +1,5 @@
 import React from 'react';
-import Mascot from './Mascot';
+import { Mascot } from './Mascot';
 import { useBook } from '../contexts/BookContext';
 
 interface ChapterGeneratorProps {}

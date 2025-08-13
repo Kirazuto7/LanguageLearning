@@ -6,9 +6,12 @@ import com.example.language_learning.entity.User;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.CreateUserRequest;
+import com.example.language_learning.requests.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,21 @@ public class UserService {
             User savedUser = userRepository.save(user);
             // The final expression is the success value of the Mono.
             return mapper.toDto(savedUser);
+        });
+    }
+
+    public Mono<UserDTO> login(LoginRequest request) {
+        return Mono.fromCallable(() -> {
+            if (userRepository.findByUsername(request.getUsername()).isEmpty()) {
+                throw new IllegalArgumentException("User not found.");
+            }
+            User user = userRepository.findByUsername(request.getUsername()).get();
+
+            if(!Objects.equals(user.getPassword(), request.getPassword())) {
+                throw new IllegalArgumentException("Incorrect password.");
+            } else {
+                return mapper.toDto(user);
+            }
         });
     }
 }
