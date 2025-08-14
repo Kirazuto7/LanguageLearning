@@ -57,10 +57,5 @@ const buildPagesForChapter = (chapter: ChapterDTO): React.ReactElement[] => {
 export function buildPagesFromBookData(bookData: LessonBookDTO | null): React.ReactElement[] {
     if(!bookData || !bookData.chapters) return [];
     // Loop through the book chapters and build each page
-    return bookData.chapters.flatMap(buildPagesForChapter);  
-};
-
-export function buildPagesFromChapters(chapters: ChapterDTO[]): React.ReactElement[] {
-    if(!chapters) return [];
-    return chapters.flatMap(buildPagesForChapter);
+    return bookData.chapters.flatMap(buildPagesForChapter);
 };

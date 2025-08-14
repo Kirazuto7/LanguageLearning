@@ -9,12 +9,12 @@ import reactor.core.publisher.Mono;
 
 
 @RestController
-@RequestMapping("/api/book")
+@RequestMapping("/api/books")
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
 
-    @PostMapping("/fetch")
+    @PostMapping("/fetch/book")
     public Mono<LessonBookDTO> fetchBook(@RequestBody LessonBookRequest fetchRequest) {
         return bookService.fetchBook(fetchRequest);
     }
