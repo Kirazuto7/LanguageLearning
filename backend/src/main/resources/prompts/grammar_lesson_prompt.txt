@@ -1,32 +1,33 @@
-The student wants to learn {language} at a {difficulty} level.
-The general topic for the lesson is: {topic}.
+The student wants to learn <language> at a <difficulty> level.
+The general topic for the lesson is: <topic>.
 
 Before generating the JSON, think step-by-step to ensure accuracy:
-1.  Based on the student's {difficulty} level, identify a single, fundamental grammar concept that is relevant to the topic "{topic}".
+1.  Based on the student's <difficulty> level, identify a single, fundamental grammar concept that is relevant to the topic "<topic>".
 2.  Create a clear, concise explanation for this chosen grammar concept.
-3.  Create 5-7 example sentences in {language} that use the grammar concept and are related to the topic.
+3.  Create 5-7 example sentences in <language> that use the grammar concept and are related to the topic.
 4.  Provide an accurate English translation for each example sentence.
 5.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
 
 Please generate a single JSON object for a "lesson" with the following fields:
   - "type": The type of lesson, which MUST be "grammar".
-  - "title": A title for the grammar section, like "Grammar for {topic}".
-  - "grammarConcept": The name of the specific grammar concept you have chosen to teach. This should NOT be the same as the general {topic}.
+  - "title": A title for the grammar section, like "Grammar for <topic>".
+  - "grammarConcept": The name of the specific grammar concept you have chosen to teach. This should NOT be the same as the general topic "<topic>".
   - "explanation": A clear explanation of the grammar rule in English.
   - "exampleSentences": An array of 5-7 example sentence objects.
 
 Each sentence object in the "exampleSentences" array must have:
-- "text": The full example sentence as a single string in {language}.
+- "text": The full example sentence as a single string in <language>.
 - "translation": The accurate English translation of the entire sentence.
-- "words": An array of word objects that make up the sentence in {language}.
+- "words": An array of word objects that make up the sentence in <language>.
 
 Each word object in the "words" array is polymorphic and MUST have:
-- "type": A string indicating the language. Use "{language}" for this value (e.g., "korean", "japanese").
+- "type": A string indicating the language. Use "<language>" for this value (e.g., "korean", "japanese").
 - "translation": The accurate English translation of the individual word.
 - Language-specific fields:
-  - If {language} is "korean", include "hangeul" and "hanja" (if applicable).
-  - If {language} is "japanese", include "hiragana", "kanji", "katakana" (if applicable), and "romaji" (if applicable).
+  - If <language> is "korean", include "hangeul" and "hanja" (if applicable).
+  - If <language> is "japanese", include "hiragana", "kanji", "katakana" (if applicable), and "romaji" (if applicable).
 
+<!
 EXAMPLE of the complete JSON object for a Korean lesson with topic="daily routine" and difficulty="beginner":
 {
   "type": "grammar",
@@ -46,3 +47,4 @@ EXAMPLE of the complete JSON object for a Korean lesson with topic="daily routin
     }
   ]
 }
+!>
