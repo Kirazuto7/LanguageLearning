@@ -27,11 +27,11 @@ export function useBookManager(language: string, difficulty: string): BookManage
 
     // 4. Generate Chapter function will assemble the required data and call the mutation
     const generateChapter = async (topic: string) => {
-        if (!user || !bookData) {
-            console.error("Cannot generate chapter: User or Book data is missing.");
+        if (!user) {
+            console.error("Cannot generate chapter: User is not logged in.");
             return null;
         }
-        return generateChapterMutation({ language, difficulty, topic, userId: user.id, bookId: bookData.id }).unwrap();
+        return generateChapterMutation({ language, difficulty, topic, userId: user.id }).unwrap();
     };
 
     // 5. Process book pages based on the book data state

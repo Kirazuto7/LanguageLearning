@@ -9,17 +9,18 @@ export const bookApiSlice = apiSlice.injectEndpoints({
                 url: '/books/fetch/book',
                 method: 'POST',
                 body: credentials
-            })
+            }),
+            providesTags: (result, error, { language, difficulty }) => [{ type: 'Book', id: `${language}-${difficulty}`}],
         }),
 
         // Generate a New Chapter
-        generateChapter: builder.mutation<ChapterDTO, { language: string, difficulty: string, topic: string, userId: number, bookId: number}>({
+        generateChapter: builder.mutation<ChapterDTO, { language: string, difficulty: string, topic: string, userId: number}>({
             query: ({language, difficulty, topic, userId}) => ({ // Book Id not part of request body
                 url: '/chapters/generate',
                 method: 'POST',
                 body: {language, difficulty, topic, userId}
             }),
-            invalidatesTags: (result, error, arg, meta) => [{ type: 'Book', id: arg.bookId }],
+            invalidatesTags: (result, error, {language, difficulty}, meta) => [{ type: 'Book', id: `${language}-${difficulty}` }],
         }),
     })
 });

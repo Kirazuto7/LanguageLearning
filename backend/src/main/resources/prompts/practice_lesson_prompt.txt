@@ -1,8 +1,8 @@
-The student wants to learn {language} at a {difficulty} level.
-The general topic for the lesson is: {topic}.
+The student wants to learn <language> at a <difficulty> level.
+The general topic for the lesson is: <topic>.
 
 Before generating the JSON, think step-by-step to ensure accuracy:
-1.  Identify 5-7 key vocabulary words related to the topic "{topic}" that are appropriate for a {difficulty} learner.
+1.  Identify 5-7 key vocabulary words related to the topic "<topic>" that are appropriate for a <difficulty> learner.
 2.  Create 3-4 "fill-in-the-blank" sentences. Each sentence should use one of the key vocabulary words. The sentence should have a blank `____` where the word should go.
 3.  For each "fill-in-the-blank" sentence, provide the correct answer (the missing word) and 2-3 plausible but incorrect options.
 4.  Create 2-3 "free-form" writing prompts that encourage the student to use the vocabulary and concepts they've learned to write their own sentence.
@@ -10,7 +10,7 @@ Before generating the JSON, think step-by-step to ensure accuracy:
 
 Please generate a single JSON object for a "lesson" with the following fields:
   - "type": The type of lesson, which MUST be "practice".
-  - "title": A title for the lesson, like "Practice Exercises for {topic}".
+  - "title": A title for the lesson, like "Practice Exercises for <topic>".
   - "instructions": A short instructional text, like "Use the vocabulary and grammar you've learned to complete the following exercises."
   - "questions": An array of 5-7 question objects.
 
@@ -20,6 +20,7 @@ Each question object in the "questions" array must have:
 - "answer": For "FILL_IN_THE_BLANK" questions, this is the correct word. For "FREE_FORM" questions, this should be null.
 - "options": For "FILL_IN_THE_BLANK" questions, this is an array of strings containing the correct answer and 2-3 incorrect options. For "FREE_FORM" questions, this should be null or an empty array.
 
+<!
 EXAMPLE of the complete JSON object for a Korean lesson with topic="travel" and difficulty="beginner":
 {
   "type": "practice",
@@ -40,3 +41,4 @@ EXAMPLE of the complete JSON object for a Korean lesson with topic="travel" and 
     }
   ]
 }
+!>

@@ -68,7 +68,14 @@ public class AIService {
         logger.info("Generating a {} for topic: {}", componentName,request.getTopic());
         var outputParser = new BeanOutputConverter<>(dtoClass);
 
-        PromptTemplate promptTemplate = new PromptTemplate(promptResource);
+        PromptTemplate promptTemplate;
+        try {
+            promptTemplate = new PromptTemplate(promptResource);
+        } catch (Exception e) {
+            logger.error("Failed to create prompt template from resource: {}. Check for syntax errors like unclosed '<' or '>'.", promptResource.getFilename(), e);
+            return Mono.error(new IllegalArgumentException("Invalid prompt template: " + promptResource.getFilename(), e));
+        }
+
         Map<String, Object> params = Map.of(
                 "language", request.getLanguage(),
                 "difficulty", request.getDifficulty(),
@@ -89,7 +96,7 @@ public class AIService {
                 .doOnNext(json -> logger.info("Extracted JSON for {}: {}", componentName, json))
                 .map(outputParser::convert)
                 .doOnNext(parsed -> logger.info("Parsed {}: {}", componentName, parsed))
-                .doOnError(e -> logger.error("Failed to parse AI reponse for {}.", componentName, e));
+                .doOnError(e -> logger.error("Failed to generate or parse AI response for {}.", componentName, e));
     }
 
 
