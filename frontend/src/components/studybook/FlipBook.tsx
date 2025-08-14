@@ -1,35 +1,38 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import styles from '../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import { useLanguage } from '../../contexts/LanguageSettingsContext';
-import { useBook } from '../../contexts/BookContext';
 import BehindCoverPage from './BehindCoverPage';
 import TableOfContentsPage, { TocChapter } from './TableOfContentsPage';
 import BookPage from './BookPage';
 import { ChapterDTO } from '../../types/dto';
+import { useBookManager } from '../../hooks/useBookManager';
 
 interface PageFlipAPI {
     flip: (pageIndex: number, corner?: string) => void;
 }
 
-const FlipBook: React.FC = () => {
-    const { difficulty, languageName } = useLanguage();
-    const { pages, chapters, generatedChapterPageNumber } = useBook();
-    const flipBook = useRef<React.ElementRef<typeof HTMLFlipBook> | null>(null);
-    
+interface FlipBookProps {
+    generatedChapterPage: number | null;
+    onFlipComplete: () => void;
+}
+
+
+const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplete }) => {
+    const { language, difficulty, languageName } = useLanguage();
+    const { pages, chapters, title } = useBookManager(language, difficulty);
+    const flipBookRef = useRef<React.ElementRef<typeof HTMLFlipBook> | null>(null);
+
     const onInit = () => {
-        if(flipBook.current && generatedChapterPageNumber && generatedChapterPageNumber > 0) {
-            (flipBook.current.pageFlip() as PageFlipAPI).flip(generatedChapterPageNumber+2);
+        if(flipBookRef.current && generatedChapterPage && generatedChapterPage > 0) {
+            (flipBookRef.current.pageFlip() as PageFlipAPI).flip(generatedChapterPage+2);
+            onFlipComplete();
         }
     }
 
-    const onUpdate = () => {
-        //console.log("Update");
-    }
-
-    const navigateToPage = (pageIndex: number) => {
-        if(flipBook.current) {
-            (flipBook.current.pageFlip() as PageFlipAPI).flip(pageIndex);
+    const handleChapterSelect = (pageIndex: number) => {
+        if(flipBookRef.current) {
+            (flipBookRef.current.pageFlip() as PageFlipAPI).flip(pageIndex);
         }
     }
 
@@ -52,12 +55,12 @@ const FlipBook: React.FC = () => {
             {/*@ts-ignore*/}
             <HTMLFlipBook
                 key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
-                ref={flipBook}
+                ref={flipBookRef}
                 width={450} height={600}
                 showCover={true}
                 drawShadow={true}
                 onInit={onInit}
-                onUpdate={onUpdate}
+                onUpdate={() => {}}
                 onFlip={() => {}}
                 onChangeState={() => {}}
                 onChangeOrientation={() => {}}
@@ -65,13 +68,13 @@ const FlipBook: React.FC = () => {
 
                 {/* Cover Page */}
                 <div className={`${styles.cover}`}>
-                    <h2 className={`mt-5 text-center ${styles['book-title']}`}>{difficulty}</h2>
+                    <h2 className={`mt-5 text-center ${styles['book-title']}`}>{title}</h2>
                     <h2 className={`mt-5 text-center ${styles['book-title']}`}>{languageName}</h2>
                 </div>
 
                 <BehindCoverPage/>
                 <BookPage pageNumber={0} isRightPage={true}>
-                    <TableOfContentsPage chapters={tocChapters} onNavigate={navigateToPage} />
+                    <TableOfContentsPage chapters={tocChapters} onNavigate={handleChapterSelect} />
                 </BookPage>
                 
                 {/* Book Pages */}
@@ -84,6 +87,6 @@ const FlipBook: React.FC = () => {
             </HTMLFlipBook>
         </div>
     );
-}
+};
 
 export default FlipBook;

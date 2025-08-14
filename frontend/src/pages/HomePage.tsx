@@ -1,14 +1,20 @@
 import styles from '../styles/homepage.module.css';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RootState } from '../app/store';
+
 interface HomePageProps{}
 const HomePage: React.FC<HomePageProps> = () => {
+
+  const { user } = useSelector((state: RootState) => state.auth);
+
   return (
     <Container fluid className="py-5">
     
     <div className={`${styles['glass-container']} mb-4`}>
-      <h1 className="text-4xl font-bold mb-4 text-center">Welcome to LangMaster</h1>
-      <h5 className="text-lg text-center mb-4">Empower your journey to fluency with immersive tailored lessons and ai-powered language tools.</h5>
+      <h1 className="text-4xl font-bold mb-4 text-center">Welcome {user ? `, ${user.username}` : 'to LangMaster'}</h1>
       <h3>Ready to Begin?</h3>
       <p>
           Every journey starts with a single step. Here are some tips to make the most of your lessons:
@@ -29,7 +35,22 @@ const HomePage: React.FC<HomePageProps> = () => {
       <div className="divider mb-4"/>
       <Card>
           <Card.Header>
-              <Card.Title className="text-center fw-bold" style={{cursor: 'pointer'}} onClick={() => window.location.href = '/study'}>Study Book</Card.Title>
+              <Card.Title className="text-center fw-bold">
+                {
+                  user ? (
+                    <Link
+                      to="/study"
+                      state={{ language: user.settings.language, difficulty: user.settings.difficulty }}
+                      className="text-decoration-none text-reset"
+                    >
+                      Study Your {user.settings.language} Book
+                    </Link>
+                  ) :
+                  (
+                    <span className="text-muted">Study Book (Login to access)</span>
+                  )
+                }
+              </Card.Title>
           </Card.Header>
           <Card.Body>
               <p>This is an interactive book where you can generate lessons on any topic.</p>
