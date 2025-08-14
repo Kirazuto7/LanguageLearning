@@ -3,8 +3,10 @@ import styles from "../styles/loginpage.module.css";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { MascotCharacter, Blackboard }  from "../components/Mascot";
-import { useUser } from "../contexts/UserContext";
 import { LoginRequest, CreateUserRequest } from "../types/dto";
+import { useSelector } from "react-redux";
+import { useLoginMutation, useRegisterMutation } from "../features/users/userApiSlice";
+import { RootState } from "../app/store";
 
 interface LoginProps {
     onShowRegister: () => void;
@@ -14,7 +16,7 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [validated, setValidated] = useState<boolean>(false);
-    const { login, isLoading, error } = useUser();
+    const [ login, {isLoading, error}] = useLoginMutation();
 
     const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -22,14 +24,14 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
         setValidated(true);
         if(form.checkValidity() === true) {
             const request: LoginRequest = { username, password };
-            await login(request);
+            await login(request).unwrap();
         } 
     }
 
     return(
-        <Form 
-            id={styles['login-form']} 
-            className="glass-container" 
+        <Form
+            id={styles['login-form']}
+            className="glass-container"
             onSubmit={onLogin}
             validated={validated}
             noValidate
@@ -39,7 +41,7 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
                 <MascotCharacter hop={true} />
             </div>
 
-            { error && <Alert variant="danger">{error}</Alert> }
+            { error && <Alert variant="danger">{'data' in error ? JSON.stringify((error as any).data.message) : 'An error occurred'}</Alert> }
 
             <Form.Group className="mb-3">
                 <Form.Label htmlFor="login-username">Username</Form.Label>
@@ -93,7 +95,7 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
     const [language, setLanguage] = useState<string>("");
     const [difficulty, setDifficulty] = useState<string>("");
     const [validated, setValidated] = useState<boolean>(false);
-    const { register, isLoading, error } = useUser();
+    const [ register, {isLoading, error} ] = useRegisterMutation();
 
     const onRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -101,14 +103,14 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
         setValidated(true);
         if(form.checkValidity() === true) {
             const request: CreateUserRequest = { username, password, language, difficulty };
-            await register(request);
+            await register(request).unwrap();
         }
     }
 
     return(
-        <Form 
-            id={styles['register-form']} 
-            className="glass-container" 
+        <Form
+            id={styles['register-form']}
+            className="glass-container"
             onSubmit={onRegister}
             validated={validated}
             noValidate
@@ -118,7 +120,7 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
                 <MascotCharacter hop={false} />
             </div>
 
-            { error && <Alert variant="danger">{error}</Alert> }
+            { error && <Alert variant="danger">{'data' in error ? JSON.stringify((error as any).data.message) : 'An error occurred'}</Alert> }
 
             <Form.Group className="mb-3">
                 <Form.Label htmlFor="register-username">Username</Form.Label>
@@ -205,7 +207,7 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
 }
 
 const LoginPage = () => {
-    const { user } = useUser();
+    const { user } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
     const [showRegister, setShowRegister] = useState<boolean>(false);
 
