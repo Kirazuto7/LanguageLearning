@@ -2,6 +2,7 @@ package com.example.language_learning.mapper;
 
 import com.example.language_learning.dto.SettingsDTO;
 import com.example.language_learning.dto.UserDTO;
+import com.example.language_learning.dto.languages.EnglishWordDTO;
 import com.example.language_learning.dto.languages.JapaneseWordDTO;
 import com.example.language_learning.dto.languages.KoreanWordDTO;
 import com.example.language_learning.dto.languages.WordDTO;
@@ -14,15 +15,18 @@ import com.example.language_learning.entity.languages.KoreanWord;
 import com.example.language_learning.entity.languages.Word;
 import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.entity.models.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
+@Slf4j
 public class DtoMapper {
 
     /* ***************** */
@@ -154,8 +158,11 @@ public class DtoMapper {
         mapLessonBaseProperties(lesson, dto);
         lesson.setType(LessonType.VOCABULARY);
         if (dto.getVocabularies() != null) {
-            // The list from the DTO is already ordered, so we can map it directly.
-            lesson.setVocabularies(dto.getVocabularies().stream().map(this::toEntity).collect(Collectors.toList()));
+            List<Word> words = dto.getVocabularies().stream()
+                            .map(this::toEntity)
+                                    .filter(Objects::nonNull)
+                                            .toList();
+            lesson.setVocabularies(words);
         }
         return lesson;
     }
@@ -246,6 +253,8 @@ public class DtoMapper {
     /* ******************* */
 
     public Word toEntity(WordDTO dto) {
+        if (dto == null) return null;
+
         if (dto instanceof KoreanWordDTO koreanDto) {
             KoreanWord word = new KoreanWord();
             word.setId(koreanDto.getId());
@@ -264,7 +273,9 @@ public class DtoMapper {
             word.setRomaji(japaneseDto.getRomaji());
             return word;
         }
-        throw new IllegalArgumentException("Unknown Word DTO type: " + dto.getClass().getSimpleName());
+
+        log.warn("Received an unsupported EnglishWordDTO. Skipping this word.");
+        return null;
     }
 
     public WordDTO toDto(Word entity) {
