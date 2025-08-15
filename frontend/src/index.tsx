@@ -6,7 +6,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { UserProvider } from './contexts/UserContext';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 
 const rootElement = document.getElementById('root');
 if(!rootElement) {
@@ -22,9 +23,9 @@ root.render(
             - v7_relativeSplatPath: Changes how relative paths are resolved in splat routes.
         */}
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <UserProvider>
+            <Provider store={store}>
                 <App />
-            </UserProvider>
+            </Provider>
         </BrowserRouter>
     </React.StrictMode>
 );

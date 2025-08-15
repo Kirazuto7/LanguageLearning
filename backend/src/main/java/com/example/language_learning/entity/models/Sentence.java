@@ -21,26 +21,11 @@ public class Sentence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(
-            mappedBy = "sentence",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @OrderBy("wordIndex ASC")
-    private List<SentenceWord> words = new ArrayList<>();
+
+    @Column(columnDefinition = "TEXT")
     private String text;
+
+    @Column(columnDefinition = "TEXT")
     private String translation; // English translation of the entire sentence
 
-    public void addWord(SentenceWord sentenceWord) {
-        words.add(sentenceWord);
-        sentenceWord.setSentence(this);
-    }
-
-    public void addWord(Word word) {
-        SentenceWord sentenceWord = new SentenceWord();
-        sentenceWord.setSentence(this);
-        sentenceWord.setWord(word);
-        sentenceWord.setWordIndex(this.words.size());
-        this.words.add(sentenceWord);
-    }
 }

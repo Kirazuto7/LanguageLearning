@@ -17,29 +17,31 @@ repositories {
 }
 dependencyManagement {
 	imports {
+        // Manages the Spring AI BOM dependencies
 		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0"
 	}
 }
 dependencies {
+    // Spring-boot Dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	// The version is managed by the Spring AI BOM
-	//implementation 'org.springframework.ai:spring-ai-client-chat'
-	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // AI Dependencies
+	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
+    // Database Dependencies
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql'
 
-	// Add Lombok
-	compileOnly 'org.projectlombok:lombok:1.18.32' // latest as of 2025
+    // Lombok Dependencies
+    compileOnly 'org.projectlombok:lombok:1.18.32' // latest as of 2025
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-	// DevTools for hot-reloading
+	// DevTools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
 }
 
 jar {

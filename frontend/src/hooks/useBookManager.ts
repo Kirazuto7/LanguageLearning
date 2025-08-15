@@ -1,113 +1,58 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { buildPagesFromBookData, buildPagesFromChapters } from '../utils/buildPagesFromData';
-import { LessonBookDTO, ChapterDTO } from '../types/dto';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { buildPagesFromBookData } from '../utils/buildPagesFromData';
+import { ChapterDTO } from '../types/dto';
+import { useSelector } from 'react-redux';
+import { useFetchBookQuery, useGenerateChapterMutation } from '../features/books/bookApiSlice';
+import { RootState } from '../app/store';
+
 
 interface BookManagerResult {
     pages: React.ReactElement[];
     title: string;
     chapters: ChapterDTO[];
-    generateChapter: (topic: string) => Promise<void>;
-    generatedChapterPageNumber: number | null;
+    generateChapter: (topic: string) => Promise<ChapterDTO | null>;
     isLoading: boolean;
     error: string | null;
 }
 
-/* ----------------------------------------------------------- */
-/* --- Hook to Handle Initial Fetch && Process New Chapters--- */
-/* ----------------------------------------------------------- */
 export function useBookManager(language: string, difficulty: string): BookManagerResult {
-    const [bookData, setBookData] = useState<LessonBookDTO | null>(null); // Book Data in JSON format
-    const [newChapters, setNewChapters] = useState<ChapterDTO[]>([]); // New Chapters created
-    const [title, setTitle] = useState<string>(''); // Title of the Book
-    const [generatedChapterPageNumber, setGeneratedChapterPageNumber] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    // 1. Fetch user from global Redux state
+    const { user } = useSelector((state: RootState) => state.auth);
 
-    // Makes Initial fetch for Book Data
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/book/fetch', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ language, difficulty }),
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch initial book data.');
-                }
+    // 2. Fetch the book data
+    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery({ language, difficulty, userId: user!.id });
+    
+    // 3. Get the mutation function(s)
+    const [generateChapterMutation, { isLoading: isGeneratingChapter, error: generateChapterError }] = useGenerateChapterMutation();
 
-                const data: LessonBookDTO = await response.json();
-                setBookData(data);
-                setTitle(data.bookTitle || '');
-            } catch (err) {
-                    setError(err instanceof Error ? err.message :'An error occurred while fetching the book.');
-                    console.error(err);
-            }
+    // 4. Generate Chapter function will assemble the required data and call the mutation
+    const generateChapter = async (topic: string): Promise<ChapterDTO | null> => {
+        if (!user) {
+            console.error("Cannot generate chapter: User is not logged in.");
+            return null;
         }
+        try {
+            return await generateChapterMutation({ language, difficulty, topic, userId: user.id }).unwrap();
+        } catch (err) {
+            console.error('Failed to generate chapter:', err);
+            return null;
+        }
+    };
 
-        fetchData();
-    }, [language, difficulty])
-
-    // Array of Flipbook Component Pages using data fetched initially from the database
-    const initialPages = useMemo(() => {
+    // 5. Process book pages based on the book data state
+    const pages = useMemo(() => {
         if(!bookData) return [];
         return buildPagesFromBookData(bookData);
     }, [bookData]);
 
-    // Array of Flipbook Component Pages using data fetched from new chapter requests
-    const newPages = useMemo(() => {
-        if(newChapters.length === 0) return [];
-        return buildPagesFromChapters(newChapters);
-    }, [newChapters]);
+    const title = bookData?.bookTitle || 'Book Title';
+    const chapters = bookData?.chapters || [];
+    const isLoading = isFetchingBook || isGeneratingChapter;
+    const error = useMemo(() => {
+        if (fetchBookError) return 'Failed to fetch the book.';
+        if (generateChapterError) return 'Failed to generate the new chapter.';
+        return null;
+    }, [fetchBookError, generateChapterError]);
 
-    // Combined pages
-    const pages = useMemo(() => [...initialPages, ...newPages], [initialPages, newPages]);
-
-    // Get Chapter information for the table of contents
-    const chapters = useMemo((): ChapterDTO[] => [
-            ...(bookData?.chapters || []),
-            ...newChapters
-    ], [bookData, newChapters]);
-
-    // Internal helper function to process new chapters
-    const processChapter = useCallback((chapterData: ChapterDTO) => {
-        if(!chapterData) return;
-        setNewChapters(prev => [...prev, chapterData]);
-        const startingPage = chapterData.pages.length > 0 ? chapterData.pages[0].pageNumber : null;
-        setGeneratedChapterPageNumber(startingPage);
-    }, []);
-
-    const generateChapter = useCallback(async (topic: string) => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const response = await fetch('/api/chapters/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ language, difficulty, topic }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to generate chapter. The server responded with an error.');
-            }
-
-            const data: ChapterDTO = await response.json();
-            processChapter(data);
-
-        } catch (err) {
-            if(err instanceof Error)
-                setError(err.message);
-            else
-                setError('An unknown error occurred.');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [language, difficulty, processChapter]);
-
-    return { pages, title, chapters, generateChapter, generatedChapterPageNumber, isLoading, error };
+    return { pages, title, chapters, generateChapter, isLoading, error };
 }

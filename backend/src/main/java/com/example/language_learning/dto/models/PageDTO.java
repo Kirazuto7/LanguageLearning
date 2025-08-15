@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 public class PageDTO {
     private Long id;
     private int pageNumber;
-    private ChapterDTO chapter;
     private LessonDTO lesson;
 }

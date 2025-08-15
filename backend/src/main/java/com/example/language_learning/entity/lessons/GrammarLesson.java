@@ -16,10 +16,22 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class GrammarLesson extends Lesson {
+    @Column(columnDefinition = "TEXT")
     private String grammarConcept;
-    private String explanation;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "grammar_lesson_id")
-    private List<Sentence> examples = new ArrayList<>();
 
+    @Column(columnDefinition = "TEXT")
+    private String explanation;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "grammar_lesson_sentences",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "sentence_id")
+    )
+    @OrderColumn(name = "sentence_order")
+    private List<Sentence> exampleSentences = new ArrayList<>();
+
+    public void addExampleSentence(Sentence sentence) {
+        this.exampleSentences.add(sentence);
+    }
 }

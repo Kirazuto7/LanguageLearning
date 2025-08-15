@@ -3,8 +3,7 @@ package com.example.language_learning.entity.lessons;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.language_learning.entity.models.VocabularyWord;
-import lombok.AllArgsConstructor;
+import com.example.language_learning.entity.languages.Word;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -18,11 +17,16 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 public class VocabularyLesson extends Lesson {
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VocabularyWord> vocabularies = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "vocabulary_lesson_words",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "word_id")
+    )
+    @OrderColumn(name = "word_order")
+    private List<Word> vocabularies = new ArrayList<>();
 
-    public void addVocabulary(VocabularyWord vocabularyWord) {
-        vocabularies.add(vocabularyWord);
-        vocabularyWord.setLesson(this);
+    public void addVocabulary(Word word) { // This helper method is no longer needed as the relationship is unidirectional
+        this.vocabularies.add(word);
     }
 }
