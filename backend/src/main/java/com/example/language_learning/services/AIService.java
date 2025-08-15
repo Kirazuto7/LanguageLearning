@@ -3,7 +3,7 @@ package com.example.language_learning.services;
 import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.languages.JapaneseWordDTO;
 import com.example.language_learning.dto.languages.KoreanWordDTO;
-import com.example.language_learning.dto.models.VocabularyWordDTO;
+import com.example.language_learning.dto.languages.WordDTO;
 import com.example.language_learning.dto.lessons.GrammarLessonDTO;
 import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
 import com.example.language_learning.dto.lessons.PracticeLessonDTO;
@@ -162,12 +162,11 @@ public class AIService {
      * @param vocabularies The list of vocabulary words.
      * @return A formatted string of the words.
      */
-    private String formatVocabularyForPrompt(List<VocabularyWordDTO> vocabularies) {
+    private String formatVocabularyForPrompt(List<WordDTO> vocabularies) {
         if (vocabularies == null || vocabularies.isEmpty()) {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(VocabularyWordDTO::getWord)
                 .map(word -> {
                     if (word instanceof KoreanWordDTO koreanWord) {
                         return koreanWord.getHangeul();

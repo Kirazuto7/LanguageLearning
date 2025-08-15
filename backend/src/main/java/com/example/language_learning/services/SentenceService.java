@@ -18,8 +18,6 @@ public class SentenceService {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public Sentence createSentence(SentenceDTO dto) {
-        Sentence sentence = mapper.toEntity(dto);
-        dto.getWords().forEach(wordDTO -> sentence.addWord(wordService.createWord(wordDTO)));
-        return sentence;
+        return mapper.toEntity(dto);
     }
 }

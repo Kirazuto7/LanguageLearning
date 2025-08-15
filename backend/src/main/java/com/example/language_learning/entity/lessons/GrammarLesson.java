@@ -23,10 +23,15 @@ public class GrammarLesson extends Lesson {
     private String explanation;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "grammar_lesson_id")
-    private List<Sentence> examples = new ArrayList<>();
+    @JoinTable(
+            name = "grammar_lesson_sentences",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "sentence_id")
+    )
+    @OrderColumn(name = "sentence_order")
+    private List<Sentence> exampleSentences = new ArrayList<>();
 
-    public void addExample(Sentence sentence) {
-        this.examples.add(sentence);
+    public void addExampleSentence(Sentence sentence) {
+        this.exampleSentences.add(sentence);
     }
 }

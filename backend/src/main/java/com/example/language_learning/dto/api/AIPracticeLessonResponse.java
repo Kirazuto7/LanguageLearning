@@ -11,5 +11,6 @@ import java.util.List;
 public record AIPracticeLessonResponse(
     @JsonProperty("title") String title,
     @JsonProperty("instructions") String instructions,
+    @JsonProperty("answerPool") List<String> answerPool,
     @JsonProperty("questions") List<QuestionDTO> questions
 ) { }

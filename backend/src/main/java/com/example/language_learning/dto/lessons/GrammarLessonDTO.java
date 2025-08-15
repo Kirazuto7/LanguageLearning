@@ -1,7 +1,6 @@
 package com.example.language_learning.dto.lessons;
 
 import com.example.language_learning.dto.models.SentenceDTO;
-import com.example.language_learning.dto.models.VocabularyWordDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
