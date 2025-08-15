@@ -15,10 +15,11 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
             <h5 className="text-center mb-4">{lesson.title}</h5>
             <table className="table table-striped">
                 <tbody>
-                    {lesson.vocabularies.map((vocabItem) => (
-                        <tr key={vocabItem.id}>
-                            <td><strong>{renderWord(vocabItem.word)}</strong></td>
-                            <td>{vocabItem.word.translation}</td>
+                    {lesson.vocabularies.map((vocabItem, index) => (
+                        // Use the item's ID if it exists, otherwise fall back to the array index.
+                        <tr key={vocabItem.id ?? index}>
+                            <td><strong>{renderWord(vocabItem)}</strong></td>
+                            <td>{vocabItem.translation}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -28,6 +29,3 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
 };
 
 export default VocabularyLesson;
-
-
-

@@ -22,7 +22,7 @@ public class GrammarLessonService {
         GrammarLesson lesson = (GrammarLesson) mapper.toEntity(dto);
         dto.getExampleSentences().forEach(sentenceDTO -> {
             Sentence sentence = sentenceService.createSentence(sentenceDTO);
-            lesson.addExample(sentence);
+            lesson.addExampleSentence(sentence);
         });
         return lesson;
     }

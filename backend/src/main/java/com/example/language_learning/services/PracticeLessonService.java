@@ -16,12 +16,6 @@ public class PracticeLessonService {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public PracticeLesson createPracticeLesson(PracticeLessonDTO dto) {
-        PracticeLesson lesson = (PracticeLesson) mapper.toEntity(dto);
-        if(dto.getQuestions() != null) {
-            dto.getQuestions().stream()
-                    .map(mapper::toEntity)
-                    .forEach(lesson::addQuestion);
-        }
-        return lesson;
+        return (PracticeLesson) mapper.toEntity(dto);
     }
 }

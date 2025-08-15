@@ -61,22 +61,15 @@ export interface JapaneseWordDTO extends WordDTO {
 
 export type AnyWordDTO = KoreanWordDTO | JapaneseWordDTO;
 
-export interface VocabularyWordDTO {
-    id: number;
-    word: AnyWordDTO;
-    wordIndex: number;
-}
-
 export interface SentenceDTO {
     id: number;
-    words: AnyWordDTO[];
     text: string;
     translation: string;
 }
 
 export interface VocabularyLessonDTO extends LessonDTO {
     type: 'VOCABULARY';
-    vocabularies: VocabularyWordDTO[];
+    vocabularies: AnyWordDTO[];
 }
 
 export interface GrammarLessonDTO extends LessonDTO {

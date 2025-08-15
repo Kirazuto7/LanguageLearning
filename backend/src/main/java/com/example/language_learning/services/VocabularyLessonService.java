@@ -13,14 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class VocabularyLessonService {
 
     private final DtoMapper mapper;
-    private final WordService wordService;
 
     @Transactional(propagation = Propagation.MANDATORY)
     public VocabularyLesson createVocabularyLesson(VocabularyLessonDTO dto) {
-        VocabularyLesson lesson = (VocabularyLesson) mapper.toEntity(dto);
-        dto.getVocabularies().forEach(vwDto -> {
-            lesson.addWord(wordService.createWord(vwDto.getWord()), vwDto.getWordIndex());
-        });
-        return lesson;
+        return (VocabularyLesson) mapper.toEntity(dto);
     }
 }

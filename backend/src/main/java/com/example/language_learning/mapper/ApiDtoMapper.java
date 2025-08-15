@@ -44,6 +44,7 @@ public class ApiDtoMapper {
         dto.setTitle(response.title());
         dto.setInstructions(response.instructions());
         dto.setQuestions(response.questions());
+        dto.setAnswerPool(response.answerPool());
         return dto;
     }
 

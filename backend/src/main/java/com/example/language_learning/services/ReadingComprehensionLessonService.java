@@ -16,12 +16,6 @@ public class ReadingComprehensionLessonService {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public ReadingComprehensionLesson createReadingComprehensionLesson(ReadingComprehensionLessonDTO dto) {
-        ReadingComprehensionLesson lesson = (ReadingComprehensionLesson) mapper.toEntity(dto);
-        if(dto.getQuestions() != null) {
-            dto.getQuestions().stream()
-                    .map(mapper::toEntity)
-                    .forEach(lesson::addQuestion);
-        }
-        return lesson;
+        return (ReadingComprehensionLesson) mapper.toEntity(dto);
     }
 }
