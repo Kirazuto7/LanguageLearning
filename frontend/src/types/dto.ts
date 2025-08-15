@@ -61,22 +61,15 @@ export interface JapaneseWordDTO extends WordDTO {
 
 export type AnyWordDTO = KoreanWordDTO | JapaneseWordDTO;
 
-export interface VocabularyWordDTO {
-    id: number;
-    word: AnyWordDTO;
-    wordIndex: number;
-}
-
 export interface SentenceDTO {
     id: number;
-    words: AnyWordDTO[];
     text: string;
     translation: string;
 }
 
 export interface VocabularyLessonDTO extends LessonDTO {
     type: 'VOCABULARY';
-    vocabularies: VocabularyWordDTO[];
+    vocabularies: AnyWordDTO[];
 }
 
 export interface GrammarLessonDTO extends LessonDTO {
@@ -88,7 +81,7 @@ export interface GrammarLessonDTO extends LessonDTO {
 
 export interface QuestionDTO {
     id: number;
-    questionType: 'multiple-choice' | 'fill-in-the-blank' | 'free-form';
+    questionType: 'MULTIPLE_CHOICE' | 'FILL_IN_THE_BLANK' | 'FREE_FORM';
     questionText: string;
     options?: string[];
     answer: string;
@@ -121,8 +114,14 @@ export interface LoginRequest {
 }
 
 export interface LessonBookRequest {
-    username: string;
+    userId: number;
     language: string;
     difficulty: string;
 }
 
+export interface ChapterGenerationRequest {
+    language: string;
+    difficulty: string;
+    topic: string;
+    userId: number;
+}

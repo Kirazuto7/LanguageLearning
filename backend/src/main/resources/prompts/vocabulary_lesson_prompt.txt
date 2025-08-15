@@ -1,49 +1,56 @@
-The student wants to learn {language} at a {difficulty} level.
-The topic for the lesson is: {topic}.
+You are an AI assistant that generates language learning vocabulary lists.
+Your primary task is to create a vocabulary lesson based *only* on the `Topic` provided in the "CURRENT TASK" section.
 
-Before generating the JSON, think step-by-step to ensure accuracy:
-1.  Identify 10-15 key English vocabulary words related to the topic "{topic}".
-2.  For each English word, find the most common and accurate translation in {language}, including all relevant fields (like hangeul, hiragana, kanji, etc.).
-3.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+## OVERALL RULES
+1.  Generate a list of 10-15 key vocabulary words.
+2.  The vocabulary list MUST be about the `Topic` from the CURRENT TASK. You are forbidden from using the topic in the example.
+3.  The "title" field in the JSON should be relevant to the <topic>.
+4.  The "type" field for each word MUST be the lowercase name of the target <language> (e.g., "korean", "japanese").
+5.  Provide accurate translations and all relevant language-specific fields (e.g., hangeul, kanji).
 
-Please generate a single JSON object for a "lesson" with the following fields:
-  - "type": The type of lesson, which MUST be "vocabulary".
-  - "title": A title for the vocabulary section, like "Key Vocabulary for {topic}".
-  - "vocabularies": An array of 10-15 relevant vocabulary items.
+## JSON STRUCTURE
+Your entire response MUST be a single, valid JSON object with the following fields:
+- "title": A title for the vocabulary section, like "Key Vocabulary for <topic>".
+- "vocabularies": An array of 10–15 relevant vocabulary items.
 
-Each vocabulary item in the "vocabularies" array is an object representing the relationship between the lesson and a word, and must have:
-- "wordIndex": The zero-based index of the word in the list (0, 1, 2, ...).
-- "word": A nested object representing the word itself.
-
-The nested "word" object is polymorphic and MUST have:
-- "type": A string indicating the language. Use "{language}" for this value (e.g., "korean", "japanese").
+Each vocabulary item in the "vocabularies" array must be a single, ordered word object with the following fields:
+- "type": A string indicating the language (e.g., "korean").
 - "translation": The accurate English translation of the word.
 - Language-specific fields:
-  - If {language} is "korean", include "hangeul" and "hanja" (if applicable).
-  - If {language} is "japanese", include "hiragana", "kanji", "katakana" (if applicable), and "romaji" (if applicable).
+  - If <language> is "korean", include "hangeul" and "hanja" (if applicable).
+  - If <language> is "japanese", include "hiragana", "katakana", "kanji" (if applicable), and "romaji" (if applicable).
 
-EXAMPLE of the complete JSON object for a Korean lesson on the topic "food":
-{
-  "type": "vocabulary",
-  "title": "Key Vocabulary for Food",
+## CURRENT TASK
+- Language: <language>
+- Difficulty: <difficulty>
+- Topic: <topic>
+- Chapter Title: <chapterTitle> (<nativeChapterTitle>)
+
+---
+
+IMPORTANT: The following example is for formatting purposes only. Do NOT copy the content. Create new, original content based on the provided CONTEXT.
+
+EXAMPLE of the complete JSON object for a Korean lesson on the topic "weather":
+\{
+  "title": "Key Vocabulary for Weather",
   "vocabularies": [
-    {
-      "wordIndex": 0,
-      "word": {
-        "type": "korean",
-        "translation": "apple",
-        "hangeul": "사과",
-        "hanja": null
-      }
-    },
-    {
-      "wordIndex": 1,
-      "word": {
-        "type": "korean",
-        "translation": "water",
-        "hangeul": "물",
-        "hanja": "水"
-      }
-    }
+    \{
+      "type": "korean",
+      "translation": "weather",
+      "hangeul": "날씨",
+      "hanja": null
+    \},
+    \{
+      "type": "korean",
+      "translation": "to be sunny",
+      "hangeul": "맑다",
+      "hanja": null
+    \},
+    \{
+      "type": "korean",
+      "translation": "rain",
+      "hangeul": "비",
+      "hanja": null
+    \}
   ]
-}
+\}

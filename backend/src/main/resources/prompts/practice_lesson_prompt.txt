@@ -1,42 +1,71 @@
-The student wants to learn {language} at a {difficulty} level.
-The general topic for the lesson is: {topic}.
+## ROLE: AI Language Learning Content Creator
 
-Before generating the JSON, think step-by-step to ensure accuracy:
-1.  Identify 5-7 key vocabulary words related to the topic "{topic}" that are appropriate for a {difficulty} learner.
-2.  Create 3-4 "fill-in-the-blank" sentences. Each sentence should use one of the key vocabulary words. The sentence should have a blank `____` where the word should go.
-3.  For each "fill-in-the-blank" sentence, provide the correct answer (the missing word) and 2-3 plausible but incorrect options.
-4.  Create 2-3 "free-form" writing prompts that encourage the student to use the vocabulary and concepts they've learned to write their own sentence.
-5.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+## GOAL
+Generate a practice lesson with a variety of questions that reinforce the `Topic`, `Vocabulary List`, and `Grammar Concept`.
 
-Please generate a single JSON object for a "lesson" with the following fields:
-  - "type": The type of lesson, which MUST be "practice".
-  - "title": A title for the lesson, like "Practice Exercises for {topic}".
-  - "instructions": A short instructional text, like "Use the vocabulary and grammar you've learned to complete the following exercises."
-  - "questions": An array of 5-7 question objects.
+## RULES
+1.  All generated content (`title`, `instructions`, `questions`, `answerPool`) MUST be strictly related to the `Topic`. Do NOT generate content for a different topic.
+2.  The questions MUST test the provided `Vocabulary List` and `Grammar Concept`.
+3.  The `answerPool` MUST contain a variety of word types (nouns, verbs, adjectives) from the `Vocabulary List`. This variety is crucial for creating unambiguous questions.
+4.  For `FILL_IN_THE_BLANK` questions, the `questionText` sentence MUST provide enough context so that only one word from the `answerPool` is the logical answer.
+5.  The `answer` for `FILL_IN_THE_BLANK` questions MUST EXACTLY MATCH one of the strings in the `answerPool`.
+6.  The `title` and `instructions` fields MUST be in English.
+7.  The `answerPool`, `questionText` (for fill-in-the-blank), and `answer` fields MUST be in the target <language>.
+8.  All content must be appropriate for a <difficulty> learner.
+
+## JSON STRUCTURE
+Your entire response MUST be a single, valid JSON object with the following fields:
+- "title": A title for the practice section.
+- "instructions": A brief explanation in English of what the user should do.
+- "answerPool": An array of 5-8 strings in <language> to be used as answers and distractors.
+- "questions": An array of 3-5 question objects.
 
 Each question object in the "questions" array must have:
-- "questionType": Either "FILL_IN_THE_BLANK" or "FREE_FORM".
-- "questionText": The full prompt or the sentence with a blank.
-- "answer": For "FILL_IN_THE_BLANK" questions, this is the correct word. For "FREE_FORM" questions, this should be null.
-- "options": For "FILL_IN_THE_BLANK" questions, this is an array of strings containing the correct answer and 2-3 incorrect options. For "FREE_FORM" questions, this should be null or an empty array.
+- "questionType": `FILL_IN_THE_BLANK` or `FREE_FORM`.
+- "questionText": The question text.
+- "answer": The correct answer, or `null` for FREE_FORM.
+- "options": Must be an empty array `[]`.
 
-EXAMPLE of the complete JSON object for a Korean lesson with topic="travel" and difficulty="beginner":
-{
-  "type": "practice",
-  "title": "Practice Exercises for Travel",
-  "instructions": "Use the vocabulary and grammar you've learned to complete the following exercises.",
+## CURRENT TASK
+- Language: <language>
+- Difficulty: <difficulty>
+- Topic: <topic>
+- Vocabulary List: <vocabulary>
+- Grammar Concept: <grammarConcept>
+
+---
+
+IMPORTANT: The following example is for formatting purposes only. Do NOT copy the content. Create new, original content based on the provided CONTEXT.
+
+EXAMPLE of the complete JSON object for a Korean lesson with topic="weather":
+\{
+  "title": "Practice Talking About Weather",
+  "instructions": "Use the words from the answer pool to complete the sentences.",
+  "answerPool": ["날씨", "비", "눈", "덥다", "춥다"],
   "questions": [
-    {
+    \{
       "questionType": "FILL_IN_THE_BLANK",
-      "questionText": "공항에 가려면 ________을 타야 해요.",
-      "answer": "버스",
-      "options": ["버스", "호텔", "음식"]
-    },
-    {
+      "questionText": "오늘 _______가 어때요?",
+      "answer": "날씨",
+      "options": []
+    \},
+    \{
+      "questionType": "FILL_IN_THE_BLANK",
+      "questionText": "여름은 너무 _______.",
+      "answer": "덥다",
+      "options": []
+    \},
+    \{
+      "questionType": "FILL_IN_THE_BLANK",
+      "questionText": "겨울에는 _______이/가 와요.",
+      "answer": "눈",
+      "options": []
+    \},
+    \{
       "questionType": "FREE_FORM",
-      "questionText": "Write a sentence about where you want to travel next.",
+      "questionText": "비 오는 날에 무엇을 하는 것을 좋아해요?",
       "answer": null,
       "options": []
-    }
+    \}
   ]
-}
+\}

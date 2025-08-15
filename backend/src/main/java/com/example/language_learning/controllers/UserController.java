@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 
 @RestController
@@ -22,13 +23,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public Mono<UserDTO> createUser(@RequestBody  CreateUserRequest request) {
+    public UserDTO createUser(@Valid @RequestBody  CreateUserRequest request) {
         logger.info("Received request to create a user with username: {}", request.getUsername());
         return userService.createNewUser(request);
     }
 
     @PostMapping("/login")
-    public Mono<UserDTO> login(@RequestBody LoginRequest request) {
+    public UserDTO login(@Valid @RequestBody LoginRequest request) {
         logger.info("Received request to login with username: {}", request.getUsername());
         return userService.login(request);
     }
