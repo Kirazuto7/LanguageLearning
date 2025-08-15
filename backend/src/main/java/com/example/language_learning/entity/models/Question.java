@@ -21,24 +21,26 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String questionType; // e.g., "multiple_choice", "fill_in_the_blank", "FREE_FORM"
+    @Enumerated(EnumType.STRING)
+    private QuestionType questionType;
 
     @Column(columnDefinition = "TEXT")
     private String questionText;
 
+    @Column(columnDefinition = "TEXT")
     private String answer;
 
     // For multiple choice, a list of options as answer choices. Otherwise, null.
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
-    @Column(name = "option")
+    @Column(name = "option", columnDefinition = "TEXT")
     private List<String> options = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-    public Question(String questionType, String questionText) {
+    public Question(QuestionType questionType, String questionText) {
         this.questionType = questionType;
         this.questionText = questionText;
     }

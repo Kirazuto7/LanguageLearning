@@ -20,18 +20,23 @@ export function useBookManager(language: string, difficulty: string): BookManage
     const { user } = useSelector((state: RootState) => state.auth);
 
     // 2. Fetch the book data
-    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery({ language, difficulty });
+    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery({ language, difficulty, userId: user!.id });
     
     // 3. Get the mutation function(s)
     const [generateChapterMutation, { isLoading: isGeneratingChapter, error: generateChapterError }] = useGenerateChapterMutation();
 
     // 4. Generate Chapter function will assemble the required data and call the mutation
-    const generateChapter = async (topic: string) => {
+    const generateChapter = async (topic: string): Promise<ChapterDTO | null> => {
         if (!user) {
             console.error("Cannot generate chapter: User is not logged in.");
             return null;
         }
-        return generateChapterMutation({ language, difficulty, topic, userId: user.id }).unwrap();
+        try {
+            return await generateChapterMutation({ language, difficulty, topic, userId: user.id }).unwrap();
+        } catch (err) {
+            console.error('Failed to generate chapter:', err);
+            return null;
+        }
     };
 
     // 5. Process book pages based on the book data state
@@ -43,7 +48,11 @@ export function useBookManager(language: string, difficulty: string): BookManage
     const title = bookData?.bookTitle || 'Book Title';
     const chapters = bookData?.chapters || [];
     const isLoading = isFetchingBook || isGeneratingChapter;
-    const error = fetchBookError || generateChapterError ? 'An error occurred.' : null;
+    const error = useMemo(() => {
+        if (fetchBookError) return 'Failed to fetch the book.';
+        if (generateChapterError) return 'Failed to generate the new chapter.';
+        return null;
+    }, [fetchBookError, generateChapterError]);
 
     return { pages, title, chapters, generateChapter, isLoading, error };
 }

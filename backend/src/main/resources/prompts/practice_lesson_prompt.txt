@@ -1,44 +1,59 @@
-The student wants to learn <language> at a <difficulty> level.
-The general topic for the lesson is: <topic>.
+You are an AI assistant that generates language learning exercises.
+Your task is to create a "practice" lesson based on the provided topic, difficulty, vocabulary, and grammar concept.
 
-Before generating the JSON, think step-by-step to ensure accuracy:
-1.  Identify 5-7 key vocabulary words related to the topic "<topic>" that are appropriate for a <difficulty> learner.
-2.  Create 3-4 "fill-in-the-blank" sentences. Each sentence should use one of the key vocabulary words. The sentence should have a blank `____` where the word should go.
-3.  For each "fill-in-the-blank" sentence, provide the correct answer (the missing word) and 2-3 plausible but incorrect options.
-4.  Create 2-3 "free-form" writing prompts that encourage the student to use the vocabulary and concepts they've learned to write their own sentence.
-5.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+The lesson should contain a title, instructions, and a list of 5 questions.
+The questions should be a mix of `FILL_IN_THE_BLANK` and `FREE_FORM` types.
+
+RULES:
+1.  The `title` should be relevant to the topic.
+2.  The `instructions` should be clear and in English.
+3.  The `questions` array must contain question objects.
+4.  For `FILL_IN_THE_BLANK` questions:
+    - The `questionText` MUST be in <language> and contain one or more `_______` placeholders.
+    - The `answer` field MUST be a single string in <language>. If there are multiple blanks, provide the correct answers as a single comma-separated string (e.g., "answer1,answer2").
+    - The `options` array should contain 3-4 plausible choices in <language>, including the correct answer.
+5.  For `FREE_FORM` questions:
+    - The `questionText` should be an open-ended prompt in <language>.
+    - The `answer` field MUST be `null`.
+    - The `options` array MUST be empty (`[]`).
+6.  All text in <language> must be appropriate for a <difficulty> learner.
+7.  All questions, answers, and options must be in the target <language>!
+8.  Your entire response MUST be a single, valid JSON object. Do not include any text outside of the JSON structure.
+
+CONTEXT:
+- Language: <language>
+- Difficulty: <difficulty>
+- Topic: <topic>
+- Vocabulary List: <vocabulary>
+- Grammar Concept: <grammarConcept>
 
 Please generate a single JSON object for a "lesson" with the following fields:
-  - "type": The type of lesson, which MUST be "practice".
-  - "title": A title for the lesson, like "Practice Exercises for <topic>".
-  - "instructions": A short instructional text, like "Use the vocabulary and grammar you've learned to complete the following exercises."
-  - "questions": An array of 5-7 question objects.
+- "title": A title for the practice section.
+- "instructions": A brief explanation in English of what the user should do.
+- "questions": An array of 3-5 question objects, each with "questionType", "questionText", "answer", and "options".
 
-Each question object in the "questions" array must have:
-- "questionType": Either "FILL_IN_THE_BLANK" or "FREE_FORM".
-- "questionText": The full prompt or the sentence with a blank.
-- "answer": For "FILL_IN_THE_BLANK" questions, this is the correct word. For "FREE_FORM" questions, this should be null.
-- "options": For "FILL_IN_THE_BLANK" questions, this is an array of strings containing the correct answer and 2-3 incorrect options. For "FREE_FORM" questions, this should be null or an empty array.
-
-<!
-EXAMPLE of the complete JSON object for a Korean lesson with topic="travel" and difficulty="beginner":
-{
-  "type": "practice",
-  "title": "Practice Exercises for Travel",
+EXAMPLE of the complete JSON object for a Korean lesson with topic="ordering food":
+\{
+  "title": "Practice Ordering Food",
   "instructions": "Use the vocabulary and grammar you've learned to complete the following exercises.",
   "questions": [
-    {
+    \{
       "questionType": "FILL_IN_THE_BLANK",
-      "questionText": "공항에 가려면 ________을 타야 해요.",
-      "answer": "버스",
-      "options": ["버스", "호텔", "음식"]
-    },
-    {
+      "questionText": "이 _______ 주세요.",
+      "answer": "김치찌개",
+      "options": ["김치찌개", "물", "의자"]
+    \},
+    \{
+      "questionType": "FILL_IN_THE_BLANK",
+      "questionText": "_______하고 _______ 주세요.",
+      "answer": "밥,국",
+      "options": ["밥,국", "책,펜", "신발,양말"]
+    \},
+    \{
       "questionType": "FREE_FORM",
-      "questionText": "Write a sentence about where you want to travel next.",
+      "questionText": "가장 좋아하는 한국 음식이 무엇인가요? 왜 그 음식을 좋아하나요?",
       "answer": null,
       "options": []
-    }
+    \}
   ]
-}
-!>
+\}

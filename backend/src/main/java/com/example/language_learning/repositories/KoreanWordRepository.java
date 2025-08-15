@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface KoreanWordRepository extends JpaRepository<KoreanWord, Long> {
     // Example of a language-specific query
     Optional<KoreanWord> findByHangeul(String hangeul);
+    Optional<KoreanWord> findByHanja(String hanja);
 }

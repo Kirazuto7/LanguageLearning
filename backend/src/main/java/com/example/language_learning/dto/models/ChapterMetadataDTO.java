@@ -6,4 +6,5 @@ import lombok.Data;
 public class ChapterMetadataDTO {
     private String title;
     private String nativeTitle;
+    private String topic;
 }

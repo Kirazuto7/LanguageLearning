@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ReadingComprehensionLesson extends Lesson {
+    @Column(columnDefinition = "TEXT")
     private String story;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)

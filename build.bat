@@ -1,6 +1,19 @@
 @echo off
 setlocal enabledelayedexpansion
 
+set "DO_CLEANUP=false"
+
+:arg_loop
+if "%~1"=="" goto :args_done
+if /i "%~1"=="-remove" set "DO_CLEANUP=true"
+:args_done
+
+if "%DO_CLEANUP%" == "true" (
+    call :DockerStartup
+    call :DockerCleanup
+    goto :eof
+)
+
 echo Before building the application, make sure you create a .env file in the root
 echo directory of the project and include your postgres db setup credentials
 

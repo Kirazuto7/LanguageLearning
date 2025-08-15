@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VocabularyWordDTO {
     private Long id;
-    private VocabularyLessonDTO lesson;
     private WordDTO word;
     private int wordIndex;
 }

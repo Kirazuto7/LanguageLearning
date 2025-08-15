@@ -13,7 +13,7 @@ import lombok.Data;
         visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = VocabularyLessonDTO.class, name = "vocabulary"),
-        @JsonSubTypes.Type(value = PracticeLessonDTO.class, name = "sentence"),
+        @JsonSubTypes.Type(value = PracticeLessonDTO.class, name = "practice"),
         @JsonSubTypes.Type(value = GrammarLessonDTO.class, name = "grammar"),
         @JsonSubTypes.Type(value = ReadingComprehensionLessonDTO.class, name = "reading_comprehension")
 })
@@ -21,5 +21,4 @@ public abstract class LessonDTO {
     private Long id;
     private String type;
     private String title;
-    private PageDTO page;
 }

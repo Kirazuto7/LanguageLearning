@@ -28,7 +28,11 @@ public class Sentence {
     )
     @OrderBy("wordIndex ASC")
     private List<SentenceWord> words = new ArrayList<>();
+
+    @Column(columnDefinition = "TEXT")
     private String text;
+
+    @Column(columnDefinition = "TEXT")
     private String translation; // English translation of the entire sentence
 
     public void addWord(SentenceWord sentenceWord) {
