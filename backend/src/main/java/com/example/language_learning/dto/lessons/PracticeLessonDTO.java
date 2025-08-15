@@ -14,4 +14,5 @@ import java.util.List;
 public class PracticeLessonDTO extends LessonDTO {
     private String instructions;
     private List<QuestionDTO> questions;
+    private List<String> answerPool;
 }

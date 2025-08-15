@@ -16,10 +16,17 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class GrammarLesson extends Lesson {
+    @Column(columnDefinition = "TEXT")
     private String grammarConcept;
+
+    @Column(columnDefinition = "TEXT")
     private String explanation;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "grammar_lesson_id")
     private List<Sentence> examples = new ArrayList<>();
 
+    public void addExample(Sentence sentence) {
+        this.examples.add(sentence);
+    }
 }

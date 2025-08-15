@@ -2,18 +2,16 @@ The student wants to learn <language> at a <difficulty> level.
 The topic for the chapter is: <topic>.
 
 Before generating the JSON, think step-by-step to ensure accuracy:
-1.  Based on the topic "<topic>", create a creative and relevant chapter title in English.
-2.  Provide an accurate translation of that title in <language>.
-3.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+1. Based on the topic "<topic>", create a creative and relevant chapter title in English.
+2. Provide an accurate translation of that title in <language>.
+3. Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
 
 Please generate a single JSON object with the following fields:
 - "title": The English title for the chapter.
 - "nativeTitle": The translated title in <language>.
 
-<!
 EXAMPLE of the complete JSON object for a Korean lesson with topic="greetings":
-{
+\{
   "title": "Essential Greetings",
   "nativeTitle": "필수 인사말"
-}
-!>
+\}

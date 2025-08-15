@@ -19,5 +19,4 @@ public class ChapterDTO {
     private String title;
     private String nativeTitle;
     private List<PageDTO> pages;
-    private LessonBookDTO lessonBook;
 }

@@ -9,7 +9,6 @@ import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 
@@ -33,10 +32,9 @@ public class BookService {
                 });
     }
 
-    public Mono<LessonBookDTO> fetchBook(LessonBookRequest request) {
+    public LessonBookDTO fetchBook(LessonBookRequest request) {
         LessonBook book = findOrCreateBook(request.getLanguage(), request.getDifficulty(), request.getUserId());
-        LessonBookDTO lessonBookDTO = dtoMapper.toDto(book);
-        return Mono.just(lessonBookDTO);
+        return dtoMapper.toDto(book);
     }
 
     public LessonBook save(LessonBook book) {

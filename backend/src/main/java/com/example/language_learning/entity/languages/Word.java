@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "words")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Word {
     @Id

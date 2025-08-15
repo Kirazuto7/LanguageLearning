@@ -13,7 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class VocabularyWord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +29,9 @@ public class VocabularyWord {
     @Column(name = "word_index", nullable = false)
     private int wordIndex;
 
+    public VocabularyWord(VocabularyLesson lesson, Word word, int wordIndex) {
+        this.lesson = lesson;
+        this.word = word;
+        this.wordIndex = wordIndex;
+    }
 }

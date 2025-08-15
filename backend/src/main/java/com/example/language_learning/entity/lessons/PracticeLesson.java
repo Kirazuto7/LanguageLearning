@@ -23,6 +23,11 @@ public class PracticeLesson extends Lesson {
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name="practice_lesson_answer_pool", joinColumns = @JoinColumn(name="lesson_id"))
+    @Column(name = "answer", columnDefinition = "TEXT")
+    private List<String> answerPool = new ArrayList<>();
+
     public void addQuestion(Question question) {
         this.questions.add(question);
         question.setLesson(this);

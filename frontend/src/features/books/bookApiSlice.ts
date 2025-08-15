@@ -1,26 +1,26 @@
 import { apiSlice } from "../api/apiSlice";
-import { LessonBookDTO, ChapterDTO } from "../../types/dto";
+import { LessonBookDTO, ChapterDTO, LessonBookRequest, ChapterGenerationRequest } from "../../types/dto";
 
 export const bookApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         // Initial Book Data
-        fetchBook: builder.query<LessonBookDTO, { language: string, difficulty: string}>({
+        fetchBook: builder.query<LessonBookDTO, LessonBookRequest>({
             query: credentials => ({
                 url: '/books/fetch/book',
                 method: 'POST',
                 body: credentials
             }),
-            providesTags: (result, error, { language, difficulty }) => [{ type: 'Book', id: `${language}-${difficulty}`}],
+            providesTags: (result, error, { language, difficulty, userId }) => [{ type: 'Book', id: `${language}-${difficulty}-${userId}`}],
         }),
 
         // Generate a New Chapter
-        generateChapter: builder.mutation<ChapterDTO, { language: string, difficulty: string, topic: string, userId: number}>({
-            query: ({language, difficulty, topic, userId}) => ({ // Book Id not part of request body
+        generateChapter: builder.mutation<ChapterDTO, ChapterGenerationRequest>({
+            query: (request) => ({
                 url: '/chapters/generate',
                 method: 'POST',
-                body: {language, difficulty, topic, userId}
+                body: request
             }),
-            invalidatesTags: (result, error, {language, difficulty}, meta) => [{ type: 'Book', id: `${language}-${difficulty}` }],
+            invalidatesTags: (result, error, {language, difficulty, userId}, meta) => [{ type: 'Book', id: `${language}-${difficulty}-${userId}` }],
         }),
     })
 });

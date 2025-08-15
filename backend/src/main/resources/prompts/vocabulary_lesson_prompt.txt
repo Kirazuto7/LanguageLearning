@@ -1,50 +1,48 @@
- The student wants to learn <language> at a <difficulty> level.
- The topic for the lesson is: <topic>.
+The student wants to learn <language> at a <difficulty> level.
+The lesson is for a chapter titled <chapterTitle> (<nativeChapterTitle>).
+The general topic for the lesson is: <topic>.
 
- Before generating the JSON, think step-by-step to ensure accuracy:
- 1.  Identify 10-15 key English vocabulary words related to the topic "<topic>".
- 2.  For each English word, find the most common and accurate translation in <language>, including all relevant fields (like hangeul, hiragana, kanji, etc.).
- 3.  Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
+Before generating the JSON, think step-by-step to ensure accuracy:
+1. Identify 10–15 key English vocabulary words related to the topic "<topic>" and the chapter title.
+2. For each English word, find the most common and accurate translation in <language>, including all relevant fields (like hangeul, hiragana, kanji, etc.).
+3. Assemble this information into the final JSON structure as specified below. Your internal thoughts should NOT be in the final output.
 
- Please generate a single JSON object for a "lesson" with the following fields:
-   - "type": The type of lesson, which MUST be "vocabulary".
-   - "title": A title for the vocabulary section, like "Key Vocabulary for <topic>".
-   - "vocabularies": An array of 10-15 relevant vocabulary items.
+Please generate a single JSON object for a "lesson" with the following fields:
+- "title": A title for the vocabulary section, like "Key Vocabulary for <topic>".
+- "vocabularies": An array of 10–15 relevant vocabulary items.
 
- Each vocabulary item in the "vocabularies" array is an object representing the relationship between the lesson and a word, and must have:
-// Hidden Lines
- - "word": A nested object representing the word itself.
+Each vocabulary item in the "vocabularies" array is an object representing the relationship between the lesson and a word, and must have:
+- "wordIndex": The index of the word (0-based).
+- "word": A nested object representing the word itself.
 
- The nested "word" object is polymorphic and MUST have:
- - "type": A string indicating the language. Use "<language>" for this value (e.g., "korean", "japanese").
- - "translation": The accurate English translation of the word.
- - Language-specific fields:
-   - If <language> is "korean", include "hangeul" and "hanja" (if applicable).
-   - If <language> is "japanese", include "hiragana", "kanji", "katakana" (if applicable), and "romaji" (if applicable).
-<!
+The nested "word" object is polymorphic and MUST have:
+- "type": A string indicating the language. This MUST be the lowercase name of the target <language> (e.g., "korean", "japanese"). It must NEVER be "english".
+- "translation": The accurate English translation of the word.
+- Language-specific fields:
+  - If <language> is "korean", include "hangeul" and "hanja" (if applicable).
+  - If <language> is "japanese", include "hiragana", "kanji" (if applicable), and "romaji" (if applicable).
+
 EXAMPLE of the complete JSON object for a Korean lesson on the topic "food":
-{
-  "type": "vocabulary",
+\{
   "title": "Key Vocabulary for Food",
   "vocabularies": [
-    {
+    \{
       "wordIndex": 0,
-      "word": {
+      "word": \{
         "type": "korean",
         "translation": "apple",
         "hangeul": "사과",
         "hanja": null
-      }
-    },
-    {
+      \}
+    \},
+    \{
       "wordIndex": 1,
-      "word": {
+      "word": \{
         "type": "korean",
         "translation": "water",
         "hangeul": "물",
         "hanja": "水"
-      }
-    }
+      \}
+    \}
   ]
-}
-!>
+\}

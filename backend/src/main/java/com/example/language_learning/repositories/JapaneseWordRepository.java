@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface JapaneseWordRepository extends JpaRepository<JapaneseWord, Long> {
     // Example of a language-specific query
     Optional<JapaneseWord> findByHiragana(String hiragana);
+    Optional<JapaneseWord> findByKatakana(String katakana);
+    Optional<JapaneseWord> findByKanji(String kanji);
 }

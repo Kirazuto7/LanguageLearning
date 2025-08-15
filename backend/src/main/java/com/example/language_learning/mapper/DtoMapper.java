@@ -13,13 +13,8 @@ import com.example.language_learning.entity.languages.JapaneseWord;
 import com.example.language_learning.entity.languages.KoreanWord;
 import com.example.language_learning.entity.languages.Word;
 import com.example.language_learning.entity.lessons.*;
-import com.example.language_learning.entity.models.Chapter;
-import com.example.language_learning.entity.models.LessonBook;
-import com.example.language_learning.entity.models.Page;
-import com.example.language_learning.entity.models.Question;
-import com.example.language_learning.entity.models.Sentence;
-import com.example.language_learning.entity.models.SentenceWord;
-import com.example.language_learning.entity.models.VocabularyWord;
+import com.example.language_learning.entity.models.*;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -71,7 +66,6 @@ public class DtoMapper {
         chapter.setChapterNumber(dto.getChapterNumber());
         chapter.setTitle(dto.getTitle());
         chapter.setNativeTitle(dto.getNativeTitle());
-        // The parent LessonBook is set by the parent's mapper or service, not here.
         if (dto.getPages() != null) {
             dto.getPages().stream()
                     .map(this::toEntity)
@@ -141,26 +135,21 @@ public class DtoMapper {
     private void mapLessonBaseProperties(Lesson lesson, LessonDTO dto) {
         lesson.setId(dto.getId());
         lesson.setTitle(dto.getTitle());
-        lesson.setType(dto.getType());
-        // The parent Page is set by the parent's mapper or service, not here.
     }
 
     private void mapLessonBaseProperties(LessonDTO dto, Lesson lesson) {
         dto.setId(lesson.getId());
         dto.setTitle(lesson.getTitle());
-        dto.setType(lesson.getType());
-        // Do not map the parent Page to avoid circular dependencies.
+        if (lesson.getType() != null) {
+            dto.setType(lesson.getType().name());
+        }
     }
 
     // Specific lesson type mappers
     private VocabularyLesson toEntity(VocabularyLessonDTO dto) {
         VocabularyLesson lesson = new VocabularyLesson();
         mapLessonBaseProperties(lesson, dto);
-        if (dto.getVocabularies() != null) {
-            dto.getVocabularies().stream()
-                    .map(this::toEntity)
-                    .forEach(lesson::addVocabulary);
-        }
+        lesson.setType(LessonType.VOCABULARY);
         return lesson;
     }
 
@@ -174,12 +163,9 @@ public class DtoMapper {
     private PracticeLesson toEntity(PracticeLessonDTO dto) {
         PracticeLesson lesson = new PracticeLesson();
         mapLessonBaseProperties(lesson, dto);
+        lesson.setType(LessonType.PRACTICE);
         lesson.setInstructions(dto.getInstructions());
-        if (dto.getQuestions() != null) {
-            dto.getQuestions().stream()
-                    .map(this::toEntity) // This will call toEntity(QuestionDTO)
-                    .forEach(lesson::addQuestion);
-        }
+        lesson.setAnswerPool(dto.getAnswerPool());
         return lesson;
     }
 
@@ -187,6 +173,7 @@ public class DtoMapper {
         PracticeLessonDTO dto = new PracticeLessonDTO();
         mapLessonBaseProperties(dto, entity);
         dto.setInstructions(entity.getInstructions());
+        dto.setAnswerPool(entity.getAnswerPool());
         if (entity.getQuestions() != null) {
             dto.setQuestions(entity.getQuestions().stream().map(this::toDto).collect(Collectors.toList()));
         }
@@ -196,11 +183,9 @@ public class DtoMapper {
     private GrammarLesson toEntity(GrammarLessonDTO dto) {
         GrammarLesson lesson = new GrammarLesson();
         mapLessonBaseProperties(lesson, dto);
+        lesson.setType(LessonType.GRAMMAR);
         lesson.setGrammarConcept(dto.getGrammarConcept());
         lesson.setExplanation(dto.getExplanation());
-        if (dto.getExampleSentences() != null) {
-            lesson.setExamples(dto.getExampleSentences().stream().map(this::toEntity).collect(Collectors.toList()));
-        }
         return lesson;
     }
 
@@ -216,12 +201,8 @@ public class DtoMapper {
     private ReadingComprehensionLesson toEntity(ReadingComprehensionLessonDTO dto) {
         ReadingComprehensionLesson lesson = new ReadingComprehensionLesson();
         mapLessonBaseProperties(lesson, dto);
+        lesson.setType(LessonType.READING_COMPREHENSION);
         lesson.setStory(dto.getStory());
-        if (dto.getQuestions() != null) {
-            dto.getQuestions().stream()
-                    .map(this::toEntity) // This will call toEntity(QuestionDTO)
-                    .forEach(lesson::addQuestion);
-        }
         return lesson;
     }
 
@@ -262,15 +243,16 @@ public class DtoMapper {
     }
 
     public WordDTO toDto(Word entity) {
-        if (entity instanceof KoreanWord koreanEntity) {
+        Object unproxiedEntity = Hibernate.unproxy(entity);
+
+        if (unproxiedEntity instanceof KoreanWord koreanEntity) {
             KoreanWordDTO dto = new KoreanWordDTO();
             dto.setId(koreanEntity.getId());
             dto.setHangeul(koreanEntity.getHangeul());
             dto.setHanja(koreanEntity.getHanja());
             dto.setTranslation(koreanEntity.getTranslation());
             return dto;
-        }
-        else if (entity instanceof JapaneseWord japaneseEntity) {
+        } else if (unproxiedEntity instanceof JapaneseWord japaneseEntity) {
             JapaneseWordDTO dto = new JapaneseWordDTO();
             dto.setId(japaneseEntity.getId());
             dto.setTranslation(japaneseEntity.getTranslation());
@@ -280,7 +262,7 @@ public class DtoMapper {
             dto.setRomaji(japaneseEntity.getRomaji());
             return dto;
         }
-        throw new IllegalArgumentException("Unknown Word entity type: " + entity.getClass().getSimpleName());
+        throw new IllegalArgumentException("Unknown Word entity type: " + unproxiedEntity.getClass().getSimpleName());
     }
 
     /* **************************** */
@@ -290,9 +272,6 @@ public class DtoMapper {
     public VocabularyWord toEntity(VocabularyWordDTO dto) {
         VocabularyWord item = new VocabularyWord();
         item.setId(dto.getId());
-        // The Word entity should be fetched from the DB in the service layer, not created here.
-        item.setWord(toEntity(dto.getWord()));
-        // The parent Lesson is set by the parent's mapper or service, not here.
         item.setWordIndex(dto.getWordIndex());
         return item;
     }
@@ -301,7 +280,6 @@ public class DtoMapper {
         VocabularyWordDTO dto = new VocabularyWordDTO();
         dto.setId(entity.getId());
         dto.setWord(toDto(entity.getWord()));
-        // Do not map the parent Lesson to avoid circular dependencies.
         dto.setWordIndex(entity.getWordIndex());
         return dto;
     }
@@ -314,9 +292,6 @@ public class DtoMapper {
         SentenceWord entity = new SentenceWord();
         entity.setId(dto.getId());
         entity.setWordIndex(dto.getWordIndex());
-        // The Word entity should be fetched from the DB in the service layer, not created here.
-        entity.setWord(toEntity(dto.getWord()));
-        // The parent Sentence is set by the parent's mapper or service, not here.
         return entity;
     }
 
@@ -325,7 +300,6 @@ public class DtoMapper {
         dto.setId(entity.getId());
         dto.setWordIndex(entity.getWordIndex());
         dto.setWord(toDto(entity.getWord()));
-        // Do not map the parent Sentence to avoid circular dependencies.
         return dto;
     }
 
@@ -338,11 +312,6 @@ public class DtoMapper {
         sentence.setId(dto.getId());
         sentence.setTranslation(dto.getTranslation());
         sentence.setText(dto.getText());
-        if(dto.getWords() != null) {
-            dto.getWords().stream()
-                    .map(this::toEntity)
-                    .forEach(sentence::addWord);
-        }
         return sentence;
     }
 
@@ -367,7 +336,9 @@ public class DtoMapper {
 
     public Question toEntity(QuestionDTO dto) {
         if (dto == null) return null;
-        Question entity = new Question(dto.getQuestionType(), dto.getQuestionText());
+        Question entity = new Question();
+        entity.setQuestionType(QuestionType.valueOf(dto.getQuestionType()));
+        entity.setQuestionText(dto.getQuestionText());
         entity.setAnswer(dto.getAnswer());
         entity.setOptions(dto.getOptions());
         return entity;
@@ -377,7 +348,8 @@ public class DtoMapper {
         if (entity == null) return null;
         QuestionDTO dto = new QuestionDTO();
         dto.setId(entity.getId());
-        dto.setQuestionType(entity.getQuestionType());
+        if(entity.getQuestionType() != null)
+            dto.setQuestionType(entity.getQuestionType().name());
         dto.setQuestionText(entity.getQuestionText());
         dto.setAnswer(entity.getAnswer());
         dto.setOptions(entity.getOptions());

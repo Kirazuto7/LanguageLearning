@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SentenceWordDTO {
     private Long id;
-    private SentenceDTO sentence;
     private WordDTO word;
     private int wordIndex;
 }
