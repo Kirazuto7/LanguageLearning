@@ -12,7 +12,7 @@ const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-a
   // The outer div is for the library. It gets the ref.
   // The inner div is for our styles.
   return (
-    <div ref={ref}>
+    <div className='h-100' ref={ref}>
       <div className={`${styles['active-page']} ${pageSideClass}`}>
         <div className={styles['page-content']}>
           {children}

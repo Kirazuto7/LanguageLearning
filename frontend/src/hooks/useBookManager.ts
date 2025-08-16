@@ -20,7 +20,9 @@ export function useBookManager(language: string, difficulty: string): BookManage
     const { user } = useSelector((state: RootState) => state.auth);
 
     // 2. Fetch the book data
-    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery({ language, difficulty, userId: user!.id });
+    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery(
+        { language, difficulty, userId: user?.id as number },
+        { skip: !user });
     
     // 3. Get the mutation function(s)
     const [generateChapterMutation, { isLoading: isGeneratingChapter, error: generateChapterError }] = useGenerateChapterMutation();
