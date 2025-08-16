@@ -1,5 +1,5 @@
-import ChapterGenerator from "../components/ChapterGenerator";
-import FlipBook from "../components/studybook/FlipBook";
+import ChapterGenerator from "../components/ai/ChapterGenerator";
+import Lessonbook from "../components/learningtools/studybook/Lessonbook";
 import React, { useState } from 'react';
 import { useLocation, Navigate } from "react-router-dom";
 
@@ -17,13 +17,16 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
 
     return (
         <div>
-            <FlipBook
-                generatedChapterPage={generatedChapterPage}
-                onFlipComplete={() => setGeneratedChapterPage(null)}
-            />
+            <Lessonbook/>
+            
             <ChapterGenerator onChapterGenerated={setGeneratedChapterPage} />
         </div>
     );
 }
 
 export default StudyBookPage;
+
+/*<FlipBook
+                generatedChapterPage={generatedChapterPage}
+                onFlipComplete={() => setGeneratedChapterPage(null)}
+            />*/

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Styles from '../styles/mascot.module.css';
 import LanguageSettings from './LanguageSettings';
-import { useLanguage } from '../contexts/LanguageSettingsContext';
+import { useSettingsManager } from '../../hooks/useSettingsManager';
 
 interface MascotCharacterProps {
     hop?: boolean;
@@ -203,15 +203,15 @@ interface MascotProps {
 }
 
 export const Mascot: React.FC<MascotProps> = ({ onTopicSubmit, isLoading = false }) => {
-    const { language } = useLanguage();
+    const { settings } = useSettingsManager();
     const [hop, setHop] = useState<boolean>(false);
-    const [speech, setSpeech] = useState<string>(`Let's learn ${language}! What should our first topic be? 😄`);
+    const [speech, setSpeech] = useState<string>(`Let's learn ${settings?.language || ' a new language'}! What should our first topic be? 😄`);
     const [openSettings, setOpenSettings] = useState<boolean>(false);
 
     useEffect(() => {
         // When the language is changed in settings, update the mascot's speech.
-        setSpeech(`Let's learn ${language}! What should our first topic be? 😄`);
-    }, [language]);
+        setSpeech(`Let's learn ${settings?.language || ' a new language'}! What should our first topic be? 😄`);
+    }, [settings]);
 
     const handleSendButton = (topic: string) => {
         setHop(true);

@@ -1,6 +1,7 @@
-import VocabularyLesson from "../components/lessons/VocabularyLesson";
-import BookPage from "../components/studybook/BookPage";
-import ChapterPage from "../components/studybook/ChapterPage";
+import VocabularyLesson from "../components/learningtools/studybook/lessons/VocabularyLesson";
+import GrammarLesson from "../components/learningtools/studybook/lessons/GrammarLesson";
+import BookPage from "../components/learningtools/readingbook/BookPage";
+import ChapterPage from "../components/learningtools/readingbook/ChapterPage";
 import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
 
 // Determines Page Component layout depending on the lesson type of the page
@@ -12,8 +13,10 @@ const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
     switch (page.lesson.type) {
         case 'VOCABULARY':
             return <VocabularyLesson lesson={page.lesson}/>;
+        case 'GRAMMAR':
+            return <GrammarLesson lesson={page.lesson}/>
         default:
-            return <p>Unsupported lesson type: {page.lesson.type}</p>;
+            return <div style={{height: '100%'}}><p>Unsupported lesson type: {page.lesson.type}</p></div>;
     }
 }
 
