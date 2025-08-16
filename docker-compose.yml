@@ -55,8 +55,6 @@ services:
           devices:
             - capabilities: [gpu] # optional
     healthcheck:
-      # The ollama CLI is available in the container and can be used for a more reliable healthcheck
-      # than curl, which is not installed in the minimal official image.
       test: ["CMD", "ollama", "list"]
       interval: 10s
       timeout: 5s

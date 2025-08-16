@@ -12,6 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class GrammarLessonDTO extends LessonDTO {
     private String grammarConcept;
+    private String nativeGrammarConcept;
     private String explanation;
     private List<SentenceDTO> exampleSentences;
 }

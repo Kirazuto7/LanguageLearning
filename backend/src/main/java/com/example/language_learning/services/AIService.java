@@ -167,16 +167,7 @@ public class AIService {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(word -> {
-                    if (word instanceof KoreanWordDTO koreanWord) {
-                        return koreanWord.getHangeul();
-                    }
-                    else if(word instanceof JapaneseWordDTO japaneseWord) {
-                        return japaneseWord.getHiragana();
-                    }
-                    // Fallback to the English translation if the type is not specifically handled.
-                    return word.getTranslation();
-                })
+                .map(WordDTO::getPrimaryRepresentation)
                 .collect(Collectors.joining(", "));
     }
 

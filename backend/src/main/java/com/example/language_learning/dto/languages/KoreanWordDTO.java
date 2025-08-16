@@ -10,4 +10,15 @@ import lombok.NoArgsConstructor;
 public class KoreanWordDTO extends WordDTO{
     private String hangeul;
     private String hanja;
+
+    @Override
+    public String getPrimaryRepresentation() {
+        if (hangeul != null && !hangeul.trim().isEmpty()) {
+            return getHangeul();
+        }
+        if (hanja != null && !hanja.trim().isEmpty()) {
+            return getHanja();
+        }
+        return "";
+    }
 }

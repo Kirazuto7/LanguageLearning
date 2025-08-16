@@ -36,7 +36,7 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
         }
     }
 
-    const pageIndexOffset = 2;
+    //const pageIndexOffset = 2;
 
     const tocChapters: TocChapter[] = chapters.map( (chapter: ChapterDTO) => {
         const firstPageOfChapter = chapter.pages?.[0];
@@ -45,7 +45,7 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
             chapterNumber: chapter.chapterNumber,
             title: chapter.title,
             displayPageNumber: displayPageNumber,
-            navigationPageIndex: displayPageNumber > 0 ? displayPageNumber + pageIndexOffset : 0
+            navigationPageIndex: displayPageNumber > 0 ? displayPageNumber : 0
         }
     });
 
