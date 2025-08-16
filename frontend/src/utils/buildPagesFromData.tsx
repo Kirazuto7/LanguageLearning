@@ -1,4 +1,4 @@
-import VocabularyLesson from "../components/lessons/VocabularyLesson";
+import VocabularyPage from "../components/lessons/VocabularyPage";
 import BookPage from "../components/studybook/BookPage";
 import ChapterPage from "../components/studybook/ChapterPage";
 import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
@@ -11,9 +11,9 @@ const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
 
     switch (page.lesson.type) {
         case 'VOCABULARY':
-            return <VocabularyLesson lesson={page.lesson}/>;
+            return <VocabularyPage lesson={page.lesson}/>;
         default:
-            return <p>Unsupported lesson type: {page.lesson.type}</p>;
+            return <div style={{height: '100%'}}><p>Unsupported lesson type: {page.lesson.type}</p></div>;
     }
 }
 
