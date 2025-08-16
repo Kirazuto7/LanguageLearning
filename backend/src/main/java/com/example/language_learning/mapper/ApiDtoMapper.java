@@ -34,6 +34,7 @@ public class ApiDtoMapper {
         GrammarLessonDTO dto = new GrammarLessonDTO();
         dto.setTitle(response.title());
         dto.setGrammarConcept(response.grammarConcept());
+        dto.setNativeGrammarConcept(response.nativeGrammarConcept());
         dto.setExplanation(response.explanation());
         dto.setExampleSentences(response.exampleSentences());
         return dto;

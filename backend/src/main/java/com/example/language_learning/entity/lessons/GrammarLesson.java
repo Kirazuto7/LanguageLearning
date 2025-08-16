@@ -20,6 +20,9 @@ public class GrammarLesson extends Lesson {
     private String grammarConcept;
 
     @Column(columnDefinition = "TEXT")
+    private String nativeGrammarConcept;
+
+    @Column(columnDefinition = "TEXT")
     private String explanation;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
