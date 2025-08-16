@@ -6,7 +6,6 @@ import HomePage from './pages/HomePage';
 import StudyBookPage from './pages/StudyBookPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage  from './pages/LoginPage';
-import StudyLayout from './layouts/StudyLayout';
 
 const App: React.FC = () => {
 
@@ -20,10 +19,7 @@ const App: React.FC = () => {
               <Route path="/" element={<LandingPage/>} />
               <Route path="/login" element={<LoginPage/>} />
               <Route path="/home" element={<HomePage />} />
-              <Route element={<StudyLayout/>}>
-                <Route path="/study" element={<StudyBookPage />} />
-              </Route>
-              
+              <Route path="/study" element={<StudyBookPage />} />
             </Routes>
           </Container>
         </main>

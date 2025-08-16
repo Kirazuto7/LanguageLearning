@@ -1,8 +1,7 @@
-import ChapterGenerator from "../components/ChapterGenerator";
-import FlipBook from "../components/studybook/FlipBook";
+import ChapterGenerator from "../components/ai/ChapterGenerator";
+import Lessonbook from "../components/learningtools/studybook/Lessonbook";
 import React, { useState } from 'react';
 import { useLocation, Navigate } from "react-router-dom";
-import Lessonbook from "../components/studybook/Lessonbook";
 
 interface StudyBookPageProps{}
 

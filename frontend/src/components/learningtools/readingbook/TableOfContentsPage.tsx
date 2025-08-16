@@ -32,7 +32,7 @@ const TableOfContentsPage: React.FC<TableOfContentsPageProps> = (({ chapters = [
                                 fontSize: '1rem',
                                 width: '100%'
                                 }}
-                            > 
+                            >
                                 <div className="d-flex flex-column align-items-start">
                                     <div className="fw-bold">Chapter {chapterNumber}</div>
                                     <div className="d-flex justify-content-between w-100 ">

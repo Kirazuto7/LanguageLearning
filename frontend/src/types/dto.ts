@@ -75,6 +75,7 @@ export interface VocabularyLessonDTO extends LessonDTO {
 export interface GrammarLessonDTO extends LessonDTO {
     type: 'GRAMMAR';
     grammarConcept: string;
+    nativeGrammarConcept: string;
     explanation: string;
     exampleSentences: SentenceDTO[];
 }
@@ -124,4 +125,9 @@ export interface ChapterGenerationRequest {
     difficulty: string;
     topic: string;
     userId: number;
+}
+
+export interface UpdateSettingsRequest {
+    userId: number;
+    settings: Partial<Omit<SettingsDTO, 'id'>>;
 }

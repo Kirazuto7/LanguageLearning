@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserDTO } from "../../types/dto";
-import { userApiSlice } from "../users/userApiSlice";
+import { userApiSlice } from "../api/userApiSlice";
 
 /*//////////////////////////////////////////////////////////////////////////////////////*/
-/* This is a standard Redux "slice" that will manage the user's authentication state on */
+/*     This Redux "slice" will manage the user's authentication state on                */
 /*     the client side (i.e., storing the user object after a successful login).        */
 /*//////////////////////////////////////////////////////////////////////////////////////*/
 
@@ -21,10 +21,6 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        // On App load
-        /*setUser: (state, action: PayloadAction<UserDTO>) => {
-            state.user = action.payload;
-        },*/
         logOut: (state) => {
             state.user = null;
             localStorage.removeItem('user');
@@ -35,17 +31,15 @@ const authSlice = createSlice({
         /*  When the mutators execute (e.g.: login, register)  */
         /*/////////////////////////////////////////////////////*/
 
-        // Login
-        builder.addMatcher(userApiSlice.endpoints.login.matchFulfilled, (state, { payload }) =>{
-            state.user = payload;
-            localStorage.setItem('user', JSON.stringify(payload));
-        });
-
-        // Register
-        builder.addMatcher(userApiSlice.endpoints.register.matchFulfilled, (state, { payload }) => {
-            state.user = payload;
-            localStorage.setItem('user', JSON.stringify(payload));
-        })
+        builder.addMatcher(
+            (action): action is PayloadAction<UserDTO> =>
+                userApiSlice.endpoints.login.matchFulfilled(action) || // Login
+                userApiSlice.endpoints.register.matchFulfilled(action), // Register
+            (state, { payload }) => {
+                state.user = payload;
+                localStorage.setItem('user', JSON.stringify(payload));
+            }
+        )
     }
 });
 

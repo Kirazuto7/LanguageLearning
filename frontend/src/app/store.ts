@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "../features/api/apiSlice";
-import authReducer from "../features/auth/authSlice";
+import authReducer from "../features/state/authSlice";
+import settingsReducer from "../features/state/settingsSlice";
 
 export const store = configureStore({
     reducer: {
         [apiSlice.reducerPath]: apiSlice.reducer, // top-level slice reducer
         auth: authReducer,
+        settings: settingsReducer,
     },
     /*//////////////////////////////////////////////////////////////*/
     /* Adding the api middleware enables rtk-query features such as */

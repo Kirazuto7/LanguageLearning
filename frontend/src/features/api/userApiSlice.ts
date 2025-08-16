@@ -1,5 +1,5 @@
 import { apiSlice } from "../api/apiSlice";
-import { LoginRequest, CreateUserRequest, UserDTO } from "../../types/dto";
+import { LoginRequest, CreateUserRequest, UserDTO, UpdateSettingsRequest, SettingsDTO } from "../../types/dto";
 
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
@@ -18,7 +18,15 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 body: userData
             })
         }),
+
+        updateSettings: builder.mutation<SettingsDTO, UpdateSettingsRequest>({
+            query: ({ userId, settings }) => ({
+                url: `/users/${userId}/settings`,
+                method: 'PATCH',
+                body: settings,
+            })
+        }),
     })
 });
 
-export const { useLoginMutation, useRegisterMutation } = userApiSlice;
+export const { useLoginMutation, useRegisterMutation, useUpdateSettingsMutation } = userApiSlice;
