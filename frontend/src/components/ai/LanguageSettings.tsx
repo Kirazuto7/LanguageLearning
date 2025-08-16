@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
 import Styles from '../styles/mascot.module.css';
-import { useLanguage } from '../contexts/LanguageSettingsContext';
+import { useSettingsManager } from '../../hooks/useSettingsManager';
 
 interface LanguageSettingsProps {
     openSettings: boolean,
@@ -12,7 +12,7 @@ const LanguageSettings: React.FC<LanguageSettingsProps> = ({
     openSettings,
     setOpenSettings
 }) => {
-    const { language, setLanguage, difficulty, setDifficulty } = useLanguage();
+    const { settings, updateSettings, isLoading } = useSettingsManager();
     const settingsRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -49,15 +49,31 @@ const LanguageSettings: React.FC<LanguageSettingsProps> = ({
                                 <div className="card-header">Language Settings</div>
                                 <div className="card-body">
                                     <div className="mb-3">
-                                        <label htmlFor="language-select" className="form-label">Language:</label>
-                                        <select id="language-select" className="form-select" value={language} onChange={(e) => setLanguage(e.target.value)}>
+                                        <label htmlFor="language-select" className="form-label">
+                                            Language:
+                                        </label>
+                                        <select
+                                            id="language-select"
+                                            className="form-select"
+                                            value={settings?.language || ''}
+                                            onChange={(e) => updateSettings({language: e.target.value})}
+                                            disabled={isLoading || !settings}
+                                        >
                                             <option value="Korean">Korean</option>
                                             <option value="Japanese">Japanese</option>
                                         </select>
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="level-select" className="form-label">Proficiency Level:</label>
-                                        <select id="level-select" className="form-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                                        <label htmlFor="level-select" className="form-label">
+                                            Proficiency Level:
+                                        </label>
+                                        <select
+                                            id="level-select"
+                                            className="form-select"
+                                            value={settings?.difficulty || ''}
+                                            onChange={(e) => updateSettings({difficulty: e.target.value})}
+                                            disabled={isLoading || !settings}
+                                        >
                                             <option value="Beginner">Beginner</option>
                                             <option value="Pre-Intermediate">Pre-Intermediate</option>
                                             <option value="Intermediate">Intermediate</option>

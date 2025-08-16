@@ -1,12 +1,11 @@
 import React, { useRef } from 'react';
 import styles from '../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
-import { useLanguage } from '../../contexts/LanguageSettingsContext';
 import BehindCoverPage from './BehindCoverPage';
 import TableOfContentsPage, { TocChapter } from './TableOfContentsPage';
 import BookPage from './BookPage';
-import { ChapterDTO } from '../../types/dto';
-import { useBookManager } from '../../hooks/useBookManager';
+import { ChapterDTO } from '../../../types/dto';
+import { useReadingBookManager } from '../../../hooks/useReadingBookManager';
 
 interface PageFlipAPI {
     flip: (pageIndex: number, corner?: string) => void;
@@ -19,8 +18,7 @@ interface FlipBookProps {
 
 
 const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplete }) => {
-    const { language, difficulty, languageName } = useLanguage();
-    const { pages, chapters, title } = useBookManager(language, difficulty);
+    const { pages, chapters, title } = useReadingBookManager();
     const flipBookRef = useRef<React.ElementRef<typeof HTMLFlipBook> | null>(null);
 
     const onInit = () => {
@@ -32,7 +30,7 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
 
     const handleChapterSelect = (pageIndex: number) => {
         if(flipBookRef.current) {
-            (flipBookRef.current.pageFlip() as PageFlipAPI).flip(pageIndex);
+            (flipBookRef.current.pageFlip() as PageFlipAPI).flip(pageIndex+1);
         }
     }
 
@@ -69,7 +67,6 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
                 {/* Cover Page */}
                 <div className={`${styles.cover}`}>
                     <h2 className={`mt-5 text-center ${styles['book-title']}`}>{title}</h2>
-                    <h2 className={`mt-5 text-center ${styles['book-title']}`}>{languageName}</h2>
                 </div>
 
                 <BehindCoverPage/>

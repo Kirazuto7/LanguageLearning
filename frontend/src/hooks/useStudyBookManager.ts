@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { buildPagesFromBookData } from '../utils/buildPagesFromData';
 import { ChapterDTO } from '../types/dto';
 import { useSelector } from 'react-redux';
-import { useFetchBookQuery, useGenerateChapterMutation } from '../features/books/bookApiSlice';
+import { useFetchBookQuery, useGenerateChapterMutation } from '../features/api/bookApiSlice';
 import { RootState } from '../app/store';
 
 
-interface BookManagerResult {
+interface StudyBookManagerResult {
     pages: React.ReactElement[];
     title: string;
     chapters: ChapterDTO[];
@@ -15,18 +15,23 @@ interface BookManagerResult {
     error: string | null;
 }
 
-export function useBookManager(language: string, difficulty: string): BookManagerResult {
+export function useStudyBookManager(): StudyBookManagerResult {
     // 1. Fetch user from global Redux state
     const { user } = useSelector((state: RootState) => state.auth);
-
+    const { settings } = useSelector((state: RootState) => state.settings);
+    const language = settings?.language || '';
+    const difficulty = settings?.difficulty || '';
+    
     // 2. Fetch the book data
-    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery({ language, difficulty, userId: user!.id });
+    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery(
+        { language, difficulty, userId: user?.id as number },
+        { skip: !user || !settings});
     
     // 3. Get the mutation function(s)
     const [generateChapterMutation, { isLoading: isGeneratingChapter, error: generateChapterError }] = useGenerateChapterMutation();
 
     // 4. Generate Chapter function will assemble the required data and call the mutation
-    const generateChapter = async (topic: string): Promise<ChapterDTO | null> => {
+    const generateChapter = useCallback(async (topic: string): Promise<ChapterDTO | null> => {
         if (!user) {
             console.error("Cannot generate chapter: User is not logged in.");
             return null;
@@ -37,7 +42,7 @@ export function useBookManager(language: string, difficulty: string): BookManage
             console.error('Failed to generate chapter:', err);
             return null;
         }
-    };
+    }, [user, language, difficulty, generateChapterMutation]);
 
     // 5. Process book pages based on the book data state
     const pages = useMemo(() => {

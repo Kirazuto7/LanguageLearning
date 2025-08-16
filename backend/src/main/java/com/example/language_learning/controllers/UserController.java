@@ -1,16 +1,16 @@
 package com.example.language_learning.controllers;
 
+import com.example.language_learning.dto.SettingsDTO;
 import com.example.language_learning.dto.UserDTO;
+import com.example.language_learning.entity.Settings;
 import com.example.language_learning.requests.CreateUserRequest;
 import com.example.language_learning.requests.LoginRequest;
 import com.example.language_learning.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,14 +23,22 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public UserDTO createUser(@Valid @RequestBody  CreateUserRequest request) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody  CreateUserRequest request) {
         logger.info("Received request to create a user with username: {}", request.getUsername());
-        return userService.createNewUser(request);
+        UserDTO newUser = userService.createNewUser(request);
+        return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
-    public UserDTO login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequest request) {
         logger.info("Received request to login with username: {}", request.getUsername());
-        return userService.login(request);
+        UserDTO user = userService.login(request);
+        return ResponseEntity.ok(user);
+    }
+
+    @PatchMapping("/{userId}/settings")
+    public ResponseEntity<SettingsDTO> updateUserSettings(@PathVariable Long userId, @RequestBody SettingsDTO updateRequest) {
+        SettingsDTO updatedSettings = userService.updateSettings(userId, updateRequest);
+        return ResponseEntity.ok(updatedSettings);
     }
 }

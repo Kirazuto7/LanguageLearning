@@ -1,5 +1,6 @@
 package com.example.language_learning.services;
 
+import com.example.language_learning.dto.SettingsDTO;
 import com.example.language_learning.dto.UserDTO;
 import com.example.language_learning.entity.Settings;
 import com.example.language_learning.entity.User;
@@ -8,6 +9,7 @@ import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.CreateUserRequest;
 import com.example.language_learning.requests.LoginRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -16,6 +18,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final DtoMapper mapper;
 
     public UserDTO createNewUser(CreateUserRequest request) {
@@ -25,7 +28,7 @@ public class UserService {
 
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Settings settings = new Settings();
         settings.setLanguage(request.getLanguage());
@@ -40,9 +43,24 @@ public class UserService {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
-        if (!Objects.equals(user.getPassword(), request.getPassword())) {
-            throw new IllegalArgumentException("Incorrect password.");
+        if (!passwordEncoder.matches(user.getPassword(), request.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password.");
         }
         return mapper.toDto(user);
+    }
+
+    public SettingsDTO updateSettings(Long userId, SettingsDTO updateRequest) {
+        User user = userRepository.findById(userId).orElseThrow( () ->
+                new IllegalArgumentException("User with id: " + userId + " not found.")
+        );
+
+        if(updateRequest.getLanguage() != null && !updateRequest.getLanguage().isBlank()) {
+            user.getSettings().setLanguage(updateRequest.getLanguage());
+        }
+        if(updateRequest.getDifficulty() != null && !updateRequest.getDifficulty().isBlank()) {
+            user.getSettings().setDifficulty(updateRequest.getDifficulty());
+        }
+        User savedUser = userRepository.save(user);
+        return mapper.toDto(savedUser.getSettings());
     }
 }
