@@ -1,14 +1,16 @@
 import React from 'react';
 import { Table, Card } from 'react-bootstrap';
-import { VocabularyLessonDTO } from '../../types/dto';
-import { renderWord } from '../../utils/renderUtils';
+import { VocabularyLessonDTO, AnyWordDTO } from '../../../../types/dto';
+import { renderWord } from '../../../../utils/renderUtils';
 
-
-interface VocabularyPageProps {
+interface VocabularyLessonProps {
     lesson: VocabularyLessonDTO;
 }
 
-const VocabularyPage: React.FC<VocabularyPageProps> = ({ lesson }) => {
+/**
+ * Renders the content for a vocabulary lesson, displaying words and their translations in a table.
+*/
+const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
 
     return(
         <Card className="h-100 d-flex flex-column">
@@ -25,7 +27,7 @@ const VocabularyPage: React.FC<VocabularyPageProps> = ({ lesson }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {lesson.vocabularies.map((word, index) => (
+                        {lesson.vocabularies.map((word: AnyWordDTO, index) => (
                             <tr key={index}>
                                 {renderWord(word)}
                                 <td>{word.translation}</td>
@@ -37,4 +39,4 @@ const VocabularyPage: React.FC<VocabularyPageProps> = ({ lesson }) => {
         </Card>
     );
 }
-export default VocabularyPage;
+export default VocabularyLesson;

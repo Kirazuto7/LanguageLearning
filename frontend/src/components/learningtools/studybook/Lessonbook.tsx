@@ -1,15 +1,13 @@
 import React from "react";
 import styles from '../../styles/lessonbook.module.css';
 import { Carousel, Spinner } from "react-bootstrap";
-import { useLanguage } from "../../contexts/LanguageSettingsContext";
-import { useBookManager } from "../../hooks/useBookManager";
+import { useStudyBookManager } from "../../../hooks/useStudyBookManager";
 
 interface LessonbookProps{
 };
 
 const Lessonbook: React.FC<LessonbookProps> = ({}) => {
-    const { language, difficulty } = useLanguage();
-    const { pages, title, isLoading } = useBookManager(language, difficulty);
+    const { pages, title, isLoading } = useStudyBookManager();
 
     if (isLoading) {
         return <div className="d-flex justify-content-center align-items-center h-100"><Spinner animation="border" /></div>;

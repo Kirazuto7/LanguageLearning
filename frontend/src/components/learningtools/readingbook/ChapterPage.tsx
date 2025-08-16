@@ -11,7 +11,7 @@ interface ChapterPageProps {
 }
 /**
  * Renders the content for the first page of a chapter.
- */        
+ */
 const ChapterPage = React.forwardRef<HTMLDivElement, ChapterPageProps>(({ pageNumber, children, isRightPage = true, chapterNumber, chapterNativeTitle, chapterTitle }, ref) => {
 const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-active-page'];
 
