@@ -46,7 +46,7 @@ services:
   ollama:
     build:
       context: ./backend
-      dockerfile: DockerfileKo
+      dockerfile: DockerfileAI
     ports:
       - "11434:11434"
     deploy:
