@@ -8,5 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class EnglishWordDTO extends WordDTO {
-    // No extra fields are needed for English, as the 'translation' field in the base class holds the word.
+    private String word;
+    @Override
+    public String getPrimaryRepresentation() {
+        if (word != null && !word.trim().isEmpty()) {
+            return getWord();
+        }
+        return "";
+    }
 }
