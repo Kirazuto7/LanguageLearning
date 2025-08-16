@@ -206,6 +206,7 @@ public class DtoMapper {
         mapLessonBaseProperties(lesson, dto);
         lesson.setType(LessonType.GRAMMAR);
         lesson.setGrammarConcept(dto.getGrammarConcept());
+        lesson.setNativeGrammarConcept(dto.getNativeGrammarConcept());
         lesson.setExplanation(dto.getExplanation());
         if (dto.getExampleSentences() != null) {
             dto.getExampleSentences().stream()
@@ -219,6 +220,7 @@ public class DtoMapper {
         GrammarLessonDTO dto = new GrammarLessonDTO();
         mapLessonBaseProperties(dto, entity);
         dto.setGrammarConcept(entity.getGrammarConcept());
+        dto.setNativeGrammarConcept(entity.getNativeGrammarConcept());
         dto.setExplanation(entity.getExplanation());
         dto.setExampleSentences(entity.getExampleSentences().stream().map(this::toDto).collect(Collectors.toList()));
         return dto;

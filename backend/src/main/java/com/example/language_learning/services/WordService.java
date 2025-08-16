@@ -7,8 +7,6 @@ import com.example.language_learning.entity.languages.Word;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.JapaneseWordRepository;
 import com.example.language_learning.repositories.KoreanWordRepository;
-import com.example.language_learning.repositories.WordRepository;
-import jakarta.persistence.ElementCollection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
