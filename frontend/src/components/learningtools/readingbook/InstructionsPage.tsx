@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/bookpage.module.css';
+import styles from '../../../styles/bookpage.module.css';
 
 interface InstructionsPageProps {
     children: React.ReactNode;

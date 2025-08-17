@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { MascotCharacter, Blackboard }  from "../components/ai/Mascot";
 import { LoginRequest, CreateUserRequest } from "../types/dto";
 import { useSelector } from "react-redux";
-import { useLoginMutation, useRegisterMutation } from "../features/users/userApiSlice";
+import { useLoginMutation, useRegisterMutation } from "../features/api/userApiSlice";
 import { RootState } from "../app/store";
 
 interface LoginProps {
@@ -41,7 +41,11 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
                 <MascotCharacter hop={true} />
             </div>
 
-            { error && <Alert variant="danger">{'data' in error ? JSON.stringify((error as any).data.message) : 'An error occurred'}</Alert> }
+            { error && (
+                <Alert variant="danger">
+                    {(error as any)?.data?.message || 'An unexpected error occurred. Please try again.'}
+                </Alert>
+            )}
 
             <Form.Group className="mb-3">
                 <Form.Label htmlFor="login-username">Username</Form.Label>
@@ -120,7 +124,11 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
                 <MascotCharacter hop={false} />
             </div>
 
-            { error && <Alert variant="danger">{'data' in error ? JSON.stringify((error as any).data.message) : 'An error occurred'}</Alert> }
+            { error && (
+                <Alert variant="danger">
+                    {(error as any)?.data?.message || 'An unexpected error occurred. Please try again.'}
+                </Alert>
+            )}
 
             <Form.Group className="mb-3">
                 <Form.Label htmlFor="register-username">Username</Form.Label>

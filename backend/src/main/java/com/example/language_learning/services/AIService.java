@@ -1,8 +1,6 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.api.*;
-import com.example.language_learning.dto.languages.JapaneseWordDTO;
-import com.example.language_learning.dto.languages.KoreanWordDTO;
 import com.example.language_learning.dto.languages.WordDTO;
 import com.example.language_learning.dto.lessons.GrammarLessonDTO;
 import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
@@ -16,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,16 @@ import java.util.stream.Collectors;
 public class AIService {
 
     private static final Logger logger = LoggerFactory.getLogger(AIService.class);
-    private final ChatClient chatClient;
+    private static final String DEFAULT_MODEL_NAME = "qwen3";
+    private static final Map<String, String> LANGUAGE_MODEL_MAP;
+    static {
+        LANGUAGE_MODEL_MAP = Map.of(
+          "korean", "exaone",
+          "japanese", "qwen3",
+          "default", DEFAULT_MODEL_NAME
+        );
+    }
+    private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
     @Value("classpath:prompts/chapter_metadata_prompt.txt")
     private Resource chapterMetadataPrompt;
@@ -55,9 +63,13 @@ public class AIService {
     @Value("classpath:prompts/reading_comprehension_lesson_prompt.txt")
     private Resource readingComprehensionLessonPrompt;
 
-    public AIService(ChatClient chatClient, ApiDtoMapper apiDtoMapper) {
-        this.chatClient = chatClient;
+    public AIService(Map<String, ChatClient> chatClients, ApiDtoMapper apiDtoMapper) {
+        this.chatClients = chatClients;
         this.apiDtoMapper = apiDtoMapper;
+        logger.info("--- Verifying Injected ChatClients ---");
+        logger.info("Found {} ChatClient bean(s):", chatClients.size());
+        chatClients.keySet().forEach(key -> logger.info(" -> Bean name: '{}'", key));
+        logger.info("--------------------------------------");
     }
 
     public Mono<ChapterMetadataDTO> generateChapterMetadata(ChapterGenerationRequest request) {
@@ -141,6 +153,8 @@ public class AIService {
 
         var prompt = promptTemplate.create(params);
         logger.debug("Rendered Prompt for {}: {}", componentName, prompt.getContents());
+        String language = (String) params.get("language");
+        ChatClient chatClient = selectClient(language);
 
         return chatClient.prompt()
                 .user(prompt.getContents())
@@ -148,7 +162,7 @@ public class AIService {
                 .map(list -> String.join("", list))
                 .doOnNext(rawResponse -> logger.info("Raw AI Response for {}: {}", componentName, rawResponse))
                 .map(this::extractJson)
-                .doOnNext(json -> logger.info("Extracted JSON for {}: {}", componentName, json))
+                .doOnNext(json -> logger.debug("Extracted JSON for {}: {}", componentName, json))
                 .map(outputParser::convert)
                 .map(mapperFunction)
                 .doOnNext(mapped -> logger.info("Mapped to internal DTO {}: {}", componentName, mapped))
@@ -194,5 +208,25 @@ public class AIService {
             return rawResponse.substring(firstBrace, lastBrace + 1);
         }
         return rawResponse; 
+    }
+
+    /**
+     * Selects a ChatClient based on the chosen language setting.
+     *
+     * @param language The language setting used to select the ChatClient to use.
+     * @return The Chat client for the selected language.
+     */
+    private ChatClient selectClient(String language) {
+        if(language == null || language.isBlank()) {
+            throw new IllegalArgumentException("Language cannot be null or empty.");
+        }
+        String modelName = LANGUAGE_MODEL_MAP.getOrDefault(language.toLowerCase(), LANGUAGE_MODEL_MAP.get("default"));
+        ChatClient client = chatClients.get(modelName);
+
+        if (client == null) {
+            logger.error("Could not find a ChatClient bean named '{}'. Available beans are: {}", modelName, chatClients.keySet());
+            throw new IllegalStateException("AI model client not configured: " + modelName);
+        }
+        return client;
     }
 }

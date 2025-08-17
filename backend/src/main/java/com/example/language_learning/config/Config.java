@@ -14,10 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class Config {
 
-    @Bean
+    /*@Bean
     public ChatClient chatClient(ChatClient.Builder builder, @Value("${app.ai.system-prompt}") String systemPrompt) {
         return builder.defaultSystem(systemPrompt).build();
-    }
+    }*/
 
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
