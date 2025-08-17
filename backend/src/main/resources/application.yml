@@ -1,10 +1,19 @@
 spring:
   ai:
-    ollama:
-      base-url: http://ollama:11434
+    exaone:
+      base-url: http://exaone:11434
       chat:
         options:
           model: exaone3.5
+          format: json
+          num-ctx: 8192
+          num-predict: 8192
+          temperature: 0.5
+    qwen3:
+      base-url: http://qwen3:11434
+      chat:
+        options:
+          model: qwen3:8b
           format: json
           num-ctx: 8192
           num-predict: 8192

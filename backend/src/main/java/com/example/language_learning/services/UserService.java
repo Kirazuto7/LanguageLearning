@@ -41,9 +41,11 @@ public class UserService {
 
     public UserDTO login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                // Use a generic error to prevent user enumeration attacks
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password."));
 
-        if (!passwordEncoder.matches(user.getPassword(), request.getPassword())) {
+        // The raw password from the request comes first, then the encoded one from the DB
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid username or password.");
         }
         return mapper.toDto(user);
