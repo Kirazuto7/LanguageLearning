@@ -1,4 +1,4 @@
-import styles from '../../styles/bookpage.module.css';
+import styles from '../../../styles/bookpage.module.css';
 
 export interface TocChapter {
     chapterNumber: number;

@@ -9,7 +9,12 @@ import com.example.language_learning.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,24 +26,51 @@ import javax.validation.Valid;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody  CreateUserRequest request) {
         logger.info("Received request to create a user with username: {}", request.getUsername());
-        UserDTO newUser = userService.createNewUser(request);
+        userService.createNewUser(request);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDTO newUser = userService.getUserByUsername(request.getUsername());
         return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequest request) {
         logger.info("Received request to login with username: {}", request.getUsername());
-        UserDTO user = userService.login(request);
-        return ResponseEntity.ok(user);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDTO userDto = userService.getUserByUsername(request.getUsername());
+        return ResponseEntity.ok(userDto);
     }
 
-    @PatchMapping("/{userId}/settings")
-    public ResponseEntity<SettingsDTO> updateUserSettings(@PathVariable Long userId, @RequestBody SettingsDTO updateRequest) {
-        SettingsDTO updatedSettings = userService.updateSettings(userId, updateRequest);
+    @PatchMapping("/settings")
+    public ResponseEntity<?> updateUserSettings(@RequestBody SettingsDTO updateRequest, Authentication authentication) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check if the user is authenticated. If not, the principal will be a string "anonymousUser".
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+        }
+
+        String username = auth.getName();
+        SettingsDTO updatedSettings = userService.updateSettings(username, updateRequest);
         return ResponseEntity.ok(updatedSettings);
     }
 }

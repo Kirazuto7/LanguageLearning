@@ -21,7 +21,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
         updateSettings: builder.mutation<SettingsDTO, UpdateSettingsRequest>({
             query: ({ userId, settings }) => ({
-                url: `/users/${userId}/settings`,
+                url: `/users/settings`,
                 method: 'PATCH',
                 body: settings,
             })

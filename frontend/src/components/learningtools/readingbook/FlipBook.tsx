@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import styles from '../../styles/flipbook.module.css';
+import styles from '../../../styles/flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import BehindCoverPage from './BehindCoverPage';
 import TableOfContentsPage, { TocChapter } from './TableOfContentsPage';
