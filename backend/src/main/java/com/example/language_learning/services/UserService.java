@@ -1,7 +1,6 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.SettingsDTO;
-import com.example.language_learning.dto.UserDTO;
 import com.example.language_learning.entity.Settings;
 import com.example.language_learning.entity.User;
 import com.example.language_learning.mapper.DtoMapper;
@@ -11,17 +10,11 @@ import com.example.language_learning.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +23,6 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final DtoMapper mapper;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(CreateUserRequest request) {
         User user = createNewUser(request);
@@ -39,9 +31,6 @@ public class UserService implements UserDetailsService {
     }
 
     public AuthenticationResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
         String jwtToken = jwtService.generateToken(user);
@@ -77,7 +66,6 @@ public class UserService implements UserDetailsService {
         
         Settings settings = user.getSettings();
 
-        // Use Optional to avoid verbose null/blank checks and clearly express intent.
         java.util.Optional.ofNullable(updateRequest.getLanguage())
                 .filter(lang -> !lang.isBlank())
                 .ifPresent(settings::setLanguage);

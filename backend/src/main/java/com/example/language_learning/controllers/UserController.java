@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ import javax.validation.Valid;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody  CreateUserRequest request, HttpServletResponse servletResponse) {
@@ -36,6 +39,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequest request, HttpServletResponse servletResponse) {
         logger.info("Received request to login with username: {}", request.getUsername());
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
         AuthenticationResponse authenticationResponse = userService.login(request);
         setJwtCookie(servletResponse, authenticationResponse.getToken());
         return ResponseEntity.ok(authenticationResponse.getUser());
