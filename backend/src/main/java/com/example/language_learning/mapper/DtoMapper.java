@@ -2,16 +2,11 @@ package com.example.language_learning.mapper;
 
 import com.example.language_learning.dto.SettingsDTO;
 import com.example.language_learning.dto.UserDTO;
-import com.example.language_learning.dto.languages.EnglishWordDTO;
-import com.example.language_learning.dto.languages.JapaneseWordDTO;
-import com.example.language_learning.dto.languages.KoreanWordDTO;
 import com.example.language_learning.dto.languages.WordDTO;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.entity.Settings;
 import com.example.language_learning.entity.User;
-import com.example.language_learning.entity.languages.JapaneseWord;
-import com.example.language_learning.entity.languages.KoreanWord;
 import com.example.language_learning.entity.languages.Word;
 import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.entity.models.*;
@@ -19,11 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Component
 @Slf4j
@@ -180,7 +173,6 @@ public class DtoMapper {
         mapLessonBaseProperties(lesson, dto);
         lesson.setType(LessonType.PRACTICE);
         lesson.setInstructions(dto.getInstructions());
-        lesson.setAnswerPool(dto.getAnswerPool());
         if (dto.getQuestions() != null) {
             List<Question> questions = dto.getQuestions().stream()
                     .map(qDto -> toEntity(qDto, lesson))
@@ -194,7 +186,6 @@ public class DtoMapper {
         PracticeLessonDTO dto = new PracticeLessonDTO();
         mapLessonBaseProperties(dto, entity);
         dto.setInstructions(entity.getInstructions());
-        dto.setAnswerPool(entity.getAnswerPool());
         if (entity.getQuestions() != null) {
             dto.setQuestions(entity.getQuestions().stream().map(this::toDto).collect(Collectors.toList()));
         }
@@ -256,51 +247,24 @@ public class DtoMapper {
 
     public Word toEntity(WordDTO dto) {
         if (dto == null) return null;
-
-        if (dto instanceof KoreanWordDTO koreanDto) {
-            KoreanWord word = new KoreanWord();
-            word.setId(koreanDto.getId());
-            word.setHangeul(koreanDto.getHangeul());
-            word.setTranslation(koreanDto.getTranslation());
-            word.setHanja(koreanDto.getHanja());
-            return word;
-        }
-        else if (dto instanceof JapaneseWordDTO japaneseDto) {
-            JapaneseWord word = new JapaneseWord();
-            word.setId(japaneseDto.getId());
-            word.setTranslation(japaneseDto.getTranslation());
-            word.setHiragana(japaneseDto.getHiragana());
-            word.setKatakana(japaneseDto.getKatakana());
-            word.setKanji(japaneseDto.getKanji());
-            word.setRomaji(japaneseDto.getRomaji());
-            return word;
-        }
-
-        log.warn("Received an unsupported EnglishWordDTO. Skipping this word.");
-        return null;
+        Word word = new Word();
+        word.setId(dto.getId());
+        word.setEnglishTranslation(dto.getEnglishTranslation());
+        word.setNativeWord(dto.getNativeWord());
+        word.setLanguage(dto.getLanguage());
+        word.setPhoneticSpelling(dto.getPhoneticSpelling());
+        return word;
     }
 
     public WordDTO toDto(Word entity) {
-        Object unproxiedEntity = Hibernate.unproxy(entity);
-
-        if (unproxiedEntity instanceof KoreanWord koreanEntity) {
-            KoreanWordDTO dto = new KoreanWordDTO();
-            dto.setId(koreanEntity.getId());
-            dto.setHangeul(koreanEntity.getHangeul());
-            dto.setHanja(koreanEntity.getHanja());
-            dto.setTranslation(koreanEntity.getTranslation());
-            return dto;
-        } else if (unproxiedEntity instanceof JapaneseWord japaneseEntity) {
-            JapaneseWordDTO dto = new JapaneseWordDTO();
-            dto.setId(japaneseEntity.getId());
-            dto.setTranslation(japaneseEntity.getTranslation());
-            dto.setHiragana(japaneseEntity.getHiragana());
-            dto.setKatakana(japaneseEntity.getKatakana());
-            dto.setKanji(japaneseEntity.getKanji());
-            dto.setRomaji(japaneseEntity.getRomaji());
-            return dto;
-        }
-        throw new IllegalArgumentException("Unknown Word entity type: " + unproxiedEntity.getClass().getSimpleName());
+        if (entity == null) return null;
+        WordDTO dto = new WordDTO();
+        dto.setId(entity.getId());
+        dto.setEnglishTranslation(entity.getEnglishTranslation());
+        dto.setLanguage(entity.getLanguage());
+        dto.setNativeWord(entity.getNativeWord());
+        dto.setPhoneticSpelling(entity.getPhoneticSpelling());
+        return dto;
     }
 
     /* ********************* */
@@ -308,6 +272,7 @@ public class DtoMapper {
     /* ********************* */
 
     public Sentence toEntity(SentenceDTO dto) {
+        if (dto == null) return null;
         Sentence sentence = new Sentence();
         sentence.setId(dto.getId());
         sentence.setTranslation(dto.getTranslation());
@@ -316,6 +281,7 @@ public class DtoMapper {
     }
 
     public SentenceDTO toDto(Sentence entity) {
+        if (entity == null) return null;
         SentenceDTO dto = new SentenceDTO();
         dto.setId(entity.getId());
         dto.setTranslation(entity.getTranslation());

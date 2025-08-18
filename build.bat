@@ -71,7 +71,7 @@ goto :eof
 
     docker-compose down
     echo Closing any existing DockerWindow...
-    taskkill /F /FI "WINDOWTITLE eq DockerWindow" /T 2>nul
+    taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
     exit /b 0
 
 :DockerHardCleanup
@@ -84,7 +84,7 @@ goto :eof
     docker-compose down -v
     docker builder prune -f
     echo Closing any existing DockerWindow...
-    taskkill /F /FI "WINDOWTITLE eq DockerWindow" /T 2>nul
+    taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
     exit /b 0
 
 :DockerBuild

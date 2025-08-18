@@ -10,5 +10,5 @@ import java.util.List;
  */
 public record AIVocabularyLessonResponse(
     @JsonProperty("title") String title,
-    @JsonProperty("vocabularies") List<WordDTO> vocabularies
+    @JsonProperty("vocabularies") List<AIVocabularyItemDTO> vocabularies
 ) { }

@@ -20,7 +20,7 @@ The language of the story MUST be `{language}`.
 
 ## LANGUAGE & DIFFICULTY RULES
 1.  The `story` field MUST be written entirely in `{language}`. It MUST NOT contain any English.
-2.  The `title`, `questionText`, `answer`, and `options` fields MUST be in English.
+2.  CRITICAL: The `title`, `questionText`, `answer`, and `options` fields MUST be in **English only**. Do not use `{language}` characters in these fields.
 3.  All text in `{language}` must be appropriate for a `{difficulty}` learner.
 
 ## JSON STRUCTURE
@@ -30,7 +30,6 @@ Your entire response MUST be a single, valid JSON object with the following fiel
 - "questions": An array of 3-4 question objects.
 
 Each question object in the "questions" array must have:
-- "questionType": This MUST be "MULTIPLE_CHOICE".
 - "questionText": The comprehension question in English.
 - "answer": The correct answer in English.
 - "options": An array of strings containing the correct answer and incorrect options.
@@ -45,13 +44,11 @@ EXAMPLE of the complete JSON object for a Korean lesson with topic="weather" and
   "story": "오늘은 비가 옵니다. 하늘이 흐립니다. 민준은 창밖을 봅니다. 그는 집에서 책을 읽습니다. 따뜻한 차도 마십니다.",
   "questions": [
     \{
-      "questionType": "MULTIPLE_CHOICE",
       "questionText": "How is the weather today?",
       "answer": "It is rainy.",
       "options": ["It is sunny.", "It is snowy.", "It is rainy."]
     \},
     \{
-      "questionType": "MULTIPLE_CHOICE",
       "questionText": "What is Minjun doing?",
       "answer": "He is reading a book at home.",
       "options": ["He is playing outside.", "He is reading a book at home.", "He is sleeping."]

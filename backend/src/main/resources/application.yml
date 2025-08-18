@@ -37,14 +37,20 @@ spring:
           num-predict: 8192
           temperature: 0.5
 
+    ollama3:
+      base-url: http://rakuten:11434
+      chat:
+        model: hangyang/rakutenai-7b-chat
+        options:
+          format: json
+          num-ctx: 8192
+          num-predict: 8192
+          temperature: 0.5
+
 logging:
   level:
-    org:
-      springframework:
-        security: DEBUG
-        boot:
-          actuate:
-            health: WARN
+    org.springframework.security: WARN
+    org.springframework.boot.actuate.health: WARN
 
 management:
   endpoints:

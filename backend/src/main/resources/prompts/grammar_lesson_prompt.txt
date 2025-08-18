@@ -15,15 +15,18 @@ Based on the provided Topic and Vocabulary List, you must:
 3.  Create a complete grammar lesson explaining this concept.
 
 The content MUST be about the `{topic}` and explain the grammar concept you have chosen.
-The language of the example sentences MUST be `{language}`.
 
-## OVERALL RULES
+## CONTENT RULES
 1.  The `explanation` should be clear, concise, and easy for a `{difficulty}` learner to understand.
 2.  Crucially, the `explanation` MUST include the specific grammar particles, endings, or structures from `{language}` within the English text to provide clear examples. For instance, when explaining a Korean particle, mention it directly like '-(으)ㄴ'.
 3.  Provide 3-5 `exampleSentences` that clearly demonstrate the grammar concept.
-4.  The `title`, `grammarConcept`, and `explanation` fields MUST be in English.
-5.  The `nativeGrammarConcept` field MUST be the name of the grammar concept in the target `{language}`.
-6.  The `exampleSentences` `text` MUST be in `{language}`, and its `translation` MUST be in English.
+
+## LANGUAGE & DIFFICULTY RULES
+1.  The `title`, `grammarConcept`, and `explanation` fields MUST be in English.
+2.  The `nativeGrammarConcept` field MUST be the name of the grammar concept in the target `{language}`.
+3.  The `exampleSentences` `text` MUST be in `{language}`.
+4.  CRITICAL: The `translation` for each example sentence MUST be in **English only**. Do not use `{language}` characters in this field.
+5.  All content must be appropriate for a `{difficulty}` learner.
 
 ## JSON STRUCTURE
 Your entire response MUST be a single, valid JSON object with the following fields:

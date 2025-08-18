@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class SentenceService {
     private final DtoMapper mapper;
     private final SentenceRepository sentenceRepository;
-    private final WordService wordService;
 
     @Transactional(propagation = Propagation.MANDATORY)
     public Sentence createSentence(SentenceDTO dto) {
