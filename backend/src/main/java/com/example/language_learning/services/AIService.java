@@ -10,6 +10,8 @@ import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -46,12 +48,14 @@ public class AIService {
     static {
         LANGUAGE_MODEL_MAP = Map.of(
           "korean", "exaone",
-          "japanese", "qwen3",
+          "japanese", "rakuten",
           "default", DEFAULT_MODEL_NAME
         );
     }
     private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
+    private final ObjectMapper objectMapper;
+
     @Value("classpath:prompts/chapter_metadata_prompt.txt")
     private Resource chapterMetadataPrompt;
     @Value("classpath:prompts/vocabulary_lesson_prompt.txt")
@@ -63,9 +67,10 @@ public class AIService {
     @Value("classpath:prompts/reading_comprehension_lesson_prompt.txt")
     private Resource readingComprehensionLessonPrompt;
 
-    public AIService(Map<String, ChatClient> chatClients, ApiDtoMapper apiDtoMapper) {
+    public AIService(Map<String, ChatClient> chatClients, ApiDtoMapper apiDtoMapper, ObjectMapper objectMapper) {
         this.chatClients = chatClients;
         this.apiDtoMapper = apiDtoMapper;
+        this.objectMapper = objectMapper;
         logger.info("--- Verifying Injected ChatClients ---");
         logger.info("Found {} ChatClient bean(s):", chatClients.size());
         chatClients.keySet().forEach(key -> logger.info(" -> Bean name: '{}'", key));
@@ -94,7 +99,12 @@ public class AIService {
         params.put("chapterTitle", metadata.getTitle());
         params.put("nativeChapterTitle", metadata.getNativeTitle());
 
-        return generateLessonComponent(params, vocabularyLessonPrompt, AIVocabularyLessonResponse.class, apiDtoMapper::toVocabularyLessonDTO);
+        return generateLessonComponent(
+                params,
+                vocabularyLessonPrompt,
+                AIVocabularyLessonResponse.class,
+                response -> apiDtoMapper.toVocabularyLessonDTO(response, request.getLanguage())
+        );
     }
 
     public Mono<GrammarLessonDTO> generateGrammarLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
@@ -161,7 +171,7 @@ public class AIService {
                 .stream().content().collectList()
                 .map(list -> String.join("", list))
                 .doOnNext(rawResponse -> logger.info("Raw AI Response for {}: {}", componentName, rawResponse))
-                .map(this::extractJson)
+                .map(this::extractAndSanitizeJson)
                 .doOnNext(json -> logger.debug("Extracted JSON for {}: {}", componentName, json))
                 .map(outputParser::convert)
                 .map(mapperFunction)
@@ -181,7 +191,7 @@ public class AIService {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(WordDTO::getPrimaryRepresentation)
+                .map(WordDTO::getNativeWord)
                 .collect(Collectors.joining(", "));
     }
 
@@ -196,7 +206,25 @@ public class AIService {
 
     /**
      * Extracts a JSON object from a raw string response that may contain conversational text.
-     *
+     * Sanitize the response string before passing it to the convertor to remove any suspicious/duplicate fields.
+     * @param rawResponse The raw string response from the AI.
+     * @return A string containing only the JSON object.
+     */
+    private String extractAndSanitizeJson(String rawResponse) {
+        String extractedJson = extractJson(rawResponse);
+
+        try {
+            // Convert the json string into a map and then back into a string
+            Map<String, Object> objectMap = objectMapper.readValue(extractedJson, new TypeReference<>(){});
+            return objectMapper.writeValueAsString(objectMap);
+        } catch (Exception e) {
+            logger.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
+            return extractedJson;
+        }
+    }
+
+    /**
+     * Extracts a JSON object from a raw string response that may contain conversational text.
      * @param rawResponse The raw string response from the AI.
      * @return A string containing only the JSON object.
      */

@@ -26,7 +26,4 @@ public class VocabularyLesson extends Lesson {
     @OrderColumn(name = "word_order")
     private List<Word> vocabularies = new ArrayList<>();
 
-    public void addVocabulary(Word word) { // This helper method is no longer needed as the relationship is unidirectional
-        this.vocabularies.add(word);
-    }
 }

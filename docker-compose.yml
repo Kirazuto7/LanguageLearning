@@ -34,6 +34,8 @@ services:
         condition: service_healthy
       exaone:
         condition: service_healthy
+      rakuten:
+        condition: service_healthy
       qwen3:
         condition: service_healthy
     healthcheck:
@@ -55,9 +57,27 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu] # optional
+            - capabilities: [gpu] # Optional / Can remove to use CPU
     healthcheck:
       test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  rakuten:
+    build:
+      context: ./backend/dockerfiles
+      dockerfile: DockerfileJP
+    ports:
+      - "11435:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu] # Optional / Can remove to use CPU
+    healthcheck:
+      test: [ "CMD", "ollama", "list" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -68,12 +88,12 @@ services:
       context: ./backend/dockerfiles
       dockerfile: DockerfileAI
     ports:
-      - "11435:11434"
+      - "11436:11434"
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: [ gpu ] # optional
+            - capabilities: [gpu] # Optional / Can remove to use CPU
     healthcheck:
       test: [ "CMD", "ollama", "list" ]
       interval: 10s
