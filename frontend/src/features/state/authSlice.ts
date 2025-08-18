@@ -21,6 +21,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
+        // Manual
         logOut: (state) => {
             state.user = null;
             localStorage.removeItem('user');
@@ -39,7 +40,26 @@ const authSlice = createSlice({
                 state.user = payload;
                 localStorage.setItem('user', JSON.stringify(payload));
             }
+        );
+        
+        // User initiated via api
+        builder.addMatcher(
+            userApiSlice.endpoints.logout.matchFulfilled,
+            (state) => {
+                state.user = null;
+                localStorage.removeItem('user');
+            }
         )
+
+        builder.addMatcher(
+            userApiSlice.endpoints.updateSettings.matchFulfilled,
+            (state, { payload }) => {
+                if(state.user) {
+                    state.user.settings = payload;
+                    localStorage.setItem('user', JSON.stringify(state.user));
+                }
+            }
+        );
     }
 });
 

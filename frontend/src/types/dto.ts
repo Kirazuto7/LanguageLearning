@@ -128,6 +128,10 @@ export interface ChapterGenerationRequest {
 }
 
 export interface UpdateSettingsRequest {
-    userId: number;
     settings: Partial<Omit<SettingsDTO, 'id'>>;
+}
+
+export interface AuthenticationResponse {
+    token: string,
+    user: UserDTO
 }

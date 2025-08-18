@@ -5,14 +5,13 @@ spring:
     hibernate:
       ddl-auto: update # Use "validate" in production to avoid accidental data loss.
   datasource:
-    # This URL uses the internal Docker network port for container-to-container communication.
     url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   mvc:
     async:
-      request-timeout: 90000 # Increase timeout for long-running AI requests
+      request-timeout: 90000
   ai:
     # Disable auto-configuration to allow for full manual bean definition.
     model:
@@ -22,7 +21,6 @@ spring:
       base-url: http://qwen3:11434
       chat:
         model: qwen3:8b
-        base-url: http://qwen3:11434
         options:
           format: json
           num-ctx: 8192
@@ -41,7 +39,12 @@ spring:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+        boot:
+          actuate:
+            health: WARN
 
 management:
   endpoints:
@@ -49,7 +52,6 @@ management:
       exposure:
         include: health
 
-# Your custom application properties
 app:
   ai:
     system-prompt: >
@@ -61,3 +63,9 @@ app:
       Do not include any conversational text, markdown formatting, code block fences, or any other text outside of the JSON structure itself.
       Ensure your entire response is a single JSON object and is not truncated.
       Pay special attention to escaping special characters within the JSON string values.
+
+application:
+  security:
+    jwt:
+      secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
+      expiration: 86400000
