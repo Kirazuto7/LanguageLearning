@@ -8,7 +8,12 @@ import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.CreateUserRequest;
 import com.example.language_learning.requests.LoginRequest;
+import com.example.language_learning.security.AuthenticationResponse;
+import com.example.language_learning.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,8 +29,26 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final DtoMapper mapper;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserDTO createNewUser(CreateUserRequest request) {
+    public AuthenticationResponse register(CreateUserRequest request) {
+        User user = createNewUser(request);
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponse(jwtToken, mapper.toDto(user));
+    }
+
+    public AuthenticationResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponse(jwtToken, mapper.toDto(user));
+    }
+
+    public User createNewUser(CreateUserRequest request) {
         userRepository.findByUsername(request.getUsername()).ifPresent(u -> {
             throw new IllegalArgumentException("Username already exists");
         });
@@ -39,34 +62,31 @@ public class UserService implements UserDetailsService {
         settings.setDifficulty(request.getDifficulty());
         user.setSettings(settings);
 
-        User savedUser = userRepository.save(user);
-        return mapper.toDto(savedUser);
+        return userRepository.save(user);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
-    }
-
-    public UserDTO getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .map(mapper::toDto)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
     }
 
     public SettingsDTO updateSettings(String username, SettingsDTO updateRequest) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        
+        Settings settings = user.getSettings();
 
-        if(updateRequest.getLanguage() != null && !updateRequest.getLanguage().isBlank()) {
-            user.getSettings().setLanguage(updateRequest.getLanguage());
-        }
-        if(updateRequest.getDifficulty() != null && !updateRequest.getDifficulty().isBlank()) {
-            user.getSettings().setDifficulty(updateRequest.getDifficulty());
-        }
-        User savedUser = userRepository.save(user);
-        return mapper.toDto(savedUser.getSettings());
+        // Use Optional to avoid verbose null/blank checks and clearly express intent.
+        java.util.Optional.ofNullable(updateRequest.getLanguage())
+                .filter(lang -> !lang.isBlank())
+                .ifPresent(settings::setLanguage);
+
+        java.util.Optional.ofNullable(updateRequest.getDifficulty())
+                .filter(diff -> !diff.isBlank())
+                .ifPresent(settings::setDifficulty);
+
+        userRepository.save(user);
+        return mapper.toDto(settings);
     }
 }
