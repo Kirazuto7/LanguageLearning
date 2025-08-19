@@ -1,11 +1,9 @@
 package com.example.language_learning.mapper;
 
 import com.example.language_learning.dto.api.*;
+import com.example.language_learning.dto.lessons.*;
+import com.example.language_learning.dto.models.ConjugationExampleDTO;
 import com.example.language_learning.dto.models.WordDTO;
-import com.example.language_learning.dto.lessons.GrammarLessonDTO;
-import com.example.language_learning.dto.lessons.PracticeLessonDTO;
-import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
-import com.example.language_learning.dto.lessons.VocabularyLessonDTO;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.dto.models.QuestionDTO;
 import com.example.language_learning.entity.models.QuestionType;
@@ -51,6 +49,23 @@ public class ApiDtoMapper {
                 .nativeGrammarConcept(response.nativeGrammarConcept())
                 .explanation(response.explanation())
                 .exampleSentences(response.exampleSentences())
+                .build();
+    }
+
+    public ConjugationLessonDTO toConjugationLessonDTO(AIConjugationLessonResponse response) {
+        return ConjugationLessonDTO.builder()
+                .title(response.title())
+                .explanation(response.explanation())
+                .infinitive(response.infinitive())
+                .conjugationTable(response.conjugationTable().stream()
+                        .map(aiConjugationExample -> {
+                            return ConjugationExampleDTO.builder()
+                                    .conjugatedForm(aiConjugationExample.conjugatedForm())
+                                    .tense(aiConjugationExample.tense())
+                                    .exampleSentence(aiConjugationExample.exampleSentence())
+                                    .sentenceTranslation(aiConjugationExample.sentenceTranslation())
+                                    .build();
+                        }).toList())
                 .build();
     }
 

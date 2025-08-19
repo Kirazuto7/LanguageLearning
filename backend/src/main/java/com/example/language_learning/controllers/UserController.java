@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody  CreateUserRequest request, HttpServletResponse servletResponse) {
-        logger.info("Received request to create a user with username: {}", request.getUsername());
+        logger.info("Received request to create a user with username: {}", request.username());
         AuthenticationResponse authenticationResponse = userService.register(request);
         setJwtCookie(servletResponse, authenticationResponse.token());
         return ResponseEntity.ok(authenticationResponse.user());
@@ -38,9 +38,9 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequest request, HttpServletResponse servletResponse) {
-        logger.info("Received request to login with username: {}", request.getUsername());
+        logger.info("Received request to login with username: {}", request.username());
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
         AuthenticationResponse authenticationResponse = userService.login(request);
         setJwtCookie(servletResponse, authenticationResponse.token());
