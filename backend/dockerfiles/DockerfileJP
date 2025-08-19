@@ -4,7 +4,7 @@ FROM ollama/ollama:latest AS model-puller
 # Start server in background to allow pull
 RUN ollama serve & \
     sleep 5 && \
-    ollama pull hangyang/rakutenai-7b-chat
+    ollama pull pakachan/elyza-llama3-8b
 
 # ---------- Stage 2: Runtime container ----------
 FROM ollama/ollama:latest

@@ -44,7 +44,7 @@ public class AIService {
     static {
         LANGUAGE_MODEL_MAP = Map.of(
           "korean", "exaone",
-          "japanese", "rakuten",
+          "japanese", "elyza",
           "default", DEFAULT_MODEL_NAME
         );
     }
@@ -56,6 +56,8 @@ public class AIService {
     private Resource chapterMetadataPrompt;
     @Value("classpath:prompts/vocabulary_lesson_prompt.txt")
     private Resource vocabularyLessonPrompt;
+    @Value("classpath:prompts/japanese_vocabulary_lesson_prompt.txt")
+    private Resource japaneseVocabularyLessonPrompt;
     @Value("classpath:prompts/grammar_lesson_prompt.txt")
     private Resource grammarLessonPrompt;
     @Value("classpath:prompts/conjugation_lesson_prompt.txt")
@@ -97,9 +99,16 @@ public class AIService {
         params.put("chapterTitle", metadata.title());
         params.put("nativeChapterTitle", metadata.nativeTitle());
 
+        Resource selectedPrompt;
+        if ("japanese".equalsIgnoreCase(request.language())) {
+            selectedPrompt = this.japaneseVocabularyLessonPrompt;
+        } else {
+            selectedPrompt = this.vocabularyLessonPrompt;
+        }
+
         return generateLessonComponent(
                 params,
-                vocabularyLessonPrompt,
+                selectedPrompt,
                 AIVocabularyLessonResponse.class,
                 response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language())
         );
