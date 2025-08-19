@@ -95,8 +95,8 @@ public class AIService {
         params.put("language", request.getLanguage());
         params.put("difficulty", request.getDifficulty());
         params.put("topic", request.getTopic());
-        params.put("chapterTitle", metadata.getTitle());
-        params.put("nativeChapterTitle", metadata.getNativeTitle());
+        params.put("chapterTitle", metadata.title());
+        params.put("nativeChapterTitle", metadata.nativeTitle());
 
         return generateLessonComponent(
                 params,
@@ -111,7 +111,7 @@ public class AIService {
         params.put("language", request.getLanguage());
         params.put("difficulty", request.getDifficulty());
         params.put("topic", request.getTopic());
-        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.getVocabularies()));
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
 
         return generateLessonComponent(params, grammarLessonPrompt, AIGrammarLessonResponse.class, apiDtoMapper::toGrammarLessonDTO);
     }
@@ -121,8 +121,8 @@ public class AIService {
         params.put("language", request.getLanguage());
         params.put("difficulty", request.getDifficulty());
         params.put("topic", request.getTopic());
-        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.getVocabularies()));
-        params.put("grammarConcept", grammar.getGrammarConcept());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+        params.put("grammarConcept", grammar.grammarConcept());
 
         return generateLessonComponent(params, practiceLessonPrompt, AIPracticeLessonResponse.class, apiDtoMapper::toPracticeLessonDTO);
     }
@@ -132,8 +132,8 @@ public class AIService {
         params.put("language", request.getLanguage());
         params.put("difficulty", request.getDifficulty());
         params.put("topic", request.getTopic());
-        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.getVocabularies()));
-        params.put("grammarConcept", grammar.getGrammarConcept());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+        params.put("grammarConcept", grammar.grammarConcept());
 
         return generateLessonComponent(params, readingComprehensionLessonPrompt, AIReadingComprehensionLessonResponse.class, apiDtoMapper::toReadingComprehensionLessonDTO);
     }
@@ -190,7 +190,7 @@ public class AIService {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(WordDTO::getNativeWord)
+                .map(WordDTO::nativeWord)
                 .collect(Collectors.joining(", "));
     }
 

@@ -31,7 +31,7 @@ public class ChapterController {
         logger.info("Received request to generate chapter for: {}", request);
 
         ChapterDTO chapterResponse = chapterService.generateNewChapter(request);
-        logger.info("Successfully generated chapter: {}", chapterResponse.getTitle());
+        logger.info("Successfully generated chapter: {}", chapterResponse.title());
         return chapterResponse;
     }
 

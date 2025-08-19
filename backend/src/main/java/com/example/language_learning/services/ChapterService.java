@@ -79,8 +79,8 @@ public class ChapterService {
 
     private Chapter createChapter(LessonBook book, int chapterNumber, ChapterComponents components) {
         Chapter chapter = new Chapter();
-        chapter.setTitle(components.metadata().getTitle());
-        chapter.setNativeTitle(components.metadata().getNativeTitle());
+        chapter.setTitle(components.metadata().title());
+        chapter.setNativeTitle(components.metadata().nativeTitle());
         chapter.setChapterNumber(chapterNumber);
 
         int lastPageNumber = book.getChapters().stream()
