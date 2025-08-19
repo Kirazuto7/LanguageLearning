@@ -1,6 +1,6 @@
 package com.example.language_learning.security;
 
-import com.example.language_learning.dto.UserDTO;
+import com.example.language_learning.dto.user.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

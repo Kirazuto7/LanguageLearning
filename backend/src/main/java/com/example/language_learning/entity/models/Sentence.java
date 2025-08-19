@@ -1,20 +1,14 @@
 package com.example.language_learning.entity.models;
 
-import com.example.language_learning.entity.languages.Word;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.*;
 
 
 @Entity
 @Table(name="sentences")
-@Getter
-@Setter
+@Builder
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Sentence {
     @Id

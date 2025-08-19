@@ -1,14 +1,13 @@
-package com.example.language_learning.entity;
+package com.example.language_learning.entity.user;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "settings")
-@Getter
-@Setter
+@Builder
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Settings {
     @Id

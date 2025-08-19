@@ -1,6 +1,5 @@
 package com.example.language_learning.dto.api;
 
-import com.example.language_learning.dto.languages.WordDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;

@@ -1,15 +1,12 @@
 package com.example.language_learning.dto.models;
 
 import com.example.language_learning.dto.lessons.LessonDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PageDTO {
-    private Long id;
-    private int pageNumber;
-    private LessonDTO lesson;
-}
+
+@Builder
+public record PageDTO (
+    Long id,
+    int pageNumber,
+    LessonDTO lesson
+) {}

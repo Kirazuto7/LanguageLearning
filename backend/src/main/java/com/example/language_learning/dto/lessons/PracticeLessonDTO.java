@@ -1,17 +1,21 @@
 package com.example.language_learning.dto.lessons;
 
 import com.example.language_learning.dto.models.QuestionDTO;
-import com.example.language_learning.dto.models.SentenceDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.example.language_learning.entity.lessons.LessonType;
+import lombok.Builder;
+
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PracticeLessonDTO extends LessonDTO {
-    private String instructions;
-    private List<QuestionDTO> questions;
+@Builder
+public record PracticeLessonDTO(
+        Long id,
+        String title,
+        String instructions,
+        List<QuestionDTO> questions
+) implements LessonDTO {
+    @Override
+    public LessonType type() {
+        return LessonType.PRACTICE;
+    }
 }

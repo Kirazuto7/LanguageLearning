@@ -1,7 +1,7 @@
 package com.example.language_learning.controllers;
 
-import com.example.language_learning.dto.SettingsDTO;
-import com.example.language_learning.dto.UserDTO;
+import com.example.language_learning.dto.user.SettingsDTO;
+import com.example.language_learning.dto.user.UserDTO;
 import com.example.language_learning.requests.CreateUserRequest;
 import com.example.language_learning.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;
