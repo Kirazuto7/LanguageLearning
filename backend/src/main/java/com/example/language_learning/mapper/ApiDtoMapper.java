@@ -57,7 +57,7 @@ public class ApiDtoMapper {
                 .title(response.title())
                 .explanation(response.explanation())
                 .conjugationRuleName(response.conjugationRuleName())
-                .conjugationTable(response.conjugationTable().stream()
+                .conjugatedWords(response.conjugatedWords().stream()
                         .map(aiConjugationExample -> {
                             return ConjugationExampleDTO.builder()
                                     .conjugatedForm(aiConjugationExample.conjugatedForm())

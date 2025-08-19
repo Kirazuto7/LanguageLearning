@@ -12,7 +12,7 @@ public record ConjugationLessonDTO(
         String title,
         String conjugationRuleName,
         String explanation,
-        List<ConjugationExampleDTO> conjugationTable
+        List<ConjugationExampleDTO> conjugatedWords
 ) implements LessonDTO {
     @Override
     public LessonType type() {

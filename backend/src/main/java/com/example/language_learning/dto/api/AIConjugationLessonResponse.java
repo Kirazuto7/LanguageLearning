@@ -8,6 +8,6 @@ public record AIConjugationLessonResponse(
         @JsonProperty("title") String title,
         @JsonProperty("conjugation_rule_name") String conjugationRuleName,
         @JsonProperty("explanation") String explanation,
-        @JsonProperty("conjugation_table") List<AIConjugationExampleDTO> conjugationTable
+        @JsonProperty("conjugated_words") List<AIConjugationExampleDTO> conjugatedWords
 ) {
 }
