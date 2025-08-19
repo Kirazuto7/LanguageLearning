@@ -20,7 +20,7 @@ public class GrammarLessonService {
     @Transactional(propagation = Propagation.MANDATORY)
     public GrammarLesson createGrammarLesson(GrammarLessonDTO dto) {
         GrammarLesson lesson = (GrammarLesson) mapper.toEntity(dto);
-        dto.getExampleSentences().forEach(sentenceDTO -> {
+        dto.exampleSentences().forEach(sentenceDTO -> {
             Sentence sentence = sentenceService.createSentence(sentenceDTO);
             lesson.addExampleSentence(sentence);
         });

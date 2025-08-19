@@ -32,8 +32,8 @@ public class UserController {
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody  CreateUserRequest request, HttpServletResponse servletResponse) {
         logger.info("Received request to create a user with username: {}", request.getUsername());
         AuthenticationResponse authenticationResponse = userService.register(request);
-        setJwtCookie(servletResponse, authenticationResponse.getToken());
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        setJwtCookie(servletResponse, authenticationResponse.token());
+        return ResponseEntity.ok(authenticationResponse.user());
     }
 
     @PostMapping("/login")
@@ -43,8 +43,8 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
         AuthenticationResponse authenticationResponse = userService.login(request);
-        setJwtCookie(servletResponse, authenticationResponse.getToken());
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        setJwtCookie(servletResponse, authenticationResponse.token());
+        return ResponseEntity.ok(authenticationResponse.user());
     }
 
     @PostMapping("/logout")

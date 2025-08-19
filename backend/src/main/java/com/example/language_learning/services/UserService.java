@@ -66,11 +66,11 @@ public class UserService implements UserDetailsService {
         
         Settings settings = user.getSettings();
 
-        java.util.Optional.ofNullable(updateRequest.getLanguage())
+        java.util.Optional.ofNullable(updateRequest.language())
                 .filter(lang -> !lang.isBlank())
                 .ifPresent(settings::setLanguage);
 
-        java.util.Optional.ofNullable(updateRequest.getDifficulty())
+        java.util.Optional.ofNullable(updateRequest.difficulty())
                 .filter(diff -> !diff.isBlank())
                 .ifPresent(settings::setDifficulty);
 
