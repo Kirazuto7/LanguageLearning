@@ -30,6 +30,7 @@ public class User implements UserDetails {
     private Settings settings;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<LessonBook> lessonBookList = new ArrayList<>();
 
     public void addLessonBook(LessonBook lessonBook) {

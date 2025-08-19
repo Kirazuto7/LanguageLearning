@@ -1,9 +1,6 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.lessons.GrammarLessonDTO;
-import com.example.language_learning.dto.lessons.PracticeLessonDTO;
-import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
-import com.example.language_learning.dto.lessons.VocabularyLessonDTO;
+import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.ChapterDTO;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.requests.ChapterGenerationRequest;
@@ -24,6 +21,7 @@ public class ChapterService {
     private final AIService aiService;
     private final VocabularyLessonService vocabularyLessonService;
     private final GrammarLessonService grammarLessonService;
+    private final ConjugationLessonService conjugationLessonService;
     private final PracticeLessonService practiceLessonService;
     private final ReadingComprehensionLessonService readingComprehensionLessonService;
     private final DtoMapper mapper;
@@ -36,6 +34,7 @@ public class ChapterService {
             ChapterMetadataDTO metadata,
             VocabularyLessonDTO vocabulary,
             GrammarLessonDTO grammar,
+            ConjugationLessonDTO conjugation,
             PracticeLessonDTO practice,
             ReadingComprehensionLessonDTO reading) {}
 
@@ -43,17 +42,32 @@ public class ChapterService {
     public ChapterDTO generateNewChapter(ChapterGenerationRequest request) {
         // 1. Find an existing or create the lesson book
         LessonBook book = bookService.findOrCreateBook(request.language(), request.difficulty(), request.userId());
+        int nextChapterNumber = book.getChapters().stream()
+                .mapToInt(Chapter::getChapterNumber)
+                .max()
+                .orElse(0) + 1;
 
         // 2. Sequentially generate all lesson components using a reactive pipeline.
         ChapterComponents components = aiService.generateChapterMetadata(request)
                 .flatMap(metadata -> aiService.generateVocabularyLesson(request, metadata)
-                        .flatMap(vocabulary -> aiService.generateGrammarLesson(request, vocabulary)
-                                .flatMap(grammar -> aiService.generatePracticeLesson(request, vocabulary, grammar)
-                                        .flatMap(practice -> aiService.generateReadingComprehensionLesson(request, vocabulary, grammar)
-                                                .map(reading -> new ChapterComponents(metadata, vocabulary, grammar, practice, reading))
-                                        )
-                                )
-                        )
+                        .flatMap(vocabulary -> {
+                            if (nextChapterNumber % 2 != 0) {
+                                return aiService.generateGrammarLesson(request, vocabulary)
+                                        .flatMap(grammar -> aiService.generatePracticeLesson(request, vocabulary, grammar)
+                                                .flatMap(practice -> aiService.generateReadingComprehensionLesson(request, vocabulary, grammar)
+                                                        .map(reading -> new ChapterComponents(metadata, vocabulary, grammar, null, practice, reading))
+                                                )
+                                        );
+                            }
+                            else {
+                                return aiService.generateConjugationLesson(request, vocabulary)
+                                        .flatMap(conjugation -> aiService.generatePracticeLesson(request, vocabulary, conjugation)
+                                                .flatMap(practice -> aiService.generateReadingComprehensionLesson(request, vocabulary, conjugation)
+                                                        .map(reading -> new ChapterComponents(metadata, vocabulary, null, conjugation, practice, reading))
+                                                )
+                                        );
+                            }
+                        })
                 ).block();
 
         if (components == null) {
@@ -61,11 +75,6 @@ public class ChapterService {
         }
 
         // 3. Assemble and save the chapter within the transaction
-        int nextChapterNumber = book.getChapters().stream()
-                .mapToInt(Chapter::getChapterNumber)
-                .max()
-                .orElse(0) + 1;
-
         Chapter chapter = createChapter(book, nextChapterNumber, components);
         book.addChapter(chapter);
         LessonBook savedBook = bookService.save(book);
@@ -90,7 +99,11 @@ public class ChapterService {
                 .orElse(0);
 
         chapter.addPage(new Page(lastPageNumber + 1, vocabularyLessonService.createVocabularyLesson(components.vocabulary())));
-        chapter.addPage(new Page(lastPageNumber + 2, grammarLessonService.createGrammarLesson(components.grammar())));
+        if (components.grammar() != null) {
+            chapter.addPage(new Page(lastPageNumber + 2, grammarLessonService.createGrammarLesson(components.grammar())));
+        } else if (components.conjugation() != null) {
+            chapter.addPage(new Page(lastPageNumber + 2, conjugationLessonService.createConjugationLesson(components.conjugation())));
+        }
         chapter.addPage(new Page(lastPageNumber + 3, practiceLessonService.createPracticeLesson(components.practice())));
         chapter.addPage(new Page(lastPageNumber + 4, readingComprehensionLessonService.createReadingComprehensionLesson(components.reading())));
 

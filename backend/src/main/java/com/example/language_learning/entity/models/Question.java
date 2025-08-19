@@ -3,6 +3,7 @@ package com.example.language_learning.entity.models;
 import com.example.language_learning.entity.lessons.Lesson;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.Builder.Default;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class Question {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "option", columnDefinition = "TEXT")
+    @Default
     private List<String> options = new ArrayList<>();
 
     @ManyToOne

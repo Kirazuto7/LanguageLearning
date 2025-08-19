@@ -2,6 +2,7 @@ package com.example.language_learning.entity.lessons;
 
 import com.example.language_learning.entity.models.Sentence;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -32,6 +33,7 @@ public class GrammarLesson extends Lesson {
             inverseJoinColumns = @JoinColumn(name = "sentence_id")
     )
     @OrderColumn(name = "sentence_order")
+    @Builder.Default
     private List<Sentence> exampleSentences = new ArrayList<>();
 
     public void addExampleSentence(Sentence sentence) {

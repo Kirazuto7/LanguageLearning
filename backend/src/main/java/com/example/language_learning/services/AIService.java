@@ -134,12 +134,20 @@ public class AIService {
     }
 
     public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
+        return generatePracticeLessonInternal(request, vocabulary, grammar.grammarConcept());
+    }
+
+    public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, ConjugationLessonDTO conjugation) {
+        return generatePracticeLessonInternal(request, vocabulary, conjugation.explanation());
+    }
+
+    private Mono<PracticeLessonDTO> generatePracticeLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
         Map<String, Object> params = new HashMap<>();
         params.put("language", request.language());
         params.put("difficulty", request.difficulty());
         params.put("topic", request.topic());
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
-        params.put("grammarConcept", grammar.grammarConcept());
+        params.put("grammarConcept", concept);
 
         return generateLessonComponent(
                 params,
@@ -149,12 +157,20 @@ public class AIService {
     }
 
     public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
+        return generateReadingComprehensionLessonInternal(request, vocabulary, grammar.grammarConcept());
+    }
+
+    public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, ConjugationLessonDTO conjugation) {
+        return generateReadingComprehensionLessonInternal(request, vocabulary, conjugation.explanation());
+    }
+
+    private Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
         Map<String, Object> params = new HashMap<>();
         params.put("language", request.language());
         params.put("difficulty", request.difficulty());
         params.put("topic", request.topic());
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
-        params.put("grammarConcept", grammar.grammarConcept());
+        params.put("grammarConcept", concept);
 
         return generateLessonComponent(
                 params,
