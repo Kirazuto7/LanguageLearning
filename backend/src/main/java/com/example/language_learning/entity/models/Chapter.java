@@ -24,6 +24,7 @@ public class Chapter {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "chapter")
     @OrderColumn(name = "page_order")
+    @Builder.Default
     private List<Page> pages = new ArrayList<>();
 
     @ManyToOne(fetch =  FetchType.LAZY)

@@ -21,6 +21,7 @@ public class ReadingComprehensionLesson extends Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "question_order")
+    @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
     public void addQuestion(Question question) {

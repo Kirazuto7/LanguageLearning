@@ -25,6 +25,7 @@ public class LessonBook {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonBook")
     @OrderColumn(name = "chapter_order")
+    @Builder.Default
     private List<Chapter> chapters = new ArrayList<>();
 
     @ManyToOne

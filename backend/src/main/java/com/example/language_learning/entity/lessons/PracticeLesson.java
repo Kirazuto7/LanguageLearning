@@ -21,6 +21,7 @@ public class PracticeLesson extends Lesson {
     private String instructions; // e.g., "Use the vocabulary you've learned to complete the exercises."
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
     public void addQuestion(Question question) {
