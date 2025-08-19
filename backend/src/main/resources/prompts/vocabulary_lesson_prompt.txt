@@ -12,8 +12,9 @@ The language of the vocabulary MUST be `{language}`.
 
 ## CONTENT RULES
 1.  Generate a list of 10-15 key vocabulary words directly related to the `{topic}`.
-2.  For each vocabulary item, first think of the English word (e.g., "sports"). Then, provide its `{language}` equivalent (e.g., 「スポーツ」) and its components in the JSON fields. The `translation` field in the JSON MUST be the original English word.
-3.  Provide accurate translations and phonetic spellings according to the rules in the JSON STRUCTURE section.
+2.  For each vocabulary item, provide the English word in the `englishTranslation` field.
+3.  CRITICAL: For each English word, you MUST provide its accurate `{language}` translation. Use this translation to populate the `nativeWord`, `phoneticSpelling`, and `details` fields. These fields must not be empty.
+4.  Provide accurate phonetic spellings according to the rules in the JSON STRUCTURE section.
 
 ## LANGUAGE & DIFFICULTY RULES
 1.  The `title` field MUST be in English.
