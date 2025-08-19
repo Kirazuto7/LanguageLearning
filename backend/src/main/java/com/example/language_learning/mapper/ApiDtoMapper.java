@@ -56,12 +56,12 @@ public class ApiDtoMapper {
         return ConjugationLessonDTO.builder()
                 .title(response.title())
                 .explanation(response.explanation())
-                .infinitive(response.infinitive())
+                .conjugationRuleName(response.conjugationRuleName())
                 .conjugationTable(response.conjugationTable().stream()
                         .map(aiConjugationExample -> {
                             return ConjugationExampleDTO.builder()
                                     .conjugatedForm(aiConjugationExample.conjugatedForm())
-                                    .tense(aiConjugationExample.tense())
+                                    .infinitive(aiConjugationExample.infinitive())
                                     .exampleSentence(aiConjugationExample.exampleSentence())
                                     .sentenceTranslation(aiConjugationExample.sentenceTranslation())
                                     .build();

@@ -18,7 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConjugationLesson extends Lesson {
-    private String infinitive; // Base verb/adjective aka dictionary form
+    // The name of the rule being taught, e.g., "Present Tense"
+    private String conjugationRuleName;
 
     @Column(columnDefinition = "TEXT")
     private String explanation;

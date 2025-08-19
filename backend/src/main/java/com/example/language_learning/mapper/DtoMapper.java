@@ -225,7 +225,7 @@ public class DtoMapper {
         ConjugationLesson lesson = ConjugationLesson.builder()
                 .title(dto.title())
                 .type(LessonType.CONJUGATION)
-                .infinitive(dto.infinitive())
+                .conjugationRuleName(dto.conjugationRuleName())
                 .explanation(dto.explanation())
                 .build();
 
@@ -242,7 +242,7 @@ public class DtoMapper {
         return ConjugationLessonDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
-                .infinitive(entity.getInfinitive())
+                .conjugationRuleName(entity.getConjugationRuleName())
                 .explanation(entity.getExplanation())
                 .conjugationTable(entity.getConjugationTable().stream()
                         .map(this::toDto)
@@ -332,7 +332,7 @@ public class DtoMapper {
         if (dto == null) return null;
         return ConjugationExample.builder()
                 .conjugatedForm(dto.conjugatedForm())
-                .tense(dto.tense())
+                .infinitive(dto.infinitive())
                 .exampleSentence(dto.exampleSentence())
                 .sentenceTranslation(dto.sentenceTranslation())
                 .lesson(lesson)
@@ -344,7 +344,7 @@ public class DtoMapper {
         return ConjugationExampleDTO.builder()
                 .id(entity.getId())
                 .conjugatedForm(entity.getConjugatedForm())
-                .tense(entity.getTense())
+                .infinitive(entity.getInfinitive())
                 .exampleSentence(entity.getExampleSentence())
                 .sentenceTranslation(entity.getSentenceTranslation())
                 .build();

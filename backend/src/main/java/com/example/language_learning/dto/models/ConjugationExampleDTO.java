@@ -5,7 +5,7 @@ import lombok.Builder;
 @Builder
 public record ConjugationExampleDTO(
         Long id,
-        String tense,
+        String infinitive,
         String conjugatedForm,
         String exampleSentence,
         String sentenceTranslation

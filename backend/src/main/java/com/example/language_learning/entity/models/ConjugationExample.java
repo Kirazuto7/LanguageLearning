@@ -15,7 +15,7 @@ public class ConjugationExample {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String tense; // e.g., "Present, Past, Future"
+    private String infinitive; // Dictionary Form aka base form
 
     @Column(columnDefinition = "TEXT")
     private String conjugatedForm;

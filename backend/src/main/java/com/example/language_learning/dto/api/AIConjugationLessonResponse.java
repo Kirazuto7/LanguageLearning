@@ -6,7 +6,7 @@ import java.util.List;
 
 public record AIConjugationLessonResponse(
         @JsonProperty("title") String title,
-        @JsonProperty("infinitive") String infinitive,
+        @JsonProperty("conjugation_rule_name") String conjugationRuleName,
         @JsonProperty("explanation") String explanation,
         @JsonProperty("conjugation_table") List<AIConjugationExampleDTO> conjugationTable
 ) {
