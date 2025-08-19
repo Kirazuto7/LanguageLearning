@@ -1,11 +1,8 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.api.*;
+import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.WordDTO;
-import com.example.language_learning.dto.lessons.GrammarLessonDTO;
-import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
-import com.example.language_learning.dto.lessons.PracticeLessonDTO;
-import com.example.language_learning.dto.lessons.VocabularyLessonDTO;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
@@ -61,6 +58,8 @@ public class AIService {
     private Resource vocabularyLessonPrompt;
     @Value("classpath:prompts/grammar_lesson_prompt.txt")
     private Resource grammarLessonPrompt;
+    @Value("classpath:prompts/conjugation_lesson_prompt.txt")
+    private Resource conjugationLessonPrompt;
     @Value("classpath:prompts/practice_lesson_prompt.txt")
     private Resource practiceLessonPrompt;
     @Value("classpath:prompts/reading_comprehension_lesson_prompt.txt")
@@ -78,23 +77,23 @@ public class AIService {
 
     public Mono<ChapterMetadataDTO> generateChapterMetadata(ChapterGenerationRequest request) {
         Map<String, Object> params = Map.of(
-                "language", request.getLanguage(),
-                "difficulty", request.getDifficulty(),
-                "topic", request.getTopic()
+                "language", request.language(),
+                "difficulty", request.difficulty(),
+                "topic", request.topic()
         );
 
         return generateLessonComponent(
                 params,
                 chapterMetadataPrompt,
                 AIChapterMetadataResponse.class,
-                apiResponse -> apiDtoMapper.toChapterMetadataDTO(apiResponse, request.getTopic()));
+                apiResponse -> apiDtoMapper.toChapterMetadataDTO(apiResponse, request.topic()));
     }
 
     public Mono<VocabularyLessonDTO> generateVocabularyLesson(ChapterGenerationRequest request, ChapterMetadataDTO metadata) {
         Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
         params.put("chapterTitle", metadata.title());
         params.put("nativeChapterTitle", metadata.nativeTitle());
 
@@ -102,40 +101,66 @@ public class AIService {
                 params,
                 vocabularyLessonPrompt,
                 AIVocabularyLessonResponse.class,
-                response -> apiDtoMapper.toVocabularyLessonDTO(response, request.getLanguage())
+                response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language())
         );
     }
 
     public Mono<GrammarLessonDTO> generateGrammarLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
         Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
 
-        return generateLessonComponent(params, grammarLessonPrompt, AIGrammarLessonResponse.class, apiDtoMapper::toGrammarLessonDTO);
+        return generateLessonComponent(
+                params,
+                grammarLessonPrompt,
+                AIGrammarLessonResponse.class,
+                apiDtoMapper::toGrammarLessonDTO);
+    }
+
+    public Mono<ConjugationLessonDTO> generateConjugationLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+
+        return generateLessonComponent(
+                params,
+                conjugationLessonPrompt,
+                AIConjugationLessonResponse.class,
+                apiDtoMapper::toConjugationLessonDTO);
     }
 
     public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
         Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
         params.put("grammarConcept", grammar.grammarConcept());
 
-        return generateLessonComponent(params, practiceLessonPrompt, AIPracticeLessonResponse.class, apiDtoMapper::toPracticeLessonDTO);
+        return generateLessonComponent(
+                params,
+                practiceLessonPrompt,
+                AIPracticeLessonResponse.class,
+                apiDtoMapper::toPracticeLessonDTO);
     }
 
     public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
         Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
         params.put("grammarConcept", grammar.grammarConcept());
 
-        return generateLessonComponent(params, readingComprehensionLessonPrompt, AIReadingComprehensionLessonResponse.class, apiDtoMapper::toReadingComprehensionLessonDTO);
+        return generateLessonComponent(
+                params,
+                readingComprehensionLessonPrompt,
+                AIReadingComprehensionLessonResponse.class,
+                apiDtoMapper::toReadingComprehensionLessonDTO);
     }
 
     /**

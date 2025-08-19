@@ -42,7 +42,7 @@ public class ChapterService {
     @Transactional
     public ChapterDTO generateNewChapter(ChapterGenerationRequest request) {
         // 1. Find an existing or create the lesson book
-        LessonBook book = bookService.findOrCreateBook(request.getLanguage(), request.getDifficulty(), request.getUserId());
+        LessonBook book = bookService.findOrCreateBook(request.language(), request.difficulty(), request.userId());
 
         // 2. Sequentially generate all lesson components using a reactive pipeline.
         ChapterComponents components = aiService.generateChapterMetadata(request)

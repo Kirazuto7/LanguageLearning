@@ -31,7 +31,7 @@ public class BookService {
     }
 
     public LessonBookDTO fetchBook(LessonBookRequest request) {
-        LessonBook book = findOrCreateBook(request.getLanguage(), request.getDifficulty(), request.getUserId());
+        LessonBook book = findOrCreateBook(request.language(), request.difficulty(), request.userId());
         return dtoMapper.toDto(book);
     }
 

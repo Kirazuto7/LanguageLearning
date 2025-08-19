@@ -1,14 +1,13 @@
 package com.example.language_learning.requests;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class LoginRequest {
+
+public record LoginRequest (
 
     @NotNull(message = "Username cannot be null")
-    private String username;
+    String username,
 
     @NotNull(message = "Password cannot be null")
-    private String password;
-}
+    String password
+) {}

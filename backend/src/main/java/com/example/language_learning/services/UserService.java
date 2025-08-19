@@ -31,24 +31,24 @@ public class UserService implements UserDetailsService {
     }
 
     public AuthenticationResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
         String jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken, mapper.toDto(user));
     }
 
     public User createNewUser(CreateUserRequest request) {
-        userRepository.findByUsername(request.getUsername()).ifPresent(u -> {
+        userRepository.findByUsername(request.username()).ifPresent(u -> {
             throw new IllegalArgumentException("Username already exists");
         });
 
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUsername(request.username());
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         Settings settings = new Settings();
-        settings.setLanguage(request.getLanguage());
-        settings.setDifficulty(request.getDifficulty());
+        settings.setLanguage(request.language());
+        settings.setDifficulty(request.difficulty());
         user.setSettings(settings);
 
         return userRepository.save(user);
