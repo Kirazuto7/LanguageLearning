@@ -2,12 +2,14 @@ package com.example.language_learning.entity.lessons;
 
 import com.example.language_learning.entity.models.Page;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
+@SuperBuilder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Table(name = "lessons")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Lesson {

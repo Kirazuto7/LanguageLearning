@@ -1,7 +1,7 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.languages.WordDTO;
-import com.example.language_learning.entity.languages.Word;
+import com.example.language_learning.dto.models.WordDTO;
+import com.example.language_learning.entity.models.Word;
 import com.example.language_learning.mapper.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

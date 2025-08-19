@@ -1,13 +1,11 @@
-package com.example.language_learning.entity.languages;
+package com.example.language_learning.entity.models;
 
-import com.example.language_learning.entity.lessons.VocabularyLesson;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Builder
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "words")
@@ -27,4 +25,7 @@ public class Word {
 
     @Column(columnDefinition = "TEXT")
     private String phoneticSpelling; // e.g., すし, eum-sik
+
+    @Column(columnDefinition = "TEXT")
+    private String details; // JSON string meant to hold language-specific metadata e.g, hiragana, katakana, romaji
 }

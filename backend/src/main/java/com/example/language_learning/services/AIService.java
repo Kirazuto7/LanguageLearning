@@ -1,7 +1,7 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.api.*;
-import com.example.language_learning.dto.languages.WordDTO;
+import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.lessons.GrammarLessonDTO;
 import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
 import com.example.language_learning.dto.lessons.PracticeLessonDTO;
@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;

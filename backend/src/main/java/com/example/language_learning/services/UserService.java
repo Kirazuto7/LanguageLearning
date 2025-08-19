@@ -1,8 +1,8 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.SettingsDTO;
-import com.example.language_learning.entity.Settings;
-import com.example.language_learning.entity.User;
+import com.example.language_learning.dto.user.SettingsDTO;
+import com.example.language_learning.entity.user.Settings;
+import com.example.language_learning.entity.user.User;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.CreateUserRequest;

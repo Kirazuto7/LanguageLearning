@@ -41,25 +41,12 @@ export interface LessonDTO {
 
 export interface WordDTO {
     id: number;
-    type: 'korean' | 'japanese';
-    translation: string;
+    englishTranslation: string;
+    language: string;
+    nativeWord: string;
+    phoneticSpelling: string;
+    details?: { [key: string]: any };
 }
-
-export interface KoreanWordDTO extends WordDTO {
-    type: 'korean';
-    hangeul: string;
-    hanja: string;
-}
-
-export interface JapaneseWordDTO extends WordDTO {
-    type: 'japanese';
-    hiragana: string;
-    katakana: string;
-    kanji: string;
-    romaji: string;
-}
-
-export type AnyWordDTO = KoreanWordDTO | JapaneseWordDTO;
 
 export interface SentenceDTO {
     id: number;
@@ -69,7 +56,7 @@ export interface SentenceDTO {
 
 export interface VocabularyLessonDTO extends LessonDTO {
     type: 'VOCABULARY';
-    vocabularies: AnyWordDTO[];
+    vocabularies: WordDTO[];
 }
 
 export interface GrammarLessonDTO extends LessonDTO {
@@ -82,7 +69,7 @@ export interface GrammarLessonDTO extends LessonDTO {
 
 export interface QuestionDTO {
     id: number;
-    questionType: 'MULTIPLE_CHOICE' | 'FILL_IN_THE_BLANK' | 'FREE_FORM';
+    questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;
     options?: string[];
     answer: string;
