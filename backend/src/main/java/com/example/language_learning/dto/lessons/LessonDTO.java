@@ -1,24 +1,22 @@
 package com.example.language_learning.dto.lessons;
 
-import com.example.language_learning.dto.models.PageDTO;
+import com.example.language_learning.entity.lessons.LessonType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Data;
 
-@Data
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type",
-        visible = true)
+        property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = VocabularyLessonDTO.class, name = "vocabulary"),
-        @JsonSubTypes.Type(value = PracticeLessonDTO.class, name = "practice"),
-        @JsonSubTypes.Type(value = GrammarLessonDTO.class, name = "grammar"),
-        @JsonSubTypes.Type(value = ReadingComprehensionLessonDTO.class, name = "reading_comprehension")
+        @JsonSubTypes.Type(value = VocabularyLessonDTO.class, name = "VOCABULARY"),
+        @JsonSubTypes.Type(value = PracticeLessonDTO.class, name = "PRACTICE"),
+        @JsonSubTypes.Type(value = GrammarLessonDTO.class, name = "GRAMMAR"),
+        @JsonSubTypes.Type(value = ConjugationLessonDTO.class, name = "CONJUGATION"),
+        @JsonSubTypes.Type(value = ReadingComprehensionLessonDTO.class, name = "READING_COMPREHENSION")
 })
-public abstract class LessonDTO {
-    private Long id;
-    private String type;
-    private String title;
+public interface LessonDTO {
+    Long id();
+    LessonType type();
+    String title();
 }

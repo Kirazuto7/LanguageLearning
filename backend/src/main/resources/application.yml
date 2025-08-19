@@ -1,23 +1,65 @@
 spring:
+  application:
+    name: language-learning
+  jpa:
+    hibernate:
+      ddl-auto: update # Use "validate" in production to avoid accidental data loss.
+  datasource:
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  mvc:
+    async:
+      request-timeout: 90000
   ai:
-    ollama:
-      base-url: http://ollama:11434
+    # Disable auto-configuration to allow for full manual bean definition.
+    model:
+      chat: none
+      embedding: none
+    ollama1:
+      base-url: http://qwen3:11434
       chat:
+        model: qwen3:8b
         options:
-          model: exaone3.5
           format: json
           num-ctx: 8192
           num-predict: 8192
           temperature: 0.5
 
-app:
-  ai:
-    system-prompt: >
-      You are an expert language tutor, fluent in both English and the target language.
-      Your name is Jinny. 
-      Your most important duty is to provide 100% accurate translations and language content.
-      ACCURACY IS PARAMOUNT. Do not invent or guess words or grammar rules.
-      You must only output a single, raw, well-formed, and complete JSON object.
-      Do not include any conversational text, markdown formatting, code block fences, or any other text outside of the JSON structure itself.
-      Ensure your entire response is a single JSON object and is not truncated.
-      Pay special attention to escaping special characters within the JSON string values.
+    ollama2:
+      base-url: http://exaone:11434
+      chat:
+        model: exaone3.5
+        options:
+          format: json
+          num-ctx: 8192
+          num-predict: 8192
+          temperature: 0.5
+
+    ollama3:
+      base-url: http://elyza:11434
+      chat:
+        model: pakachan/elyza-llama3-8b
+        options:
+          format: json
+          num-ctx: 8192
+          num-predict: 8192
+          temperature: 0.5
+
+logging:
+  level:
+    org.springframework.security: WARN
+    org.springframework.boot.actuate.health: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+application:
+  security:
+    jwt:
+      secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
+      expiration: 86400000

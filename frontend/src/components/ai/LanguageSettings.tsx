@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Button, Collapse } from 'react-bootstrap';
-import Styles from '../styles/mascot.module.css';
+import Styles from '../../styles/mascot.module.css';
 import { useSettingsManager } from '../../hooks/useSettingsManager';
 
 interface LanguageSettingsProps {

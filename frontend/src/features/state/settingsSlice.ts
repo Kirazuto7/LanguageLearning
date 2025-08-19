@@ -18,6 +18,11 @@ export const settingsSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
+         builder.addCase(logOut, (state) => {
+            state.settings = null;
+            localStorage.removeItem('settings');
+        });
+
         builder.addMatcher(
             (action): action is PayloadAction<UserDTO> =>
                 userApiSlice.endpoints.login.matchFulfilled(action) ||
@@ -36,11 +41,6 @@ export const settingsSlice = createSlice({
                localStorage.setItem('settings', JSON.stringify(payload));
           }
         );
-        
-        builder.addCase(logOut, (state) => {
-            state.settings = null;
-            localStorage.removeItem('settings');
-        });
     }
 })
 

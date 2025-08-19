@@ -1,5 +1,5 @@
 import React from "react";
-import styles from '../../styles/lessonbook.module.css';
+import styles from '../../../styles/lessonbook.module.css';
 import { Carousel, Spinner } from "react-bootstrap";
 import { useStudyBookManager } from "../../../hooks/useStudyBookManager";
 

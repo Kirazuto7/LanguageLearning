@@ -1,66 +1,80 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.SettingsDTO;
-import com.example.language_learning.dto.UserDTO;
-import com.example.language_learning.entity.Settings;
-import com.example.language_learning.entity.User;
+import com.example.language_learning.dto.user.SettingsDTO;
+import com.example.language_learning.entity.user.Settings;
+import com.example.language_learning.entity.user.User;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.CreateUserRequest;
 import com.example.language_learning.requests.LoginRequest;
+import com.example.language_learning.security.AuthenticationResponse;
+import com.example.language_learning.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final DtoMapper mapper;
+    private final JwtService jwtService;
 
-    public UserDTO createNewUser(CreateUserRequest request) {
-        userRepository.findByUsername(request.getUsername()).ifPresent(u -> {
+    public AuthenticationResponse register(CreateUserRequest request) {
+        User user = createNewUser(request);
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponse(jwtToken, mapper.toDto(user));
+    }
+
+    public AuthenticationResponse login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.username())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponse(jwtToken, mapper.toDto(user));
+    }
+
+    public User createNewUser(CreateUserRequest request) {
+        userRepository.findByUsername(request.username()).ifPresent(u -> {
             throw new IllegalArgumentException("Username already exists");
         });
 
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUsername(request.username());
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         Settings settings = new Settings();
-        settings.setLanguage(request.getLanguage());
-        settings.setDifficulty(request.getDifficulty());
+        settings.setLanguage(request.language());
+        settings.setDifficulty(request.difficulty());
         user.setSettings(settings);
 
-        User savedUser = userRepository.save(user);
-        return mapper.toDto(savedUser);
+        return userRepository.save(user);
     }
 
-    public UserDTO login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
-
-        if (!passwordEncoder.matches(user.getPassword(), request.getPassword())) {
-            throw new IllegalArgumentException("Invalid username or password.");
-        }
-        return mapper.toDto(user);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
     }
 
-    public SettingsDTO updateSettings(Long userId, SettingsDTO updateRequest) {
-        User user = userRepository.findById(userId).orElseThrow( () ->
-                new IllegalArgumentException("User with id: " + userId + " not found.")
-        );
+    public SettingsDTO updateSettings(String username, SettingsDTO updateRequest) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        
+        Settings settings = user.getSettings();
 
-        if(updateRequest.getLanguage() != null && !updateRequest.getLanguage().isBlank()) {
-            user.getSettings().setLanguage(updateRequest.getLanguage());
-        }
-        if(updateRequest.getDifficulty() != null && !updateRequest.getDifficulty().isBlank()) {
-            user.getSettings().setDifficulty(updateRequest.getDifficulty());
-        }
-        User savedUser = userRepository.save(user);
-        return mapper.toDto(savedUser.getSettings());
+        java.util.Optional.ofNullable(updateRequest.language())
+                .filter(lang -> !lang.isBlank())
+                .ifPresent(settings::setLanguage);
+
+        java.util.Optional.ofNullable(updateRequest.difficulty())
+                .filter(diff -> !diff.isBlank())
+                .ifPresent(settings::setDifficulty);
+
+        userRepository.save(user);
+        return mapper.toDto(settings);
     }
 }

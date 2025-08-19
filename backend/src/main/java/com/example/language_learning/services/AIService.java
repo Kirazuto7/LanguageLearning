@@ -1,17 +1,14 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.api.*;
-import com.example.language_learning.dto.languages.JapaneseWordDTO;
-import com.example.language_learning.dto.languages.KoreanWordDTO;
-import com.example.language_learning.dto.languages.WordDTO;
-import com.example.language_learning.dto.lessons.GrammarLessonDTO;
-import com.example.language_learning.dto.lessons.ReadingComprehensionLessonDTO;
-import com.example.language_learning.dto.lessons.PracticeLessonDTO;
-import com.example.language_learning.dto.lessons.VocabularyLessonDTO;
+import com.example.language_learning.dto.lessons.*;
+import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -42,79 +39,153 @@ import java.util.stream.Collectors;
 public class AIService {
 
     private static final Logger logger = LoggerFactory.getLogger(AIService.class);
-    private final ChatClient chatClient;
+    private static final String DEFAULT_MODEL_NAME = "qwen3";
+    private static final Map<String, String> LANGUAGE_MODEL_MAP;
+    static {
+        LANGUAGE_MODEL_MAP = Map.of(
+          "korean", "exaone",
+          "japanese", "elyza",
+          "default", DEFAULT_MODEL_NAME
+        );
+    }
+    private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
+    private final ObjectMapper objectMapper;
+
     @Value("classpath:prompts/chapter_metadata_prompt.txt")
     private Resource chapterMetadataPrompt;
     @Value("classpath:prompts/vocabulary_lesson_prompt.txt")
     private Resource vocabularyLessonPrompt;
+    @Value("classpath:prompts/japanese_vocabulary_lesson_prompt.txt")
+    private Resource japaneseVocabularyLessonPrompt;
     @Value("classpath:prompts/grammar_lesson_prompt.txt")
     private Resource grammarLessonPrompt;
+    @Value("classpath:prompts/conjugation_lesson_prompt.txt")
+    private Resource conjugationLessonPrompt;
     @Value("classpath:prompts/practice_lesson_prompt.txt")
     private Resource practiceLessonPrompt;
     @Value("classpath:prompts/reading_comprehension_lesson_prompt.txt")
     private Resource readingComprehensionLessonPrompt;
 
-    public AIService(ChatClient chatClient, ApiDtoMapper apiDtoMapper) {
-        this.chatClient = chatClient;
+    public AIService(Map<String, ChatClient> chatClients, ApiDtoMapper apiDtoMapper, ObjectMapper objectMapper) {
+        this.chatClients = chatClients;
         this.apiDtoMapper = apiDtoMapper;
+        this.objectMapper = objectMapper;
+        logger.info("--- Verifying Injected ChatClients ---");
+        logger.info("Found {} ChatClient bean(s):", chatClients.size());
+        chatClients.keySet().forEach(key -> logger.info(" -> Bean name: '{}'", key));
+        logger.info("--------------------------------------");
     }
 
     public Mono<ChapterMetadataDTO> generateChapterMetadata(ChapterGenerationRequest request) {
         Map<String, Object> params = Map.of(
-                "language", request.getLanguage(),
-                "difficulty", request.getDifficulty(),
-                "topic", request.getTopic()
+                "language", request.language(),
+                "difficulty", request.difficulty(),
+                "topic", request.topic()
         );
 
         return generateLessonComponent(
                 params,
                 chapterMetadataPrompt,
                 AIChapterMetadataResponse.class,
-                apiResponse -> apiDtoMapper.toChapterMetadataDTO(apiResponse, request.getTopic()));
+                apiResponse -> apiDtoMapper.toChapterMetadataDTO(apiResponse, request.topic()));
     }
 
     public Mono<VocabularyLessonDTO> generateVocabularyLesson(ChapterGenerationRequest request, ChapterMetadataDTO metadata) {
         Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
-        params.put("chapterTitle", metadata.getTitle());
-        params.put("nativeChapterTitle", metadata.getNativeTitle());
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        params.put("chapterTitle", metadata.title());
+        params.put("nativeChapterTitle", metadata.nativeTitle());
 
-        return generateLessonComponent(params, vocabularyLessonPrompt, AIVocabularyLessonResponse.class, apiDtoMapper::toVocabularyLessonDTO);
+        Resource selectedPrompt;
+        if ("japanese".equalsIgnoreCase(request.language())) {
+            selectedPrompt = this.japaneseVocabularyLessonPrompt;
+        } else {
+            selectedPrompt = this.vocabularyLessonPrompt;
+        }
+
+        return generateLessonComponent(
+                params,
+                selectedPrompt,
+                AIVocabularyLessonResponse.class,
+                response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language())
+        );
     }
 
     public Mono<GrammarLessonDTO> generateGrammarLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
         Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
-        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.getVocabularies()));
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
 
-        return generateLessonComponent(params, grammarLessonPrompt, AIGrammarLessonResponse.class, apiDtoMapper::toGrammarLessonDTO);
+        return generateLessonComponent(
+                params,
+                grammarLessonPrompt,
+                AIGrammarLessonResponse.class,
+                apiDtoMapper::toGrammarLessonDTO);
+    }
+
+    public Mono<ConjugationLessonDTO> generateConjugationLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+
+        return generateLessonComponent(
+                params,
+                conjugationLessonPrompt,
+                AIConjugationLessonResponse.class,
+                apiDtoMapper::toConjugationLessonDTO);
     }
 
     public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
-        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.getVocabularies()));
-        params.put("grammarConcept", grammar.getGrammarConcept());
+        return generatePracticeLessonInternal(request, vocabulary, grammar.grammarConcept());
+    }
 
-        return generateLessonComponent(params, practiceLessonPrompt, AIPracticeLessonResponse.class, apiDtoMapper::toPracticeLessonDTO);
+    public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, ConjugationLessonDTO conjugation) {
+        return generatePracticeLessonInternal(request, vocabulary, conjugation.explanation());
+    }
+
+    private Mono<PracticeLessonDTO> generatePracticeLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+        params.put("grammarConcept", concept);
+
+        return generateLessonComponent(
+                params,
+                practiceLessonPrompt,
+                AIPracticeLessonResponse.class,
+                apiDtoMapper::toPracticeLessonDTO);
     }
 
     public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.getLanguage());
-        params.put("difficulty", request.getDifficulty());
-        params.put("topic", request.getTopic());
-        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.getVocabularies()));
-        params.put("grammarConcept", grammar.getGrammarConcept());
+        return generateReadingComprehensionLessonInternal(request, vocabulary, grammar.grammarConcept());
+    }
 
-        return generateLessonComponent(params, readingComprehensionLessonPrompt, AIReadingComprehensionLessonResponse.class, apiDtoMapper::toReadingComprehensionLessonDTO);
+    public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, ConjugationLessonDTO conjugation) {
+        return generateReadingComprehensionLessonInternal(request, vocabulary, conjugation.explanation());
+    }
+
+    private Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+        params.put("grammarConcept", concept);
+
+        return generateLessonComponent(
+                params,
+                readingComprehensionLessonPrompt,
+                AIReadingComprehensionLessonResponse.class,
+                apiDtoMapper::toReadingComprehensionLessonDTO);
     }
 
     /**
@@ -141,14 +212,16 @@ public class AIService {
 
         var prompt = promptTemplate.create(params);
         logger.debug("Rendered Prompt for {}: {}", componentName, prompt.getContents());
+        String language = (String) params.get("language");
+        ChatClient chatClient = selectClient(language);
 
         return chatClient.prompt()
                 .user(prompt.getContents())
                 .stream().content().collectList()
                 .map(list -> String.join("", list))
                 .doOnNext(rawResponse -> logger.info("Raw AI Response for {}: {}", componentName, rawResponse))
-                .map(this::extractJson)
-                .doOnNext(json -> logger.info("Extracted JSON for {}: {}", componentName, json))
+                .map(this::extractAndSanitizeJson)
+                .doOnNext(json -> logger.debug("Extracted JSON for {}: {}", componentName, json))
                 .map(outputParser::convert)
                 .map(mapperFunction)
                 .doOnNext(mapped -> logger.info("Mapped to internal DTO {}: {}", componentName, mapped))
@@ -167,7 +240,7 @@ public class AIService {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(WordDTO::getPrimaryRepresentation)
+                .map(WordDTO::nativeWord)
                 .collect(Collectors.joining(", "));
     }
 
@@ -182,7 +255,25 @@ public class AIService {
 
     /**
      * Extracts a JSON object from a raw string response that may contain conversational text.
-     *
+     * Sanitize the response string before passing it to the convertor to remove any suspicious/duplicate fields.
+     * @param rawResponse The raw string response from the AI.
+     * @return A string containing only the JSON object.
+     */
+    private String extractAndSanitizeJson(String rawResponse) {
+        String extractedJson = extractJson(rawResponse);
+
+        try {
+            // Convert the json string into a map and then back into a string
+            Map<String, Object> objectMap = objectMapper.readValue(extractedJson, new TypeReference<>(){});
+            return objectMapper.writeValueAsString(objectMap);
+        } catch (Exception e) {
+            logger.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
+            return extractedJson;
+        }
+    }
+
+    /**
+     * Extracts a JSON object from a raw string response that may contain conversational text.
      * @param rawResponse The raw string response from the AI.
      * @return A string containing only the JSON object.
      */
@@ -194,5 +285,25 @@ public class AIService {
             return rawResponse.substring(firstBrace, lastBrace + 1);
         }
         return rawResponse; 
+    }
+
+    /**
+     * Selects a ChatClient based on the chosen language setting.
+     *
+     * @param language The language setting used to select the ChatClient to use.
+     * @return The Chat client for the selected language.
+     */
+    private ChatClient selectClient(String language) {
+        if(language == null || language.isBlank()) {
+            throw new IllegalArgumentException("Language cannot be null or empty.");
+        }
+        String modelName = LANGUAGE_MODEL_MAP.getOrDefault(language.toLowerCase(), LANGUAGE_MODEL_MAP.get("default"));
+        ChatClient client = chatClients.get(modelName);
+
+        if (client == null) {
+            logger.error("Could not find a ChatClient bean named '{}'. Available beans are: {}", modelName, chatClients.keySet());
+            throw new IllegalStateException("AI model client not configured: " + modelName);
+        }
+        return client;
     }
 }

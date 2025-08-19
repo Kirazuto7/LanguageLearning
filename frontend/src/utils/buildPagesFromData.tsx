@@ -3,6 +3,9 @@ import GrammarLesson from "../components/learningtools/studybook/lessons/Grammar
 import BookPage from "../components/learningtools/readingbook/BookPage";
 import ChapterPage from "../components/learningtools/readingbook/ChapterPage";
 import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
+import PracticeLesson from "../components/learningtools/studybook/lessons/PracticeLesson";
+import ReadingComprehensionLesson from "../components/learningtools/studybook/lessons/ReadingComprehensionLesson";
+import ConjugationLesson from "../components/learningtools/studybook/lessons/ConjugationLesson";
 
 // Determines Page Component layout depending on the lesson type of the page
 const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
@@ -14,9 +17,16 @@ const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
         case 'VOCABULARY':
             return <VocabularyLesson lesson={page.lesson}/>;
         case 'GRAMMAR':
-            return <GrammarLesson lesson={page.lesson}/>
+            return <GrammarLesson lesson={page.lesson}/>;
+        case 'CONJUGATION':
+            return <ConjugationLesson lesson={page.lesson}/>;
+        case 'PRACTICE':
+            return <PracticeLesson lesson={page.lesson}/>;
+        case 'READING_COMPREHENSION':
+            return <ReadingComprehensionLesson lesson={page.lesson}/>;
         default:
-            return <div style={{height: '100%'}}><p>Unsupported lesson type: {page.lesson.type}</p></div>;
+            const unknownLesson = page.lesson as { type?: string };
+            return <div style={{height: '100%'}}><p>Unsupported lesson type: {unknownLesson.type || 'Unknown'}</p></div>;
     }
 }
 

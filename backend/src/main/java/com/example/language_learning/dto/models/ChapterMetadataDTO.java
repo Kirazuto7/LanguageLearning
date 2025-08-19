@@ -1,10 +1,10 @@
 package com.example.language_learning.dto.models;
 
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class ChapterMetadataDTO {
-    private String title;
-    private String nativeTitle;
-    private String topic;
-}
+@Builder
+public record ChapterMetadataDTO (
+    String title,
+    String nativeTitle,
+    String topic
+) {}

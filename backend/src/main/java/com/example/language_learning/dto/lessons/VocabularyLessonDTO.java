@@ -1,15 +1,19 @@
 package com.example.language_learning.dto.lessons;
 
-import com.example.language_learning.dto.languages.WordDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.example.language_learning.dto.models.WordDTO;
+import com.example.language_learning.entity.lessons.LessonType;
+import lombok.Builder;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class VocabularyLessonDTO extends LessonDTO {
-    private List<WordDTO> vocabularies;
+@Builder
+public record VocabularyLessonDTO(
+        Long id,
+        String title,
+        List<WordDTO> vocabularies
+) implements LessonDTO {
+    @Override
+    public LessonType type() {
+        return LessonType.VOCABULARY;
+    }
 }

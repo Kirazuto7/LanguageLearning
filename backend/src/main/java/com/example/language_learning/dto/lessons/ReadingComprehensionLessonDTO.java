@@ -1,16 +1,20 @@
 package com.example.language_learning.dto.lessons;
 
 import com.example.language_learning.dto.models.QuestionDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.example.language_learning.entity.lessons.LessonType;
+import lombok.Builder;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class ReadingComprehensionLessonDTO extends LessonDTO {
-    private String story;
-    private List<QuestionDTO> questions;
+@Builder
+public record ReadingComprehensionLessonDTO(
+        Long id,
+        String title,
+        String story,
+        List<QuestionDTO> questions
+) implements LessonDTO {
+    @Override
+    public LessonType type() {
+        return LessonType.READING_COMPREHENSION;
+    }
 }
