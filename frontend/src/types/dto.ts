@@ -36,7 +36,7 @@ export interface PageDTO {
 export interface LessonDTO {
     id: number;
     title: string;
-    type: 'VOCABULARY' | 'GRAMMAR' | 'PRACTICE' | 'READING_COMPREHENSION';
+    type: 'VOCABULARY' | 'GRAMMAR' | 'CONJUGATION' | 'PRACTICE' | 'READING_COMPREHENSION';
 }
 
 export interface WordDTO {
@@ -75,6 +75,21 @@ export interface QuestionDTO {
     answer: string;
 }
 
+export interface ConjugationLessonDTO extends LessonDTO {
+    type: 'CONJUGATION';
+    conjugationRuleName: string;
+    explanation: string;
+    conjugatedWords: ConjugationExampleDTO[];
+}
+
+export interface ConjugationExampleDTO {
+    id: number;
+    infinitive: string;
+    conjugatedForm: string;
+    exampleSentence: string;
+    sentenceTranslation: string;
+}
+
 export interface PracticeLessonDTO extends LessonDTO {
     type: 'PRACTICE';
     instructions: string;
@@ -87,7 +102,7 @@ export interface ReadingComprehensionLessonDTO extends LessonDTO {
     questions: QuestionDTO[];
 }
 
-export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
+export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | ConjugationLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
 
 export interface CreateUserRequest {
     username: string;

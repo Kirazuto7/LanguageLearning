@@ -229,8 +229,8 @@ public class DtoMapper {
                 .explanation(dto.explanation())
                 .build();
 
-        if (dto.conjugationTable() != null) {
-            dto.conjugationTable().stream()
+        if (dto.conjugatedWords() != null) {
+            dto.conjugatedWords().stream()
                     .map(exampleDto -> toEntity(exampleDto, lesson))
                     .forEach(lesson::addConjugationExample);
         }
@@ -244,7 +244,7 @@ public class DtoMapper {
                 .title(entity.getTitle())
                 .conjugationRuleName(entity.getConjugationRuleName())
                 .explanation(entity.getExplanation())
-                .conjugationTable(entity.getConjugationTable().stream()
+                .conjugatedWords(entity.getConjugatedWords().stream()
                         .map(this::toDto)
                         .toList())
                 .build();

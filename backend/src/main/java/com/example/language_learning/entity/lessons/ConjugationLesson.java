@@ -26,10 +26,10 @@ public class ConjugationLesson extends Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<ConjugationExample> conjugationTable = new ArrayList<>();
+    private List<ConjugationExample> conjugatedWords = new ArrayList<>();
 
     public void addConjugationExample(ConjugationExample example) {
-        this.conjugationTable.add(example);
+        this.conjugatedWords.add(example);
         example.setLesson(this);
     }
 }

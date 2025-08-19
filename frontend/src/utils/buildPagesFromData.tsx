@@ -5,6 +5,7 @@ import ChapterPage from "../components/learningtools/readingbook/ChapterPage";
 import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
 import PracticeLesson from "../components/learningtools/studybook/lessons/PracticeLesson";
 import ReadingComprehensionLesson from "../components/learningtools/studybook/lessons/ReadingComprehensionLesson";
+import ConjugationLesson from "../components/learningtools/studybook/lessons/ConjugationLesson";
 
 // Determines Page Component layout depending on the lesson type of the page
 const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
@@ -17,6 +18,8 @@ const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
             return <VocabularyLesson lesson={page.lesson}/>;
         case 'GRAMMAR':
             return <GrammarLesson lesson={page.lesson}/>;
+        case 'CONJUGATION':
+            return <ConjugationLesson lesson={page.lesson}/>;
         case 'PRACTICE':
             return <PracticeLesson lesson={page.lesson}/>;
         case 'READING_COMPREHENSION':
