@@ -3,7 +3,7 @@ package com.example.language_learning.dto.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record AIConjugationExampleDTO(
-        @JsonProperty("tense") String tense,
+        @JsonProperty("infinitive") String infinitive,
         @JsonProperty("conjugated_form") String conjugatedForm,
         @JsonProperty("example_sentence") String exampleSentence,
         @JsonProperty("sentence_translation") String sentenceTranslation

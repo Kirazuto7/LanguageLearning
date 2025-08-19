@@ -10,7 +10,7 @@ import java.util.List;
 public record ConjugationLessonDTO(
         Long id,
         String title,
-        String infinitive,
+        String conjugationRuleName,
         String explanation,
         List<ConjugationExampleDTO> conjugationTable
 ) implements LessonDTO {
