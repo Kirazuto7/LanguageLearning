@@ -1,5 +1,12 @@
 import { WordDTO } from '../types/dto';
 
+/**
+ * Checks if a string contains any Japanese Kanji characters.
+ * @param text The string to check.
+ * @returns True if the string contains Kanji, false otherwise.
+ */
+const containsKanji = (text: string): boolean => /[\u4e00-\u9faf]/.test(text);
+
 export const renderWord = (word: WordDTO): JSX.Element => {
     let content: JSX.Element;
 
@@ -10,7 +17,8 @@ export const renderWord = (word: WordDTO): JSX.Element => {
     else if (word.language.toLowerCase() === 'japanese') {
         // For Japanese, use the 'details' field to decide how to render.
         // The <ruby> tag is only appropriate for Kanji with furigana.
-        if (word.details?.script === 'kanji' && word.phoneticSpelling) {
+        // A more robust check is to see if the native word contains Kanji characters.
+        if (word.nativeWord && containsKanji(word.nativeWord) && word.phoneticSpelling) {
             content = (
                 <ruby>
                     {word.nativeWord}

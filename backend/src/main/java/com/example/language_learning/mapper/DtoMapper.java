@@ -198,10 +198,9 @@ public class DtoMapper {
                 .build();
 
         if (dto.exampleSentences() != null) {
-            List<Sentence> sentences = dto.exampleSentences().stream()
+            dto.exampleSentences().stream()
                     .map(this::toEntity)
-                    .toList();
-            lesson.setExampleSentences(sentences);
+                    .forEach(lesson::addExampleSentence);
         }
         return lesson;
     }
@@ -289,6 +288,7 @@ public class DtoMapper {
                 .nativeWord(dto.nativeWord())
                 .language(dto.language())
                 .phoneticSpelling(dto.phoneticSpelling())
+                .details(dto.details())
                 .build();
     }
 
@@ -300,6 +300,7 @@ public class DtoMapper {
                 .language(entity.getLanguage())
                 .nativeWord(entity.getNativeWord())
                 .phoneticSpelling(entity.getPhoneticSpelling())
+                .details(entity.getDetails())
                 .build();
     }
 

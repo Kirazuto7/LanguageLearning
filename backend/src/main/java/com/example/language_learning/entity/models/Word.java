@@ -1,7 +1,10 @@
 package com.example.language_learning.entity.models;
 
+import com.example.language_learning.mapper.util.JpaMapConverter;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Map;
 
 @Builder
 @Data
@@ -26,6 +29,7 @@ public class Word {
     @Column(columnDefinition = "TEXT")
     private String phoneticSpelling; // e.g., すし, eum-sik
 
+    @Convert(converter = JpaMapConverter.class)
     @Column(columnDefinition = "TEXT")
-    private String details; // JSON string meant to hold language-specific metadata e.g, hiragana, katakana, romaji
+    private Map<String, Object> details; // contains language-specific metadata e.g, hiragana, katakana, romaji
 }
