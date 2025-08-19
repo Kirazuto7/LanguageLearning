@@ -36,30 +36,17 @@ export interface PageDTO {
 export interface LessonDTO {
     id: number;
     title: string;
-    type: 'VOCABULARY' | 'GRAMMAR' | 'PRACTICE' | 'READING_COMPREHENSION';
+    type: 'VOCABULARY' | 'GRAMMAR' | 'CONJUGATION' | 'PRACTICE' | 'READING_COMPREHENSION';
 }
 
 export interface WordDTO {
     id: number;
-    type: 'korean' | 'japanese';
-    translation: string;
+    englishTranslation: string;
+    language: string;
+    nativeWord: string;
+    phoneticSpelling: string;
+    details?: { [key: string]: any };
 }
-
-export interface KoreanWordDTO extends WordDTO {
-    type: 'korean';
-    hangeul: string;
-    hanja: string;
-}
-
-export interface JapaneseWordDTO extends WordDTO {
-    type: 'japanese';
-    hiragana: string;
-    katakana: string;
-    kanji: string;
-    romaji: string;
-}
-
-export type AnyWordDTO = KoreanWordDTO | JapaneseWordDTO;
 
 export interface SentenceDTO {
     id: number;
@@ -69,7 +56,7 @@ export interface SentenceDTO {
 
 export interface VocabularyLessonDTO extends LessonDTO {
     type: 'VOCABULARY';
-    vocabularies: AnyWordDTO[];
+    vocabularies: WordDTO[];
 }
 
 export interface GrammarLessonDTO extends LessonDTO {
@@ -82,10 +69,25 @@ export interface GrammarLessonDTO extends LessonDTO {
 
 export interface QuestionDTO {
     id: number;
-    questionType: 'MULTIPLE_CHOICE' | 'FILL_IN_THE_BLANK' | 'FREE_FORM';
+    questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;
     options?: string[];
     answer: string;
+}
+
+export interface ConjugationLessonDTO extends LessonDTO {
+    type: 'CONJUGATION';
+    conjugationRuleName: string;
+    explanation: string;
+    conjugatedWords: ConjugationExampleDTO[];
+}
+
+export interface ConjugationExampleDTO {
+    id: number;
+    infinitive: string;
+    conjugatedForm: string;
+    exampleSentence: string;
+    sentenceTranslation: string;
 }
 
 export interface PracticeLessonDTO extends LessonDTO {
@@ -100,7 +102,7 @@ export interface ReadingComprehensionLessonDTO extends LessonDTO {
     questions: QuestionDTO[];
 }
 
-export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
+export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | ConjugationLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
 
 export interface CreateUserRequest {
     username: string;
@@ -128,6 +130,10 @@ export interface ChapterGenerationRequest {
 }
 
 export interface UpdateSettingsRequest {
-    userId: number;
     settings: Partial<Omit<SettingsDTO, 'id'>>;
+}
+
+export interface AuthenticationResponse {
+    token: string,
+    user: UserDTO
 }

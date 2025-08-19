@@ -10,12 +10,16 @@ Your entire response MUST be a single, valid JSON object.
 The content MUST be about the `{topic}`.
 The language of the vocabulary MUST be `{language}`.
 
-## OVERALL RULES
+## CONTENT RULES
 1.  Generate a list of 10-15 key vocabulary words directly related to the `{topic}`.
-2.  For each vocabulary item, first think of the English word (e.g., "sports"). Then, provide its `{language}` equivalent (e.g., 「スポーツ」) and its components in the JSON fields. The `translation` field in the JSON MUST be the original English word.
-3.  The "title" field in the JSON must be a relevant title for the `{topic}`.
-4.  The "type" field for each word MUST be "{language}". This is mandatory.
-5.  Provide accurate translations and all relevant language-specific fields (e.g., hangeul, kanji) according to the rules below.
+2.  For each vocabulary item, provide the English word in the `englishTranslation` field.
+3.  CRITICAL: For each English word, you MUST provide its accurate `{language}` translation. Use this translation to populate the `nativeWord`, `phoneticSpelling`, and `details` fields. These fields must not be empty.
+4.  Provide accurate phonetic spellings according to the rules in the JSON STRUCTURE section.
+
+## LANGUAGE & DIFFICULTY RULES
+1.  The `title` field MUST be in English.
+2.  CRITICAL: The `englishTranslation` field for each word MUST be in **English only**. Do not use `{language}` characters in this field.
+3.  All vocabulary must be appropriate for a `{difficulty}` learner.
 
 ## JSON STRUCTURE
 Your entire response MUST be a single, valid JSON object with the following fields:
@@ -23,15 +27,17 @@ Your entire response MUST be a single, valid JSON object with the following fiel
 - "vocabularies": An array of 10–15 relevant vocabulary items.
 
 Each vocabulary item in the "vocabularies" array must be a single, ordered word object with the following fields:
-- "type": A string indicating the language. It MUST be "{language}".
-- "translation": The accurate **English** translation of the word. This field MUST NOT contain Japanese or Korean characters.
-- Language-specific fields:
-  - If {language} is "korean", include "hangeul" and "hanja" (if applicable).
-  - For the "hanja" field, only provide the corresponding Chinese character if it is commonly used and you are certain of the correct one. If there is no common Hanja or you are uncertain, provide `null`.
-  - If {language} is "japanese", include "hiragana", "katakana", "kanji", and "romaji".
-    - For words written in Katakana (e.g., スポーツ), the "hiragana" and "kanji" fields MUST be `null`.
-    - For words written in Hiragana that have a common Kanji form, provide both. Otherwise, the "kanji" field should be `null`.
-    - For words written in Hiragana, the "katakana" field MUST be `null`.
+- "type": A string indicating the language. It MUST be "{language}". This helps with polymorphic deserialization.
+- "englishTranslation": The accurate English translation of the word.
+- "nativeWord": The primary representation of the word in `{language}`. For Japanese, this should be the Kanji (if available). For Korean, this should be the Hangeul.
+- "phoneticSpelling": A phonetic guide for the native word. For Japanese, this should be the Hiragana reading. For Korean, this should be the Romaja spelling.
+- "details": A JSON object for language-specific metadata.
+  - For `{language}` = "japanese", this object MUST contain the following keys: "kanji", "hiragana", and "katakana".
+       - "kanji": The Kanji form of the word. Provide `null` if it doesn't exist or isn't common.
+       - "hiragana": The Hiragana form or reading of the word. This is a CRITICAL field and should only be `null` if the word is exclusively written in Katakana.
+       - "katakana": The Katakana form of the word. Provide `null` if it's not a Katakana word.
+     - For other languages, this can be an empty object `\{\}`.
+
 
  ---
 
@@ -40,27 +46,70 @@ Each vocabulary item in the "vocabularies" array must be a single, ordered word 
 
 IMPORTANT: The following example is for formatting and structure ONLY. Do NOT copy its content. Your content must be about `{topic}`.
 
-EXAMPLE of the complete JSON object for a Korean lesson on the topic "weather":
+EXAMPLE 1: Korean lesson on the topic "weather":
 \{
   "title": "Key Vocabulary for Weather",
   "vocabularies": [
     \{
       "type": "korean",
-      "translation": "weather",
-      "hangeul": "날씨",
-      "hanja": null
+      "englishTranslation": "weather",
+      "nativeWord": "날씨",
+      "phoneticSpelling": "nalssi",
+      "details": \{\}
     \},
     \{
       "type": "korean",
-      "translation": "to be sunny",
-      "hangeul": "맑다",
-      "hanja": null
+      "englishTranslation": "to be sunny",
+      "nativeWord": "맑다",
+      "phoneticSpelling": "makda",
+      "details": \{\}
     \},
     \{
       "type": "korean",
-      "translation": "rain",
-      "hangeul": "비",
-      "hanja": null
+      "englishTranslation": "rain",
+      "nativeWord": "비",
+      "phoneticSpelling": "bi",
+      "details": \{\}
+    \}
+  ]
+\}
+
+EXAMPLE 2: Japanese lesson on the topic "food":
+\{
+  "title": "Key Vocabulary for Food",
+  "vocabularies": [
+    \{
+      "type": "japanese",
+      "englishTranslation": "sushi",
+      "nativeWord": "寿司",
+      "phoneticSpelling": "すし",
+      "details": \{
+        "kanji": "寿司",
+        "hiragana": "すし",
+        "katakana": null
+      \}
+    \},
+    \{
+      "type": "japanese",
+      "englishTranslation": "ramen",
+      "nativeWord": "ラーメン",
+      "phoneticSpelling": "ラーメン",
+      "details": \{
+        "kanji": null,
+        "hiragana": null,
+        "katakana": "ラーメン"
+      \}
+    \},
+    \{
+      "type": "japanese",
+      "englishTranslation": "delicious",
+      "nativeWord": "おいしい",
+      "phoneticSpelling": "おいしい",
+      "details": \{
+        "kanji": null,
+        "hiragana": "おいしい",
+        "katakana": null
+      \}
     \}
   ]
 \}

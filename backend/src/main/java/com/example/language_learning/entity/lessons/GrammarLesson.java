@@ -2,18 +2,19 @@ package com.example.language_learning.entity.lessons;
 
 import com.example.language_learning.entity.models.Sentence;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "grammar_lessons")
+@SuperBuilder
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class GrammarLesson extends Lesson {
     @Column(columnDefinition = "TEXT")
@@ -32,6 +33,7 @@ public class GrammarLesson extends Lesson {
             inverseJoinColumns = @JoinColumn(name = "sentence_id")
     )
     @OrderColumn(name = "sentence_order")
+    @Builder.Default
     private List<Sentence> exampleSentences = new ArrayList<>();
 
     public void addExampleSentence(Sentence sentence) {

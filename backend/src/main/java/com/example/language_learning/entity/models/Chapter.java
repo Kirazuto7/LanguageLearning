@@ -2,18 +2,15 @@ package com.example.language_learning.entity.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.language_learning.entity.lessons.Lesson;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 
 @Entity
 @Table(name = "chapters")
-@Getter
-@Setter
+@Builder
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Chapter {
     
@@ -27,6 +24,7 @@ public class Chapter {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "chapter")
     @OrderColumn(name = "page_order")
+    @Builder.Default
     private List<Page> pages = new ArrayList<>();
 
     @ManyToOne(fetch =  FetchType.LAZY)

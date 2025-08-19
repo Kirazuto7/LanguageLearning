@@ -17,7 +17,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./backend/dockerfiles
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -32,7 +32,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ollama:
+      exaone:
+        condition: service_healthy
+      elyza:
+        condition: service_healthy
+      qwen3:
         condition: service_healthy
     healthcheck:
       # This check requires curl to be installed in the backend container.
@@ -43,19 +47,55 @@ services:
       retries: 10
       start_period: 30s
 
-  ollama:
+  exaone:
     build:
-      context: ./backend
-      dockerfile: DockerfileAI
+      context: ./backend/dockerfiles
+      dockerfile: DockerfileKo
     ports:
       - "11434:11434"
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu] # optional
+            - capabilities: [gpu] # Optional / Can remove to use CPU
     healthcheck:
       test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  elyza:
+    build:
+      context: ./backend/dockerfiles
+      dockerfile: DockerfileJP
+    ports:
+      - "11435:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu] # Optional / Can remove to use CPU
+    healthcheck:
+      test: [ "CMD", "ollama", "list" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  qwen3:
+    build:
+      context: ./backend/dockerfiles
+      dockerfile: DockerfileAI
+    ports:
+      - "11436:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu] # Optional / Can remove to use CPU
+    healthcheck:
+      test: [ "CMD", "ollama", "list" ]
       interval: 10s
       timeout: 5s
       retries: 5

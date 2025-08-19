@@ -1,7 +1,7 @@
 package com.example.language_learning.services;
 
 import com.example.language_learning.dto.models.LessonBookDTO;
-import com.example.language_learning.entity.User;
+import com.example.language_learning.entity.user.User;
 import com.example.language_learning.entity.models.LessonBook;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.LessonBookRepository;
@@ -9,8 +9,6 @@ import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class BookService {
     }
 
     public LessonBookDTO fetchBook(LessonBookRequest request) {
-        LessonBook book = findOrCreateBook(request.getLanguage(), request.getDifficulty(), request.getUserId());
+        LessonBook book = findOrCreateBook(request.language(), request.difficulty(), request.userId());
         return dtoMapper.toDto(book);
     }
 

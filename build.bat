@@ -10,7 +10,7 @@ if /i "%~1"=="-remove" set "DO_CLEANUP=true"
 
 if "%DO_CLEANUP%" == "true" (
     call :DockerStartup
-    call :DockerCleanup
+    call :DockerHardCleanup
     goto :eof
 )
 
@@ -69,8 +69,22 @@ goto :eof
     echo **********************************************
     echo.
 
+    docker-compose down
+    echo Closing any existing DockerWindow...
+    taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
+    exit /b 0
+
+:DockerHardCleanup
+    echo.
+    echo **********************************************
+    echo *        Removing Docker Container(s)        *
+    echo **********************************************
+    echo.
+
     docker-compose down -v
     docker builder prune -f
+    echo Closing any existing DockerWindow...
+    taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
     exit /b 0
 
 :DockerBuild

@@ -17,8 +17,7 @@ interface SettingsManagerResult {
 
 export function useSettingsManager(): SettingsManagerResult {
     const { user } = useSelector((state: RootState) => state.auth);
-    const { settings } = useSelector((state: RootState) => state.settings);
-
+    const settings = user?.settings ?? null;
     const [updateSettingsMutation, {isLoading, error}] = useUpdateSettingsMutation();
 
     const updateSettings = useCallback(async(newSettings: Partial<Omit<SettingsDTO, 'id'>>) => {
@@ -28,7 +27,7 @@ export function useSettingsManager(): SettingsManagerResult {
         }
 
         try{
-            return await updateSettingsMutation({userId: user.id, settings: newSettings}).unwrap();
+            return await updateSettingsMutation(newSettings).unwrap();
         }
         catch (err) {
             console.error("Failed to update settings:", err);
