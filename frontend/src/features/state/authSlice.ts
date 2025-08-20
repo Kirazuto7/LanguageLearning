@@ -17,15 +17,16 @@ const initialState: AuthState = {
     user: storedUser ? JSON.parse(storedUser) : null,
 };
 
+const handleUserLogout = (state: AuthState) => {
+    state.user = null;
+    localStorage.removeItem('user');
+};
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        // Manual
-        logOut: (state) => {
-            state.user = null;
-            localStorage.removeItem('user');
-        },
+        logOut: handleUserLogout,
     },
     extraReducers: (builder) => {
         /*/////////////////////////////////////////////////////*/
@@ -45,11 +46,8 @@ const authSlice = createSlice({
         // User initiated via api
         builder.addMatcher(
             userApiSlice.endpoints.logout.matchFulfilled,
-            (state) => {
-                state.user = null;
-                localStorage.removeItem('user');
-            }
-        )
+            handleUserLogout
+        );
 
         builder.addMatcher(
             userApiSlice.endpoints.updateSettings.matchFulfilled,

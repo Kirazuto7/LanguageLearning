@@ -13,7 +13,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     const {settings} = useSettingsManager();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
-    const renderText = (text: string, { as: Component = 'p', className = '' } = {}) => {
+    const renderText = (text: string, { as: Component = 'p' as React.ElementType, className = '' } = {}) => {
         if (isJapanese) {
             return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
         }

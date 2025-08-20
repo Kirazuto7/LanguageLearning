@@ -6,11 +6,13 @@ import HomePage from './pages/HomePage';
 import StudyBookPage from './pages/StudyBookPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage  from './pages/LoginPage';
+import SessionManager from './components/headless/SessionManager';
 
 const App: React.FC = () => {
 
   return (
       <div className="App">
+        <SessionManager/>
         <NavigationBar />
 
         <main className="mt-4">
