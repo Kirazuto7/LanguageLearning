@@ -10,10 +10,11 @@ import com.example.language_learning.entity.user.User;
 import com.example.language_learning.entity.models.Word;
 import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.entity.models.*;
+import com.example.language_learning.enums.LessonType;
+import com.example.language_learning.enums.QuestionType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 
 @Component

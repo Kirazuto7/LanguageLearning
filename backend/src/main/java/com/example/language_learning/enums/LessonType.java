@@ -1,4 +1,4 @@
-package com.example.language_learning.entity.lessons;
+package com.example.language_learning.enums;
 
 public enum LessonType {
     VOCABULARY,

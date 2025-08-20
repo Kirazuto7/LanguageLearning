@@ -1,4 +1,4 @@
-package com.example.language_learning.entity.models;
+package com.example.language_learning.enums;
 
 public enum QuestionType {
     MULTIPLE_CHOICE,

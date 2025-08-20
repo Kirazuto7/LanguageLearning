@@ -18,7 +18,7 @@ spring:
       chat: none
       embedding: none
     ollama1:
-      base-url: http://qwen3:11434
+      base-url: http://ai:11434
       chat:
         model: qwen3:8b
         options:
@@ -28,7 +28,7 @@ spring:
           temperature: 0.5
 
     ollama2:
-      base-url: http://exaone:11434
+      base-url: http://ai-kr:11434
       chat:
         model: exaone3.5
         options:
@@ -38,7 +38,7 @@ spring:
           temperature: 0.5
 
     ollama3:
-      base-url: http://elyza:11434
+      base-url: http://ai-jp:11434
       chat:
         model: pakachan/elyza-llama3-8b
         options:

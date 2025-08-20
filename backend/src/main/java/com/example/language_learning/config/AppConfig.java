@@ -1,5 +1,6 @@
 package com.example.language_learning.config;
 
+import com.atilika.kuromoji.ipadic.Tokenizer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -18,6 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class AppConfig {
+
+    @Bean
+    public Tokenizer tokenizer() {
+        return new Tokenizer();
+    }
 
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {

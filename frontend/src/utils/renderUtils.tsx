@@ -5,7 +5,7 @@ import { WordDTO } from '../types/dto';
  * @param text The string to check.
  * @returns True if the string contains Kanji, false otherwise.
  */
-const containsKanji = (text: string): boolean => /[\u4e00-\u9faf]/.test(text);
+export const containsKanji = (text: string): boolean => /[\u4e00-\u9faf]/.test(text);
 
 export const renderWord = (word: WordDTO): JSX.Element => {
     let content: JSX.Element;

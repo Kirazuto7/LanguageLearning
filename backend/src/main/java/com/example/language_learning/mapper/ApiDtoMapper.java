@@ -2,21 +2,24 @@ package com.example.language_learning.mapper;
 
 import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.ConjugationExampleDTO;
-import com.example.language_learning.dto.models.WordDTO;
-import com.example.language_learning.dto.models.ChapterMetadataDTO;
-import com.example.language_learning.dto.models.QuestionDTO;
-import com.example.language_learning.entity.models.QuestionType;
+import com.example.language_learning.dto.models.*;
+import com.example.language_learning.enums.QuestionType;
+import com.example.language_learning.services.FuriganaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * Maps from the API-Response DTOs (sanitized) to the
  * application's internal DTOs.
  */
 @Component
+@RequiredArgsConstructor
 public class ApiDtoMapper {
+
+    private final FuriganaService furiganaService;
 
     public ChapterMetadataDTO toChapterMetadataDTO(AIChapterMetadataResponse response, String topic) {
         return ChapterMetadataDTO.builder()
@@ -38,57 +41,83 @@ public class ApiDtoMapper {
                                     .englishTranslation(aiVocabulary.englishTranslation())
                                     .details(aiVocabulary.details())
                                     .build();
-                        }).toList())
+                        }).collect(Collectors.toList()))
                 .build();
     }
 
-    public GrammarLessonDTO toGrammarLessonDTO(AIGrammarLessonResponse response) {
+    public GrammarLessonDTO toGrammarLessonDTO(AIGrammarLessonResponse response, String language) {
         return GrammarLessonDTO.builder()
                 .title(response.title())
                 .grammarConcept(response.grammarConcept())
                 .nativeGrammarConcept(response.nativeGrammarConcept())
                 .explanation(response.explanation())
-                .exampleSentences(response.exampleSentences())
+                .exampleSentences(response.exampleSentences().stream()
+                        .map(aiSentence -> {
+                            String text = "japanese".equalsIgnoreCase(language)
+                                    ? furiganaService.addFurigana(aiSentence.text())
+                                    : aiSentence.text();
+                            return SentenceDTO.builder()
+                                    .text(text)
+                                    .translation(aiSentence.translation())
+                                    .build();
+                        }).collect(Collectors.toList()))
                 .build();
     }
 
-    public ConjugationLessonDTO toConjugationLessonDTO(AIConjugationLessonResponse response) {
+    public ConjugationLessonDTO toConjugationLessonDTO(AIConjugationLessonResponse response, String language) {
         return ConjugationLessonDTO.builder()
                 .title(response.title())
                 .explanation(response.explanation())
                 .conjugationRuleName(response.conjugationRuleName())
                 .conjugatedWords(response.conjugatedWords().stream()
                         .map(aiConjugationExample -> {
+                            if("japanese".equalsIgnoreCase(language)) {
+                                String infinitive = furiganaService.addFurigana(aiConjugationExample.infinitive());
+                                String conjugatedForm = furiganaService.addFurigana(aiConjugationExample.conjugatedForm());
+                                String exampleSentence = furiganaService.addFurigana(aiConjugationExample.exampleSentence());
+                                return ConjugationExampleDTO.builder()
+                                        .conjugatedForm(conjugatedForm)
+                                        .infinitive(infinitive)
+                                        .exampleSentence(exampleSentence)
+                                        .sentenceTranslation(aiConjugationExample.sentenceTranslation())
+                                        .build();
+                            }
                             return ConjugationExampleDTO.builder()
                                     .conjugatedForm(aiConjugationExample.conjugatedForm())
                                     .infinitive(aiConjugationExample.infinitive())
                                     .exampleSentence(aiConjugationExample.exampleSentence())
                                     .sentenceTranslation(aiConjugationExample.sentenceTranslation())
                                     .build();
-                        }).toList())
+                        }).collect(Collectors.toList()))
                 .build();
     }
 
-    public PracticeLessonDTO toPracticeLessonDTO(AIPracticeLessonResponse response) {
+    public PracticeLessonDTO toPracticeLessonDTO(AIPracticeLessonResponse response, String language) {
         return PracticeLessonDTO.builder()
                 .title(response.title())
                 .instructions(response.instructions())
                 .questions(response.questions().stream()
                         .map(aiQuestion -> {
+                            String questionText = "japanese".equalsIgnoreCase(language)
+                                    ? furiganaService.addFurigana(aiQuestion.questionText())
+                                    : aiQuestion.questionText();
                             return QuestionDTO.builder()
-                                    .questionText(aiQuestion.questionText())
+                                    .questionText(questionText)
                                     .questionType(QuestionType.FREE_FORM.name())
                                     .answer(null)
                                     .options(Collections.emptyList())
                                     .build();
-                        }).toList())
+                        }).collect(Collectors.toList()))
                 .build();
     }
 
-    public ReadingComprehensionLessonDTO toReadingComprehensionLessonDTO(AIReadingComprehensionLessonResponse response) {
+    public ReadingComprehensionLessonDTO toReadingComprehensionLessonDTO(AIReadingComprehensionLessonResponse response, String language) {
+        String story = "japanese".equalsIgnoreCase(language)
+                ? furiganaService.addFurigana(response.story())
+                : response.story();
         return ReadingComprehensionLessonDTO.builder()
                 .title(response.title())
-                .story(response.story())
+                .story(story)
                 .questions(response.questions().stream()
                         .map(aiQuestion -> {
                             return QuestionDTO.builder()
@@ -97,7 +126,7 @@ public class ApiDtoMapper {
                                     .answer(aiQuestion.answer())
                                     .options(aiQuestion.options())
                                     .build();
-                        }).toList())
+                        }).collect(Collectors.toList()))
                 .build();
     }
 

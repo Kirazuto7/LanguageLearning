@@ -6,7 +6,6 @@ import java.util.Map;
  * Represents the simplified JSON structure for a vocabulary item from the AI.
  */
 public record AIVocabularyItemDTO(
-    String type,
     String englishTranslation,
     String nativeWord,
     String phoneticSpelling,
