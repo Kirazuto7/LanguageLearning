@@ -15,7 +15,7 @@ const ConjugationLesson: React.FC<ConjugationLessonProps> = ({ lesson }) => {
     const isJapanese = settings?.language.toLowerCase() === "japanese";
     
 
-    const renderText = (text: string, { as: Component = 'div', className = '' } = {}) => {
+    const renderText = (text: string, { as: Component = 'div' as React.ElementType, className = '' } = {}) => {
         if (isJapanese) {
             return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
         }

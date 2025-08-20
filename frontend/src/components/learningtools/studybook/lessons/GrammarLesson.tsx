@@ -13,7 +13,7 @@ const GrammarLesson: React.FC<GrammarLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
     const isJapanese = settings?.language.toLowerCase() === 'japanese';
 
-    const renderText = (text: string, { as: Component = 'div', className = '' } = {}) => {
+    const renderText = (text: string, { as: Component = 'div' as React.ElementType, className = '' } = {}) => {
         if (isJapanese) {
             return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
         }
