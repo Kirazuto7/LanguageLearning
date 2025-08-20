@@ -27,7 +27,6 @@ Your entire response MUST be a single, valid JSON object with the following fiel
 - "vocabularies": An array of 10–15 relevant vocabulary items.
 
 Each vocabulary item in the "vocabularies" array must be a single, ordered word object with the following fields:
-- "type": A string indicating the language. It MUST be "{language}". This helps with polymorphic deserialization.
 - "englishTranslation": The accurate English translation of the word.
 - "nativeWord": The primary representation of the word in `{language}`. For Japanese, this should be the Kanji (if available). For Korean, this should be the Hangeul.
 - "phoneticSpelling": A phonetic guide for the native word. For Japanese, this should be the Hiragana reading. For Korean, this should be the Romaja spelling.
@@ -51,21 +50,18 @@ EXAMPLE 1: Korean lesson on the topic "weather":
   "title": "Key Vocabulary for Weather",
   "vocabularies": [
     \{
-      "type": "korean",
       "englishTranslation": "weather",
       "nativeWord": "날씨",
       "phoneticSpelling": "nalssi",
       "details": \{\}
     \},
     \{
-      "type": "korean",
       "englishTranslation": "to be sunny",
       "nativeWord": "맑다",
       "phoneticSpelling": "makda",
       "details": \{\}
     \},
     \{
-      "type": "korean",
       "englishTranslation": "rain",
       "nativeWord": "비",
       "phoneticSpelling": "bi",
@@ -79,7 +75,6 @@ EXAMPLE 2: Japanese lesson on the topic "food":
   "title": "Key Vocabulary for Food",
   "vocabularies": [
     \{
-      "type": "japanese",
       "englishTranslation": "sushi",
       "nativeWord": "寿司",
       "phoneticSpelling": "すし",
@@ -90,7 +85,6 @@ EXAMPLE 2: Japanese lesson on the topic "food":
       \}
     \},
     \{
-      "type": "japanese",
       "englishTranslation": "ramen",
       "nativeWord": "ラーメン",
       "phoneticSpelling": "ラーメン",
@@ -101,7 +95,6 @@ EXAMPLE 2: Japanese lesson on the topic "food":
       \}
     \},
     \{
-      "type": "japanese",
       "englishTranslation": "delicious",
       "nativeWord": "おいしい",
       "phoneticSpelling": "おいしい",

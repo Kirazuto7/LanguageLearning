@@ -1,7 +1,7 @@
 package com.example.language_learning.dto.lessons;
 
 import com.example.language_learning.dto.models.QuestionDTO;
-import com.example.language_learning.entity.lessons.LessonType;
+import com.example.language_learning.enums.LessonType;
 import lombok.Builder;
 
 import java.util.List;

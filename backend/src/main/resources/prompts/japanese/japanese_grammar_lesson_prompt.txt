@@ -18,13 +18,13 @@ The content MUST be about the `{topic}` and explain the grammar concept you have
 
 ## CONTENT RULES
 1.  The `explanation` should be clear, concise, and easy for a `{difficulty}` learner to understand.
-2.  Crucially, the `explanation` MUST include the specific grammar particles, endings, or structures from `{language}` within the English text to provide clear examples. For instance, when explaining a Korean particle, mention it directly like '-(으)ㄴ'.
+2.  Crucially, the `explanation` MUST include the specific grammar particles, endings, or structures from `{language}` within the English text to provide clear examples. For instance, when explaining a Japanese particle, mention it directly like 'は (wa)'.
 3.  Provide 5-6 `exampleSentences` that clearly demonstrate the grammar concept.
 
 ## LANGUAGE & DIFFICULTY RULES
 1.  The `title`, `grammarConcept`, and `explanation` fields MUST be in English.
 2.  The `nativeGrammarConcept` field MUST be the name of the grammar concept in the target `{language}`.
-3.  The `exampleSentences` `text` MUST be in `{language}`.
+3.  The `exampleSentences` `text` field MUST be in `{language}`. Do not add any furigana or other annotations.
 4.  CRITICAL: The `translation` for each example sentence MUST be in **English only**. Do not use `{language}` characters in this field.
 5.  All content must be appropriate for a `{difficulty}` learner.
 
@@ -44,19 +44,19 @@ Each sentence object must have:
 
 IMPORTANT: The following example is for formatting and structure ONLY. Do NOT copy its content. Your content must be about `{topic}`.
 
-EXAMPLE of the complete JSON object for a Korean lesson on the topic "weather":
+EXAMPLE of the complete JSON object for a Japanese lesson on the topic "weather":
 \{
   "title": "Grammar for Describing Weather",
-  "grammarConcept": "Using Adjectives to Describe Nouns",
-  "nativeGrammarConcept": "형용사로 명사 수식하기",
-  "explanation": "In Korean, adjectives are placed before the noun they describe. The adjective stem is modified with '-(으)ㄴ' to connect it to the noun. Use '은' for stems ending in a consonant and 'ㄴ' for stems ending in a vowel.",
+  "grammarConcept": "Using i-Adjectives to Describe Nouns",
+  "nativeGramarConcept": "い形容詞",
+  "explanation": "To describe a noun with an i-adjective, you place the adjective directly before the noun. For example, '暑い' (hot) + '日' (day) becomes '暑い日' (hot day).",
   "exampleSentences": [
     \{
-      "text": "오늘은 좋은 날씨예요.",
-      "translation": "Today is nice weather."
+      "text": "今日は良い天気ですね。",
+      "translation": "Today is nice weather, isn't it?"
     \},
     \{
-      "text": "추운 날에는 따뜻한 차를 마셔요.",
+      "text": "寒い日には温かいお茶を飲みます。",
       "translation": "On a cold day, I drink warm tea."
     \}
   ]
