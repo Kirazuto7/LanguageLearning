@@ -7,7 +7,6 @@ import { RootState } from '../app/store';
 
 
 interface StudyBookManagerResult {
-    pages: React.ReactElement[];
     title: string;
     chapters: ChapterDTO[];
     generateChapter: (topic: string) => Promise<ChapterDTO | null>;
@@ -44,12 +43,6 @@ export function useStudyBookManager(): StudyBookManagerResult {
         }
     }, [user, language, difficulty, generateChapterMutation]);
 
-    // 5. Process book pages based on the book data state
-    const pages = useMemo(() => {
-        if(!bookData) return [];
-        return buildPagesFromBookData(bookData);
-    }, [bookData]);
-
     const title = bookData?.bookTitle || 'Book Title';
     const chapters = bookData?.chapters || [];
     const isLoading = isFetchingBook || isGeneratingChapter;
@@ -59,5 +52,5 @@ export function useStudyBookManager(): StudyBookManagerResult {
         return null;
     }, [fetchBookError, generateChapterError]);
 
-    return { pages, title, chapters, generateChapter, isLoading, error };
+    return { title, chapters, generateChapter, isLoading, error };
 }
