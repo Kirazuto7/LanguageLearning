@@ -1,13 +1,12 @@
 import React from "react";
-import styles from '../styles/homepage.module.css';
 import { Container } from "react-bootstrap";
 
 interface LandingPageProps {}
 
 const LandingPage: React.FC<LandingPageProps> = () => {
     return(
-        <Container fluid className="py-5">
-            <div className={`${styles['glass-container']} mb-4`}>
+        <Container fluid className="d-flex flex-column justify-content-center align-items-center flex-grow-1 py-5">
+            <div className={"glass-container mb-4"} style={{ maxWidth: '800px'}}>
             <h1 className="text-4xl font-bold mb-4 text-center">Welcome to LangMaster</h1>
             <h5 className="text-lg text-center mb-4">Empower your journey to fluency with immersive tailored lessons and ai-powered language tools.</h5>
             <h3>Ready to Begin?</h3>

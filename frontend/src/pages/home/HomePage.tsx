@@ -1,9 +1,9 @@
-import styles from '../styles/homepage.module.css';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { RootState } from '../app/store';
+import { RootState } from '../../app/store';
+import React from "react";
 
 interface HomePageProps{}
 const HomePage: React.FC<HomePageProps> = () => {
@@ -11,9 +11,9 @@ const HomePage: React.FC<HomePageProps> = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   return (
-    <Container fluid className="py-5">
+    <Container fluid className="d-flex flex-column flex-grow-1 py-5">
     
-    <div className={`${styles['glass-container']} mb-4`}>
+    <div className={"glass-container mb-4"}>
       <h1 className="text-4xl font-bold mb-4 text-center">Welcome {user ? `, ${user.username}` : 'to LangMaster'}</h1>
       <h3>Ready to Begin?</h3>
       <p>
@@ -30,8 +30,8 @@ const HomePage: React.FC<HomePageProps> = () => {
       </p>
     </div>
 
-    <div className={`${styles['glass-container']} p-5 mb-4  rounded-3`}>
-      <h2 className={`${styles['collection-title']} text-center`}>Language Tools Collection</h2>
+    <div className={"glass-container p-5 mb-4  rounded-3"}>
+      <h2 className={"text-center"}>Language Tools Collection</h2>
       <div className="divider mb-4"/>
       <Card>
           <Card.Header>

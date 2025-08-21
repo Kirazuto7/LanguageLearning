@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import styles from '../../../styles/flipbook.module.css';
+import styles from './flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import BehindCoverPage from './BehindCoverPage';
 import TableOfContentsPage, { TocChapter } from './TableOfContentsPage';
-import BookPage from './BookPage';
+import BookPage from '../../bookpages/BookPage';
 import { ChapterDTO } from '../../../types/dto';
 import { useReadingBookManager } from '../../../hooks/useReadingBookManager';
 
