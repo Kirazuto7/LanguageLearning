@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import styles from "../styles/loginpage.module.css";
+import styles from "./loginpage.module.css";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { MascotCharacter, Blackboard }  from "../components/ai/Mascot";
-import { LoginRequest, CreateUserRequest } from "../types/dto";
+import { MascotCharacter, Blackboard }  from "../../components/ai/Mascot";
+import { LoginRequest, CreateUserRequest } from "../../types/dto";
 import { useSelector } from "react-redux";
-import { useLoginMutation, useRegisterMutation } from "../features/api/userApiSlice";
-import { RootState } from "../app/store";
+import { useLoginMutation, useRegisterMutation } from "../../features/api/userApiSlice";
+import { RootState } from "../../app/store";
 
 interface LoginProps {
     onShowRegister: () => void;

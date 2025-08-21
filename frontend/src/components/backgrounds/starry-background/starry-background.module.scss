@@ -1,0 +1,52 @@
+@keyframes anim-stars {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+%stars-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+
+  &::after {
+    content: " ";
+    position: absolute;
+    top: 2000px;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+  }
+}
+
+.stars1 {
+  @extend %stars-base;
+  animation: anim-stars 150s linear infinite;
+  $shadows: 53px 1595px 1px #FFF,1119px 1320px 0px #FFF,1113px 1298px 1px #FFF,129px 1199px 1px #FFF,1385px 186px 0px #FFF,1468px 1018px 0px #FFF,1932px 1033px 1px #FFF,144px 182px 1px #FFF,1079px 1430px 1px #FFF,1590px 983px 1px #FFF,1691px 132px 0px #FFF,1352px 1419px 1px #FFF,354px 1904px 1px #FFF,1339px 1228px 1px #FFF,144px 1493px 0px #FFF;
+  box-shadow: $shadows;
+  &::after { box-shadow: $shadows; }
+}
+
+.stars2 {
+  @extend %stars-base;
+  animation: anim-stars 100s linear infinite;
+  $shadows: 1826px 1448px 1px #FFF,135px 1324px 0px #FFF,1891px 1329px 1px #FFF,1503px 1433px 1px #FFF,1008px 131px 1px #FFF,163px 1059px 0px #FFF,1334px 101px 1px #FFF,1430px 1338px 0px #FFF,1385px 139px 1px #FFF,1503px 101px 0px #FFF,1236px 1530px 0px #FFF,1589px 1853px 1px #FFF,1883px 142px 1px #FFF,1336px 106px 1px #FFF,1001px 1139px 0px #FFF;
+  box-shadow: $shadows;
+  &::after { box-shadow: $shadows; }
+}
+
+.stars3 {
+  @extend %stars-base;
+  animation: anim-stars 50s linear infinite;
+  $shadows: 1285px 1153px 1px #FFF,183px 110px 0px #FFF,150px 1129px 1px #FFF,1294px 113px 1px #FFF,1244px 113px 1px #FFF,1529px 1123px 0px #FFF,1123px 112px 1px #FFF,1234px 1238px 0px #FFF,1285px 129px 1px #FFF,1503px 101px 0px #FFF,1236px 1530px 0px #FFF,1589px 1853px 1px #FFF,1883px 142px 1px #FFF,1336px 106px 1px #FFF,1001px 1139px 0px #FFF;
+  box-shadow: $shadows;
+  &::after { box-shadow: $shadows; }
+}

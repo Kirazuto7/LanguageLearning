@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import styles from '../../../styles/lessonbook.module.css';
+import styles from './lessonbook.module.scss';
 import { Carousel, Pagination, Spinner, Form } from "react-bootstrap";
 import { useStudyBookManager } from "../../../hooks/useStudyBookManager";
 import { buildPagesForChapter } from "../../../utils/buildPagesFromData";
@@ -76,11 +76,12 @@ const Lessonbook: React.FC<LessonbookProps> = ({}) => {
     )});
 
     return(
-        <div className="p-3">
+        <div className={"p-3"}>
+
             <h2 className="text-center mb-3" style={{color: "white"}}>{title}</h2>
             {renderChapterSelector()}
             <div className={`${styles['content-area']} mt-4`}>
-                <Pagination className={` ${styles['page-control-container']} flex-column align-items-center align-self-center`}>
+                <Pagination className={`${styles['page-control-container']} flex-column align-items-center align-self-center`}>
                     <Pagination.Prev className={`${styles['page-control-item']} mb-4`} onClick={() => handlePageSelect(activePageIndex - 1)} disabled={activePageIndex === 0}/>
                     {paginationItems}
                     <Pagination.Next className={`${styles['page-control-item']} mt-4`} onClick={() => handlePageSelect(activePageIndex + 1)} disabled={activePageIndex === chapterPages.length-1}/>
