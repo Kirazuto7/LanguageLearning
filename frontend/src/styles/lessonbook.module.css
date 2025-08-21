@@ -2,31 +2,86 @@
  * Custom styles for the Lessonbook carousel to make controls more visible.
  */
 
+.content-area {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
 .studybook-carousel {
-    /* Set a height for the carousel. vh units are relative to viewport height. */
     height: 80vh;
     /* To prevent it from becoming too wide on large screens and center it */
-    max-width: 900px;
-    margin: 0 auto;
-    overflow: auto;
-}
-
-/* Override the default white SVG icon with a dark grey one for the 'previous' control */
-.studybook-carousel :global(.carousel-control-prev-icon) {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23333'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");
-}
-
-/* Override the default white SVG icon with a dark grey one for the 'next' control */
-.studybook-carousel :global(.carousel-control-next-icon) {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23333'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-}
-
-/* Optional: Add a subtle background on hover for better feedback */
-.studybook-carousel :global(.carousel-control-prev:hover),
-.studybook-carousel :global(.carousel-control-next:hover) {
-    background-color: rgba(0, 0, 0, 0.05);
+    max-width: 950px;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(255,255,255, 1);
 }
 
 .studybook-carousel :global(.carousel-inner) {
     height: 100%;
+    border-radius: 8px;
+}
+
+.chapter-select {
+    max-width: 450px;
+    min-width: 400px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem !important; /* Override bootstrap default */
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0,0,0, 0.1);
+}
+
+
+.page-control-container {
+    display: flex;
+    border: 1px solid #cccccc;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 1rem !important;
+    padding: 1rem 0.5rem;
+    box-shadow: 0 2px 6px rgba(255,255,255, 1);
+}
+
+.page-item :global(.page-link) {
+    border-radius: 50% !important;
+    width: 2.3rem;
+    height: 2.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    color: #ec4899;
+    box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+    font-weight: bold;
+}
+
+.page-control-item :global(.page-link) {
+    border-radius: 50% !important;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    color: #ec4899;
+    box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+    font-weight: bold;
+}
+
+.active-page-item :global(.page-link) {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    color: white;
+    border-color: #ec4899;
+}
+
+.active-page-item :global(.page-link):hover {
+    background: linear-gradient(135deg, #db2777 0%, #be185d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
 }

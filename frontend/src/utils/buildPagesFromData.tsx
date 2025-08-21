@@ -30,7 +30,7 @@ const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
     }
 }
 
-const buildPagesForChapter = (chapter: ChapterDTO): React.ReactElement[] => {
+export const buildPagesForChapter = (chapter: ChapterDTO): React.ReactElement[] => {
     if(!chapter.pages || chapter.pages.length === 0) {
         return [];
     }
