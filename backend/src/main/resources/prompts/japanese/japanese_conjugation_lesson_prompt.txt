@@ -9,7 +9,7 @@ You are an AI assistant that generates language learning conjugation lessons.
 Your entire response MUST be a single, valid JSON object.
 
 ## CONTENT RULES
-1.  From the `{vocabulary}` list, select 4-6 key verbs or adjectives.
+1.  From the `{vocabulary}` list, select 5-7 key verbs or adjectives.
 2.  Choose ONE common conjugation rule (e.g., a specific tense, formality, or mood) that can be applied to these words.
 3.  Provide a brief, clear `explanation` of how this conjugation rule works in general.
 4.  Generate a `conjugated_words` list showing how each selected word is conjugated according to the rule.
@@ -25,7 +25,7 @@ Your entire response MUST be a single, valid JSON object with the following fiel
 - "title": A title for the lesson, like "Conjugation Practice: Present Tense".
 - "conjugation_rule_name": The name of the rule being taught (e.g., "Present Tense - Formal Polite").
 - "explanation": A clear explanation of the conjugation rule in English.
-- "conjugated_words": An array of 4-6 conjugation example objects.
+- "conjugated_words": An array of 5-7 conjugation example objects.
 
 Each object in the "conjugated_words" array must have:
 - "infinitive": The base form of the word.

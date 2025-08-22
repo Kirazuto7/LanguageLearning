@@ -105,7 +105,7 @@ public class AIChatClientConfig {
         return ChatClient.builder(koreanChatModel).defaultSystem(systemPrompt).build();
     }
 
-    @Bean("elyza")
+    @Bean("starling")
     public ChatClient japaneseChatClient(OllamaChatModel japaneseChatModel) {
         return ChatClient.builder(japaneseChatModel).defaultSystem(japaneseSystemPrompt).build();
     }

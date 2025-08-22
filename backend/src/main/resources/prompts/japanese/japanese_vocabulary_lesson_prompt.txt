@@ -13,35 +13,28 @@ The content MUST be about the `{topic}`.
 2.  All vocabulary must be appropriate for a `{difficulty}` learner.
 
 ## JSON STRUCTURE AND FIELD RULES (VERY IMPORTANT)
-Your entire response MUST be a single, valid JSON object with the following fields:
+Your entire response MUST be a single, valid JSON object with the following fields in this exact order:
 - "title": A title for the vocabulary section in English, like "Key Vocabulary for {topic}".
 - "vocabularies": An array of 10–15 vocabulary word objects.
 
-Each vocabulary item in the "vocabularies" array must be a single, ordered word object with the following fields:
+Each vocabulary item in the "vocabularies" array must be a single, ordered word object with the following fields in this exact order:
 - "englishTranslation": The English translation. This field MUST NOT contain any Japanese characters.
-- "nativeWord": The primary display form of the word. It MUST be the Kanji if the word has one. If not, it MUST be the Katakana for loanwords. Otherwise, it is the Hiragana.
-- "phoneticSpelling": The full phonetic reading of the `nativeWord` written ONLY in hiragana.
-- "details": A JSON object containing the following three keys: "kanji", "hiragana", and "katakana".
-  - "kanji": The Kanji characters for the word. If the word has no common Kanji form, this MUST be `null`.
-  - "hiragana": The full hiragana reading. This MUST be identical to the `phoneticSpelling`.
-  - "katakana": The Katakana characters if the word is a loanword. If not, this MUST be `null`.
+- "kanji": The (Kanji) 漢字 characters for the word. If the word has no common Kanji form, this MUST be `null`.
+- "hiragana": The full (hiragana) ひらがな reading of the word. This field is mandatory.
+- "katakana": The (katakana) カタカナ characters if the word is a loanword. If not, this MUST be `null`.
 
 ---
 
 ## EXAMPLES
-IMPORTANT: The following examples demonstrate the rules for different word types. Do NOT copy their content. Your content must be about `{topic}`.
+IMPORTANT: The following examples demonstrate the rules for different word types. Do NOT copy their content. Your content must be about `{topic}`. All fields must be present in every object.
 
 ### Example 1: A word with Kanji
 ```json
 \{
   "englishTranslation": "train",
-  "nativeWord": "電車",
-  "phoneticSpelling": "でんしゃ",
-  "details": \{
-    "kanji": "電車",
-    "hiragana": "でんしゃ",
-    "katakana": null
-  \}
+  "kanji": "電車",
+  "hiragana": "でんしゃ",
+  "katakana": null
 \}
 ```
 
@@ -49,13 +42,9 @@ IMPORTANT: The following examples demonstrate the rules for different word types
 ```json
 \{
   "englishTranslation": "bus",
-  "nativeWord": "バス",
-  "phoneticSpelling": "ばす",
-  "details": \{
-    "kanji": null,
-    "hiragana": "ばす",
-    "katakana": "バス"
-  \}
+  "kanji": null,
+  "hiragana": "ばす",
+  "katakana": "バス"
 \}
 ```
 
@@ -63,12 +52,8 @@ IMPORTANT: The following examples demonstrate the rules for different word types
 ```json
 \{
   "englishTranslation": "thank you",
-  "nativeWord": "ありがとう",
-  "phoneticSpelling": "ありがとう",
-  "details": \{
-    "kanji": null,
-    "hiragana": "ありがとう",
-    "katakana": null
-  \}
+  "kanji": null,
+  "hiragana": "ありがとう",
+  "katakana": null
 \}
 ```

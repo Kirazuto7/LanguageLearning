@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +44,15 @@ public class ApiDtoMapper {
                                     .details(aiVocabulary.details())
                                     .build();
                         }).collect(Collectors.toList()))
+                .build();
+    }
+
+    public VocabularyLessonDTO toVocabularyLessonDTO(AIJapaneseVocabularyLessonResponse response, String language) {
+        return VocabularyLessonDTO.builder()
+                .title(response.title())
+                .vocabularies(response.vocabularies().stream()
+                        .map(furiganaService::verifyAndMapJapaneseWord)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
