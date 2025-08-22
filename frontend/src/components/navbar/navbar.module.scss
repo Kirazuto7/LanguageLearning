@@ -1,15 +1,61 @@
 .icon-container {
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
 }
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
 
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 5px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 8px rgba(var(--primary-color-rgb), 0.2);
   }
   50% {
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.4);
   }
+}
+
+.icon {
+  color: var(--primary-color);
+}
+
+:global(.navbar).customNavbar {
+  position: relative;
+  z-index: 10;
+  background-image: none !important;
+  background: transparent;
+  border-bottom: 1px solid var(--glass-border-color);
+
+  :global(.navbar-brand),
+  :global(.nav-link) {
+    color: var(--navbar-text-color);
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  :global(a.navbar-brand:hover),
+  :global(.nav-link:hover) {
+    color: var(--navbar-text-hover-color) !important;
+    transform: translateY(-2px);
+  }
+
+  // Style the logout button to match the theme
+  :global(.btn-outline) {
+    color: var(--navbar-text-color);
+    border-color: var(--navbar-text-color);
+  }
+  :global(.btn-outline:hover) {
+    color: var(--text-color-dark);
+    background-color: var(--navbar-text-hover-color);
+    border-color: var(--navbar-text-hover-color);
+  }
+
+  :global(.navbar-toggler) {
+    border-color: rgba(var(--primary-color-rgb), 0.5);
+  }
+
+  --bs-emphasis-color-rgb: var(--primary-color-rgb);
 }
