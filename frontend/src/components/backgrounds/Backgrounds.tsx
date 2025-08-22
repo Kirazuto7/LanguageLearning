@@ -1,15 +1,15 @@
 import {useTheme} from "../../contexts/ThemeContext";
-import StarryBackground from "./starry-background/StarryBackground";
 import SunsetBackground from "./sunset-background/SunsetBackground";
+import NebulaBackground from "./nebula-background/NebulaBackground";
 
 const Backgrounds: React.FC = () => {
     const { theme } = useTheme();
 
     switch (theme) {
-        case 'starry':
-            return <StarryBackground/>;
         case 'sunset':
             return <SunsetBackground/>;
+        case 'nebula':
+            return <NebulaBackground />;
         default:
             return null;
     }
