@@ -1,10 +1,12 @@
 @import '../theme';
 
 .content {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
+  // Place the content in the grid and ensure it's on top
+  grid-row: 1;
+  grid-column: 1;
+  z-index: 1;
 }
 
 :global(body.themed-body) {
@@ -15,8 +17,18 @@
 }
 
 .layoutContainer {
-  position: relative;
   min-height: calc(100vh - 56px);
+  // Use grid to create a robust layering context
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.backgroundCanvas {
+  grid-row: 1;
+  grid-column: 1;
+  position: relative; // Needed for the absolute positioned children
+  z-index: 0; // Ensure it's behind the content
 }
 
 :global(body.themed-body.light) {
@@ -29,4 +41,8 @@
 
 :global(body.themed-body.nebula) {
   @include generate-theme(map-get($themes, nebula));
+}
+
+:global(body.themed-body.cafe) {
+  @include generate-theme(map-get($themes, cafe));
 }

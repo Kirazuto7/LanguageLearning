@@ -76,7 +76,7 @@ const Lessonbook: React.FC<LessonbookProps> = ({}) => {
     )});
 
     return(
-        <div className={"p-3"}>
+        <div className={"p-3 mb-5"}>
 
             <h2 className={`text-center mb-3 ${styles.title}`}>{title}</h2>
             {renderChapterSelector()}

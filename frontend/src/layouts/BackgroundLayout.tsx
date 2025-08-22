@@ -16,8 +16,10 @@ const BackgroundLayout: React.FC = () => {
     }, [theme]);
 
     return (
-        <div className={`${styles.layoutContainer}`}>
-            <Backgrounds />
+        <div className={styles.layoutContainer}>
+            <div className={styles.backgroundCanvas}>
+                <Backgrounds />
+            </div>
             <main className={styles.content}>
                 <Outlet />
             </main>
