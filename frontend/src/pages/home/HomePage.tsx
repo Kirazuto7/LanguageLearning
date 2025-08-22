@@ -30,8 +30,8 @@ const HomePage: React.FC<HomePageProps> = () => {
       </p>
     </div>
 
-    <div className={"glass-container p-5 mb-4  rounded-3"}>
-      <h2 className={"text-center"}>Language Tools Collection</h2>
+    <div className="glass-container mb-4">
+      <h2 className="text-center">Language Tools Collection</h2>
       <div className="divider mb-4"/>
       <Card>
           <Card.Header>

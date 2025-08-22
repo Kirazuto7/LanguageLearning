@@ -42,7 +42,7 @@ const NavigationBar = () => {
 
     const renderAuthLinks = () => {
       if(user) {
-        return <Button className=".navbar btn" onClick={handleLogout}>Logout</Button>
+        return <Button className="btn-outline" onClick={handleLogout}>Logout</Button>
       }
       else {
         return(
@@ -52,17 +52,19 @@ const NavigationBar = () => {
     }
 
     return(
-        <Navbar className="custom-navbar" variant="dark" expand="lg">
+        <Navbar className={styles.customNavbar} expand="lg">
           <Container>
-              <div className={ `${styles['icon-container']} p-2 bg-primary/10 rounded-lg ${styles['animate-pulse-glow']}`}>
+              <div className={`${styles['icon-container']} ${styles['animate-pulse-glow']}`}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                       className="lucide lucide-book-open w-6 h-6 text-primary">
+                       className={`lucide lucide-book-open ${styles.icon}`}>
                       <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                   </svg>
               </div>
-              <Navbar.Text>LangMaster</Navbar.Text>
+              <Navbar.Brand className="fw-bold ms-2">
+                  LangMaster
+              </Navbar.Brand>
               <Navbar.Toggle aria-controls="basic-navbar-nav"/>
               <Navbar.Collapse id="basic-navbar-nav">
                   <Nav className="me-auto">

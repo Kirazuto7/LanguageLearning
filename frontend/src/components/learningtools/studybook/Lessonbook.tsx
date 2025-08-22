@@ -78,7 +78,7 @@ const Lessonbook: React.FC<LessonbookProps> = ({}) => {
     return(
         <div className={"p-3"}>
 
-            <h2 className="text-center mb-3" style={{color: "white"}}>{title}</h2>
+            <h2 className={`text-center mb-3 ${styles.title}`}>{title}</h2>
             {renderChapterSelector()}
             <div className={`${styles['content-area']} mt-4`}>
                 <Pagination className={`${styles['page-control-container']} flex-column align-items-center align-self-center`}>
