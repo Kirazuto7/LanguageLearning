@@ -13,6 +13,7 @@ $themes: (
       text-color-light: #ffffff,
       navbar-text-color: #3b82f6,
       navbar-text-hover-color: #1f2937,
+      title-color: #1f2937, // Dark title for light theme
       text-color-dark: #1f2937,
 
       // Gradients
@@ -39,6 +40,7 @@ $themes: (
     text-color-light: #ffffff,
     text-color-dark: #431407,
     navbar-text-color: #ffffff,
+    title-color: #ffffff,
     navbar-text-hover-color: #fcd34d,
 
     // Gradients
@@ -48,7 +50,6 @@ $themes: (
     // Backgrounds
     body-bg: radial-gradient(ellipse at 85% 25%, #fcd34d 0%, #f97316 25%, #701a75 60%, #4a044e 100%),
 
-    // Components
     // Components
     glass-bg: rgba(67, 20, 7, 0.25),
     glass-border-color: rgba(253, 186, 116, 0.4),
@@ -64,6 +65,7 @@ $themes: (
     text-color-light: #ffffff,
     navbar-text-color: #d8b4fe,
     navbar-text-hover-color: #ffffff,
+    title-color: #ffffff,
     text-color-dark: #1e1b4b,
 
     // Gradients
@@ -79,6 +81,31 @@ $themes: (
     glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.2),
     button-shadow-hover: 0 8px 25px rgba(168, 85, 247, 0.3),
     pagination-shadow: 0 8px 20px rgba(168, 85, 247, 0.3)
+  ),
+  cafe: (
+    // Palette
+    primary-color: #4d7c0f, // A warm, earthy green
+    primary-color-dark: #3f6212,
+    primary-color-darker: #365314,
+    text-color-light: #ffffff,
+    navbar-text-color: #365314, // Dark green for readability
+    navbar-text-hover-color: #65a30d,
+    title-color: #365314,
+    text-color-dark: #1c1917,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #65a30d 0%, #4d7c0f 100%),
+    primary-gradient-hover: linear-gradient(135deg, #4d7c0f 0%, #3f6212 100%),
+
+    // Backgrounds
+    body-bg: #fefce8, // A very light, warm beige
+
+    // Components
+    glass-bg: rgba(255, 255, 255, 0.7),
+    glass-border-color: rgba(220, 220, 220, 0.9),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+    button-shadow-hover: 0 8px 25px rgba(101, 163, 13, 0.3),
+    pagination-shadow: 0 8px 20px rgba(101, 163, 13, 0.3)
   )
 );
 
@@ -92,6 +119,7 @@ $themes: (
   --text-color-light: #{map-get($theme-map, text-color-light)};
   --text-color-dark: #{map-get($theme-map, text-color-dark)};
   --navbar-text-color: #{map-get($theme-map, navbar-text-color)};
+  --title-color: #{map-get($theme-map, title-color)};
   --navbar-text-hover-color: #{map-get($theme-map, navbar-text-hover-color)};
 
   // Gradients

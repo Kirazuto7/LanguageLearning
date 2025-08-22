@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './nebula-background.module.scss';
-import StarryBackground from '../starry-background/StarryBackground';
+import StarryBackground from './StarryBackground';
 
 const NebulaBackground: React.FC = () => {
     return (
