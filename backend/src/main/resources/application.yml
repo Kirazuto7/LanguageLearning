@@ -41,7 +41,7 @@ spring:
     ollama3:
       base-url: http://ai-jp:11434
       chat:
-        model: pakachan/elyza-llama3-8b
+        model: summerwind/japanese-starling-chatv
         options:
           format: json
           num-ctx: 8192

@@ -75,12 +75,19 @@ public class AIService {
 
         Resource prompt = getPromptOrThrow(request.language(), PromptType.VOCABULARY);
 
-        return generateLessonComponent(
-                params,
-                prompt,
-                AIVocabularyLessonResponse.class,
-                response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language())
-        );
+        if ("Japanese".equalsIgnoreCase(request.language())) {
+            return generateLessonComponent(
+                    params,
+                    prompt,
+                    AIJapaneseVocabularyLessonResponse.class,
+                    response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language()));
+        } else {
+            return generateLessonComponent(
+                    params,
+                    prompt,
+                    AIVocabularyLessonResponse.class,
+                    response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language()));
+        }
     }
 
     public Mono<GrammarLessonDTO> generateGrammarLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {

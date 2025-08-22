@@ -2,18 +2,28 @@ package com.example.language_learning.services;
 
 import com.atilika.kuromoji.ipadic.Token;
 import com.atilika.kuromoji.ipadic.Tokenizer;
-import lombok.RequiredArgsConstructor;
+import com.example.language_learning.dto.api.AIJapaneseVocabularyItemDTO;
+import com.example.language_learning.dto.models.WordDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
 @Service
-@RequiredArgsConstructor
 public class FuriganaService {
+
     private final Tokenizer tokenizer;
-    // Regex pattern to match kanji characters
-    private static final Pattern KANJI_PATTERN = Pattern.compile(".*\\p{InCJK_UNIFIED_IDEOGRAPHS}.*");
+    private static final Pattern KANJI_PATTERN = Pattern.compile(".*\\p{sc=Han}.*");
+    private static final Pattern HIRAGANA_PATTERN = Pattern.compile("^[\\p{sc=Hiragana}ー]+$");
+    private static final Pattern KATAKANA_PATTERN = Pattern.compile("^[\\p{sc=Katakana}ー]+$");
+
+    public FuriganaService(Tokenizer tokenizer) {
+        this.tokenizer = tokenizer;
+    }
 
     public String addFurigana(String text) {
         if(text == null || text.isEmpty()) {
@@ -25,14 +35,116 @@ public class FuriganaService {
 
         for(Token token : tokens) {
             String surface = token.getSurface();
-            String reading = token.getReading();
+            String hiraganaReading = katakanaToHiragana(token.getReading());
 
-            if(KANJI_PATTERN.matcher(surface).matches() && reading != null && !surface.equals(reading)) {
-                result.append("<ruby>").append(surface).append("<rt>").append(reading).append("</rt></ruby>");
+            if(KANJI_PATTERN.matcher(surface).matches() && hiraganaReading != null && !surface.equals(hiraganaReading)) {
+                result.append("<ruby>").append(surface).append("<rt>").append(hiraganaReading).append("</rt></ruby>");
             } else {
                 result.append(surface);
             }
         }
         return result.toString();
+    }
+
+    /**
+     * Verifies and maps a Japanese vocabulary item from the AI Response.
+     * Utilizing the Kuromoji tokenizer we can derive the proper forms of (Kanji, Katakana) from hiragana
+     * to combat AI inconsistencies and protect data integrity.
+     */
+    public WordDTO verifyAndMapJapaneseWord(AIJapaneseVocabularyItemDTO aiWord) {
+        // 1. First verify AI output with REGEX
+        String hiragana = patternVerifier(aiWord.hiragana(), HIRAGANA_PATTERN);
+        String katakana = patternVerifier(aiWord.katakana(), KATAKANA_PATTERN);
+        String kanji = patternVerifier(aiWord.kanji(), KANJI_PATTERN);
+
+        // No Data to work with so return null
+        if (hiragana == null && katakana == null && kanji == null) { return null; }
+
+        // 2. If any of the individual outputs are incorrect, attempt to sanitize with the tokenizer
+        String inputForTokenizer = Stream.of(kanji, hiragana, katakana)
+                .filter(word -> word != null && !word.isBlank())
+                .findFirst()
+                .orElse(null);
+
+        if(inputForTokenizer == null) return null;
+
+        List<Token> tokens = tokenizer.tokenize(inputForTokenizer);
+        StringBuilder kanjiBuilder = new StringBuilder();
+        StringBuilder hiraganaBuilder = new StringBuilder();
+        StringBuilder katakanaBuilder = new StringBuilder();
+
+        for(Token token : tokens) {
+            String surfaceForm = token.getSurface();
+            String readingForm = token.getReading(); // Katakana
+
+            kanjiBuilder.append(surfaceForm);
+
+            if(readingForm != null) {
+                hiraganaBuilder.append(katakanaToHiragana(readingForm));
+                katakanaBuilder.append(readingForm);
+            }
+            else {
+                hiraganaBuilder.append(surfaceForm);
+                katakanaBuilder.append(surfaceForm);
+            }
+        }
+
+        if(kanji == null) {
+            kanji = kanjiBuilder.toString();
+        }
+
+        if(hiragana == null) {
+            hiragana = hiraganaBuilder.toString();
+        }
+
+        if(katakana == null) {
+            katakana = katakanaBuilder.toString();
+        }
+        // 3. Create the details map
+        Map<String, Object> details = new HashMap<>();
+        details.put("kanji", kanji);
+        details.put("hiragana", hiragana);
+        details.put("katakana", katakana);
+
+        // 4. Build and return the word object
+        String nativeWord = determineNativeWord(kanji, katakana, hiragana);
+
+        return WordDTO.builder()
+                .language("japanese")
+                .nativeWord(nativeWord)
+                .englishTranslation(aiWord.englishTranslation())
+                .phoneticSpelling(hiragana)
+                .details(details)
+                .build();
+    }
+
+    private String katakanaToHiragana(String katakana) {
+        if (katakana == null) return null;
+        StringBuilder hiragana = new StringBuilder();
+        for (char c : katakana.toCharArray()) {
+            if (c >= 'ァ' && c <= 'ヶ') {
+                hiragana.append((char) (c - 'ァ' + 'ぁ'));
+            } else {
+                hiragana.append(c);
+            }
+        }
+        return hiragana.toString();
+    }
+
+    private String patternVerifier(String word, Pattern pattern) {
+        if(word != null && !word.isBlank() && pattern.matcher(word).matches()) {
+            return word;
+        }
+        return null;
+    }
+
+    private String determineNativeWord(String kanji, String katakana, String hiragana) {
+        if (kanji != null && !kanji.isBlank()) {
+            return kanji;
+        }
+        if (katakana != null && !katakana.isBlank()) {
+            return katakana;
+        }
+        return hiragana;
     }
 }

@@ -63,7 +63,7 @@ public class AIConfig {
         japanesePrompts.put(PromptType.CONJUGATION, japaneseConjugationLessonPrompt);
         japanesePrompts.put(PromptType.PRACTICE, japanesePracticeLessonPrompt);
         japanesePrompts.put(PromptType.READING_COMPREHENSION, japaneseReadingComprehensionLessonPrompt);
-        AIAsset japaneseAsset = AIAsset.builder().modelName("elyza").prompts(japanesePrompts).build();
+        AIAsset japaneseAsset = AIAsset.builder().modelName("starling").prompts(japanesePrompts).build();
 
         aiAssets.put("default", defaultAsset);
         aiAssets.put("korean", koreanAsset);
