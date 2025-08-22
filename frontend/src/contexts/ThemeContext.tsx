@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useContext, useState} from "react";
 
-type Theme = 'starry' | 'light' | 'sunset';
+type Theme = 'light' | 'sunset' | 'nebula';
 
 interface ThemeContextType {
     theme: Theme;
@@ -14,7 +14,7 @@ interface ThemeProviderProps {
 const ThemeContext = createContext<ThemeContextType| undefined>(undefined);
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-    const [theme, setTheme] = useState<Theme>('sunset');
+    const [theme, setTheme] = useState<Theme>('nebula');
 
     return(
         <ThemeContext.Provider value={{theme, setTheme}}>
@@ -30,4 +30,3 @@ export const useTheme = () => {
     }
     return context;
 }
-

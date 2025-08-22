@@ -1,0 +1,29 @@
+@keyframes rotate-nebula {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nebulaContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.nebula {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.2), transparent 40%),
+              radial-gradient(circle at 70% 70%, rgba(59, 130, 246, 0.2), transparent 40%);
+  animation: rotate-nebula 200s linear infinite;
+  opacity: 0.6;
+}

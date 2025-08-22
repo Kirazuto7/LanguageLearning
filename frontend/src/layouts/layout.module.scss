@@ -19,14 +19,14 @@
   min-height: calc(100vh - 56px);
 }
 
-:global(body.themed-body.starry) {
-  @include generate-theme(map-get($themes, starry));
-}
-
 :global(body.themed-body.light) {
   @include generate-theme(map-get($themes, light));
 }
 
 :global(body.themed-body.sunset) {
   @include generate-theme(map-get($themes, sunset));
+}
+
+:global(body.themed-body.nebula) {
+  @include generate-theme(map-get($themes, nebula));
 }
