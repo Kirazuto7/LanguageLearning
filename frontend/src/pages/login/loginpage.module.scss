@@ -1,23 +1,21 @@
 #login-page-container {
-    position: relative;
-    width: 100%;
-    max-width: 1350px;
-    margin-left: 0;
-    margin-right: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: calc(100vh - 72px);
+    padding: 2rem 1rem;
 }
 
 #login-form, #register-form {
     border-radius: 8px;
     margin: auto 0;
-    padding: 16px 250px;
-    width: 80%;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px; // Set a max-width for larger screens
 }
 
 #passwordHelpBlock {
-    color: white;
+    color: var(--text-color-light);
     opacity: 0.7;
 }
 
@@ -26,12 +24,11 @@
     font-size: medium;
     text-decoration: none;
     cursor: pointer;
-    color: #1E90FF;
+    color: var(--primary-color);
     transition: color 0.2s ease;
 }
 
 .form-links:hover {
     text-decoration: underline;
-    color: #63B3FF;
-    font-size: large;
+    color: var(--primary-color-dark);
 }

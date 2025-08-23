@@ -413,6 +413,7 @@ public class DtoMapper {
         return Settings.builder()
                 .language(dto.language())
                 .difficulty(dto.difficulty())
+                .theme(dto.theme())
                 .build();
     }
 
@@ -421,6 +422,7 @@ public class DtoMapper {
                 .id(entity.getId())
                 .language(entity.getLanguage())
                 .difficulty(entity.getDifficulty())
+                .theme(entity.getTheme())
                 .build();
     }
 

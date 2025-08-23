@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SettingsDTO, UserDTO } from "../../types/dto";
 import { userApiSlice } from "../api/userApiSlice";
 import { logOut } from "./authSlice";
+import {RootState} from "../../app/store";
 
 interface SettingsState {
     settings: SettingsDTO | null;
@@ -44,5 +45,6 @@ export const settingsSlice = createSlice({
     }
 })
 
-export const {} = settingsSlice.actions;
+export const selectCurrentSettings = (state: RootState) => state.settings.settings;
+export const selectCurrentTheme = (state: RootState) => state.settings.settings?.theme ?? 'default';
 export default settingsSlice.reducer;

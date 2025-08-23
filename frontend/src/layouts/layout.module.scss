@@ -9,13 +9,6 @@
   z-index: 1;
 }
 
-:global(body.themed-body) {
-  position: relative;
-  overflow-x: hidden;
-  transition: background 0.5s ease;
-  background: var(--body-bg);
-}
-
 .layoutContainer {
   min-height: calc(100vh - 56px);
   // Use grid to create a robust layering context
@@ -29,6 +22,14 @@
   grid-column: 1;
   position: relative; // Needed for the absolute positioned children
   z-index: 0; // Ensure it's behind the content
+}
+
+
+:global(body.themed-body) {
+  position: relative;
+  overflow-x: hidden;
+  transition: background 0.5s ease;
+  background: var(--body-bg);
 }
 
 :global(body.themed-body.light) {
@@ -45,4 +46,16 @@
 
 :global(body.themed-body.cafe) {
   @include generate-theme(map-get($themes, cafe));
+}
+
+:global(body.themed-body.hanok) {
+  @include generate-theme(map-get($themes, hanok));
+}
+
+:global(body.themed-body.fuji) {
+  @include generate-theme(map-get($themes, fuji));
+}
+
+:global(body.themed-body.school) {
+  @include generate-theme(map-get($themes, school));
 }

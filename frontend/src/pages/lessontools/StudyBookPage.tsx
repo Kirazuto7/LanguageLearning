@@ -1,5 +1,5 @@
-import ChapterGenerator from "../components/ai/ChapterGenerator";
-import Lessonbook from "../components/learningtools/studybook/Lessonbook";
+import ChapterGenerator from "../../components/ai/ChapterGenerator";
+import Lessonbook from "../../components/learningtools/studybook/Lessonbook";
 import React, { useState } from 'react';
 
 interface StudyBookPageProps{}

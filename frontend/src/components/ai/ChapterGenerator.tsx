@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mascot } from './Mascot';
+import StudyBookMascot from './StudyBookMascot';
 import { useStudyBookManager } from '../../hooks/useStudyBookManager';
 
 interface ChapterGeneratorProps {
@@ -23,7 +23,7 @@ const ChapterGenerator: React.FC<ChapterGeneratorProps> = ({
     return (
         <div>
             {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-            <Mascot onTopicSubmit={handleTopicSubmit} isLoading={isLoading} />
+            <StudyBookMascot onTopicSubmit={handleTopicSubmit} isLoading={isLoading} />
         </div>
     );
 }

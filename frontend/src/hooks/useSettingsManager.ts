@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
 import { useUpdateSettingsMutation } from "../features/api/userApiSlice";
 import { SettingsDTO } from "../types/dto";
 import { useCallback } from "react";
+import {selectCurrentSettings} from "../features/state/settingsSlice";
 
 /* ------------------------------------------------------------- */
 /* ---   Hook to Handle Fetching & Updating User Settings    --- */
@@ -16,12 +16,11 @@ interface SettingsManagerResult {
 }
 
 export function useSettingsManager(): SettingsManagerResult {
-    const { user } = useSelector((state: RootState) => state.auth);
-    const settings = user?.settings ?? null;
+    const settings = useSelector(selectCurrentSettings);
     const [updateSettingsMutation, {isLoading, error}] = useUpdateSettingsMutation();
 
     const updateSettings = useCallback(async(newSettings: Partial<Omit<SettingsDTO, 'id'>>) => {
-        if(!user) {
+        if(!settings) {
             console.error("Cannot update settings: user is not logged in.");
             return undefined;
         }
@@ -33,7 +32,7 @@ export function useSettingsManager(): SettingsManagerResult {
             console.error("Failed to update settings:", err);
             return undefined;
         }
-    }, [user, updateSettingsMutation])
+    }, [settings, updateSettingsMutation])
 
     return { settings, updateSettings, isLoading, error};
 }

@@ -1,10 +1,11 @@
-import {createContext, ReactNode, useContext, useState} from "react";
+import {createContext, ReactNode, useContext} from "react";
+import {useSelector} from "react-redux";
+import {selectCurrentTheme} from "../features/state/settingsSlice";
 
-type Theme = 'light' | 'sunset' | 'nebula' | 'cafe';
+export type Theme = 'default' | 'light' | 'sunset' | 'nebula' | 'cafe' | 'hanok' | 'fuji' | 'school';
 
 interface ThemeContextType {
     theme: Theme;
-    setTheme: (theme: Theme) => void;
 }
 
 interface ThemeProviderProps {
@@ -14,10 +15,10 @@ interface ThemeProviderProps {
 const ThemeContext = createContext<ThemeContextType| undefined>(undefined);
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-    const [theme, setTheme] = useState<Theme>('cafe');
+    const theme = useSelector(selectCurrentTheme) as Theme;
 
     return(
-        <ThemeContext.Provider value={{theme, setTheme}}>
+        <ThemeContext.Provider value={{theme}}>
             {children}
         </ThemeContext.Provider>
     );

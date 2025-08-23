@@ -16,4 +16,7 @@ public class Settings {
 
     private String language;
     private String difficulty;
+
+    @Column(name = "theme", nullable = false, columnDefinition = "varchar(255) default 'default'")
+    private String theme;
 }

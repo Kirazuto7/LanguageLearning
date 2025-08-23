@@ -1,14 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import { Button, Collapse } from 'react-bootstrap';
-import Styles from './mascot.module.css';
+import { Collapse } from 'react-bootstrap';
+import styles from './settings.module.scss';
 import { useSettingsManager } from '../../hooks/useSettingsManager';
+import { themes, languages, difficulties } from "../../types/options";
 
-interface LanguageSettingsProps {
+interface SettingsProps {
     openSettings: boolean,
     setOpenSettings: (open: boolean) => void;
 }
 
-const LanguageSettings: React.FC<LanguageSettingsProps> = ({
+const Settings: React.FC<SettingsProps> = ({
     openSettings,
     setOpenSettings
 }) => {
@@ -30,23 +31,25 @@ const LanguageSettings: React.FC<LanguageSettingsProps> = ({
     }, [setOpenSettings]);
 
     return (
-        <div className={Styles.settingsContainer} ref={settingsRef}>
-            <Button
-                className={Styles.settingsButton}
+        <div className={styles.settingsContainer} ref={settingsRef}>
+            <button
+                className={styles.settingsButton}
                 onClick={() => setOpenSettings(!openSettings)}
-                aria-controls="chapter-settings-collapse"
+                aria-controls="settings-collapse"
                 aria-expanded={openSettings}
-                size="sm"
             >
-                <i className="bi bi-gear-fill"></i>
-            </Button>
+                <div className={styles.navLinkContent}>
+                    <i className="bi bi-gear-fill"></i>
+                    <span>Settings</span>
+                </div>
+            </button>
 
             <Collapse in={openSettings}>
-                <div id="chapter-settings-collapse" className={Styles.settingsPanel}>
+                <div id="settings-collapse" className={styles.settingsPanel}>
                     <div className="row justify-content-center">
                         <div className="col-auto">
-                            <div className={`card ${Styles.settingsCard}`} style={{ width: '300px' }}>
-                                <div className="card-header">Language Settings</div>
+                            <div className={`card ${styles.settingsCard}`} style={{ width: '300px' }}>
+                                <div className="card-header">Settings</div>
                                 <div className="card-body">
                                     <div className="mb-3">
                                         <label htmlFor="language-select" className="form-label">
@@ -57,10 +60,11 @@ const LanguageSettings: React.FC<LanguageSettingsProps> = ({
                                             className="form-select"
                                             value={settings?.language || ''}
                                             onChange={(e) => updateSettings({language: e.target.value})}
-                                            disabled={isLoading || !settings}
+                                            disabled={isLoading}
                                         >
-                                            <option value="Korean">Korean</option>
-                                            <option value="Japanese">Japanese</option>
+                                            {languages.map(lang => (
+                                                <option key={lang.value} value={lang.value}>{lang.label}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="mb-3">
@@ -72,12 +76,27 @@ const LanguageSettings: React.FC<LanguageSettingsProps> = ({
                                             className="form-select"
                                             value={settings?.difficulty || ''}
                                             onChange={(e) => updateSettings({difficulty: e.target.value})}
-                                            disabled={isLoading || !settings}
+                                            disabled={isLoading}
                                         >
-                                            <option value="Beginner">Beginner</option>
-                                            <option value="Pre-Intermediate">Pre-Intermediate</option>
-                                            <option value="Intermediate">Intermediate</option>
-                                            <option value="Advanced">Advanced</option>
+                                            {difficulties.map(diff => (
+                                                <option key={diff.value} value={diff.value}>{diff.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="theme-select" className="form-label">
+                                            Theme:
+                                        </label>
+                                        <select
+                                            id="theme-select"
+                                            className="form-select"
+                                            value={settings?.theme || ''}
+                                            onChange={(e) => updateSettings({theme: e.target.value})}
+                                            disabled={isLoading}
+                                        >
+                                            {themes.map(theme => (
+                                                <option key={theme.value} value={theme.value}>{theme.label}</option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
@@ -90,4 +109,4 @@ const LanguageSettings: React.FC<LanguageSettingsProps> = ({
     );
 }
 
-export default LanguageSettings;
+export default Settings;
