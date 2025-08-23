@@ -50,11 +50,11 @@ const NavigationBar = () => {
                           <LearningToolsNavigation />
                       </Nav>
                   )}
-                  <Nav className="ms-auto align-items-center gap-3">
+                  <Nav className="ms-auto align-items-center gap-4">
                       {user ? (
                          <>
                             <Settings openSettings={openSettings} setOpenSettings={setOpenSettings} />
-                            <Button size="sm" className="btn-outline ms-3 me-3" onClick={handleLogout}>Logout</Button>
+                            <Button size="sm" className="btn-outline" onClick={handleLogout}>Logout</Button>
                          </>
                       ) :
                       (

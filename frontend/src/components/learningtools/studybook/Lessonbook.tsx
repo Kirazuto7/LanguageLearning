@@ -89,7 +89,7 @@ const Lessonbook: React.FC<LessonbookProps> = ({}) => {
         <div className={"p-3 mb-5"}>
 
             <h2 className={`text-center mb-3 ${styles.title}`}>{title}</h2>
-            {renderChapterSelector()}
+            {/** Chapter Selector **/ renderChapterSelector()}
             <div className={`${styles['content-area']} mt-4`}>
                 <Pagination className={`${styles['page-control-container']} flex-column align-items-center align-self-center`}>
                     <Pagination.Prev className={`${styles['page-control-item']} mb-4`} onClick={() => handlePageSelect(activePageIndex - 1)} disabled={activePageIndex === 0}/>

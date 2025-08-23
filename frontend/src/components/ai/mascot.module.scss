@@ -3,8 +3,8 @@
     bottom: 24px;
     right: 24px;
     z-index: 1000;
-    max-width: 40vw;
-    min-width: 260px;
+    max-width: 350px; /* More compact overall width */
+    min-width: 300px;
 }
 
 @keyframes mascotHop {
@@ -18,6 +18,19 @@
 
 .hop {
     animation: mascotHop 0.6s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
+}
+
+.mascotContentWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally within the column */
+    width: 100%; /* Take full width of mascotContainer */
+}
+
+.blackboardWrapper, .characterWrapper {
+    width: 100%; /* Allow blackboard and character to take full width */
+    display: flex;
+    justify-content: center; /* Center content within their wrappers */
 }
 
 #mascotCharacter {
@@ -36,50 +49,17 @@
 .inputRow {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center; /* Center the input field now that settings is gone */
     gap: 10px;
-    padding-right: 20px; /* Match speech bubble margin for alignment */
-}
-
-.settingsContainer {
-    position: relative; /* Crucial for positioning the panel */
-}
-
-.settingsContainer .btn i {
-    color: white;
-}
-
-.settingsButton, .settingsButton:hover{
-    background-color: black;
-    padding: 5px 10px !important;
-    border: none;
-}
-
-.settingsPanel {
-    position: absolute;
-    bottom: 100%; /* Position it above the button */
-    right: 0;
-    margin-bottom: 8px; /* Space between panel and button */
-    z-index: 1001;
-}
-
-.settingsCard {
-    background-color: black;
-    color: rgb(244, 154, 154);
-    border-color: rgb(244, 154, 154);
-}
-
-.settingsCard :global(.card-header) {
-    background-color: black;
-    color: rgb(244, 154, 154);
-    border-bottom: 1px solid rgb(244, 154, 154) !important;
+    padding: 0 10px; /* Add some horizontal padding */
+    width: 100%; /* Ensure it takes full width */
 }
 
 
 .textInput {
     width: 100%;
-    height: 36px;
-    max-width: 220px;
+    height: 38px; /* Standard height */
+    max-width: 100%; /* Allow it to fill the container */
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
@@ -94,7 +74,10 @@
 }
 
 .sendButton {
-    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px; /* Match input height */
     min-width: 60px;
     padding: 0 20px;
     border-radius: 8px;

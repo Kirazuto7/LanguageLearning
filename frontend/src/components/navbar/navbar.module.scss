@@ -1,7 +1,7 @@
 .icon-container {
   background-color: rgba(var(--primary-color-rgb), 0.1);
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.25rem; /* Smaller padding */
 }
 
 .animate-pulse-glow {
@@ -29,11 +29,14 @@
   background-image: none !important;
   background: transparent;
   border-bottom: 1px solid var(--glass-border-color);
+  padding-top: 0.25rem; /* Reduced padding */
+  padding-bottom: 0.25rem; /* Reduced padding */
 
   :global(.navbar-brand),
   :global(.nav-link) {
     color: var(--navbar-text-color);
     transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    font-size: 0.9rem; /* Slightly smaller font */
   }
 
   :global(a.navbar-brand:hover),
@@ -51,6 +54,11 @@
     color: var(--text-color-dark);
     background-color: var(--navbar-text-hover-color);
     border-color: var(--navbar-text-hover-color);
+  }
+
+  :global(.btn-sm) {
+    padding: 0.2rem 0.75rem;
+    font-size: 0.8rem;
   }
 
   :global(.navbar-toggler) {
