@@ -9,6 +9,7 @@ export interface SettingsDTO {
     id: number;
     language: string;
     difficulty: string;
+    theme: string;
 }
 
 export interface LessonBookDTO {
@@ -127,10 +128,6 @@ export interface ChapterGenerationRequest {
     difficulty: string;
     topic: string;
     userId: number;
-}
-
-export interface UpdateSettingsRequest {
-    settings: Partial<Omit<SettingsDTO, 'id'>>;
 }
 
 export interface AuthenticationResponse {
