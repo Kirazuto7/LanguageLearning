@@ -37,7 +37,17 @@ const Lessonbook: React.FC<LessonbookProps> = ({}) => {
     }
 
     if (!chapterPages || chapterPages.length === 0) {
-        return <div className="text-center h-100 d-flex align-items-center justify-content-center">Select a topic to begin.</div>;
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{height: '80vh'}}>
+                <div className="text-center">
+                    <h5 className={styles.pageText}>Your Study Book is Ready!</h5>
+                    <p className={styles.pageText}>
+                        Tell Jinny what you want to learn about. <br/>
+                        Try a topic like "greetings", "ordering food", or "transportation" to generate your first lesson.
+                    </p>
+                </div>
+            </div>
+        );
     }
 
     const renderChapterSelector = () => {
