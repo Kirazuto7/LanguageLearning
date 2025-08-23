@@ -48,8 +48,8 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
                 </Alert>
             )}
 
-            <Form.Group className={"mb-3"}>
-                <Form.Label htmlFor={"register-username"}>Username</Form.Label>
+            <Form.Group className="mb-3">
+                <Form.Label htmlFor="register-username">Username</Form.Label>
                 <Form.Control
                     required
                     id="register-username"
@@ -63,8 +63,8 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
                 </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group className={"mb-3"}>
-                <Form.Label htmlFor={"register-password"}>Password</Form.Label>
+            <Form.Group className="mb-3">
+                <Form.Label htmlFor="register-password">Password</Form.Label>
                 <Form.Control
                     required
                     id="register-password"
