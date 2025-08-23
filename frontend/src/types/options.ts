@@ -5,7 +5,7 @@ export const themes = [
     { value: 'nebula', label: 'Nebula' },
     { value: 'cafe', label: 'Cafe' },
     { value: 'hanok', label: 'Hanok Village' },
-    { value: 'fuji', label: 'Mt. FujiBackground' },
+    { value: 'fuji', label: 'Mt. Fuji' },
     { value: 'school', label: 'School' }
 ];
 

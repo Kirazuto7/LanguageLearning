@@ -17,7 +17,7 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
 
     useEffect(() => {
         // When the language is changed in settings, update the mascot's speech.
-        setSpeech(`Let's learn ${settings?.language || ' a new language'}! What should our first topic be? 😄`);
+        setSpeech(`Let's learn ${settings?.language || ' a new language'}! What should our next topic be? (^_^)`);
     }, [settings]);
 
     const handleSendButton = (topic: string) => {
@@ -33,22 +33,19 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
     }
 
     return(
-    <div id={styles.mascotContainer}>
-        <div  className="container">
-            <div className="row align-items-center justify-content-center">
-                <div className="col-auto">
+        <div id={styles.mascotContainer}>
+            <div className={styles.mascotContentWrapper}>
+                <div className={styles.blackboardWrapper}>
                     <Blackboard text={speech}/>
                 </div>
-                
-                <div className="col-auto">
+                <div className={styles.characterWrapper}>
                     <MascotCharacter hop={hop}/>
                 </div>
-            </div>
-            <div className={`${styles.inputRow} mt-3`}>
-                <StudyBookInputField onSend={handleSendButton} disabled={isLoading} />
+                <div className={`${styles.inputRow} mt-3`}>
+                    <StudyBookInputField onSend={handleSendButton} disabled={isLoading}/>
+                </div>
             </div>
         </div>
-    </div>
     )
 }
 
