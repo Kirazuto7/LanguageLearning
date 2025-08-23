@@ -22,7 +22,7 @@ public class BookService {
         return lessonBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty)
                 .orElseGet(() -> {
                     LessonBook newBook = new LessonBook();
-                    newBook.setBookTitle(String.format("%s for %s learners", language, difficulty));
+                    newBook.setBookTitle(String.format("%s for %s Learners", language, difficulty));
                     newBook.setLanguage(language);
                     newBook.setDifficulty(difficulty);
                     newBook.setUser(user);
