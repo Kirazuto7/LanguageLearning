@@ -16,11 +16,11 @@ const App: React.FC = () => {
     const location = useLocation();
     const userTheme = useSelector(selectCurrentTheme);
 
-    const learningToolPaths = ['/study', '/read'];
+    const themedPaths = ['/home', '/study', '/read'];
 
     useEffect(() => {
-        const isLearningToolPage = learningToolPaths.some(path => location.pathname.startsWith(path));
-        const themeToApply = isLearningToolPage ? userTheme : 'default';
+        const isThemedPage = themedPaths.some(path => location.pathname.startsWith(path));
+        const themeToApply = isThemedPage ? userTheme : 'default';
 
         document.body.className = `themed-body ${themeToApply}`;
     }, [location, userTheme]);
@@ -34,8 +34,8 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginPage/>} />
 
             <Route element={<ProtectedRoute/>}>
-                <Route path="/home" element={<HomePage />} />
                 <Route element={<BackgroundLayout/>}>
+                    <Route path="/home" element={<HomePage />} />
                     <Route path="/study" element={<StudyBookPage />} />
                 </Route>
             </Route>
