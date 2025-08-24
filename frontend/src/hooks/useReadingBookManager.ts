@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useFetchBookQuery, useGenerateChapterMutation } from '../features/api/bookApiSlice';
 import { RootState } from '../app/store';
 
-
+/*
 interface ReadingBookManagerResult {
     pages: React.ReactElement[];
     title: string;
@@ -60,4 +60,4 @@ export function useReadingBookManager(): ReadingBookManagerResult {
     }, [fetchBookError, generateChapterError]);
 
     return { pages, title, chapters, generateChapter, isLoading, error };
-}
+}*/

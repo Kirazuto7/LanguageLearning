@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useMemo } from "react";
 import styles from './lessonbook.module.scss';
 import { Carousel, Pagination, Spinner, Form } from "react-bootstrap";
-import { useStudyBookManager } from "../../../hooks/useStudyBookManager";
 import { buildPagesForChapter } from "../../../utils/buildPagesFromData";
+import {ChapterDTO} from "../../../types/dto";
+
 interface LessonbookProps{
+    title: string;
+    chapters: ChapterDTO[];
+    isLoading: boolean;
+    activeChapterIndex: number;
+    setActiveChapterIndex: (index: number) => void;
 };
 
-const Lessonbook: React.FC<LessonbookProps> = ({}) => {
-    const { chapters, title, isLoading } = useStudyBookManager();
-    const [activeChapterIndex, setActiveChapterIndex] = useState(0);
+const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, isLoading, activeChapterIndex, setActiveChapterIndex }) => {
     const [activePageIndex, setActivePageIndex] = useState(0);
 
     const currentChapter = useMemo(()=> {

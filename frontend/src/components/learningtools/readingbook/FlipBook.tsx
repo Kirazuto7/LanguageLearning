@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+/*import React, { useRef } from 'react';
 import styles from './flipbook.module.css';
 import HTMLFlipBook from 'react-pageflip';
 import BehindCoverPage from './BehindCoverPage';
@@ -50,7 +50,7 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
     return (
         <div className={styles.bookContainer}>
             <div className={styles.bookBinding}></div>
-            {/*@ts-ignore*/}
+
             <HTMLFlipBook
                 key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
                 ref={flipBookRef}
@@ -64,7 +64,7 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
                 onChangeOrientation={() => {}}
             >
 
-                {/* Cover Page */}
+
                 <div className={`${styles.cover}`}>
                     <h2 className={`mt-5 text-center ${styles['book-title']}`}>{title}</h2>
                 </div>
@@ -73,11 +73,10 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
                 <BookPage pageNumber={0} isRightPage={true}>
                     <TableOfContentsPage chapters={tocChapters} onNavigate={handleChapterSelect} />
                 </BookPage>
-                
-                {/* Book Pages */}
+
                 {pages && pages.map((page: React.ReactElement) => page)}
                 
-                {/* Back Cover Page */}
+
                 <div className={styles.backcover}>
                     <h2 className={`mt-5 text-center ${styles['book-title']}`}>The End</h2>
                 </div>
@@ -87,3 +86,6 @@ const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplet
 };
 
 export default FlipBook;
+*/
+
+export const FlipBook = () => { return (<></>)};

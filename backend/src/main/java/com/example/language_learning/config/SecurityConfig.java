@@ -32,9 +32,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/health").permitAll()
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/users/logout").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(
+                                "/api/users/health",
+                                "/api/users/register", "/api/users/login", "/api/users/logout",
+                                "/api/chapters/progress/**", // Allow access to the progress stream
+                                "/actuator/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,0 +1,12 @@
+.progressBar {
+  height: 12px;
+  font-size: 0.7rem;
+  border-radius: 6px;
+  background-color: rgba(0, 0, 0, 0.2);
+
+  /* Use :global to target the inner .progress-bar class rendered by the
+   * react-bootstrap component, which is not part of this CSS module. */
+  :global(.progress-bar) {
+    background: var(--primary-gradient);
+  }
+}
