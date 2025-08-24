@@ -14,13 +14,12 @@ export const bookApiSlice = apiSlice.injectEndpoints({
         }),
 
         // Generate a New Chapter
-        generateChapter: builder.mutation<ChapterDTO, ChapterGenerationRequest>({
+        generateChapter: builder.mutation<{taskId: string }, ChapterGenerationRequest>({
             query: (request) => ({
                 url: '/chapters/generate',
                 method: 'POST',
                 body: request
             }),
-            invalidatesTags: (result, error, {language, difficulty, userId}, meta) => [{ type: 'Book', id: `${language}-${difficulty}-${userId}` }],
         }),
     })
 });

@@ -55,6 +55,12 @@
     width: 100%; /* Ensure it takes full width */
 }
 
+.progressWrapper {
+  width: 100%;
+  padding: 0 10px;
+  margin-top: 8px;
+}
+
 
 .textInput {
     width: 100%;
@@ -68,8 +74,8 @@
 }
 
 .textInput:focus {
-    border-color: rgb(244, 154, 154);
-    box-shadow: 0 0 5px rgba(0, 170, 187, 0.5);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5);
     outline: none;
 }
 

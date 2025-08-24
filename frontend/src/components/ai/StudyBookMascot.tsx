@@ -4,21 +4,29 @@ import { useSettingsManager } from '../../hooks/useSettingsManager';
 import Blackboard from "./Blackboard";
 import MascotCharacter from "./MascotCharacter";
 import StudyBookInputField from "./StudyBookInputField";
+import ProgressBarComponent from "./ProgressBarComponent";
 
 interface StudyBookMascotProps {
     onTopicSubmit: (topic: string) => void;
-    isLoading?: boolean;
+    isLoading: boolean;
+    progress: number;
+    message: string;
 }
 
-const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoading = false }) => {
+const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoading, progress, message }) => {
     const { settings } = useSettingsManager();
     const [hop, setHop] = useState<boolean>(false);
-    const [speech, setSpeech] = useState<string>(`Let's learn ${settings?.language || ' a new language'}! What should our first topic be? 😄`);
+    const [speech, setSpeech] = useState<string>(`Ready to learn? Suggest a topic to get started! 😄`);
 
     useEffect(() => {
-        // When the language is changed in settings, update the mascot's speech.
-        setSpeech(`Let's learn ${settings?.language || ' a new language'}! What should our next topic be? (^_^)`);
-    }, [settings]);
+        if (isLoading) {
+            setSpeech(message);
+        }
+        else {
+            // When the language is changed in settings, update the mascot's speech.
+            setSpeech(`Ready to learn some ${settings?.language || 'new things'}? Suggest a topic to get started! (^_^)`);
+        }
+    }, [isLoading, message, settings]);
 
     const handleSendButton = (topic: string) => {
         setHop(true);
@@ -26,10 +34,8 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
             setHop(false);
         }, 600);
 
-        if (onTopicSubmit) {
-            onTopicSubmit(topic);
-            setSpeech(`Great! I'll generate a lesson about "${topic}" for you!`);
-        }
+        onTopicSubmit(topic);
+        // setSpeech(`Great! I'll generate a lesson about "${topic}" for you!`);
     }
 
     return(
@@ -43,6 +49,9 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>
                     <StudyBookInputField onSend={handleSendButton} disabled={isLoading}/>
+                </div>
+                <div className={styles.progressWrapper}>
+                    <ProgressBarComponent isLoading={isLoading} progress={progress}/>
                 </div>
             </div>
         </div>
