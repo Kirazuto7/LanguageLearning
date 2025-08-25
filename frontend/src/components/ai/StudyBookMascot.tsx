@@ -19,14 +19,14 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
     const [speech, setSpeech] = useState<string>(`Ready to learn? Suggest a topic to get started! 😄`);
 
     useEffect(() => {
-        if (isLoading) {
+        if (isLoading && message) {
             setSpeech(message);
         }
-        else {
+        else if (!isLoading) {
             // When the language is changed in settings, update the mascot's speech.
             setSpeech(`Ready to learn some ${settings?.language || 'new things'}? Suggest a topic to get started! (^_^)`);
         }
-    }, [isLoading, message, settings]);
+    }, [isLoading, message, settings?.language]);
 
     const handleSendButton = (topic: string) => {
         setHop(true);

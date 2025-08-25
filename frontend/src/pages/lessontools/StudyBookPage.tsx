@@ -2,6 +2,7 @@ import ChapterGenerator from "../../components/ai/ChapterGenerator";
 import Lessonbook from "../../components/learningtools/studybook/Lessonbook";
 import React, {useEffect, useState} from 'react';
 import {useStudyBookManager} from "../../hooks/useStudyBookManager";
+import { Container, Spinner } from "react-bootstrap";
 
 interface StudyBookPageProps{}
 
@@ -15,13 +16,20 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
         }
     }, [chapters]);
 
+    if (isLoading && chapters.length === 0) {
+        return(
+            <Container className="d-flex justify-content-center align-items-center" style={{minHeight: '80vh'}}>
+                <Spinner animation="border"/>
+            </Container>
+        )
+    }
+
 
     return (
         <div>
             <Lessonbook
                 title={title}
                 chapters={chapters}
-                isLoading={isLoading}
                 activeChapterIndex={activeChapterIndex}
                 setActiveChapterIndex={setActiveChapterIndex}
             />
