@@ -1,0 +1,94 @@
+#mascotContainer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    max-width: 350px; /* More compact overall width */
+    min-width: 300px;
+}
+
+@keyframes mascotHop {
+    0% { transform: translateY(0); }
+    20% { transform: translateY(-18px); }
+    40% { transform: translateY(0); }
+    60% { transform: translateY(-10px); }
+    80% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+}
+
+.hop {
+    animation: mascotHop 0.6s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
+}
+
+.mascotContentWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally within the column */
+    width: 100%; /* Take full width of mascotContainer */
+}
+
+.blackboardWrapper, .characterWrapper {
+    width: 100%; /* Allow blackboard and character to take full width */
+    display: flex;
+    justify-content: center; /* Center content within their wrappers */
+}
+
+#mascotCharacter {
+    height: 100%; 
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+
+.inputArea {
+    display: flex;
+    flex-grow: 1;
+    gap: 10px;
+}
+
+.inputRow {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the input field now that settings is gone */
+    gap: 10px;
+    padding: 0 10px; /* Add some horizontal padding */
+    width: 100%; /* Ensure it takes full width */
+}
+
+.progressWrapper {
+  width: 100%;
+  padding: 0 10px;
+  margin-top: 8px;
+}
+
+
+.textInput {
+    width: 100%;
+    height: 38px; /* Standard height */
+    max-width: 100%; /* Allow it to fill the container */
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.textInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(var(--primary-color-rgb), 0.5);
+    outline: none;
+}
+
+.sendButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px; /* Match input height */
+    min-width: 60px;
+    padding: 0 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}

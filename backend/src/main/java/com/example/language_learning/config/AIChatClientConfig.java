@@ -27,7 +27,7 @@ public class AIChatClientConfig {
     @Value("classpath:prompts/default_system_prompt.txt")
     private Resource systemPrompt;
 
-    @Value("classpath:prompts/japanese_system_prompt.txt")
+    @Value("classpath:prompts/japanese/japanese_system_prompt.txt")
     private Resource japaneseSystemPrompt;
 
     // 1. Create separate OllamaApi beans for each instance using the builder
@@ -105,7 +105,7 @@ public class AIChatClientConfig {
         return ChatClient.builder(koreanChatModel).defaultSystem(systemPrompt).build();
     }
 
-    @Bean("elyza")
+    @Bean("starling")
     public ChatClient japaneseChatClient(OllamaChatModel japaneseChatModel) {
         return ChatClient.builder(japaneseChatModel).defaultSystem(japaneseSystemPrompt).build();
     }

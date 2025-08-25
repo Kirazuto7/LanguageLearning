@@ -7,5 +7,6 @@ import lombok.Builder;
 public record SettingsDTO (
     Long id,
     String language,
-    String difficulty
+    String difficulty,
+    String theme
 ) {}

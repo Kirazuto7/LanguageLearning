@@ -1,6 +1,7 @@
 package com.example.language_learning.entity.lessons;
 
 import com.example.language_learning.entity.models.Page;
+import com.example.language_learning.enums.LessonType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

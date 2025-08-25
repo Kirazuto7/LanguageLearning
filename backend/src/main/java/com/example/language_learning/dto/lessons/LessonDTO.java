@@ -1,6 +1,6 @@
 package com.example.language_learning.dto.lessons;
 
-import com.example.language_learning.entity.lessons.LessonType;
+import com.example.language_learning.enums.LessonType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

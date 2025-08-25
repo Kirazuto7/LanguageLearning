@@ -1,0 +1,112 @@
+import React, { useRef, useEffect } from 'react';
+import { Collapse } from 'react-bootstrap';
+import styles from './settings.module.scss';
+import { useSettingsManager } from '../../hooks/useSettingsManager';
+import { themes, languages, difficulties } from "../../types/options";
+
+interface SettingsProps {
+    openSettings: boolean,
+    setOpenSettings: (open: boolean) => void;
+}
+
+const Settings: React.FC<SettingsProps> = ({
+    openSettings,
+    setOpenSettings
+}) => {
+    const { settings, updateSettings, isLoading } = useSettingsManager();
+    const settingsRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+                setOpenSettings(false);
+            }
+        }
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [setOpenSettings]);
+
+    return (
+        <div className={styles.settingsContainer} ref={settingsRef}>
+            <button
+                className={styles.settingsButton}
+                onClick={() => setOpenSettings(!openSettings)}
+                aria-controls="settings-collapse"
+                aria-expanded={openSettings}
+            >
+                <div className={styles.navLinkContent}>
+                    <i className="bi bi-gear-fill"></i>
+                    <span>Settings</span>
+                </div>
+            </button>
+
+            <Collapse in={openSettings}>
+                <div id="settings-collapse" className={styles.settingsPanel}>
+                    <div className="row justify-content-center">
+                        <div className="col-auto">
+                            <div className={`card ${styles.settingsCard}`} style={{ width: '300px' }}>
+                                <div className="card-header">Settings</div>
+                                <div className="card-body">
+                                    <div className="mb-3">
+                                        <label htmlFor="language-select" className="form-label">
+                                            Language:
+                                        </label>
+                                        <select
+                                            id="language-select"
+                                            className="form-select"
+                                            value={settings?.language || ''}
+                                            onChange={(e) => updateSettings({language: e.target.value})}
+                                            disabled={isLoading}
+                                        >
+                                            {languages.map(lang => (
+                                                <option key={lang.value} value={lang.value}>{lang.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="level-select" className="form-label">
+                                            Proficiency Level:
+                                        </label>
+                                        <select
+                                            id="level-select"
+                                            className="form-select"
+                                            value={settings?.difficulty || ''}
+                                            onChange={(e) => updateSettings({difficulty: e.target.value})}
+                                            disabled={isLoading}
+                                        >
+                                            {difficulties.map(diff => (
+                                                <option key={diff.value} value={diff.value}>{diff.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="theme-select" className="form-label">
+                                            Theme:
+                                        </label>
+                                        <select
+                                            id="theme-select"
+                                            className="form-select"
+                                            value={settings?.theme || ''}
+                                            onChange={(e) => updateSettings({theme: e.target.value})}
+                                            disabled={isLoading}
+                                        >
+                                            {themes.map(theme => (
+                                                <option key={theme.value} value={theme.value}>{theme.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Collapse>
+        </div>
+    );
+}
+
+export default Settings;

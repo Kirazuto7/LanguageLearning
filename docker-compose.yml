@@ -32,11 +32,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      exaone:
+      ai:
         condition: service_healthy
-      elyza:
+      ai-kr:
         condition: service_healthy
-      qwen3:
+      ai-jp:
         condition: service_healthy
     healthcheck:
       # This check requires curl to be installed in the backend container.
@@ -47,7 +47,7 @@ services:
       retries: 10
       start_period: 30s
 
-  exaone:
+  ai-kr:
     build:
       context: ./backend/dockerfiles
       dockerfile: DockerfileKo
@@ -65,7 +65,7 @@ services:
       retries: 5
       start_period: 30s
 
-  elyza:
+  ai-jp:
     build:
       context: ./backend/dockerfiles
       dockerfile: DockerfileJP
@@ -83,7 +83,7 @@ services:
       retries: 5
       start_period: 30s
 
-  qwen3:
+  ai:
     build:
       context: ./backend/dockerfiles
       dockerfile: DockerfileAI

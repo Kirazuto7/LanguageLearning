@@ -11,21 +11,35 @@ interface AuthState {
     user: UserDTO | null;
 }
 
-const storedUser = localStorage.getItem('user');
+const loadUserFromStorage = (): UserDTO | null => {
+    try {
+        const storedUser = localStorage.getItem('user');
+        if(storedUser === null) {
+            return null;
+        }
+        return JSON.parse(storedUser);
+    }
+    catch (error) {
+        console.error("Failed to parse user from localStorage", error);
+        localStorage.removeItem('user');
+        return null;
+    }
+};
 
 const initialState: AuthState = {
-    user: storedUser ? JSON.parse(storedUser) : null,
+    user: loadUserFromStorage(),
+};
+
+const handleUserLogout = (state: AuthState) => {
+    state.user = null;
+    localStorage.removeItem('user');
 };
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        // Manual
-        logOut: (state) => {
-            state.user = null;
-            localStorage.removeItem('user');
-        },
+        logOut: handleUserLogout,
     },
     extraReducers: (builder) => {
         /*/////////////////////////////////////////////////////*/
@@ -45,11 +59,8 @@ const authSlice = createSlice({
         // User initiated via api
         builder.addMatcher(
             userApiSlice.endpoints.logout.matchFulfilled,
-            (state) => {
-                state.user = null;
-                localStorage.removeItem('user');
-            }
-        )
+            handleUserLogout
+        );
 
         builder.addMatcher(
             userApiSlice.endpoints.updateSettings.matchFulfilled,
