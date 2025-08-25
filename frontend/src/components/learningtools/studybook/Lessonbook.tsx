@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import styles from './lessonbook.module.scss';
-import { Carousel, Pagination, Spinner, Form } from "react-bootstrap";
+import { Carousel, Pagination, Form } from "react-bootstrap";
 import { buildPagesForChapter } from "../../../utils/buildPagesFromData";
 import {ChapterDTO} from "../../../types/dto";
 
 interface LessonbookProps{
     title: string;
     chapters: ChapterDTO[];
-    isLoading: boolean;
     activeChapterIndex: number;
     setActiveChapterIndex: (index: number) => void;
 };
 
-const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, isLoading, activeChapterIndex, setActiveChapterIndex }) => {
+const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex }) => {
     const [activePageIndex, setActivePageIndex] = useState(0);
 
     const currentChapter = useMemo(()=> {
@@ -36,12 +35,9 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, isLoading, act
         setActiveChapterIndex(Number(e.target.value));
     };
 
-    if (isLoading) {
-        return <div className="d-flex justify-content-center align-items-center h-100"><Spinner animation="border" /></div>;
-    }
-
     if (!chapterPages || chapterPages.length === 0) {
-        return (
+        return null;
+        /*return (
             <div className="d-flex justify-content-center align-items-center" style={{height: '80vh'}}>
                 <div className="text-center">
                     <h5 className={styles.pageText}>Your Study Book is Ready!</h5>
@@ -51,7 +47,7 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, isLoading, act
                     </p>
                 </div>
             </div>
-        );
+        );*/
     }
 
     const renderChapterSelector = () => {

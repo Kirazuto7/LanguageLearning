@@ -9,6 +9,15 @@
   }
 }
 
+@keyframes drift {
+  from {
+    transform: translateX(-200px);
+  }
+  to {
+    transform: translateX(105vw);
+  }
+}
+
 @keyframes branch-sway {
   0%, 100% {
     transform: rotate(15deg); /* A bit more initial rotation */
@@ -73,6 +82,60 @@
     clip-path: polygon(20% 0%, 80% 0%, 100% 30%, 90% 80%, 75% 60%, 60% 90%, 50% 70%, 40% 90%, 25% 60%, 10% 80%, 0% 30%);
     z-index: 2;
   }
+}
+
+%cloud-base {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 100px;
+  opacity: 0.6;
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: 0;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background: #ffffff;
+    border-radius: 100px;
+  }
+
+  &::after {
+    width: 100px;
+    height: 100px;
+    top: -50px;
+    left: 50px;
+  }
+
+  &::before {
+    width: 150px;
+    height: 150px;
+    top: -90px;
+    right: 40px;
+  }
+}
+
+.cloud1 {
+  @extend %cloud-base;
+  width: 250px;
+  height: 80px;
+  top: 15%;
+  animation: drift 75s linear infinite 5s;
+}
+
+.cloud2 {
+  @extend %cloud-base;
+  width: 300px;
+  height: 100px;
+  top: 25%; animation: drift 90s linear infinite 15s;
+}
+
+.cloud3 {
+  @extend %cloud-base;
+  width: 200px;
+  height: 70px;
+  top: 35%;
+  animation: drift 80s linear infinite;
 }
 
 %cherry-branch-base {

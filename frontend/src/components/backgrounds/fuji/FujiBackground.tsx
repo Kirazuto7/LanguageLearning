@@ -7,6 +7,9 @@ const FujiBackground:React.FC = () => {
 
     return(
         <div className={styles.fujiContainer}>
+            <div className={styles.cloud1} />
+            <div className={styles.cloud2} />
+            <div className={styles.cloud3} />
             <div className={styles.fujiMountain}/>
             <div className={styles.cherryBranch1}/>
             <div className={styles.cherryBranch2}/>
