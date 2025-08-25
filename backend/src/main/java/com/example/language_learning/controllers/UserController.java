@@ -73,4 +73,10 @@ public class UserController {
         cookie.setMaxAge(24 * 60 * 60);
         servletResponse.addCookie(cookie);
     }
+
+    @GetMapping("health")
+    public ResponseEntity<Void> healthCheck() {
+        // Used by frontend to determine if the server is running.
+        return ResponseEntity.ok().build();
+    }
 }

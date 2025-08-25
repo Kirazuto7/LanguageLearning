@@ -33,7 +33,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 body: settingsData,
             })
         }),
+
+        healthCheck: builder.query<void, void>({
+            query: () => ({
+                url: '/users/health',
+                method: 'GET',
+            })
+        })
     })
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useUpdateSettingsMutation } = userApiSlice;
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useUpdateSettingsMutation, useHealthCheckQuery } = userApiSlice;

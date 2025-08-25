@@ -1,7 +1,7 @@
 import VocabularyLesson from "../components/learningtools/studybook/lessons/VocabularyLesson";
 import GrammarLesson from "../components/learningtools/studybook/lessons/GrammarLesson";
-import BookPage from "../components/learningtools/readingbook/BookPage";
-import ChapterPage from "../components/learningtools/readingbook/ChapterPage";
+import BookPage from "../components/bookpages/BookPage";
+import ChapterPage from "../components/bookpages/ChapterPage";
 import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
 import PracticeLesson from "../components/learningtools/studybook/lessons/PracticeLesson";
 import ReadingComprehensionLesson from "../components/learningtools/studybook/lessons/ReadingComprehensionLesson";
@@ -30,7 +30,7 @@ const getPageFromLessonType = (page: PageDTO): React.ReactElement => {
     }
 }
 
-const buildPagesForChapter = (chapter: ChapterDTO): React.ReactElement[] => {
+export const buildPagesForChapter = (chapter: ChapterDTO): React.ReactElement[] => {
     if(!chapter.pages || chapter.pages.length === 0) {
         return [];
     }

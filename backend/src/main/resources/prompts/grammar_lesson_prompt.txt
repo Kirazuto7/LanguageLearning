@@ -19,7 +19,7 @@ The content MUST be about the `{topic}` and explain the grammar concept you have
 ## CONTENT RULES
 1.  The `explanation` should be clear, concise, and easy for a `{difficulty}` learner to understand.
 2.  Crucially, the `explanation` MUST include the specific grammar particles, endings, or structures from `{language}` within the English text to provide clear examples. For instance, when explaining a Korean particle, mention it directly like '-(으)ㄴ'.
-3.  Provide 3-5 `exampleSentences` that clearly demonstrate the grammar concept.
+3.  Provide 5-6 `exampleSentences` that clearly demonstrate the grammar concept.
 
 ## LANGUAGE & DIFFICULTY RULES
 1.  The `title`, `grammarConcept`, and `explanation` fields MUST be in English.

@@ -49,6 +49,7 @@ public class UserService implements UserDetailsService {
         Settings settings = new Settings();
         settings.setLanguage(request.language());
         settings.setDifficulty(request.difficulty());
+        settings.setTheme("default");
         user.setSettings(settings);
 
         return userRepository.save(user);
@@ -66,13 +67,15 @@ public class UserService implements UserDetailsService {
         
         Settings settings = user.getSettings();
 
-        java.util.Optional.ofNullable(updateRequest.language())
-                .filter(lang -> !lang.isBlank())
-                .ifPresent(settings::setLanguage);
-
-        java.util.Optional.ofNullable(updateRequest.difficulty())
-                .filter(diff -> !diff.isBlank())
-                .ifPresent(settings::setDifficulty);
+        if (updateRequest.language() != null && !updateRequest.language().isBlank()) {
+            settings.setLanguage(updateRequest.language());
+        }
+        if (updateRequest.difficulty() != null && !updateRequest.difficulty().isBlank()) {
+            settings.setDifficulty(updateRequest.difficulty());
+        }
+        if (updateRequest.theme() != null && !updateRequest.theme().isBlank()) {
+            settings.setTheme(updateRequest.theme());
+        }
 
         userRepository.save(user);
         return mapper.toDto(settings);

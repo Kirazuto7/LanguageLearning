@@ -8,6 +8,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
+import {ThemeProvider} from './contexts/ThemeContext';
 
 const rootElement = document.getElementById('root');
 if(!rootElement) {
@@ -24,7 +25,9 @@ root.render(
         */}
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Provider store={store}>
-                <App />
+                <ThemeProvider>
+                    <App />
+                </ThemeProvider>
             </Provider>
         </BrowserRouter>
     </React.StrictMode>

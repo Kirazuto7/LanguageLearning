@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../../styles/bookpage.module.css';
+import styles from '../../bookpages/bookpage.module.css';
 
 interface BehindCoverPageProps {}
 // This component is designed to be the page right behind the front cover of the book.

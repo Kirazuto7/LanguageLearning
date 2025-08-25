@@ -1,9 +1,11 @@
 package com.example.language_learning.services;
 
+import com.example.language_learning.config.AIConfig;
 import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
+import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
@@ -13,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.chat.client.ChatClient;
@@ -39,38 +40,16 @@ import java.util.stream.Collectors;
 public class AIService {
 
     private static final Logger logger = LoggerFactory.getLogger(AIService.class);
-    private static final String DEFAULT_MODEL_NAME = "qwen3";
-    private static final Map<String, String> LANGUAGE_MODEL_MAP;
-    static {
-        LANGUAGE_MODEL_MAP = Map.of(
-          "korean", "exaone",
-          "japanese", "elyza",
-          "default", DEFAULT_MODEL_NAME
-        );
-    }
     private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
     private final ObjectMapper objectMapper;
+    private final AIConfig aiConfig;
 
-    @Value("classpath:prompts/chapter_metadata_prompt.txt")
-    private Resource chapterMetadataPrompt;
-    @Value("classpath:prompts/vocabulary_lesson_prompt.txt")
-    private Resource vocabularyLessonPrompt;
-    @Value("classpath:prompts/japanese_vocabulary_lesson_prompt.txt")
-    private Resource japaneseVocabularyLessonPrompt;
-    @Value("classpath:prompts/grammar_lesson_prompt.txt")
-    private Resource grammarLessonPrompt;
-    @Value("classpath:prompts/conjugation_lesson_prompt.txt")
-    private Resource conjugationLessonPrompt;
-    @Value("classpath:prompts/practice_lesson_prompt.txt")
-    private Resource practiceLessonPrompt;
-    @Value("classpath:prompts/reading_comprehension_lesson_prompt.txt")
-    private Resource readingComprehensionLessonPrompt;
-
-    public AIService(Map<String, ChatClient> chatClients, ApiDtoMapper apiDtoMapper, ObjectMapper objectMapper) {
-        this.chatClients = chatClients;
+    public AIService(AIConfig aiConfig, ApiDtoMapper apiDtoMapper, ObjectMapper objectMapper, Map<String, ChatClient> chatClients) {
+        this.aiConfig = aiConfig;
         this.apiDtoMapper = apiDtoMapper;
         this.objectMapper = objectMapper;
+        this.chatClients = chatClients;
         logger.info("--- Verifying Injected ChatClients ---");
         logger.info("Found {} ChatClient bean(s):", chatClients.size());
         chatClients.keySet().forEach(key -> logger.info(" -> Bean name: '{}'", key));
@@ -78,68 +57,63 @@ public class AIService {
     }
 
     public Mono<ChapterMetadataDTO> generateChapterMetadata(ChapterGenerationRequest request) {
-        Map<String, Object> params = Map.of(
-                "language", request.language(),
-                "difficulty", request.difficulty(),
-                "topic", request.topic()
-        );
+        Map<String, Object> params = createBaseParams(request);
+
+        Resource prompt = getPromptOrThrow(request.language(), PromptType.METADATA);
 
         return generateLessonComponent(
                 params,
-                chapterMetadataPrompt,
+                prompt,
                 AIChapterMetadataResponse.class,
                 apiResponse -> apiDtoMapper.toChapterMetadataDTO(apiResponse, request.topic()));
     }
 
     public Mono<VocabularyLessonDTO> generateVocabularyLesson(ChapterGenerationRequest request, ChapterMetadataDTO metadata) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.language());
-        params.put("difficulty", request.difficulty());
-        params.put("topic", request.topic());
+        Map<String, Object> params = createBaseParams(request);
         params.put("chapterTitle", metadata.title());
         params.put("nativeChapterTitle", metadata.nativeTitle());
 
-        Resource selectedPrompt;
-        if ("japanese".equalsIgnoreCase(request.language())) {
-            selectedPrompt = this.japaneseVocabularyLessonPrompt;
-        } else {
-            selectedPrompt = this.vocabularyLessonPrompt;
-        }
+        Resource prompt = getPromptOrThrow(request.language(), PromptType.VOCABULARY);
 
-        return generateLessonComponent(
-                params,
-                selectedPrompt,
-                AIVocabularyLessonResponse.class,
-                response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language())
-        );
+        if ("Japanese".equalsIgnoreCase(request.language())) {
+            return generateLessonComponent(
+                    params,
+                    prompt,
+                    AIJapaneseVocabularyLessonResponse.class,
+                    response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language()));
+        } else {
+            return generateLessonComponent(
+                    params,
+                    prompt,
+                    AIVocabularyLessonResponse.class,
+                    response -> apiDtoMapper.toVocabularyLessonDTO(response, request.language()));
+        }
     }
 
     public Mono<GrammarLessonDTO> generateGrammarLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.language());
-        params.put("difficulty", request.difficulty());
-        params.put("topic", request.topic());
+        Map<String, Object> params = createBaseParams(request);
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+
+        Resource prompt = getPromptOrThrow(request.language(), PromptType.GRAMMAR);
 
         return generateLessonComponent(
                 params,
-                grammarLessonPrompt,
+                prompt,
                 AIGrammarLessonResponse.class,
-                apiDtoMapper::toGrammarLessonDTO);
+                response -> apiDtoMapper.toGrammarLessonDTO(response, request.language()));
     }
 
     public Mono<ConjugationLessonDTO> generateConjugationLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.language());
-        params.put("difficulty", request.difficulty());
-        params.put("topic", request.topic());
+        Map<String, Object> params = createBaseParams(request);
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
+
+        Resource prompt = getPromptOrThrow(request.language(), PromptType.CONJUGATION);
 
         return generateLessonComponent(
                 params,
-                conjugationLessonPrompt,
+                prompt,
                 AIConjugationLessonResponse.class,
-                apiDtoMapper::toConjugationLessonDTO);
+                response -> apiDtoMapper.toConjugationLessonDTO(response, request.language()));
     }
 
     public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
@@ -151,18 +125,17 @@ public class AIService {
     }
 
     private Mono<PracticeLessonDTO> generatePracticeLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.language());
-        params.put("difficulty", request.difficulty());
-        params.put("topic", request.topic());
+        Map<String, Object> params = createBaseParams(request);
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
         params.put("grammarConcept", concept);
 
+        Resource prompt = getPromptOrThrow(request.language(), PromptType.PRACTICE);
+
         return generateLessonComponent(
                 params,
-                practiceLessonPrompt,
+                prompt,
                 AIPracticeLessonResponse.class,
-                apiDtoMapper::toPracticeLessonDTO);
+                response -> apiDtoMapper.toPracticeLessonDTO(response, request.language()));
     }
 
     public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
@@ -174,18 +147,17 @@ public class AIService {
     }
 
     private Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("language", request.language());
-        params.put("difficulty", request.difficulty());
-        params.put("topic", request.topic());
+        Map<String, Object> params = createBaseParams(request);
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
         params.put("grammarConcept", concept);
 
+        Resource prompt = getPromptOrThrow(request.language(), PromptType.READING_COMPREHENSION);
+
         return generateLessonComponent(
                 params,
-                readingComprehensionLessonPrompt,
+                prompt,
                 AIReadingComprehensionLessonResponse.class,
-                apiDtoMapper::toReadingComprehensionLessonDTO);
+                response -> apiDtoMapper.toReadingComprehensionLessonDTO(response, request.language()));
     }
 
     /**
@@ -218,7 +190,7 @@ public class AIService {
         return chatClient.prompt()
                 .user(prompt.getContents())
                 .stream().content().collectList()
-                .map(list -> String.join("", list))
+                .map(list -> String.join("", list).trim())
                 .doOnNext(rawResponse -> logger.info("Raw AI Response for {}: {}", componentName, rawResponse))
                 .map(this::extractAndSanitizeJson)
                 .doOnNext(json -> logger.debug("Extracted JSON for {}: {}", componentName, json))
@@ -227,6 +199,8 @@ public class AIService {
                 .doOnNext(mapped -> logger.info("Mapped to internal DTO {}: {}", componentName, mapped))
                 .doOnError(e -> logger.error("Failed to generate or parse AI response for {}.", componentName, e));
     }
+
+
 
     /**
      * Formats a list of vocabulary words into a simple, comma-separated string suitable for AI prompts.
@@ -297,7 +271,8 @@ public class AIService {
         if(language == null || language.isBlank()) {
             throw new IllegalArgumentException("Language cannot be null or empty.");
         }
-        String modelName = LANGUAGE_MODEL_MAP.getOrDefault(language.toLowerCase(), LANGUAGE_MODEL_MAP.get("default"));
+        String modelName = aiConfig.getModelName(language)
+                .orElseThrow(() -> new IllegalStateException("AI model name not configured for language: " + language));
         ChatClient client = chatClients.get(modelName);
 
         if (client == null) {
@@ -305,5 +280,20 @@ public class AIService {
             throw new IllegalStateException("AI model client not configured: " + modelName);
         }
         return client;
+    }
+
+    private Resource getPromptOrThrow(String language, PromptType promptType) {
+        return aiConfig.getPrompt(language, promptType)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Prompt of type '%s' not configured for language: %s", promptType, language)
+                ));
+    }
+
+    private Map<String, Object> createBaseParams(ChapterGenerationRequest request) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", request.language());
+        params.put("difficulty", request.difficulty());
+        params.put("topic", request.topic());
+        return params;
     }
 }

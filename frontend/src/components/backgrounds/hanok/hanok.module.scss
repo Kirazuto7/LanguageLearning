@@ -1,0 +1,327 @@
+.hanokBuilding {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  transform-style: preserve-3d; /* Enable 3D space for children */
+}
+
+.groundFloor {
+  position: absolute;
+  bottom: 10%; /* Sits on top of the new stone base */
+  width: 100%;
+  height: 40%; /* Takes up the rest of the space */
+  transform-style: preserve-3d; /* Create a 3D space for the doors and porch */
+  perspective: 1000px; /* Add perspective to see the 3D effect */
+  z-index: 1;
+  background-color: #c99868; /* The main wall color */
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 6px);
+
+  /* The dark interior, visible through the open doors */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #3e2723; /* A dark color for the room's interior */
+    transform: translateZ(-20px); /* Push the back wall far behind the doors */
+  }
+}
+
+.stoneBase {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10%; /* The height of the stone foundation */
+  background-color: #a1a1a1; /* A stone-like color */
+  border-top: 2px solid #7a7a7a;
+  z-index: 2; /* In front of the ground floor wall */
+  /* Add a grid pattern to simulate stone blocks */
+  background-image:
+    repeating-linear-gradient(to right, #8d8d8d, #8d8d8d 1px, transparent 1px, transparent 40px),
+    repeating-linear-gradient(to bottom, #8d8d8d, #8d8d8d 1px, transparent 1px, transparent 20px);
+}
+
+.entranceDoor {
+  position: absolute;
+  bottom: 0;
+  width: 15%; /* Smaller doors for two entrances */
+  height: 100%;
+  background-color: #f0e6d1; /* Lighter paper screen color */
+  background-image:
+    repeating-linear-gradient(to right, transparent, transparent 28px, #a1887f 28px, #a1887f 30px),
+    repeating-linear-gradient(to bottom, transparent, transparent 28px, #a1887f 28px, #a1887f 30px);
+  border: 8px solid #5d4037;
+  z-index: 2; /* Behind the toenmaru */
+  transition: transform 0.5s; /* Smooth transition for opening */
+}
+
+/* Left Entrance Doors */
+.leftOuter {
+  left: 15%;
+  transform: translateZ(5px) translateX(-50%);
+}
+.leftInner {
+  right: 60%; /* Pushed left to create a gap from the center */
+  transform: translateZ(5px) translateX(50%);
+}
+
+/* Right Entrance Doors */
+.rightInner {
+  left: 60%; /* Pushed right to create a gap from the center */
+  transform: translateZ(5px) translateX(-50%);
+}
+.rightOuter {
+  right: 15%;
+  transform: translateZ(5px) translateX(50%);
+}
+
+.entranceRoom {
+  position: absolute;
+  bottom: 0;
+  width: 15%;
+  height: 100%;
+  z-index: 2;
+}
+
+.leftRoom {
+  background-color: #654321;
+  transform: translateZ(5px) translateX(120%);
+}
+
+.rightRoom {
+  background-color: #654321;
+  transform: translateZ(1px) translateX(430%);
+}
+
+
+.mainRoof {
+  position: absolute;
+  bottom: 94%; /* Sits on top of the upper floor (50% bottom + 40% height) */
+  left: -10%;
+  width: 120%;
+  height: 120px;
+  z-index: 4;
+  transform-style: preserve-3d; /* Allow 3D positioning for children */
+
+  & > .amkiwaTile {
+    clip-path: polygon(0 0, 100% 0, 100% 95%, 90% 98%, 50% 100%, 10% 98%, 0 95%);
+  }
+}
+
+// This is the main container for the mid-roof section.
+// It's positioned absolutely relative to the hanokBuilding.
+.midRoof {
+  position: absolute;
+  bottom: 40%; /* Sits on top of the ground floor */
+  left: -2.5%;
+  width: 105%;
+  height: 80px;
+  z-index: 3;
+  transform-style: preserve-3d; /* Establish a 3D space for the roof parts */
+  transform-origin: top; /* Rotate from the top edge where it connects to the building */
+  transform: rotateX(65deg); /* Tilt the roof to give it a 3D perspective from below */
+  border-bottom: 3px solid #a26836;
+}
+
+// This is the flat foundation layer of the roof.
+.roofTileLayer {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background-color: transparent; /* This layer is purely for positioning */
+  display: flex;
+  align-items: stretch;
+}
+
+.sukiwaTile {
+  width: 14px; /* Fixed width for predictable pattern alignment */
+  flex-shrink: 0; /* Prevent tiles from shrinking */
+  height: 120px;
+  position: relative; /* For positioning the pseudo-elements */
+  background-color: #5a5a5a; /* The beam color */
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  //transform: translateZ(5px);
+  z-index: 2;
+
+  /* The top and bottom semi-circle caps */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 10px; /* The radius of the semi-circle */
+    background-color: inherit; /* Match the tile's beam color */
+
+  }
+
+
+  &::before { /* Top cap */
+    top: 0;
+    transform: translateY(-50%);
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+  }
+
+  &::after { /* Bottom cap */
+    background-image: radial-gradient(circle at 50% 50%, #7a7a7a, #4a4a4a);
+    bottom: 0;
+    transform: translateY(50%);
+    border-radius: 100px 100px 50% 50%;
+  }
+}
+
+
+.amkiwaTile {
+  width: 10px; /* Made slightly thinner */
+  flex-shrink: 0;
+  height: 130px;
+  position: relative;
+  background-color: #5a5a5a;
+  transform: translateZ(-6px);
+  z-index: 1;
+
+  background-image: repeating-radial-gradient(
+                  ellipse at 50% -50%,
+                  #2a2a2a 0,
+                  #2a2a2a 1px,
+                  transparent 5px
+  );
+  background-size: 100% 12px;
+  background-repeat: repeat-y;
+
+  /* Curve anchored to the bottom-left and bottom-right corners */
+  /* Creates a smoother concave curve that connects to the sukiwa tiles */
+  /* A shallower, smoother curve to make the bottom edge appear more flush */
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 80% 99%, 50% 100%, 20% 99%, 0 95%);
+}
+
+.upperFloor {
+  position: absolute;
+  bottom: 58%; /* Sits on top of the ground floor, behind the mid-roof */
+  left: 5%;
+  width: 90%;
+  height: 40%;
+  /* This container is now transparent; its background is handled by a pseudo-element */
+  z-index: 2; /* Behind the mid-roof */
+  transform-style: preserve-3d; /* Create a new 3D context for windows */
+  perspective: 800px; /* Give perspective to the windows inside */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #c99868; /* Pine wood color */
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 6px);
+    transform: translateZ(-20px); /* Push the wall background back, behind the windows */
+  }
+}
+
+.windowContainer {
+  position: relative;
+  width: 30%;
+  height: 90%;
+  transform: translateZ(-10px); /* Push the entire window frame inward */
+  transform-style: preserve-3d;
+  display: flex; /* Use flexbox to line up the panes */
+  padding: 5px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4); /* Add shadow for depth */
+  /* The container itself is transparent to let the mini-windows show through */
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #c99868; /* Match the pine wood color */
+    transform: translateZ(-6px); /* Push it behind the mini-windows (which are at -5px) */
+  }
+}
+
+.windowPane {
+  flex: 1; /* Each pane takes up equal space */
+  position: relative; /* For handle positioning */
+  background-color: #f0e6d1; /* Lighter paper screen color */
+  border: 6px solid #c99868; /* Thicker border to create the beams */
+  /* Re-add the lattice detail to the paper screens */
+  background-image:
+    repeating-linear-gradient(to right, transparent, transparent 10px, #a1887f 10px, #a1887f 11px),
+    repeating-linear-gradient(to bottom, transparent, transparent 10px, #a1887f 10px, #a1887f 11px);
+  transform: translateZ(-5px); /* Push the panes even further inward */
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4); /* Add shadow for depth */
+}
+
+.handleLeft, .handleRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;  /* Slightly larger to accommodate the border */
+  height: 10px;
+  background: transparent; /* No fill for a ring */
+  border: 2px solid #4e342e; /* The ring itself */
+  border-radius: 50%;
+  z-index: 1; /* Ensure handles are on top of the pane's border */
+}
+
+.handleLeft { left: -5px; } /* Center the ring on the frame's edge */
+.handleRight { right: -5px; } /* Center the ring on the frame's edge */
+
+
+.ridgeBeam {
+  position: absolute;
+  top: -12.5px; /* Position it on the peak of the roof, adjusted for its own height */
+  left: -1%;
+  width: 105%;
+  height: 25px; /* Thickness of the ridge beam */
+  background-color: #5a5a5a; /* The main color */
+  /* Layer the highlight and the texture lines */
+  background-image:
+    linear-gradient(to top, #7a7a7a, #5a5a5a 50%);
+  background-size: 100% 100%, 100% 10px; /* Size for highlight and repeating texture */
+  background-repeat: no-repeat, repeat-y; /* Repeat texture vertically */
+  box-shadow: 0 2px 2px rgba(0,0,0,0.5); /* Add shadow for depth */
+  z-index: 5; /* Ensure it's on top of the upper tier */
+  /* Create the semi-circle shape with the flat bottom on the roof */
+  border-radius: 12.5px 12.5px 0 0;
+  transform: rotate(180deg);
+}
+
+.staircase {
+  position: absolute;
+  bottom: 0;
+  width: 15%;
+  height: 40px; /* Matches stoneBase height */
+  transform-style: preserve-3d;
+  z-index: 3;
+}
+
+.leftStaircase {
+  left: 20%;
+}
+
+.rightStaircase {
+  right: 20%;
+}
+
+.step {
+  position: absolute;
+  width: 100%;
+  background: #a1a1a1; /* Stone color */
+  border: 1px solid #7a7a7a;
+  box-sizing: border-box;
+  height: 14px;
+
+  &:nth-child(1) {
+    bottom: 0;
+    transform: translateZ(50px);
+  }
+  &:nth-child(2) {
+    bottom: 13px; /* Stack on top */
+    transform: translateZ(25px);
+  }
+  &:nth-child(3) {
+    bottom: 26px; /* Stack on top */
+    transform: translateZ(0); /* Push back further */
+  }
+}

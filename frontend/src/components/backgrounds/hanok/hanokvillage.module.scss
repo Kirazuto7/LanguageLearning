@@ -1,0 +1,261 @@
+.hanokSceneContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: #d1e4f0;
+  z-index: -1;
+}
+
+.sky {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 75vh;
+  z-index: 1; /* Farthest back layer */
+  background-color: #a1c4fd; /* Fallback sky color */
+  background-image: linear-gradient(to bottom, #a1c4fd 0%, #c2e9fb 100%);
+}
+
+.mountains {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 75vh;
+  z-index: 4; /* In front of sky, clouds, and birds */
+}
+
+.mountains::before,
+.mountains::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-repeat: no-repeat;
+}
+
+/* Farther, lighter mountains */
+.mountains::before {
+  height: 75%; /* Made taller */
+  background-image: linear-gradient(to top, #7d9a86 0%, transparent 70%);
+  clip-path: polygon(0 40%, 20% 25%, 45% 35%, 60% 20%, 75% 30%, 90% 20%, 100% 40%, 100% 100%, 0 100%);
+  z-index: 1; /* Behind the nearer mountains */
+}
+
+/* Nearer, darker mountains */
+.mountains::after {
+  height: 80%; /* Made taller */
+  background-image: linear-gradient(to top, #4a6b52 0%, transparent 70%);
+  clip-path: polygon(0 70%, 10% 40%, 20% 55%, 35% 30%, 50% 45%, 65% 25%, 80% 40%, 90% 30%, 100% 60%, 100% 100%, 0 100%);
+  z-index: 2; /* In front of the farther mountains */
+}
+
+.street {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200%; /* Widened the street */
+  height: 40vh; /* Raised the ground level to meet the distant houses */
+  background: #b0a89e;
+  clip-path: polygon(20% 0, 80% 0, 100% 100%, 0% 100%);
+  z-index: 5; /* In front of sky and mountains */
+}
+
+.mainHanok {
+  bottom: 25vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6; /* The main foreground element */
+}
+
+.distantHanok {
+  position: absolute;
+  bottom: 35vh; /* Higher up to appear further away */
+  transform: scale(0.6); /* Smaller */
+  filter: blur(1px); /* More blurred */
+  z-index: 5; /* On the same plane as the street */
+  opacity: 0.9;
+}
+
+.distantLeft {
+  left: 5%; /* Moved further left */
+  transform-origin: bottom left;
+}
+
+.distantRight {
+  right: 5%; /* Moved further right */
+  transform-origin: bottom right;
+}
+
+.ginkgoTree {
+  position: absolute;
+  width: 200px;
+  height: 250px;
+  bottom: 28vh; /* Positioned in the mid-ground */
+  left: 20%;   /* To the left of the main hanok */
+  z-index: 6; /* On the same layer as the main hanok */
+}
+
+.trunk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 180px; /* A long, elegant trunk */
+  background-color: #4e342e;
+  border-radius: 6px 6px 0 0;
+}
+
+.branch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px; /* Branches are thinner than the trunk */
+  height: 80px;
+  background: #4e342e;
+  transform-origin: bottom center;
+
+  /* The leaves on each branch */
+  &::after {
+    content: '';
+    position: absolute;
+    top: -40px; /* Position leaves at the end of the branch */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    background: #ffc107; /* Golden yellow for Ginkgo leaves */
+    border-radius: 42% 58% 68% 32% / 63% 47% 53% 37%; /* Irregular blob for leaf cluster */
+
+    /* Use box-shadow to create more leaf clusters for a fuller look */
+    box-shadow:
+      -40px 10px 0 -8px #ffb300, /* Amber */
+      35px 15px 0 -5px #ffa000,  /* Darker amber */
+      -10px 30px 0 -3px #ffc107;   /* More yellow */
+  }
+}
+
+.branch1 { transform: rotate(-40deg) translateX(-30px); }
+.branch2 { top: -30px; transform: rotate(5deg); }
+.branch3 { transform: rotate(45deg) translateX(30px); }
+
+.ginkgoTreeRight {
+  left: auto;
+  right: 20%;
+}
+
+/* Bird animation and styling */
+.birds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 75vh;
+  z-index: 3; /* Between clouds and mountains */
+  overflow: hidden;
+}
+
+.bird {
+  position: absolute;
+  width: 2px; /* The body is just a tiny point */
+  height: 2px;
+  background: #333;
+  border-radius: 50%;
+  animation: flyAcross 15s linear infinite;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    background: #333;
+    border-radius: 2px;
+    transform-origin: center;
+    animation: flap 0.4s ease-in-out infinite alternate;
+  }
+
+  &::before { left: -11px; }
+  &::after { right: -11px; animation-direction: alternate-reverse; }
+}
+
+.bird1 {
+  top: 20%;
+  animation-duration: 30s; /* Slowed down from 15s */
+  animation-delay: -2s;
+  transform: scale(0.8);
+}
+.bird2 {
+  top: 25%;
+  animation-duration: 24s; /* Slowed down from 12s */
+  animation-delay: 0s;
+  transform: scale(0.6);
+}
+.bird3 {
+  top: 22%;
+  animation-duration: 36s; /* Slowed down from 18s */
+  animation-delay: -8s;
+  transform: scale(0.7);
+}
+
+/* Cloud animation and styling */
+.clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%; /* Wide container for seamless looping */
+  height: 75vh;
+  animation: moveClouds 120s linear infinite;
+  z-index: 2; /* Between sky and mountains */
+}
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 100px;
+  opacity: 0.7;
+
+  /* Use pseudo-elements to build up the cloud shape */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 100px;
+  }
+}
+
+.cloud1 {
+  width: 200px; height: 60px;
+  top: 10vh; left: 10%;
+  &::before { width: 100px; height: 80px; top: -30px; left: 30px; }
+  &::after { width: 120px; height: 70px; top: -20px; right: 20px; }
+}
+
+.cloud2 {
+  width: 300px; height: 80px;
+  top: 7vh; left: 50%; /* Moved higher in the sky */
+  &::before { width: 150px; height: 100px; top: -50px; left: 50px; }
+  &::after { width: 180px; height: 90px; top: -40px; right: 40px; }
+}
+
+.cloud3 {
+  width: 180px; height: 50px;
+  top: 15vh; left: 80%;
+  &::before { width: 90px; height: 70px; top: -25px; left: 25px; }
+  &::after { width: 110px; height: 60px; top: -20px; right: 15px; }
+}
+
+@keyframes moveClouds {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Moves the container by half its width, making clouds loop */
+}
+
+@keyframes flap {
+  from { transform: rotate(25deg); }
+  to { transform: rotate(-15deg); }
+}
+
+@keyframes flyAcross {
+  0% { left: -10%; }
+  100% { left: 110%; }
+}
