@@ -1,0 +1,58 @@
+/** Vocab Lesson **/
+
+#vocabTable {
+  th {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+  }
+}
+
+/** Practice Lesson **/
+
+#practiceLessonContainer {
+
+  .practiceInput {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    }
+  }
+
+  .checkButton {
+    border-radius: 6px;
+    border: none;
+    background: var(--primary-gradient);
+    color: var(--text-color-light);
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+
+    &:hover:not(:disabled) {
+      background: var(--primary-gradient-hover);
+      box-shadow: var(--button-shadow-hover);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: large;
+    }
+  }
+
+}

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Table, Card } from 'react-bootstrap';
 import { VocabularyLessonDTO, WordDTO } from '../../../../types/dto';
+import styles from "./lesson.module.scss";
+
 interface VocabularyLessonProps {
     lesson: VocabularyLessonDTO;
 }
@@ -16,6 +18,7 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
 
     const renderDefaultHeader = () => (
         <tr>
+            <th/>
             <th>Word</th>
             <th>Translation</th>
         </tr>
@@ -56,13 +59,14 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
             </Card.Header>
 
             <Card.Body style={{ overflowY: 'auto' }}>
-                <Table striped bordered hover responsive>
+                <Table id={styles.vocabTable} striped bordered hover responsive>
                     <thead>
                         {isJapanese ? renderJapaneseHeader() : renderDefaultHeader()}
                     </thead>
                     <tbody>
                         {lesson.vocabularies.map((word: WordDTO, index) => (
                             <tr key={index}>
+                                <td>{index + 1}.</td>
                                 {isJapanese ? renderJapaneseRow(word) : renderDefaultRow(word)}
                                 <td>{word.englishTranslation}</td>
                             </tr>
