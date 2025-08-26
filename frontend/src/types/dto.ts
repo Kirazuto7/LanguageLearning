@@ -134,3 +134,15 @@ export interface AuthenticationResponse {
     token: string,
     user: UserDTO
 }
+
+export interface PracticeLessonCheckRequest {
+    language: string,
+    questionId: number,
+    userSentence: string
+}
+
+export interface PracticeLessonCheckResponse {
+    isCorrect: boolean,
+    correctedSentence: string,
+    feedback: string
+}

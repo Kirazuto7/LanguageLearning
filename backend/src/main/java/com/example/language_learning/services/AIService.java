@@ -9,6 +9,7 @@ import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
+import com.example.language_learning.requests.PracticeLessonCheckResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -55,6 +56,39 @@ public class AIService {
         chatClients.keySet().forEach(key -> logger.info(" -> Bean name: '{}'", key));
         logger.info("--------------------------------------");
     }
+
+    /** Practice Lesson Methods **/
+    public Mono<PracticeLessonCheckResponse> proofRead(String originalQuestion, String userSentence, String language) {
+        logger.info("Proofreading question: {}", originalQuestion);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", language);
+        params.put("question", originalQuestion);
+        params.put("sentence", userSentence);
+
+        Resource promptResource = getPromptOrThrow(language, PromptType.PROOFREAD);
+
+        var outputParser = new BeanOutputConverter<>(AIProofreadResponse.class);
+        PromptTemplate promptTemplate = createPromptTemplate(promptResource);
+        var prompt = promptTemplate.create(params);
+        logger.debug("Rendered Prompt: {}", prompt.getContents());
+
+        ChatClient chatClient = selectClient(language);
+
+        return chatClient.prompt()
+                .user(prompt.getContents())
+                .stream().content().collectList()
+                .map(list -> String.join("", list).trim())
+                .doOnNext(rawResponse -> logger.info("Raw AI Response: {}", rawResponse))
+                .map(this::extractAndSanitizeJson)
+                .doOnNext(json -> logger.debug("Extracted JSON: {}", json))
+                .map(outputParser::convert)
+                .map(apiDtoMapper::toPracticeLessonCheckResponse)
+                .doOnNext(mapped -> logger.info("Mapped to internal DTO: {}", mapped))
+                .doOnError(e -> logger.error("Failed to generate or parse AI response.", e));
+    }
+
+    /** Chapter Generation Methods **/
 
     public Mono<ChapterMetadataDTO> generateChapterMetadata(ChapterGenerationRequest request) {
         Map<String, Object> params = createBaseParams(request);

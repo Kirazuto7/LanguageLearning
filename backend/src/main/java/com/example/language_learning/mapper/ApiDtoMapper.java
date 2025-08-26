@@ -4,6 +4,7 @@ import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.QuestionType;
+import com.example.language_learning.requests.PracticeLessonCheckResponse;
 import com.example.language_learning.services.FuriganaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -138,6 +139,14 @@ public class ApiDtoMapper {
                                     .options(aiQuestion.options())
                                     .build();
                         }).collect(Collectors.toList()))
+                .build();
+    }
+
+    public PracticeLessonCheckResponse toPracticeLessonCheckResponse(AIProofreadResponse response) {
+        return PracticeLessonCheckResponse.builder()
+                .isCorrect(response.correctedSentence() == null)
+                .correctedSentence(response.correctedSentence())
+                .feedback(response.feedback())
                 .build();
     }
 

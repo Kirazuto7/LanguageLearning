@@ -43,6 +43,8 @@ public class AIConfig {
     private Resource readingComprehensionLessonPrompt;
     @Value("classpath:prompts/japanese/japanese_reading_comprehension_lesson_prompt.txt")
     private Resource japaneseReadingComprehensionLessonPrompt;
+    @Value("classpath:prompts/practice_lesson_proofread_prompt.txt")
+    private Resource practiceLessonProofreadPrompt;
 
     @PostConstruct
     public void init() {
@@ -53,6 +55,7 @@ public class AIConfig {
         defaultPrompts.put(PromptType.CONJUGATION, conjugationLessonPrompt);
         defaultPrompts.put(PromptType.PRACTICE, practiceLessonPrompt);
         defaultPrompts.put(PromptType.READING_COMPREHENSION, readingComprehensionLessonPrompt);
+        defaultPrompts.put(PromptType.PROOFREAD, practiceLessonProofreadPrompt);
         AIAsset defaultAsset = AIAsset.builder().modelName("qwen3").prompts(defaultPrompts).build();
 
         AIAsset koreanAsset = AIAsset.builder().modelName("exaone").prompts(defaultPrompts).build();
