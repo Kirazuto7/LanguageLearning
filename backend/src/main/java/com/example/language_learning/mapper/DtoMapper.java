@@ -362,7 +362,7 @@ public class DtoMapper {
                 .questionType(QuestionType.valueOf(dto.questionType()))
                 .questionText(dto.questionText())
                 .answer(dto.answer())
-                .options(dto.options())
+                .answerChoices(dto.answerChoices())
                 .lesson(lesson)
                 .build();
     }
@@ -374,7 +374,7 @@ public class DtoMapper {
                 .questionType(entity.getQuestionType().name())
                 .questionText(entity.getQuestionText())
                 .answer(entity.getAnswer())
-                .options(entity.getOptions())
+                .answerChoices(entity.getAnswerChoices())
                 .build();
     }
 

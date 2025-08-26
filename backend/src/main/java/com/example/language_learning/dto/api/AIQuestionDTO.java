@@ -8,6 +8,6 @@ import java.util.List;
 public record AIQuestionDTO(
         String questionText,
         String answer,
-        List<String> options
+        List<String> answerChoices
 ) {
 }

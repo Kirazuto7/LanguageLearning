@@ -31,6 +31,6 @@ public class PracticeLessonService {
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.questionId()));
 
         // 2. Request feedback from the AI
-        return aiService.proofRead(question.getQuestionText(), request.userSentence(), request.language()).block();
+        return aiService.proofRead(question.getQuestionText(), request.userSentence(), request.language(), request.difficulty()).block();
     }
 }

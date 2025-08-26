@@ -31,10 +31,10 @@ public class Question {
 
     // For multiple choice, a list of options as answer choices. Otherwise, null.
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
-    @Column(name = "option", columnDefinition = "TEXT")
+    @CollectionTable(name = "question_answer_choices", joinColumns = @JoinColumn(name = "question_id"))
+    @Column(name = "answer_choice", columnDefinition = "TEXT")
     @Default
-    private List<String> options = new ArrayList<>();
+    private List<String> answerChoices = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)

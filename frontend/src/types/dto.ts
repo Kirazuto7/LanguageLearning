@@ -72,7 +72,7 @@ export interface QuestionDTO {
     id: number;
     questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;
-    options?: string[];
+    answerChoices?: string[];
     answer: string;
 }
 
@@ -137,6 +137,7 @@ export interface AuthenticationResponse {
 
 export interface PracticeLessonCheckRequest {
     language: string,
+    difficulty: string,
     questionId: number,
     userSentence: string
 }
