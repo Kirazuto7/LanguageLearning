@@ -22,25 +22,24 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
         }
     }, [chapters]);
 
-    if (isLoading && chapters.length === 0) {
-        return(
-            <Container className="d-flex justify-content-center align-items-center" style={{minHeight: '80vh'}}>
-                <Spinner animation="border"/>
-            </Container>
-        )
-    }
-
     return (
         <div>
-            <Lessonbook
-                title={title}
-                chapters={chapters}
-                activeChapterIndex={activeChapterIndex}
-                setActiveChapterIndex={setActiveChapterIndex}
-                onAllCorrect={handleAllCorrect}
-            />
-            
-            <ChapterGenerator celebrationTrigger={celebrationTrigger}/>
+            {isLoading && chapters.length === 0 ? (
+                <Container className="d-flex justify-content-center align-items-center" style={{minHeight: '80vh'}}>
+                    <Spinner animation="border"/>
+                </Container>
+            ) : (
+                <>
+                    <Lessonbook
+                        title={title}
+                        chapters={chapters}
+                        activeChapterIndex={activeChapterIndex}
+                        setActiveChapterIndex={setActiveChapterIndex}
+                        onAllCorrect={handleAllCorrect}
+                    />
+                    <ChapterGenerator celebrationTrigger={celebrationTrigger}/>
+                </>
+            )}
         </div>
     );
 }

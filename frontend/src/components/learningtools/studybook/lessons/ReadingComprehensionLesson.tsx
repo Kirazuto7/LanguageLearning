@@ -43,13 +43,17 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
 
     const handleCheckAnswers = () => {
         const newResults = lesson.questions.reduce((curr, question) => {
-            curr[question.id] = selectedAnswers[question.id] === question.answer;
+            const userAnswer = selectedAnswers[question.id] || '';
+            const correctAnswer = question.answer || '';
+            curr[question.id] = userAnswer.trim() === correctAnswer.trim();
             return curr;
         }, {} as { [key: number]: boolean });
         setResults(newResults);
 
         const allCorrect = Object.values(newResults).every(result => result === true);
+
         if (allCorrect && lesson.questions.length > 0 && onAllCorrect) {
+            console.log("TEST!");
             onAllCorrect();
         }
     };
@@ -80,6 +84,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
                         { answerChoices?.map((choice, choiceIndex) => {
                         return (
                             <Form.Check
+                                key={`choice-${question.id}-${choiceIndex}`}
                                 inline
                                 className={styles.customRadio}
                                 label={choice}

@@ -21,8 +21,8 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
 
     const chapterPages = useMemo(() => {
         if(!currentChapter) return [];
-        return buildPagesForChapter(currentChapter);
-    }, [currentChapter]);
+        return buildPagesForChapter(currentChapter, onAllCorrect);
+    }, [currentChapter, onAllCorrect]);
 
     useEffect(() => {
         setActivePageIndex(0);
@@ -106,7 +106,7 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
                     className={styles['studybook-carousel']}>
                     {chapterPages.map((page, index) =>
                         <Carousel.Item key={index} className="h-100" style={{ overflowY: 'auto' }}>
-                            {React.cloneElement(page, { onAllCorrect })}
+                            {page}
                         </Carousel.Item>
                     )}
                 </Carousel>
