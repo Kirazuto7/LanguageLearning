@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, memo } from "react";
 import styles from './lessonbook.module.scss';
 import { Carousel, Pagination, Form } from "react-bootstrap";
 import { buildPagesForChapter } from "../../../utils/buildPagesFromData";
@@ -9,9 +9,10 @@ interface LessonbookProps{
     chapters: ChapterDTO[];
     activeChapterIndex: number;
     setActiveChapterIndex: (index: number) => void;
+    onAllCorrect?: () => void;
 };
 
-const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex }) => {
+const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex, onAllCorrect }) => {
     const [activePageIndex, setActivePageIndex] = useState(0);
 
     const currentChapter = useMemo(()=> {
@@ -103,9 +104,9 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
                     activeIndex={activePageIndex}
                     onSelect={handlePageSelect}
                     className={styles['studybook-carousel']}>
-                    {chapterPages.map((page: React.ReactElement, index) =>
+                    {chapterPages.map((page, index) =>
                         <Carousel.Item key={index} className="h-100" style={{ overflowY: 'auto' }}>
-                            {page}
+                            {React.cloneElement(page, { onAllCorrect })}
                         </Carousel.Item>
                     )}
                 </Carousel>
@@ -114,4 +115,4 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
     );
 }
 
-export default Lessonbook;
+export default memo(Lessonbook);

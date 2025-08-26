@@ -9,5 +9,5 @@ public record QuestionDTO (
     String questionType,
     String questionText,
     String answer,
-    List<String> options
+    List<String> answerChoices
 ) {}

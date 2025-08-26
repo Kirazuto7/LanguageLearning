@@ -117,7 +117,7 @@ public class ApiDtoMapper {
                                     .questionText(questionText)
                                     .questionType(QuestionType.FREE_FORM.name())
                                     .answer(null)
-                                    .options(Collections.emptyList())
+                                    .answerChoices(Collections.emptyList())
                                     .build();
                         }).collect(Collectors.toList()))
                 .build();
@@ -136,7 +136,7 @@ public class ApiDtoMapper {
                                     .questionText(aiQuestion.questionText())
                                     .questionType(QuestionType.MULTIPLE_CHOICE.name())
                                     .answer(aiQuestion.answer())
-                                    .options(aiQuestion.options())
+                                    .answerChoices(aiQuestion.answerChoices())
                                     .build();
                         }).collect(Collectors.toList()))
                 .build();

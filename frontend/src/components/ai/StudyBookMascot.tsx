@@ -11,14 +11,18 @@ interface StudyBookMascotProps {
     isLoading: boolean;
     progress: number;
     message: string;
+    celebrationTrigger?: number;
 }
 
-const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoading, progress, message }) => {
+const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoading, progress, message,celebrationTrigger }) => {
     const { settings } = useSettingsManager();
     const [hop, setHop] = useState<boolean>(false);
+    const [celebrate, setCelebrate] = useState<boolean>(false);
     const [speech, setSpeech] = useState<string>(`Ready to learn? Suggest a topic to get started! 😄`);
 
     useEffect(() => {
+        if (celebrate) return;
+
         if (isLoading && message) {
             setSpeech(message);
         }
@@ -26,7 +30,20 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
             // When the language is changed in settings, update the mascot's speech.
             setSpeech(`Ready to learn some ${settings?.language || 'new things'}? Suggest a topic to get started! (^_^)`);
         }
-    }, [isLoading, message, settings?.language]);
+    }, [isLoading, message, settings?.language, celebrate]);
+
+    useEffect(() => {
+        if (celebrationTrigger && celebrationTrigger > 0) {
+            setSpeech("You got them all right! Great job! 🎉");
+            setCelebrate(true);
+
+            const timer = setTimeout(() => {
+                setCelebrate(false);
+            }, 800)
+
+            return () => clearTimeout(timer);
+        }
+    }, [celebrationTrigger]);
 
     const handleSendButton = (topic: string) => {
         setHop(true);
@@ -45,7 +62,7 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
                     <Blackboard text={speech}/>
                 </div>
                 <div className={styles.characterWrapper}>
-                    <MascotCharacter hop={hop}/>
+                    <MascotCharacter hop={hop} celebrate={celebrate}/>
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>
                     <StudyBookInputField onSend={handleSendButton} disabled={isLoading}/>

@@ -13,12 +13,15 @@ export const useProofread = () => {
 
     const checkSentence = async ({ questionId, userSentence}: ProofreadHookRequest): Promise<PracticeLessonCheckResponse> => {
         const language = settings?.language;
-        if (!language) {
-            throw new Error("Cannot proofread: Language setting is unknown.");
+        const difficulty = settings?.difficulty;
+
+        if (!difficulty || !language) {
+            throw new Error("Cannot proofread: Language or difficulty setting is unknown.");
         }
 
         return await proofread({
             language,
+            difficulty,
             questionId,
             userSentence
         }).unwrap();

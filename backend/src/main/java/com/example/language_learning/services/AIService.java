@@ -58,13 +58,14 @@ public class AIService {
     }
 
     /** Practice Lesson Methods **/
-    public Mono<PracticeLessonCheckResponse> proofRead(String originalQuestion, String userSentence, String language) {
+    public Mono<PracticeLessonCheckResponse> proofRead(String originalQuestion, String userSentence, String language, String difficulty) {
         logger.info("Proofreading question: {}", originalQuestion);
 
         Map<String, Object> params = new HashMap<>();
         params.put("language", language);
         params.put("question", originalQuestion);
         params.put("sentence", userSentence);
+        params.put("difficulty", difficulty);
 
         Resource promptResource = getPromptOrThrow(language, PromptType.PROOFREAD);
 

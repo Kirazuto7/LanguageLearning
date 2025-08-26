@@ -1,6 +1,6 @@
 import ChapterGenerator from "../../components/ai/ChapterGenerator";
 import Lessonbook from "../../components/learningtools/studybook/Lessonbook";
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useStudyBookManager} from "../../hooks/useStudyBookManager";
 import { Container, Spinner } from "react-bootstrap";
 
@@ -9,6 +9,12 @@ interface StudyBookPageProps{}
 const StudyBookPage: React.FC<StudyBookPageProps> = () => {
     const { title, chapters, isLoading } = useStudyBookManager();
     const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0);
+    const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+
+    // For Practice Lesson Callback Function
+    const handleAllCorrect = useCallback(() => {
+        setCelebrationTrigger(prev => prev + 1);
+    }, []);
 
     useEffect(() => {
         if (chapters.length > 0) {
@@ -24,7 +30,6 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
         )
     }
 
-
     return (
         <div>
             <Lessonbook
@@ -32,9 +37,10 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
                 chapters={chapters}
                 activeChapterIndex={activeChapterIndex}
                 setActiveChapterIndex={setActiveChapterIndex}
+                onAllCorrect={handleAllCorrect}
             />
             
-            <ChapterGenerator/>
+            <ChapterGenerator celebrationTrigger={celebrationTrigger}/>
         </div>
     );
 }

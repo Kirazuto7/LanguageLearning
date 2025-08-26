@@ -94,7 +94,7 @@ echo.
     echo **********************************************
     echo.
 
-    start "DockerWindow" cmd /k "docker-compose up --build"
+    start "DockerWindow" cmd /k "docker-compose up --build --force-recreate"
     exit /b 0
 
 :end

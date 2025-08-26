@@ -7,9 +7,11 @@ import {useSelector} from "react-redux";
 import {RootState} from "../../app/store";
 import {Alert} from "react-bootstrap";
 
+interface ChapterGeneratorProps {
+    celebrationTrigger?: number;
+}
 
-
-const ChapterGenerator: React.FC = () => {
+const ChapterGenerator: React.FC<ChapterGeneratorProps> = ({ celebrationTrigger }) => {
     const { user } = useSelector((state: RootState) => state.auth);
     const { settings } = useSettingsManager();
     const { startGeneration, isLoading, progress, message, error } = useChapterGeneration();
@@ -33,7 +35,13 @@ const ChapterGenerator: React.FC = () => {
     return (
         <div>
             {error && <Alert variant="danger" className="mt-3">Error: {error}</Alert>}
-            <StudyBookMascot onTopicSubmit={handleTopicSubmit} isLoading={isLoading} progress={progress} message={message}/>
+            <StudyBookMascot
+                onTopicSubmit={handleTopicSubmit}
+                isLoading={isLoading}
+                progress={progress}
+                message={message}
+                celebrationTrigger={celebrationTrigger}
+            />
         </div>
     );
 }
