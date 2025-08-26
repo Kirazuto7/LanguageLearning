@@ -1,5 +1,10 @@
 import { apiSlice } from "../api/apiSlice";
-import { LessonBookDTO, ChapterDTO, LessonBookRequest, ChapterGenerationRequest } from "../../types/dto";
+import {
+    LessonBookDTO,
+    LessonBookRequest,
+    ChapterGenerationRequest,
+    PracticeLessonCheckResponse, PracticeLessonCheckRequest
+} from "../../types/dto";
 
 export const bookApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
@@ -21,7 +26,15 @@ export const bookApiSlice = apiSlice.injectEndpoints({
                 body: request
             }),
         }),
+
+        proofread: builder.mutation<PracticeLessonCheckResponse, PracticeLessonCheckRequest>({
+            query: (proofreadRequest) => ({
+                url: '/lessonbook/practice/proofread',
+                method: 'POST',
+                body: proofreadRequest
+            })
+        }),
     })
 });
 
-export const { useFetchBookQuery, useGenerateChapterMutation } = bookApiSlice;
+export const { useFetchBookQuery, useGenerateChapterMutation, useProofreadMutation } = bookApiSlice;

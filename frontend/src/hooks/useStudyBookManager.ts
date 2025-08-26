@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ChapterDTO } from '../types/dto';
 import { useSelector } from 'react-redux';
-import { useFetchBookQuery, useGenerateChapterMutation } from '../features/api/bookApiSlice';
+import { useFetchBookQuery } from '../features/api/bookApiSlice';
 import { RootState } from '../app/store';
 
 
