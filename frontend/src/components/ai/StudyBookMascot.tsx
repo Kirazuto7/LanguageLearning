@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {Suspense, useState, useEffect} from 'react';
 import styles from "./mascots/mascot.module.scss";
 import { useSettingsManager } from '../../hooks/useSettingsManager';
 import Blackboard from "./Blackboard";
@@ -62,7 +62,9 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
                     <Blackboard text={speech}/>
                 </div>
                 <div className={styles.characterWrapper}>
-                    <Mascot character={settings?.mascot} hop={hop} celebrate={celebrate}/>
+                    <Suspense fallback={<div style={{ height: '120px', width: '120px'}}/>}>
+                        <Mascot character={settings?.mascot} hop={hop} celebrate={celebrate}/>
+                    </Suspense>
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>
                     <StudyBookInputField onSend={handleSendButton} disabled={isLoading}/>

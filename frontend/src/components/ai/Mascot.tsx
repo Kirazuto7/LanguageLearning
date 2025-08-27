@@ -1,10 +1,11 @@
-import React from "react";
-import Jinny from "./mascots/Jinny";
-import Sakura from "./mascots/Sakura";
-import Riku from "./mascots/Riku";
-import Yuna from "./mascots/Yuna";
-import Jinwoo from "./mascots/Jinwoo";
+import React, { LazyExoticComponent } from "react";
 import {MascotName} from "../../types/types";
+
+const Jinny = React.lazy(() => import("./mascots/Jinny"));
+const Sakura = React.lazy(() => import("./mascots/Sakura"));
+const Riku = React.lazy(() => import("./mascots/Riku"));
+const Yuna = React.lazy(() => import("./mascots/Yuna"));
+const Jinwoo = React.lazy(() => import("./mascots/Jinwoo"));
 
 
 interface MascotCharacterProps {
@@ -12,7 +13,7 @@ interface MascotCharacterProps {
     celebrate?: boolean;
 }
 
-const mascotMap: Record<MascotName, React.FC<MascotCharacterProps>> = {
+const mascotMap: Record<MascotName, LazyExoticComponent<React.FC<MascotCharacterProps>>> = {
     jinny: Jinny,
     sakura: Sakura,
     riku: Riku,
