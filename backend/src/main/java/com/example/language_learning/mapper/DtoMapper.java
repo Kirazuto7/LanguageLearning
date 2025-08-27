@@ -416,6 +416,7 @@ public class DtoMapper {
                 .difficulty(dto.difficulty())
                 .theme(dto.theme())
                 .mascot(dto.mascot())
+                .autoSpeakEnabled(dto.autoSpeakEnabled())
                 .build();
     }
 
@@ -427,6 +428,7 @@ public class DtoMapper {
                 .difficulty(entity.getDifficulty())
                 .theme(entity.getTheme())
                 .mascot(entity.getMascot())
+                .autoSpeakEnabled(entity.isAutoSpeakEnabled())
                 .build();
     }
 

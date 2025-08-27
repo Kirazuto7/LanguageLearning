@@ -36,7 +36,10 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
             noValidate
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
-                <Blackboard text={isLoading ? "Logging in...Please wait. ⏳" : `Hi my name is Jinny 😄. Would you like to learn a new language with me?`}/>
+                <Blackboard
+                    text={isLoading ? "Logging in...Please wait. ⏳" : `Hi my name is Jinny 😄. Would you like to learn a new language with me?`}
+                    gender={'female'}
+                />
                 <Jinny hop={true} />
             </div>
 

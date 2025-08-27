@@ -5,6 +5,7 @@ import Blackboard from "./Blackboard";
 import StudyBookInputField from "./StudyBookInputField";
 import ProgressBarComponent from "./ProgressBarComponent";
 import Mascot from "./Mascot";
+import {mascotGenders} from "../../types/types";
 
 interface StudyBookMascotProps {
     onTopicSubmit: (topic: string) => void;
@@ -59,11 +60,11 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
         <div id={styles.mascotContainer}>
             <div className={styles.mascotContentWrapper}>
                 <div className={styles.blackboardWrapper}>
-                    <Blackboard text={speech}/>
+                    <Blackboard text={speech} gender={mascotGenders[settings?.mascot || 'jinny']}/>
                 </div>
                 <div className={styles.characterWrapper}>
                     <Suspense fallback={<div style={{ height: '120px', width: '120px'}}/>}>
-                        <Mascot character={settings?.mascot} hop={hop} celebrate={celebrate}/>
+                        <Mascot character={settings?.mascot || 'jinny'} hop={hop} celebrate={celebrate}/>
                     </Suspense>
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>

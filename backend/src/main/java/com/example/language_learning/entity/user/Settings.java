@@ -24,4 +24,8 @@ public class Settings {
     @Column(name = "mascot", nullable = false)
     @Builder.Default
     private String mascot = "jinny";
+
+    @Column(name ="auto_speak_enabled", nullable = false, columnDefinition = "boolean default true")
+    @Builder.Default
+    private boolean autoSpeakEnabled = true;
 }

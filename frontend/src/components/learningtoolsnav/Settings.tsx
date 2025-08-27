@@ -60,7 +60,7 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="language-select"
                                             className="form-select"
                                             value={settings?.language || ''}
-                                            onChange={(e) => updateSettings({language: e.target.value})}
+                                            onChange={(e) => updateSettings({ ...settings, language: e.target.value })}
                                             disabled={isLoading}
                                         >
                                             {languages.map(lang => (
@@ -76,7 +76,7 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="level-select"
                                             className="form-select"
                                             value={settings?.difficulty || ''}
-                                            onChange={(e) => updateSettings({difficulty: e.target.value})}
+                                            onChange={(e) => updateSettings({ ...settings, difficulty: e.target.value })}
                                             disabled={isLoading}
                                         >
                                             {difficulties.map(diff => (
@@ -92,7 +92,7 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="theme-select"
                                             className="form-select"
                                             value={settings?.theme || ''}
-                                            onChange={(e) => updateSettings({theme: e.target.value})}
+                                            onChange={(e) => updateSettings({ ...settings, theme: e.target.value })}
                                             disabled={isLoading}
                                         >
                                             {themes.map(theme => (
@@ -108,13 +108,31 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="mascot-select"
                                             className="form-select"
                                             value={settings?.mascot || ''}
-                                            onChange={(e) => updateSettings({ mascot: e.target.value as MascotName })}
+                                            onChange={(e) => updateSettings({ ...settings, mascot: e.target.value as MascotName })}
                                             disabled={isLoading}
                                         >
                                             {mascots.map(mascot => (
                                                 <option key={mascot.value} value={mascot.value}>{mascot.label}</option>
                                             ))}
                                         </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="auto-speak-toggle" className="col-sm-4 col-form-label">
+                                            Auto-Speak
+                                        </label>
+                                        <div className="col-sm-8 d-flex align-items-center">
+                                            <div className="form-check form-switch">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    id="auto-speak-toggle"
+                                                    checked={settings?.autoSpeakEnabled ?? true}
+                                                    onChange={(e) => updateSettings({ ...settings, autoSpeakEnabled: e.target.checked})}
+                                                    disabled={isLoading}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -1,15 +1,36 @@
-import React, {useEffect, useState} from "react";
-import styles from "./mascots/mascot.module.scss";
+import React, {useEffect} from "react";
+import styles from "./blackboard.module.scss";
+import useTextToSpeech from "../../hooks/useTextToSpeech";
 import {useSettingsManager} from "../../hooks/useSettingsManager";
-import Settings from "../learningtoolsnav/Settings";
+import {MascotGender} from "../../types/types";
 
 interface BlackboardProps {
     text: string;
+    gender: MascotGender;
 }
 
-const Blackboard: React.FC<BlackboardProps> = ({text}) => {
+const Blackboard: React.FC<BlackboardProps> = ({text, gender}) => {
+    const { settings, updateSettings } = useSettingsManager();
+    const { speak, mute, isSpeaking, supported } = useTextToSpeech();
+
+    useEffect(() => {
+        if (supported && text && settings?.autoSpeakEnabled && settings.language) {
+            mute();
+            speak(text, settings.language, gender);
+        }
+    }, [text, supported, settings?.autoSpeakEnabled, settings?.language, gender]);
+
+    const toggleMute = () => {
+        const newAutoSpeakEnabled = !(settings?.autoSpeakEnabled ?? true);
+        updateSettings({ ...settings, autoSpeakEnabled: newAutoSpeakEnabled });
+
+        if (!newAutoSpeakEnabled) {
+            mute();
+        }
+    };
+
     return(
-        <div className="relative" style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))' }}>
+        <div className={styles.blackboard}>
             <svg width="280" height="200" viewBox="0 0 220 160">
                 <defs>
                     {/* Wood frame gradient */}
@@ -66,22 +87,8 @@ const Blackboard: React.FC<BlackboardProps> = ({text}) => {
 
                 {/* Main text element using foreignObject for wrapping */}
                 <foreignObject x="20" y="16" width="180" height="112" filter="url(#chalkGlow)">
-                    <div
-                        style={{
-                            color: 'white',
-                            fontFamily: "'Courier New', monospace",
-                            fontSize: '14px',
-                            textAlign: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            height: '100%',
-                            lineHeight: '1.4',
-                            wordWrap: 'break-word',
-                            textShadow: '0 0 5px rgba(255,255,255,0.5)'
-                        }}
-                    >
-                        {text}
+                    <div className={styles.textContainer}>
+                        <p>{text}</p>
                     </div>
                 </foreignObject>
 
@@ -96,6 +103,19 @@ const Blackboard: React.FC<BlackboardProps> = ({text}) => {
                     filter="url(#chalkDust)"
                 />
             </svg>
+            {supported &&
+                <button
+                    className={styles.speakButton}
+                    onClick={toggleMute}
+                    aria-label={settings?.autoSpeakEnabled ? "Mute auto-speak" : "Enable auto-speak"}
+                >
+                    {isSpeaking ?
+                        <i className="fa-solid fa-spinner fa-spin"/>
+                        :
+                        <i className={settings?.autoSpeakEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-down"}/>
+                    }
+                </button>
+            }
         </div>
     )
 }
