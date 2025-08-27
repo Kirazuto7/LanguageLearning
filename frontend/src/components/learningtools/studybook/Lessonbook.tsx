@@ -3,6 +3,7 @@ import styles from './lessonbook.module.scss';
 import { Carousel, Pagination, Form } from "react-bootstrap";
 import { buildPagesForChapter } from "../../../utils/buildPagesFromData";
 import {ChapterDTO} from "../../../types/dto";
+import {useSwipeable} from "react-swipeable";
 
 interface LessonbookProps{
     title: string;
@@ -28,6 +29,24 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
         setActivePageIndex(0);
     }, [activeChapterIndex]);
 
+    // Keyboard Navigation
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowRight' && activePageIndex < chapterPages.length - 1) {
+                handlePageSelect(activePageIndex + 1);
+            }
+            else if (e.key === 'ArrowLeft' && activePageIndex > 0) {
+                handlePageSelect(activePageIndex - 1);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+
+    }, [activePageIndex, chapterPages.length]);
+
     const handlePageSelect = (selectedIndex: number) => {
         setActivePageIndex(selectedIndex);
     };
@@ -39,6 +58,12 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
     if (!chapterPages || chapterPages.length === 0) {
         return null;
     }
+
+    // Mobile Swiping Gestures
+    const swipeGestures = useSwipeable({
+        onSwipedLeft: () => activePageIndex < chapterPages.length - 1 && handlePageSelect(activePageIndex + 1),
+        onSwipedRight: () => activePageIndex > 0 && handlePageSelect(activePageIndex - 1),
+    });
 
     const renderChapterSelector = () => {
         if(!chapters || chapters.length === 0) return null;
@@ -86,19 +111,21 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
                     {paginationItems}
                     <Pagination.Next className={`${styles['page-control-item']} mt-4`} onClick={() => handlePageSelect(activePageIndex + 1)} disabled={activePageIndex === chapterPages.length-1}/>
                 </Pagination>
-                <Carousel
-                    interval={null}
-                    indicators={false}
-                    controls={false}
-                    activeIndex={activePageIndex}
-                    onSelect={handlePageSelect}
-                    className={styles['studybook-carousel']}>
-                    {chapterPages.map((page, index) =>
-                        <Carousel.Item key={index} className="h-100" style={{ overflowY: 'auto' }}>
-                            {page}
-                        </Carousel.Item>
-                    )}
-                </Carousel>
+                <div {...swipeGestures}>
+                    <Carousel
+                        interval={null}
+                        indicators={false}
+                        controls={false}
+                        activeIndex={activePageIndex}
+                        onSelect={handlePageSelect}
+                        className={styles['studybook-carousel']}>
+                        {chapterPages.map((page, index) =>
+                            <Carousel.Item key={index} className="h-100" style={{ overflowY: 'auto' }}>
+                                {page}
+                            </Carousel.Item>
+                        )}
+                    </Carousel>
+                </div>
             </div>
         </div>
     );

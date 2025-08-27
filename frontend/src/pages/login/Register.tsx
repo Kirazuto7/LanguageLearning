@@ -5,7 +5,8 @@ import {CreateUserRequest} from "../../types/dto";
 import {Alert, Button, Form} from "react-bootstrap";
 import Blackboard from "../../components/ai/Blackboard";
 import Jinny from "../../components/ai/mascots/Jinny";
-import { languages, difficulties } from "../../types/options";
+import { languages, difficulties, mascots } from "../../types/options";
+import { mascotGenders } from "../../types/types";
 
 interface RegisterProps {
     onShowLogin: () => void;
@@ -39,8 +40,8 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard
-                    text={isLoading ? "Registering...Please wait. ⏳" : `I'm Jinny! Let's get you signed up for an exciting journey!`}
-                    gender={'female'}
+                    text={isLoading ? "Registering... Please wait. ⏳" : "I'm Jinny! Let's get you signed up for an exciting journey!"}
+                    gender={mascotGenders.jinny}
                 />
                 <Jinny hop={false}/>
             </div>

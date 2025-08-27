@@ -1,9 +1,9 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import { MascotGender } from "../types/types";
 
 interface TextToSpeechHook {
     speak: (text: string, lang: string, gender?: MascotGender) => void;
-    mute: () => void;
+    cancel: () => void;
     isSpeaking: boolean;
     supported: boolean;
 }
@@ -26,9 +26,9 @@ const preferredVoicesMap: { [key: string]: string[] } = {
     // Japanese Male
     'ja-JP-male': ['Ichiro', 'Otoya'],
     // Korean Female
-    'ko-KR-female': ['Heami', 'Yuna'],
+    'ko-KR-female': ['Google 한국의', 'Heami', 'Yuna'],
     // Korean Male (less common, but we can add known names)
-    'ko-KR-male': ['Jimin'],
+    'ko-KR-male': ['Google 한국의', 'Jimin'],
     // English Female (younger sounding)
     'en-US-female': ['Samantha', 'Google US English', 'Zira'],
     // English Male
@@ -59,8 +59,10 @@ const useTextToSpeech = (): TextToSpeechHook => {
         }
     }, []);
 
-    const speak = (text: string, lang: string, gender?: MascotGender) => {
-        if (!supported || isSpeaking) return;
+    const speak = useCallback((text: string, lang: string, gender?: MascotGender) => {
+        if (!supported || window.speechSynthesis.speaking) {
+            return;
+        }
         const langCode = languageCodeMap[lang.toLowerCase()] || 'en-US';
         const utterance = new SpeechSynthesisUtterance(text);
 
@@ -89,7 +91,7 @@ const useTextToSpeech = (): TextToSpeechHook => {
                 }
             }
         }
-
+        console.log("Selected: " + selectedVoice?.name);
         if (selectedVoice) utterance.voice = selectedVoice;
         utterance.lang = langCode;
         utterance.onstart = () => setIsSpeaking(true);
@@ -97,15 +99,15 @@ const useTextToSpeech = (): TextToSpeechHook => {
         utterance.onerror = () => setIsSpeaking(false);
 
         window.speechSynthesis.speak(utterance);
-    };
+    }, [supported, voices]);
 
-    const mute = () => {
+    const cancel = useCallback(() => {
         if (!supported) return;
         window.speechSynthesis.cancel();
         setIsSpeaking(false);
-    };
+    }, [supported]);
 
-    return { speak, mute, isSpeaking, supported };
+    return { speak, cancel, isSpeaking, supported };
 }
 
 export default useTextToSpeech;
