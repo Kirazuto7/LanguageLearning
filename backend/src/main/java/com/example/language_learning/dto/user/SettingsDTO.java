@@ -9,5 +9,6 @@ public record SettingsDTO (
     String language,
     String difficulty,
     String theme,
-    String mascot
+    String mascot,
+    boolean autoSpeakEnabled
 ) {}

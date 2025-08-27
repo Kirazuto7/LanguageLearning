@@ -51,6 +51,7 @@ public class UserService implements UserDetailsService {
         settings.setDifficulty(request.difficulty());
         settings.setTheme("default");
         settings.setMascot("jinny");
+        settings.setAutoSpeakEnabled(true);
         user.setSettings(settings);
 
         return userRepository.save(user);
@@ -81,6 +82,9 @@ public class UserService implements UserDetailsService {
         if (updateRequest.mascot() != null && !updateRequest.mascot().isBlank()) {
             settings.setMascot(updateRequest.mascot());
         }
+
+        settings.setAutoSpeakEnabled(updateRequest.autoSpeakEnabled());
+
 
         userRepository.save(user);
         return mapper.toDto(settings);

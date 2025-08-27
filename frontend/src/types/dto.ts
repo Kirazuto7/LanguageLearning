@@ -13,6 +13,7 @@ export interface SettingsDTO {
     difficulty: string;
     theme: string;
     mascot: MascotName;
+    autoSpeakEnabled: boolean;
 }
 
 export interface LessonBookDTO {
