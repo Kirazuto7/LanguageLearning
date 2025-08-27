@@ -1,3 +1,5 @@
+import {MascotName} from "./types";
+
 export interface UserDTO {
     id: number;
     username: string;
@@ -10,6 +12,7 @@ export interface SettingsDTO {
     language: string;
     difficulty: string;
     theme: string;
+    mascot: MascotName;
 }
 
 export interface LessonBookDTO {

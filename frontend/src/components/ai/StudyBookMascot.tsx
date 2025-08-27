@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import styles from "./mascot.module.scss";
+import styles from "./mascots/mascot.module.scss";
 import { useSettingsManager } from '../../hooks/useSettingsManager';
 import Blackboard from "./Blackboard";
-import MascotCharacter from "./MascotCharacter";
 import StudyBookInputField from "./StudyBookInputField";
 import ProgressBarComponent from "./ProgressBarComponent";
+import Mascot from "./Mascot";
 
 interface StudyBookMascotProps {
     onTopicSubmit: (topic: string) => void;
@@ -39,7 +39,7 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
 
             const timer = setTimeout(() => {
                 setCelebrate(false);
-            }, 800)
+            }, 2500)
 
             return () => clearTimeout(timer);
         }
@@ -62,7 +62,7 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
                     <Blackboard text={speech}/>
                 </div>
                 <div className={styles.characterWrapper}>
-                    <MascotCharacter hop={hop} celebrate={celebrate}/>
+                    <Mascot character={settings?.mascot} hop={hop} celebrate={celebrate}/>
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>
                     <StudyBookInputField onSend={handleSendButton} disabled={isLoading}/>

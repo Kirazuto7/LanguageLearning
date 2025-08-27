@@ -37,7 +37,7 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
                         setActiveChapterIndex={setActiveChapterIndex}
                         onAllCorrect={handleAllCorrect}
                     />
-                    <ChapterGenerator celebrationTrigger={celebrationTrigger}/>
+                    <ChapterGenerator celebrationTrigger={celebrationTrigger} />
                 </>
             )}
         </div>

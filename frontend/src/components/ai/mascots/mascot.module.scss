@@ -23,12 +23,41 @@
   75% { transform: translateY(-10px) rotate(0); }
 }
 
+@keyframes firework-explode {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
 .hop {
-    animation: mascotHop 0.6s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
+  animation: mascotHop 0.6s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
 }
 
 .celebrate {
-    animation: mascotCelebrate 0.8s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
+  animation: mascotCelebrate 0.8s cubic-bezier(0.4, 1.6, 0.6, 1) 1;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: firework-explode 0.7s ease-out;
+    box-shadow: // Firework particles
+          0 -25px 0 0px #ffc107, 25px 0px 0 0px #ffc107, 0 25px 0 0px #ffc107, -25px 0px 0 0px #ffc107,
+          18px -18px 0 0px #ff5722, 18px 18px 0 0px #ff5722, -18px 18px 0 0px #ff5722, -18px -18px 0 0px #ff5722;
+  }
+
+  &::before {
+    top: 30%; left: 15%;
+    animation-delay: 0.1s;
+  }
+
+  &::after {
+    top: 15%; right: 15%;
+    animation-delay: 0.3s;
+  }
 }
 
 .mascotContentWrapper {
@@ -45,6 +74,8 @@
 }
 
 #mascotCharacter {
+    position: relative;
+    overflow: visible;
     height: 100%; 
     display: flex;
     align-items: center; 

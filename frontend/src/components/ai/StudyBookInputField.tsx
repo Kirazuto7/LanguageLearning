@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import styles from "./mascot.module.scss";
+import styles from "./mascots/mascot.module.scss";
 
 interface StudyBookInputFieldProps {
     onSend: (value:string) => void;

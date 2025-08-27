@@ -4,7 +4,7 @@ import {useRegisterMutation} from "../../features/api/userApiSlice";
 import {CreateUserRequest} from "../../types/dto";
 import {Alert, Button, Form} from "react-bootstrap";
 import Blackboard from "../../components/ai/Blackboard";
-import MascotCharacter from "../../components/ai/MascotCharacter";
+import Jinny from "../../components/ai/mascots/Jinny";
 import { languages, difficulties } from "../../types/options";
 
 interface RegisterProps {
@@ -39,7 +39,7 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard text={isLoading ? "Registering...Please wait. ⏳" : `I'm Jinny! Let's get you signed up for an exciting journey!`}/>
-                <MascotCharacter hop={false}/>
+                <Jinny hop={false}/>
             </div>
 
             { error && (
