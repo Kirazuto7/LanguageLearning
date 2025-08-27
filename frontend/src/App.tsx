@@ -1,16 +1,18 @@
 import {Routes, Route, useLocation} from 'react-router-dom';
-import React, { useEffect} from "react";
+import React, { useEffect, lazy, Suspense } from "react";
 import './App.scss';
 import NavigationBar from './components/navbar/NavigationBar';
-import HomePage from './pages/home/HomePage';
-import StudyBookPage from './pages/lessontools/StudyBookPage';
-import LandingPage from './pages/home/LandingPage';
-import LoginPage  from './pages/login/LoginPage';
 import SessionManager from './components/headless/SessionManager';
 import BackgroundLayout from "./layouts/BackgroundLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import {useSelector} from "react-redux";
 import {selectCurrentTheme} from "./features/state/settingsSlice";
+import { Container, Spinner } from "react-bootstrap";
+
+const LandingPage = lazy(() => import('./pages/home/LandingPage'));
+const LoginPage = lazy(() => import('./pages/login/LoginPage'));
+const HomePage = lazy(() => import('./pages/home/HomePage'));
+const StudyBookPage = lazy(() => import('./pages/lessontools/StudyBookPage'));
 
 const App: React.FC = () => {
     const location = useLocation();
@@ -29,17 +31,26 @@ const App: React.FC = () => {
         <SessionManager/>
         <NavigationBar />
 
-        <Routes>
-            <Route path="/" element={<LandingPage/>} />
-            <Route path="/login" element={<LoginPage/>} />
+        <Suspense fallback={
+            <Container
+                className="d-flex justify-content-center align-items-center"
+                style={{ minHeight: '100vh'}}
+            >
+                <Spinner animation="border" />
+            </Container>
+        }>
+            <Routes>
+                <Route path="/" element={<LandingPage/>} />
+                <Route path="/login" element={<LoginPage/>} />
 
-            <Route element={<ProtectedRoute/>}>
-                <Route element={<BackgroundLayout/>}>
-                    <Route path="/home" element={<HomePage />} />
-                    <Route path="/study" element={<StudyBookPage />} />
+                <Route element={<ProtectedRoute/>}>
+                    <Route element={<BackgroundLayout/>}>
+                        <Route path="/home" element={<HomePage />} />
+                        <Route path="/study" element={<StudyBookPage />} />
+                    </Route>
                 </Route>
-            </Route>
-        </Routes>
+            </Routes>
+        </Suspense>
       </>
   );
 }

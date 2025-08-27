@@ -4,6 +4,7 @@ import { Form, Button, Alert } from "react-bootstrap";
 import Blackboard from "../../components/ai/Blackboard";
 import Jinny from "../../components/ai/mascots/Jinny";
 import { LoginRequest } from "../../types/dto";
+import { mascotGenders } from "../../types/types";
 import { useLoginMutation } from "../../features/api/userApiSlice";
 
 interface LoginProps {
@@ -37,8 +38,8 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard
-                    text={isLoading ? "Logging in...Please wait. ⏳" : `Hi my name is Jinny 😄. Would you like to learn a new language with me?`}
-                    gender={'female'}
+                    text={isLoading ? "Logging in...Please wait. ⏳" : "Hi, my name is Jinny! 😄 Would you like to learn a new language with me?"}
+                    gender={mascotGenders.jinny}
                 />
                 <Jinny hop={true} />
             </div>

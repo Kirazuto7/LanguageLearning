@@ -1,6 +1,7 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import styles from "./blackboard.module.scss";
 import useTextToSpeech from "../../hooks/useTextToSpeech";
+import useOnScreen from "../../hooks/useOnScreen";
 import {useSettingsManager} from "../../hooks/useSettingsManager";
 import {MascotGender} from "../../types/types";
 
@@ -10,27 +11,36 @@ interface BlackboardProps {
 }
 
 const Blackboard: React.FC<BlackboardProps> = ({text, gender}) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const isVisible = useOnScreen(ref);
     const { settings, updateSettings } = useSettingsManager();
-    const { speak, mute, isSpeaking, supported } = useTextToSpeech();
+    const { speak, cancel, isSpeaking, supported } = useTextToSpeech();
 
     useEffect(() => {
-        if (supported && text && settings?.autoSpeakEnabled && settings.language) {
-            mute();
+        if (isVisible && supported && text && settings?.autoSpeakEnabled && settings.language) {
+            cancel();
             speak(text, settings.language, gender);
         }
-    }, [text, supported, settings?.autoSpeakEnabled, settings?.language, gender]);
+        else {
+            cancel(); // Muted when not visible
+        }
+
+        return () => {
+            cancel();
+        };
+    }, [text, isVisible, supported, settings?.autoSpeakEnabled, settings?.language, gender, speak, cancel]);
 
     const toggleMute = () => {
         const newAutoSpeakEnabled = !(settings?.autoSpeakEnabled ?? true);
         updateSettings({ ...settings, autoSpeakEnabled: newAutoSpeakEnabled });
 
         if (!newAutoSpeakEnabled) {
-            mute();
+            cancel();
         }
     };
 
     return(
-        <div className={styles.blackboard}>
+        <div className={styles.blackboard} ref={ref}>
             <svg width="280" height="200" viewBox="0 0 220 160">
                 <defs>
                     {/* Wood frame gradient */}
