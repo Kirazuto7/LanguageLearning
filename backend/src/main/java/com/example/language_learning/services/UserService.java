@@ -50,6 +50,7 @@ public class UserService implements UserDetailsService {
         settings.setLanguage(request.language());
         settings.setDifficulty(request.difficulty());
         settings.setTheme("default");
+        settings.setMascot("jinny");
         user.setSettings(settings);
 
         return userRepository.save(user);
@@ -75,6 +76,10 @@ public class UserService implements UserDetailsService {
         }
         if (updateRequest.theme() != null && !updateRequest.theme().isBlank()) {
             settings.setTheme(updateRequest.theme());
+        }
+
+        if (updateRequest.mascot() != null && !updateRequest.mascot().isBlank()) {
+            settings.setMascot(updateRequest.mascot());
         }
 
         userRepository.save(user);

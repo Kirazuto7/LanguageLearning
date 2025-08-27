@@ -1,0 +1,1 @@
+export type MascotName = 'jinny' | 'sakura' | 'riku' | 'yuna' | 'jinwoo';

@@ -26,3 +26,11 @@ export const difficulties = [
     { value: 'Intermediate', label: 'Intermediate' },
     { value: 'Advanced', label: 'Advanced' }
 ]
+
+export const mascots = [
+    { value: 'jinny', label: 'Jinny' },
+    { value: 'sakura', label: 'Sakura' },
+    { value: 'riku', label: 'Riku' },
+    { value: 'yuna', label: 'Yuna' },
+    { value: 'jinwoo', label: 'Jinwoo' }
+];

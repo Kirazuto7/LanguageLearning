@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import styles from "./mascot.module.scss";
+import styles from "./mascots/mascot.module.scss";
 import {useSettingsManager} from "../../hooks/useSettingsManager";
 import Settings from "../learningtoolsnav/Settings";
 

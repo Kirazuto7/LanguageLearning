@@ -2,7 +2,8 @@ import React, { useRef, useEffect } from 'react';
 import { Collapse } from 'react-bootstrap';
 import styles from './settings.module.scss';
 import { useSettingsManager } from '../../hooks/useSettingsManager';
-import { themes, languages, difficulties } from "../../types/options";
+import { themes, languages, difficulties, mascots } from "../../types/options";
+import {MascotName} from "../../types/types";
 
 interface SettingsProps {
     openSettings: boolean,
@@ -96,6 +97,22 @@ const Settings: React.FC<SettingsProps> = ({
                                         >
                                             {themes.map(theme => (
                                                 <option key={theme.value} value={theme.value}>{theme.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="mascot-select" className="form-label">
+                                            Assistant:
+                                        </label>
+                                        <select
+                                            id="mascot-select"
+                                            className="form-select"
+                                            value={settings?.mascot || ''}
+                                            onChange={(e) => updateSettings({ mascot: e.target.value as MascotName })}
+                                            disabled={isLoading}
+                                        >
+                                            {mascots.map(mascot => (
+                                                <option key={mascot.value} value={mascot.value}>{mascot.label}</option>
                                             ))}
                                         </select>
                                     </div>

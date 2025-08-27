@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./loginpage.module.scss";
 import { Form, Button, Alert } from "react-bootstrap";
 import Blackboard from "../../components/ai/Blackboard";
-import MascotCharacter from "../../components/ai/MascotCharacter";
+import Jinny from "../../components/ai/mascots/Jinny";
 import { LoginRequest } from "../../types/dto";
 import { useLoginMutation } from "../../features/api/userApiSlice";
 
@@ -37,7 +37,7 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
         >
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard text={isLoading ? "Logging in...Please wait. ⏳" : `Hi my name is Jinny 😄. Would you like to learn a new language with me?`}/>
-                <MascotCharacter hop={true} />
+                <Jinny hop={true} />
             </div>
 
             { error && (

@@ -410,19 +410,23 @@ public class DtoMapper {
     /* **************************** */
 
     public Settings toEntity(SettingsDTO dto) {
+        if (dto == null) return null;
         return Settings.builder()
                 .language(dto.language())
                 .difficulty(dto.difficulty())
                 .theme(dto.theme())
+                .mascot(dto.mascot())
                 .build();
     }
 
     public SettingsDTO toDto(Settings entity) {
+        if(entity == null) return null;
         return SettingsDTO.builder()
                 .id(entity.getId())
                 .language(entity.getLanguage())
                 .difficulty(entity.getDifficulty())
                 .theme(entity.getTheme())
+                .mascot(entity.getMascot())
                 .build();
     }
 
