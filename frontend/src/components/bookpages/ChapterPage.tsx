@@ -23,7 +23,7 @@ const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-a
         <div className={styles['page-content']}>
             <h5 className="text-center mb-2">Chapter {chapterNumber}</h5>
             <h4 className="text-center mb-1">{chapterNativeTitle}</h4>
-            <p className="text-center mb-4">{chapterTitle}</p>
+            <h6 className="text-center mb-4">{chapterTitle}</h6>
             {children}
         </div>
         {pageNumber && <div className={styles['page-number']}>{pageNumber}</div>}

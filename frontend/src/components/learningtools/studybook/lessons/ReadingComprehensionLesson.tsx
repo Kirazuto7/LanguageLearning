@@ -1,9 +1,12 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { ReadingComprehensionLessonDTO, QuestionDTO } from '../../../../types/dto';
 import { useSettingsManager } from '../../../../hooks/useSettingsManager';
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, Card} from "react-bootstrap";
 import AnswerFeedback from "./extra/AnswerFeedback";
 import styles from "./lesson.module.scss";
+import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import { mascotGenders, MascotName } from "../../../../types/types";
+import { VolumeUpFill, Book } from "react-bootstrap-icons";
 
 interface ReadingComprehensionLessonProps {
     lesson: ReadingComprehensionLessonDTO;
@@ -14,7 +17,8 @@ interface ReadingComprehensionLessonProps {
  * Renders the content for a reading comprehension lesson, displaying the story and questions.
 */
 const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({ lesson, onAllCorrect }) => {
-    const {settings} = useSettingsManager();
+    const { settings } = useSettingsManager();
+    const { speak, cancel } = useTextToSpeech();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
     const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string }>({});
@@ -28,6 +32,14 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
         setSelectedAnswers(initialAnswers);
         setResults(null);
     }, [lesson]);
+
+    const handleSpeak = (text: string) => {
+        if (settings?.language) {
+            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+            cancel();
+            speak(text, settings.language, gender);
+        }
+    };
 
     const renderText = (text: string, { as: Component = 'p' as React.ElementType, className = '' } = {}) => {
         if (isJapanese) {
@@ -69,37 +81,46 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     return (
         <div>
             <h5 className="text-center mb-4">{lesson.title}</h5>
-            
-            {renderText(lesson.story, { className: 'lead' })}
-            
-            <hr />
-            <h6 className="mt-3">Questions:</h6>
+            <div className={styles.storyContainer}>
+                {renderText(lesson.story, { as: 'p', className: styles.storyText })}
+                <div className="text-end">
+                    <VolumeUpFill className={styles.speakIcon} onClick={() => handleSpeak(lesson.story)}/>
+                </div>
+            </div>
+
+            <div className={styles.fancyDivider}>
+                <Book size={24}/>
+            </div>
+
+            <h6>Questions:</h6>
             {lesson.questions.map((question: QuestionDTO, index) => {
                 const answerChoices = question.answerChoices;
 
                 return(
-                    <div key={question.id ?? index} className="mb-4">
-                        <p className="mb-2 lead">{index + 1}. {question.questionText}</p>
-                        <Form>
-                        { answerChoices?.map((choice, choiceIndex) => {
-                        return (
-                            <Form.Check
-                                key={`choice-${question.id}-${choiceIndex}`}
-                                inline
-                                className={styles.customRadio}
-                                label={choice}
-                                name={`question-${question.id}`}
-                                type={'radio'}
-                                id={`choice-${question.id}-${choiceIndex}`}
-                                value={choice}
-                                checked={selectedAnswers[question.id] === choice}
-                                onChange={() => handleAnswerSelect(question.id, choice)}
-                            />)
-                            })
-                        }
-                        </Form>
-                        {results && <AnswerFeedback isCorrect={results[question.id]}/>}
-                    </div>
+                    <Card key={question.id ?? index} className={styles.questionCard}>
+                        <Card.Header className={styles.questionCardHeader}>
+                            <span>Question {index + 1}</span>
+                        </Card.Header>
+                        <Card.Body>
+                            <p className={styles.questionText}>{question.questionText}</p>
+                            <Form>
+                                { answerChoices?.map((choice, choiceIndex) => (
+                                    <Form.Check
+                                        key={`choice-${question.id}-${choiceIndex}`}
+                                        className={styles.customRadio}
+                                        label={choice}
+                                        name={`question-${question.id}`}
+                                        type={'radio'}
+                                        id={`choice-${question.id}-${choiceIndex}`}
+                                        value={choice}
+                                        checked={selectedAnswers[question.id] === choice}
+                                        onChange={() => handleAnswerSelect(question.id, choice)}
+                                    />
+                                ))}
+                            </Form>
+                        </Card.Body>
+                        {results && <Card.Footer><AnswerFeedback isCorrect={results[question.id]}/></Card.Footer>}
+                    </Card>
                 )
             })}
             <div className="text-center mt-4">
