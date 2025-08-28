@@ -8,18 +8,29 @@ import {MascotGender} from "../../types/types";
 interface BlackboardProps {
     text: string;
     gender: MascotGender;
+    forceSpeak?: boolean;
 }
 
-const Blackboard: React.FC<BlackboardProps> = ({text, gender}) => {
+const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
     const ref = useRef<HTMLDivElement>(null);
     const isVisible = useOnScreen(ref);
     const { settings, updateSettings } = useSettingsManager();
     const { speak, cancel, isSpeaking, supported } = useTextToSpeech();
+    const spokenMessages = useRef(new Set<string>());
 
     useEffect(() => {
-        if (isVisible && supported && text && settings?.autoSpeakEnabled && settings.language) {
+        spokenMessages.current.clear();
+    }, [settings?.language]);
+
+    useEffect(() => {
+        const canSpeak = isVisible && supported && text && settings?.language && settings?.autoSpeakEnabled;
+        const shouldSpeak = !spokenMessages.current.has(text) || forceSpeak;
+
+        // Prevent repeated messages being voiced
+        if(canSpeak && shouldSpeak) {
             cancel();
             speak(text, settings.language, gender);
+            spokenMessages.current.add(text);
         }
         else {
             cancel(); // Muted when not visible
@@ -28,7 +39,7 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender}) => {
         return () => {
             cancel();
         };
-    }, [text, isVisible, supported, settings?.autoSpeakEnabled, settings?.language, gender, speak, cancel]);
+    }, [text, isVisible, supported, settings?.autoSpeakEnabled, settings?.language, gender, speak, cancel, forceSpeak]);
 
     const toggleMute = () => {
         const newAutoSpeakEnabled = !(settings?.autoSpeakEnabled ?? true);
