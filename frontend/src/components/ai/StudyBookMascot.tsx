@@ -60,7 +60,11 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
         <div id={styles.mascotContainer}>
             <div className={styles.mascotContentWrapper}>
                 <div className={styles.blackboardWrapper}>
-                    <Blackboard text={speech} gender={mascotGenders[settings?.mascot || 'jinny']}/>
+                    <Blackboard
+                        text={speech}
+                        gender={mascotGenders[settings?.mascot || 'jinny']}
+                        forceSpeak={isLoading || celebrate}
+                    />
                 </div>
                 <div className={styles.characterWrapper}>
                     <Suspense fallback={<div style={{ height: '120px', width: '120px'}}/>}>

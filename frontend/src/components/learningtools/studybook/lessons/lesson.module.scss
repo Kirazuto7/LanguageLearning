@@ -226,3 +226,30 @@
   color: var(--bs-secondary-color);
   opacity: 0.9;
 }
+
+
+/** Conjugation Lesson **/
+.conjugationCard {
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--glass-border-color);
+  background-color: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
+  border-radius: 0.5rem;
+}
+
+.conjugationHeader {
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+  font-size: 1.2rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.conjugationExample {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
