@@ -1,7 +1,11 @@
 import React from 'react';
-import { Table, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { VocabularyLessonDTO, WordDTO } from '../../../../types/dto';
 import styles from "./lesson.module.scss";
+import { VolumeUpFill } from "react-bootstrap-icons";
+import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import {useSettingsManager} from "../../../../hooks/useSettingsManager";
+import { mascotGenders, MascotName } from "../../../../types/types";
 
 interface VocabularyLessonProps {
     lesson: VocabularyLessonDTO;
@@ -11,46 +15,18 @@ interface VocabularyLessonProps {
  * Renders the content for a vocabulary lesson, displaying words and their translations in a table.
 */
 const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
+    const { settings } = useSettingsManager();
+    const { speak, cancel } = useTextToSpeech();
 
     const isJapanese = lesson.vocabularies.length > 0 && lesson.vocabularies[0].language.toLowerCase() === 'japanese';
 
-
-
-    const renderDefaultHeader = () => (
-        <tr>
-            <th/>
-            <th>Word</th>
-            <th>Translation</th>
-        </tr>
-    );
-
-    const renderDefaultRow = (word: WordDTO) => (
-        <td>{word.nativeWord}</td>
-    );
-
-    const renderJapaneseHeader = () => (
-        <tr>
-            <th>Kanji</th>
-            <th>Hiragana</th>
-            <th>Katakana</th>
-            <th>Translation</th>
-        </tr>
-    );
-
-    const renderJapaneseRow = (word: WordDTO) => (
-        <>
-            <td>
-                {word.details?.kanji ? (
-                    <ruby>
-                        {word.details.kanji}
-                        <rt>{word.details.hiragana}</rt>
-                    </ruby>
-                ) : '-'}
-            </td>
-            <td>{word.details?.hiragana || '-'}</td>
-            <td>{word.details?.katakana || '-'}</td>
-        </>
-    );
+    const handleSpeak = (text: string) => {
+        if (settings?.language) {
+            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+            cancel();
+            speak(text, settings.language, gender);
+        }
+    };
 
     return(
         <Card className="h-100 d-flex flex-column">
@@ -58,21 +34,33 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
                 {lesson.title}
             </Card.Header>
 
-            <Card.Body style={{ overflowY: 'auto' }}>
-                <Table id={styles.vocabTable} striped bordered hover responsive>
-                    <thead>
-                        {isJapanese ? renderJapaneseHeader() : renderDefaultHeader()}
-                    </thead>
-                    <tbody>
-                        {lesson.vocabularies.map((word: WordDTO, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}.</td>
-                                {isJapanese ? renderJapaneseRow(word) : renderDefaultRow(word)}
-                                <td>{word.englishTranslation}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+            <Card.Body style={{ overflowY: 'auto' }} className="p-4">
+                {lesson.vocabularies.map((word: WordDTO, index) => (
+                    <div key={word.id} className={styles.vocabCard}>
+                        <div className={styles.sentenceNumber}>
+                            <div className={styles.circularNumber}>{index + 1}</div>
+                        </div>
+                        <div className={styles.vocabContent}>
+                            {isJapanese ? (
+                                <p className={styles.vocabWord}>
+                                    <ruby className={styles.vocabRuby}>
+                                        {word.details?.kanji || word.nativeWord}
+                                        <rt>{word.details?.hiragana}</rt>
+                                    </ruby>
+                                </p>
+                            ) : (
+                                <p className={styles.vocabWord}>{word.nativeWord}</p>
+                            )}
+                            <p className={styles.vocabTranslation}>{word.englishTranslation}</p>
+                        </div>
+                        <div className={styles.sentenceActions}>
+                            <VolumeUpFill
+                                className={styles.speakIcon}
+                                onClick={() => handleSpeak(word.nativeWord)}
+                            />
+                        </div>
+                    </div>
+                ))}
             </Card.Body>
         </Card>
     );

@@ -47,6 +47,12 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
 
     }, [activePageIndex, chapterPages.length]);
 
+    // Mobile Swiping Gestures
+    const swipeGestures = useSwipeable({
+        onSwipedLeft: () => activePageIndex < chapterPages.length - 1 && handlePageSelect(activePageIndex + 1),
+        onSwipedRight: () => activePageIndex > 0 && handlePageSelect(activePageIndex - 1),
+    });
+
     const handlePageSelect = (selectedIndex: number) => {
         setActivePageIndex(selectedIndex);
     };
@@ -58,12 +64,6 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
     if (!chapterPages || chapterPages.length === 0) {
         return null;
     }
-
-    // Mobile Swiping Gestures
-    const swipeGestures = useSwipeable({
-        onSwipedLeft: () => activePageIndex < chapterPages.length - 1 && handlePageSelect(activePageIndex + 1),
-        onSwipedRight: () => activePageIndex > 0 && handlePageSelect(activePageIndex - 1),
-    });
 
     const renderChapterSelector = () => {
         if(!chapters || chapters.length === 0) return null;
@@ -105,13 +105,13 @@ const Lessonbook: React.FC<LessonbookProps> = ({ title, chapters, activeChapterI
 
             <h2 className={`text-center mb-3 ${styles.title}`}>{title}</h2>
             {/** Chapter Selector **/ renderChapterSelector()}
-            <div className={`${styles['content-area']} mt-4`}>
+            <div className={`${styles['content-area']} mt-4 justify-content-center`}>
                 <Pagination className={`${styles['page-control-container']} flex-column align-items-center align-self-center`}>
                     <Pagination.Prev className={`${styles['page-control-item']} mb-4`} onClick={() => handlePageSelect(activePageIndex - 1)} disabled={activePageIndex === 0}/>
                     {paginationItems}
                     <Pagination.Next className={`${styles['page-control-item']} mt-4`} onClick={() => handlePageSelect(activePageIndex + 1)} disabled={activePageIndex === chapterPages.length-1}/>
                 </Pagination>
-                <div {...swipeGestures}>
+                <div {...swipeGestures} className={styles['carousel-wrapper']}>
                     <Carousel
                         interval={null}
                         indicators={false}

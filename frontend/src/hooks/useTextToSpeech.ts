@@ -47,7 +47,7 @@ const useTextToSpeech = (): TextToSpeechHook => {
             const handleVoicesChanged = () => {
                 setVoices(window.speechSynthesis.getVoices());
                 // For debugging: This will show you the exact list of voices your browser has.
-                console.log("Available TTS Voices:", window.speechSynthesis.getVoices());
+                //console.log("Available TTS Voices:", window.speechSynthesis.getVoices());
             };
 
             window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
@@ -91,7 +91,8 @@ const useTextToSpeech = (): TextToSpeechHook => {
                 }
             }
         }
-        console.log("Selected: " + selectedVoice?.name);
+
+        //console.log("Selected: " + selectedVoice?.name);
         if (selectedVoice) utterance.voice = selectedVoice;
         utterance.lang = langCode;
         utterance.onstart = () => setIsSpeaking(true);
