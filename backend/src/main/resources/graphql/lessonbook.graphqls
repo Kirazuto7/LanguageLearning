@@ -1,0 +1,11 @@
+type LessonBook {
+    id: ID!
+    bookTitle: String!
+    difficulty: String!
+    language: String!
+    chapters: [Chapter]!
+}
+
+extend type Query {
+    getLessonBooks: [LessonBook!]!
+}

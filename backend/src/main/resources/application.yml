@@ -19,9 +19,8 @@ spring:
       chat: none
       embedding: none
     ollama1:
-      base-url: http://ai:11434
+      base-url: ${SPRING_AI_OLLAMA_BASE_URL}
       chat:
-        model: qwen3:8b
         options:
           format: json
           num-ctx: 8192
@@ -29,9 +28,8 @@ spring:
           temperature: 0.5
 
     ollama2:
-      base-url: http://ai-kr:11434
+      base-url: ${SPRING_AI_OLLAMA_BASE_URL}
       chat:
-        model: exaone3.5
         options:
           format: json
           num-ctx: 8192
@@ -39,9 +37,8 @@ spring:
           temperature: 0.5
 
     ollama3:
-      base-url: http://ai-jp:11434
+      base-url: ${SPRING_AI_OLLAMA_BASE_URL}
       chat:
-        model: summerwind/japanese-starling-chatv
         options:
           format: json
           num-ctx: 8192
