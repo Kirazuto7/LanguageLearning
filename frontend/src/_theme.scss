@@ -255,3 +255,106 @@ $themes: (
   --button-shadow-hover: #{map-get($theme-map, button-shadow-hover)};
   --pagination-shadow: #{map-get($theme-map, pagination-shadow)}
 }
+
+// =============================================================================
+ // # BREAKPOINTS & RESPONSIVE MIXIN
+ // Centralized breakpoints for consistent media queries across the application.
+ // =============================================================================
+
+ $breakpoints: (
+    desktop: 1600px,
+    laptop: 1440px,
+    tablet: 1024px,
+    mobile: 768px
+ );
+
+ @mixin respond-to($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media (max-width: #{map-get($breakpoints, $breakpoint)}) {
+            @content;
+        }
+    } @else {
+        @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints map.";
+    }
+ }
+
+@mixin respond-to-min($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media (min-width: #{map-get($breakpoints, $breakpoint)}) {
+            @content;
+        }
+    } @else {
+        @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints map."
+    }
+}
+
+// =============================================================================
+// # RESPONSIVE TYPOGRAPHY
+// Centralized font sizes for consistency and responsiveness.
+// =============================================================================
+
+$typography: (
+  // Base (desktop-first) sizes and weights
+  base: (
+    display: (size: 28px, weight: 600),
+    h1:      (size: 24px, weight: 700),
+    h2:      (size: 20px, weight: 600),
+    h3:      (size: 18px, weight: 600),
+    h4:      (size: 17px, weight: 600),
+    h5:      (size: 16px, weight: 600),
+    h6:      (size: 15px, weight: 600),
+    p:       (size: 16px, weight: 400),
+    lead:    (size: 18px, weight: 400), // For prominent paragraphs
+    small:   (size: 12px, weight: 400),
+    subtle:  (size: 14px, weight: 400), // For translations or secondary text
+    button:  (size: 16px, weight: 500),
+    a:       (size: 16px, weight: 500)
+  ),
+  // Responsive overrides (only size needs to be specified)
+  laptop: (
+    display: (size: 26px),
+    h1:      (size: 22px),
+    h2:      (size: 18px),
+    h3:      (size: 17px),
+    h4:      (size: 16px),
+    p:       (size: 15px),
+    lead:    (size: 17px)
+  ),
+  tablet: (
+    display: (size: 24px),
+    h1:      (size: 20px),
+    h2:      (size: 17px),
+    h3:      (size: 16px),
+    p:       (size: 14px),
+    lead:    (size: 16px)
+  )
+);
+
+@mixin apply-responsive-typography {
+  @each $breakpoint, $size-map in $typography {
+    @if $breakpoint == base {
+      @each $tag, $properties in $size-map {
+        $selector: "#{$tag}, .#{$tag}";
+        @if $tag == button {
+          $selector: "#{$tag}, .#{$tag}, .btn";
+        }
+        #{$selector} {
+          font-size: map-get($properties, size);
+          font-weight: map-get($properties, weight);
+        }
+      }
+    } @else {
+      @include respond-to($breakpoint) {
+        @each $tag, $properties in $size-map {
+          $selector: "#{$tag}, .#{$tag}";
+          @if $tag == button {
+            $selector: "#{$tag}, .#{$tag}, .btn";
+          }
+          #{$selector} {
+            font-size: map-get($properties, size);
+          }
+        }
+      }
+    }
+  }
+}

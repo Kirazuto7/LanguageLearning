@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './bookpage.module.css';
+import styles from './bookpage.module.scss';
 
 interface BookPageProps {
   pageNumber: number,
@@ -17,7 +17,7 @@ const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-a
         <div className={styles['page-content']}>
           {children}
         </div>
-        {pageNumber > 0 && <div className={styles['page-number']}>{pageNumber}</div>}
+        {pageNumber > 0 && <div className={`${styles['page-number']} small`}>{pageNumber}</div>}
       </div>
     </div>
   );
