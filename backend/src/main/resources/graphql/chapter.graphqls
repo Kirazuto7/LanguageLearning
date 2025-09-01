@@ -1,0 +1,11 @@
+type Chapter {
+    id: ID!
+    chapterNumber: Int!
+    title: String!
+    nativeTitle: String!
+    pages: [Page!]!
+}
+
+extend type Query {
+    getChapterById(id: ID!): Chapter
+}

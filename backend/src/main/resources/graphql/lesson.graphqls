@@ -1,0 +1,13 @@
+enum LessonType {
+    VOCABULARY,
+    GRAMMAR,
+    CONJUGATION,
+    PRACTICE,
+    READING_COMPREHENSION
+}
+
+type Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+}

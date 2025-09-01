@@ -6,10 +6,7 @@ services:
     ports:
       - "3000:3000"  # React Dev Server
     volumes:
-      # Mounts your local frontend code into the container at /app
       - ./frontend:/app
-      # This is a trick to prevent the local node_modules from overwriting
-      # the one installed in the container.
       - /app/node_modules
     depends_on:
       backend:
@@ -26,6 +23,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - SPRING_AI_OLLAMA_BASE_URL=${SPRING_AI_OLLAMA_BASE_URL}
+      - SPRING_PROFILES_ACTIVE=cpu
     volumes:
       - ./backend:/app
       - backend-gradle-cache:/root/.gradle
@@ -33,10 +32,6 @@ services:
       postgres:
         condition: service_healthy
       ai:
-        condition: service_healthy
-      ai-kr:
-        condition: service_healthy
-      ai-jp:
         condition: service_healthy
     healthcheck:
       # This check requires curl to be installed in the backend container.
@@ -47,53 +42,12 @@ services:
       retries: 10
       start_period: 30s
 
-  ai-kr:
-    build:
-      context: ./backend/dockerfiles
-      dockerfile: DockerfileKo
-    ports:
-      - "11434:11434"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu] # Optional / Can remove to use CPU
-    healthcheck:
-      test: ["CMD", "ollama", "list"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  ai-jp:
-    build:
-      context: ./backend/dockerfiles
-      dockerfile: DockerfileJP
-    ports:
-      - "11435:11434"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu] # Optional / Can remove to use CPU
-    healthcheck:
-      test: [ "CMD", "ollama", "list" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
   ai:
     build:
       context: ./backend/dockerfiles
-      dockerfile: DockerfileAI
+      dockerfile: DockerfileAI_CPU
     ports:
-      - "11436:11434"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu] # Optional / Can remove to use CPU
+      - "11434:11434"
     healthcheck:
       test: [ "CMD", "ollama", "list" ]
       interval: 10s

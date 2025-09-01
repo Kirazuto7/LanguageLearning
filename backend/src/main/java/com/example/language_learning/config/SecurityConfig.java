@@ -36,6 +36,7 @@ public class SecurityConfig {
                                 "/api/users/health",
                                 "/api/users/register", "/api/users/login", "/api/users/logout",
                                 "/api/chapters/progress/**", // Allow access to the progress stream
+                                "/graphql", "/graphiql",
                                 "/actuator/**"
                         ).permitAll()
                         .anyRequest().authenticated()

@@ -72,7 +72,6 @@ public class ChapterService {
 
     private Mono<GeneratedComponents> generateChapterComponents(ChapterGenerationRequest request, String taskId, BookContext bookContext) {
         return aiService.generateChapterMetadata(request)
-                .publishOn(Schedulers.boundedElastic()) // Switch before the blocking call in doOnSuccess
                 .doOnSuccess(metadata -> progressService.sendUpdate(taskId, 25, "Creating vocabulary lesson..."))
                 .flatMap(metadata -> aiService.generateVocabularyLesson(request, metadata)
                         .flatMap(vocabulary -> generateLessonPath(request, taskId, bookContext, metadata, vocabulary))
@@ -84,10 +83,8 @@ public class ChapterService {
         if (bookContext.nextChapterNumber() % 2 != 0) {
             progressService.sendUpdate(taskId, 50, "Explaining grammar rules...");
             return aiService.generateGrammarLesson(request, vocabulary)
-                    .publishOn(Schedulers.boundedElastic()) // Switch before the blocking call
                     .doOnSuccess(g -> progressService.sendUpdate(taskId, 75, "Building practice exercises..."))
                     .flatMap(grammar -> aiService.generatePracticeLesson(request, vocabulary, grammar)
-                            .publishOn(Schedulers.boundedElastic()) // Switch before the blocking call
                             .doOnSuccess(p -> progressService.sendUpdate(taskId, 90, "Writing reading passage..."))
                             .flatMap(practice -> aiService.generateReadingComprehensionLesson(request, vocabulary, grammar)
                                     .map(reading -> new GeneratedComponents(metadata, vocabulary, grammar, null, practice, reading))
@@ -96,10 +93,8 @@ public class ChapterService {
         } else {
             progressService.sendUpdate(taskId, 50, "Explaining conjugation rules...");
             return aiService.generateConjugationLesson(request, vocabulary)
-                    .publishOn(Schedulers.boundedElastic()) // Switch before the blocking call
                     .doOnSuccess(c -> progressService.sendUpdate(taskId, 75, "Building practice exercises..."))
                     .flatMap(conjugation -> aiService.generatePracticeLesson(request, vocabulary, conjugation)
-                            .publishOn(Schedulers.boundedElastic()) // Switch before the blocking call
                             .doOnSuccess(p -> progressService.sendUpdate(taskId, 90, "Writing reading passage..."))
                             .flatMap(practice -> aiService.generateReadingComprehensionLesson(request, vocabulary, conjugation)
                                     .map(reading -> new GeneratedComponents(metadata, vocabulary, null, conjugation, practice, reading))

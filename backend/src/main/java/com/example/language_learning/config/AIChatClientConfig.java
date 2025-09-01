@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,18 +33,24 @@ public class AIChatClientConfig {
 
     // 1. Create separate OllamaApi beans for each instance using the builder
     @Bean
-    public OllamaApi ollamaApi1(DefaultAIProperties props) {
-        return OllamaApi.builder().baseUrl(props.baseUrl()).build();
+    public OllamaApi ollamaApi1(DefaultAIProperties props, WebClient.Builder webClientBuilder) {
+        return OllamaApi.builder()
+                .webClientBuilder(webClientBuilder)
+                .baseUrl(props.baseUrl()).build();
     }
 
     @Bean
-    public OllamaApi ollamaApi2(KoreanAIProperties props) {
-        return OllamaApi.builder().baseUrl(props.baseUrl()).build();
+    public OllamaApi ollamaApi2(KoreanAIProperties props, WebClient.Builder webClientBuilder) {
+        return OllamaApi.builder()
+                .webClientBuilder(webClientBuilder)
+                .baseUrl(props.baseUrl()).build();
     }
 
     @Bean
-    public OllamaApi ollamaApi3(JapaneseAIProperties props) {
-        return OllamaApi.builder().baseUrl(props.baseUrl()).build();
+    public OllamaApi ollamaApi3(JapaneseAIProperties props, WebClient.Builder webClientBuilder) {
+        return OllamaApi.builder()
+                .webClientBuilder(webClientBuilder)
+                .baseUrl(props.baseUrl()).build();
     }
 
     // 2. Create OllamaChatModel beans using the builder pattern

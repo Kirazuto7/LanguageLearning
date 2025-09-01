@@ -28,7 +28,7 @@ public class ChapterController {
 
     @GetMapping("/progress/{taskId}")
     public SseEmitter streamProgress(@PathVariable String taskId) {
-        SseEmitter emitter = new SseEmitter(420_000L);
+        SseEmitter emitter = new SseEmitter(1_800_000L);
         progressService.addEmitter(taskId, emitter);
         return emitter;
     }

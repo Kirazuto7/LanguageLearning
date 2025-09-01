@@ -24,9 +24,11 @@ dependencyManagement {
 dependencies {
     // Spring-boot Dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-graphql'
 
     // AI Dependencies
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
@@ -48,6 +50,7 @@ dependencies {
 
     // Other Dependencies
     implementation 'com.atilika.kuromoji:kuromoji-ipadic:0.9.0' // (Furigana generation)
+
 
 	// DevTools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
