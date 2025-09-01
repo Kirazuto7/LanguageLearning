@@ -36,7 +36,7 @@ const ConjugationLesson: React.FC<ConjugationLessonProps> = ({ lesson }) => {
 
     return (
         <div>
-            <h4 className="text-center mb-4">{lesson.title}</h4>
+            <h2 className="text-center mb-4">{lesson.title}</h2>
             
             <h6>{lesson.conjugationRuleName}</h6>
             <h6>{lesson.explanation}</h6>

@@ -109,7 +109,7 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
                 {/* Main text element using foreignObject for wrapping */}
                 <foreignObject x="20" y="16" width="180" height="112" filter="url(#chalkGlow)">
                     <div className={styles.textContainer}>
-                        <p>{text}</p>
+                        <div className={`${styles.blackboardText} subtle`}>{text}</div>
                     </div>
                 </foreignObject>
 
