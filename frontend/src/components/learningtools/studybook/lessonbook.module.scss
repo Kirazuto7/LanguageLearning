@@ -1,3 +1,5 @@
+@use '../../../_theme.scss' as theme;
+
 /*
  * Custom styles for the Lessonbook carousel.
  */
@@ -11,12 +13,33 @@
     justify-content: center;
     align-items: center;
     gap: 2rem;
+
+    @include theme.respond-to(laptop) {
+        gap: 1rem;
+    }
+
+    @include theme.respond-to(mobile) {
+        gap: 1.5rem;
+    }
 }
 
 .carousel-wrapper {
   height: 100%;
   width: 100%;
   max-width: 950px;
+
+  @include theme.respond-to(laptop) {
+    max-width: 750px;
+  }
+
+  @include theme.respond-to(tablet) {
+    max-width: 680px;
+  }
+
+  @include theme.respond-to(mobile) {
+    max-width: 100%;
+    width: 90vw;
+  }
 }
 
 .studybook-carousel {
@@ -44,6 +67,11 @@
     cursor: pointer;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     box-shadow: 0 2px 6px rgba(0,0,0, 0.1);
+
+    @include theme.respond-to(mobile) {
+        min-width: unset;
+        width: 100%;
+    }
 }
 
 

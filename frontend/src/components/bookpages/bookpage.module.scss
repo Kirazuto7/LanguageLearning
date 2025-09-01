@@ -1,3 +1,5 @@
+@use '../../_theme.scss' as theme;
+
 .active-page {
     width: 100%;
     height: 100%;
@@ -6,6 +8,10 @@
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
+
+    @include theme.respond-to(tablet) {
+        padding-bottom: 5vmax;
+    }
 }
 
 .left-active-page {
@@ -36,7 +42,6 @@
     z-index: 1;
     line-height: 1.6;
     color: #333;
-    font-size: 14px;
 }
 
 .active-page::before {
@@ -69,14 +74,12 @@
 }
 
 .page-content h1 {
-    font-size: 24px;
     margin-bottom: 20px;
     color: #2c1810;
     text-align: center;
 }
 
 .page-content h2 {
-    font-size: 18px;
     margin: 15px 0 10px 0;
     color: #4a2c1a;
 }
@@ -98,7 +101,6 @@
 .page-number {
     position: absolute;
     bottom: 20px;
-    font-size: 12px;
     color: #666;
 }
 

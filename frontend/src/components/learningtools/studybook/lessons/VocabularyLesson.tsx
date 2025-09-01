@@ -42,14 +42,14 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
                         </div>
                         <div className={styles.vocabContent}>
                             {isJapanese ? (
-                                <p className={styles.vocabWord}>
+                                <h4 className={styles.vocabWord}>
                                     <ruby className={styles.vocabRuby}>
                                         {word.details?.kanji || word.nativeWord}
                                         <rt>{word.details?.hiragana}</rt>
                                     </ruby>
-                                </p>
+                                </h4>
                             ) : (
-                                <p className={styles.vocabWord}>{word.nativeWord}</p>
+                                <h4 className={styles.vocabWord}>{word.nativeWord}</h4>
                             )}
                             <p className={styles.vocabTranslation}>{word.englishTranslation}</p>
                         </div>

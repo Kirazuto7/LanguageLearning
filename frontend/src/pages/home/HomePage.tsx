@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
   return (
     <Container fluid className="d-flex flex-column flex-grow-1 py-5">
     <div className={"glass-container mb-4"}>
-      <h1 className="text-4xl font-bold mb-4 text-center">Welcome {user ? `, ${user.username}` : 'to LangMaster'}</h1>
+      <h1 className="mb-4 text-center">Welcome {user ? `, ${user.username}` : 'to LangMaster'}</h1>
       <p className="text-center">Select a tool from the navigation bar above to begin your language journey.</p>
     </div>
 
