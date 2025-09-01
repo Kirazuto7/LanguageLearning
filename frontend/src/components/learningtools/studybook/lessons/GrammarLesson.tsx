@@ -35,7 +35,7 @@ const GrammarLesson: React.FC<GrammarLessonProps> = ({ lesson }) => {
 
     return (
         <div>
-            <h4 className="text-center mb-4">{lesson.title}</h4>
+            <h2 className="text-center mb-4">{lesson.title}</h2>
             
             <h6>{lesson.grammarConcept}</h6>
             <h6>{lesson.nativeGrammarConcept}</h6>

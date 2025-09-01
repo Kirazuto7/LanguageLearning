@@ -21,8 +21,8 @@ const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-a
     <div ref={ref}>
       <div className={`${styles['active-page']} ${pageSideClass}`}>
         <div className={styles['page-content']}>
-            <h5 className="text-center mb-2">Chapter {chapterNumber}</h5>
-            <h4 className="text-center mb-1">{chapterNativeTitle}</h4>
+            <h3 className="text-center mb-2">Chapter {chapterNumber}</h3>
+            <h2 className="text-center mb-1">{chapterNativeTitle}</h2>
             <h6 className="text-center mb-4">{chapterTitle}</h6>
             {children}
         </div>

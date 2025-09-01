@@ -80,7 +80,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
 
     return (
         <div>
-            <h5 className="text-center mb-4">{lesson.title}</h5>
+            <h2 className="text-center mb-4">{lesson.title}</h2>
             <div className={styles.storyContainer}>
                 {renderText(lesson.story, { as: 'p', className: styles.storyText })}
                 <div className="text-end">

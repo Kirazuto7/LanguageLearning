@@ -9,6 +9,12 @@ import {useSelector} from "react-redux";
 import {selectCurrentTheme} from "./features/state/settingsSlice";
 import { Container, Spinner } from "react-bootstrap";
 
+import '@fontsource/inter/400.css'; // Regular
+import '@fontsource/inter/500.css'; // Medium
+import '@fontsource/inter/600.css'; // Semi-Bold
+import '@fontsource/inter/700.css'; // Bold
+import './_global.scss';
+
 const LandingPage = lazy(() => import('./pages/home/LandingPage'));
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
 const HomePage = lazy(() => import('./pages/home/HomePage'));

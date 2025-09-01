@@ -92,7 +92,7 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
 
     return (
         <div id={styles.practiceLessonContainer}>
-            <h4 className="text-center mb-4">{lesson.title}</h4>
+            <h2 className="text-center mb-4">{lesson.title}</h2>
 
             <h6>{lesson.instructions}</h6>
             {lesson.questions.map((question: QuestionDTO, index) => {
