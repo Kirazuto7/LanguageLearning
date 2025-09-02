@@ -151,3 +151,9 @@ export interface PracticeLessonCheckResponse {
     correctedSentence: string,
     feedback: string
 }
+
+export interface TtsRequest {
+    text: string;
+    voiceId: MascotName;
+    language: string;
+}

@@ -62,7 +62,7 @@ const StudyBookMascot: React.FC<StudyBookMascotProps> = ({ onTopicSubmit, isLoad
                 <div className={styles.blackboardWrapper}>
                     <Blackboard
                         text={speech}
-                        gender={mascotGenders[settings?.mascot || 'jinny']}
+                        character={settings?.mascot || 'jinny'}
                         forceSpeak={isLoading || celebrate}
                     />
                 </div>

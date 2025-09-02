@@ -1,21 +1,21 @@
 import React, {useEffect, useRef} from "react";
 import styles from "./blackboard.module.scss";
-import useTextToSpeech from "../../hooks/useTextToSpeech";
+import usePremiumTts from "../../hooks/usePremiumTts";
 import useOnScreen from "../../hooks/useOnScreen";
 import {useSettingsManager} from "../../hooks/useSettingsManager";
-import {MascotGender} from "../../types/types";
+import {MascotName} from "../../types/types";
 
 interface BlackboardProps {
     text: string;
-    gender: MascotGender;
+    character: MascotName;
     forceSpeak?: boolean;
 }
 
-const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
+const Blackboard: React.FC<BlackboardProps> = ({text, character, forceSpeak}) => {
     const ref = useRef<HTMLDivElement>(null);
     const isVisible = useOnScreen(ref);
     const { settings, updateSettings } = useSettingsManager();
-    const { speak, cancel, isSpeaking, supported } = useTextToSpeech();
+    const { speak, cancel, isSpeaking } = usePremiumTts();
     const spokenMessages = useRef(new Set<string>());
 
     useEffect(() => {
@@ -23,13 +23,13 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
     }, [settings?.language]);
 
     useEffect(() => {
-        const canSpeak = isVisible && supported && text && settings?.language && settings?.autoSpeakEnabled;
+        const canSpeak = isVisible && text && settings?.language && settings?.autoSpeakEnabled;
         const shouldSpeak = !spokenMessages.current.has(text) || forceSpeak;
 
         // Prevent repeated messages being voiced
         if(canSpeak && shouldSpeak) {
             cancel();
-            speak(text, settings.language, gender);
+            speak(text, character, settings.language);
             spokenMessages.current.add(text);
         }
         else {
@@ -39,7 +39,7 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
         return () => {
             cancel();
         };
-    }, [text, isVisible, supported, settings?.autoSpeakEnabled, settings?.language, gender, speak, cancel, forceSpeak]);
+    }, [text, isVisible, settings?.autoSpeakEnabled, settings?.language, character, speak, cancel, forceSpeak]);
 
     const toggleMute = () => {
         const newAutoSpeakEnabled = !(settings?.autoSpeakEnabled ?? true);
@@ -124,7 +124,7 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
                     filter="url(#chalkDust)"
                 />
             </svg>
-            {supported &&
+            {
                 <button
                     className={styles.speakButton}
                     onClick={toggleMute}

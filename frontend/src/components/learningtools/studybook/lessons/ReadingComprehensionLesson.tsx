@@ -4,7 +4,7 @@ import { useSettingsManager } from '../../../../hooks/useSettingsManager';
 import {Button, Form, Card} from "react-bootstrap";
 import AnswerFeedback from "./extra/AnswerFeedback";
 import styles from "./lesson.module.scss";
-import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import usePremiumTts from "../../../../hooks/usePremiumTts";
 import { mascotGenders, MascotName } from "../../../../types/types";
 import { VolumeUpFill, Book } from "react-bootstrap-icons";
 
@@ -18,7 +18,7 @@ interface ReadingComprehensionLessonProps {
 */
 const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({ lesson, onAllCorrect }) => {
     const { settings } = useSettingsManager();
-    const { speak, cancel } = useTextToSpeech();
+    const { speak, cancel } = usePremiumTts();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
     const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string }>({});
@@ -34,10 +34,9 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     }, [lesson]);
 
     const handleSpeak = (text: string) => {
-        if (settings?.language) {
-            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+        if (settings?.language && settings?.mascot) {
             cancel();
-            speak(text, settings.language, gender);
+            speak(text, settings.mascot, settings.language);
         }
     };
 

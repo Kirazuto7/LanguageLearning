@@ -13,12 +13,13 @@ java {
 
 repositories {
 	mavenCentral()
-	//maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
+	google()
 }
 dependencyManagement {
 	imports {
         // Manages the Spring AI BOM dependencies
 		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0"
+		mavenBom "com.google.cloud:libraries-bom:26.40.0"
 	}
 }
 dependencies {
@@ -48,6 +49,7 @@ dependencies {
 
     // Other Dependencies
     implementation 'com.atilika.kuromoji:kuromoji-ipadic:0.9.0' // (Furigana generation)
+    implementation 'com.google.cloud:google-cloud-texttospeech'
 
 	// DevTools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

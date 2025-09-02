@@ -41,7 +41,7 @@ const Register: React.FC<RegisterProps> = ({onShowLogin}) => {
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard
                     text={isLoading ? "Registering... Please wait. ⏳" : "I'm Jinny! Let's get you signed up for an exciting journey!"}
-                    gender={mascotGenders.jinny}
+                    character={'jinny'}
                 />
                 <Jinny hop={false}/>
             </div>

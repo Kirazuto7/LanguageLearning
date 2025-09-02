@@ -6,7 +6,7 @@ import styles from "./lesson.module.scss";
 import {useProofread} from "../../../../hooks/useProofread";
 import FeedbackDisplay from "./extra/FeedbackDisplay";
 import {VolumeUpFill} from "react-bootstrap-icons";
-import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import usePremiumTts from "../../../../hooks/usePremiumTts";
 import {mascotGenders, MascotName} from "../../../../types/types";
 
 interface PracticeLessonProps {
@@ -18,7 +18,7 @@ interface PracticeLessonProps {
 */
 const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
-    const { speak, cancel } = useTextToSpeech();
+    const { speak, cancel } = usePremiumTts();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
     const [answers, setAnswers] = useState<{[key: number]: string}>({});
@@ -72,10 +72,9 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
     }
 
     const handleSpeak = (text: string) => {
-        if (settings?.language) {
-            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+        if (settings?.language && settings?.mascot) {
             cancel();
-            speak(text, settings.language, gender);
+            speak(text, settings.mascot, settings.language);
         }
     };
 

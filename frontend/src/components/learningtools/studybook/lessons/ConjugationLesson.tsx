@@ -3,7 +3,7 @@ import { ConjugationLessonDTO, ConjugationExampleDTO } from '../../../../types/d
 import { Card } from 'react-bootstrap';
 import styles from './lesson.module.scss';
 import { useSettingsManager } from '../../../../hooks/useSettingsManager';
-import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import usePremiumTts from "../../../../hooks/usePremiumTts";
 import {mascotGenders, MascotName} from "../../../../types/types";
 import { VolumeUpFill } from "react-bootstrap-icons";
 
@@ -16,14 +16,13 @@ interface ConjugationLessonProps {
 */
 const ConjugationLesson: React.FC<ConjugationLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
-    const { speak, cancel } = useTextToSpeech();
+    const { speak, cancel } = usePremiumTts();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
     const handleSpeak = (text: string) => {
-        if (settings?.language) {
-            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+        if (settings?.language && settings?.mascot) {
             cancel();
-            speak(text, settings.language, gender);
+            speak(text, settings.mascot, settings.language);
         }
     };
 

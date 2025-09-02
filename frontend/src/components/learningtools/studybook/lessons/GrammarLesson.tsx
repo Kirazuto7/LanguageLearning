@@ -1,7 +1,7 @@
 import React from 'react';
 import { GrammarLessonDTO, SentenceDTO } from '../../../../types/dto';
 import { useSettingsManager } from '../../../../hooks/useSettingsManager';
-import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import usePremiumTts from "../../../../hooks/usePremiumTts";
 import {mascotGenders, MascotName} from "../../../../types/types";
 import styles from "./lesson.module.scss";
 import {VolumeUpFill} from "react-bootstrap-icons";
@@ -15,14 +15,13 @@ interface GrammarLessonProps {
 */
 const GrammarLesson: React.FC<GrammarLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
-    const { speak, cancel } = useTextToSpeech();
+    const { speak, cancel } = usePremiumTts();
     const isJapanese = settings?.language.toLowerCase() === 'japanese';
 
     const handleSpeak = (text: string) => {
-        if (settings?.language) {
-            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+        if (settings?.language && settings?.mascot) {
             cancel();
-            speak(text, settings.language, gender);
+            speak(text, settings.mascot, settings.language);
         }
     };
 

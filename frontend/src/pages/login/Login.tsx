@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = ({onShowRegister}) => {
             <div className="d-flex justify-content-center align-items-center mb-5">
                 <Blackboard
                     text={isLoading ? "Logging in...Please wait. ⏳" : "Hi, my name is Jinny! 😄 Would you like to learn a new language with me?"}
-                    gender={mascotGenders.jinny}
+                    character={'jinny'}
                 />
                 <Jinny hop={true} />
             </div>

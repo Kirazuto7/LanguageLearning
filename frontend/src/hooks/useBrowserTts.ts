@@ -1,7 +1,7 @@
 import {useState, useEffect, useCallback} from "react";
 import { MascotGender } from "../types/types";
 
-interface TextToSpeechHook {
+interface BrowserTtsHook {
     speak: (text: string, lang: string, gender?: MascotGender) => void;
     cancel: () => void;
     isSpeaking: boolean;
@@ -35,7 +35,7 @@ const preferredVoicesMap: { [key: string]: string[] } = {
     'en-US-male': ['Alex', 'Daniel', 'Google US English'],
 };
 
-const useTextToSpeech = (): TextToSpeechHook => {
+const useBrowserTts = (): BrowserTtsHook => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [supported, setSupported] = useState(false);
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -111,4 +111,4 @@ const useTextToSpeech = (): TextToSpeechHook => {
     return { speak, cancel, isSpeaking, supported };
 }
 
-export default useTextToSpeech;
+export default useBrowserTts;

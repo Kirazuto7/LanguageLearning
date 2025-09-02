@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 import { VocabularyLessonDTO, WordDTO } from '../../../../types/dto';
 import styles from "./lesson.module.scss";
 import { VolumeUpFill } from "react-bootstrap-icons";
-import useTextToSpeech from "../../../../hooks/useTextToSpeech";
+import usePremiumTts from "../../../../hooks/usePremiumTts";
 import {useSettingsManager} from "../../../../hooks/useSettingsManager";
 import { mascotGenders, MascotName } from "../../../../types/types";
 
@@ -16,15 +16,14 @@ interface VocabularyLessonProps {
 */
 const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
-    const { speak, cancel } = useTextToSpeech();
+    const { speak, cancel } = usePremiumTts();
 
     const isJapanese = lesson.vocabularies.length > 0 && lesson.vocabularies[0].language.toLowerCase() === 'japanese';
 
     const handleSpeak = (text: string) => {
-        if (settings?.language) {
-            const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+        if (settings?.language && settings?.mascot) {
             cancel();
-            speak(text, settings.language, gender);
+            speak(text, settings.mascot, settings.language);
         }
     };
 
