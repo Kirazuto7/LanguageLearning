@@ -1,4 +1,4 @@
-package com.example.language_learning.controllers;
+package com.example.language_learning.controllers.rest;
 
 import com.example.language_learning.dto.user.SettingsDTO;
 import com.example.language_learning.dto.user.UserDTO;

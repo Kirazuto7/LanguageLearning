@@ -10,9 +10,11 @@ import com.example.language_learning.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class BookService {
+public class LessonBookService {
     private final UserRepository userRepository;
     private final LessonBookRepository lessonBookRepository;
     private final DtoMapper dtoMapper;
@@ -21,17 +23,25 @@ public class BookService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return lessonBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty)
                 .orElseGet(() -> {
-                    LessonBook newBook = new LessonBook();
-                    newBook.setBookTitle(String.format("%s for %s Learners", language, difficulty));
-                    newBook.setLanguage(language);
-                    newBook.setDifficulty(difficulty);
-                    newBook.setUser(user);
+                    LessonBook newBook = LessonBook.builder()
+                            .bookTitle(String.format("%s for %s Learners", language, difficulty))
+                            .language(language)
+                            .difficulty(difficulty)
+                            .user(user)
+                            .build();
                     return lessonBookRepository.save(newBook);
                 });
     }
 
-    public LessonBookDTO fetchBook(LessonBookRequest request) {
-        LessonBook book = findOrCreateBook(request.language(), request.difficulty(), request.userId());
+    public List<LessonBookDTO> fetchUserLessonBooks(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return lessonBookRepository.findAllByUser(user).stream()
+                .map(dtoMapper::toDto)
+                .toList();
+    }
+
+    public LessonBookDTO fetchLessonBook(LessonBookRequest request, Long userId) {
+        LessonBook book = findOrCreateBook(request.language(), request.difficulty(), userId);
         return dtoMapper.toDto(book);
     }
 

@@ -3,7 +3,7 @@ package com.example.language_learning.services;
 import com.example.language_learning.dto.lessons.LessonDTO;
 import com.example.language_learning.dto.lessons.VocabularyLessonDTO;
 import com.example.language_learning.entity.lessons.PracticeLesson;
-import com.example.language_learning.entity.models.Question;
+import com.example.language_learning.entity.user.User;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.QuestionRepository;
 import com.example.language_learning.requests.ChapterGenerationRequest;
@@ -30,12 +30,15 @@ public class PracticeLessonService {
                 .map(dto -> (PracticeLesson) dtoMapper.toEntity(dto));
     }
 
-    public PracticeLessonCheckResponse checkSentence(PracticeLessonCheckRequest request) {
-        // 1. Fetch the Question data
-        Question question = questionRepository.findById(request.questionId())
-                .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.questionId()));
-
-        // 2. Request feedback from the AI
-        return aiService.proofRead(question.getQuestionText(), request.userSentence(), request.language(), request.difficulty()).block();
+    public Mono<PracticeLessonCheckResponse> checkSentence(PracticeLessonCheckRequest request, User user) {
+        return Mono.fromCallable(() ->
+                // 1. Fetch the Question data in a blocking-safe manner
+                questionRepository.findByIdAndUser(request.questionId(), user)
+                .orElseThrow(() -> new SecurityException("Question not found or does not belong to the user."))
+        )
+        // 2. Request feedback from the AI reactively
+        .flatMap(question ->
+            aiService.proofRead(question.getQuestionText(), request.userSentence(), request.language(), request.difficulty())
+        );
     }
 }

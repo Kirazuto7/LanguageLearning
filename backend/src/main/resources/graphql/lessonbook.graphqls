@@ -6,6 +6,12 @@ type LessonBook {
     chapters: [Chapter]!
 }
 
+input LessonBookRequestInput {
+    language: String!
+    difficulty: String!
+}
+
 extend type Query {
     getLessonBooks: [LessonBook!]!
+    getLessonBook(request: LessonBookRequestInput!): LessonBook
 }

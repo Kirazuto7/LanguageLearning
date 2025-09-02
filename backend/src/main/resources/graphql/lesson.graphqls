@@ -53,3 +53,22 @@ type ReadingComprehensionLesson implements Lesson {
     story: String!
     questions: [Question!]!
 }
+
+# Practice Lesson Proofread Mutation
+
+input PracticeLessonCheckRequestInput {
+    questionId: ID!
+    userSentence: String!
+    language: String!
+    difficulty: String!
+}
+
+type PracticeLessonCheckResponse {
+    isCorrect: Boolean!
+    feedback: String
+    correctedSentence: String
+}
+
+extend type Mutation {
+    checkPracticeSentence(request: PracticeLessonCheckRequestInput!): PracticeLessonCheckResponse
+}

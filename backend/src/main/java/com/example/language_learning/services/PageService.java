@@ -26,9 +26,20 @@ public class PageService {
     @Transactional
     public Mono<Page> createAndPersistPage(Chapter chapter, Lesson lesson, int pageNumber) {
         return Mono.fromCallable(() -> {
-           Page page = new Page(pageNumber, lesson);
-           page.setChapter(chapter);
+           Page page = Page.builder()
+                   .pageNumber(pageNumber)
+                   .lesson(lesson)
+                   .chapter(chapter)
+                   .build();
+           if (lesson != null) {
+               lesson.setPage(page); 
+           }
+           chapter.addPage(page);
            return pageRepository.save(page);
         });
+    }
+
+    public int getLastPageNumberForBook(Long bookId) {
+        return pageRepository.findMaxPageNumberByBookId(bookId).orElse(0);
     }
 }

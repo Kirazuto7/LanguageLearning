@@ -10,7 +10,6 @@ input ChapterGenerationRequestInput {
     language: String!
     difficulty: String!
     topic: String!
-    userId: ID!
 }
 
 type GenerationTask {
