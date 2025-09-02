@@ -1,4 +1,4 @@
-package com.example.language_learning.requests;
+package com.example.language_learning.responses;
 
 import lombok.Builder;
 

@@ -9,7 +9,7 @@ import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
-import com.example.language_learning.requests.PracticeLessonCheckResponse;
+import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -151,15 +152,18 @@ public class AIService {
                 response -> apiDtoMapper.toConjugationLessonDTO(response, request.language()));
     }
 
-    public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
-        return generatePracticeLessonInternal(request, vocabulary, grammar.grammarConcept());
-    }
+    public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, LessonDTO specificLesson) {
+        String concept;
+        if (specificLesson instanceof  GrammarLessonDTO grammarLesson) {
+            concept = grammarLesson.grammarConcept();
+        }
+        else if (specificLesson instanceof ConjugationLessonDTO conjugationLesson) {
+            concept = conjugationLesson.explanation();
+        }
+        else {
+            return Mono.error(new IllegalArgumentException("Unsupported lesson type for practice lesson generation: " + specificLesson.getClass().getName()));
+        }
 
-    public Mono<PracticeLessonDTO> generatePracticeLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, ConjugationLessonDTO conjugation) {
-        return generatePracticeLessonInternal(request, vocabulary, conjugation.explanation());
-    }
-
-    private Mono<PracticeLessonDTO> generatePracticeLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
         Map<String, Object> params = createBaseParams(request);
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
         params.put("grammarConcept", concept);
@@ -173,15 +177,18 @@ public class AIService {
                 response -> apiDtoMapper.toPracticeLessonDTO(response, request.language()));
     }
 
-    public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, GrammarLessonDTO grammar) {
-        return generateReadingComprehensionLessonInternal(request, vocabulary, grammar.grammarConcept());
-    }
+    public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, LessonDTO specificLesson) {
+        String concept;
+        if (specificLesson instanceof  GrammarLessonDTO grammarLesson) {
+            concept = grammarLesson.grammarConcept();
+        }
+        else if(specificLesson instanceof ConjugationLessonDTO conjugationLesson) {
+            concept = conjugationLesson.explanation();
+        }
+        else {
+            return Mono.error(new IllegalArgumentException("Unsupported lesson type for reading comprehension lesson generation: " + specificLesson.getClass().getName()));
+        }
 
-    public Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, ConjugationLessonDTO conjugation) {
-        return generateReadingComprehensionLessonInternal(request, vocabulary, conjugation.explanation());
-    }
-
-    private Mono<ReadingComprehensionLessonDTO> generateReadingComprehensionLessonInternal(ChapterGenerationRequest request, VocabularyLessonDTO vocabulary, String concept) {
         Map<String, Object> params = createBaseParams(request);
         params.put("vocabulary", formatVocabularyForPrompt(vocabulary.vocabularies()));
         params.put("grammarConcept", concept);

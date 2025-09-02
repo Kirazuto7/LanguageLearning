@@ -1,28 +1,33 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.lessons.PracticeLessonDTO;
+import com.example.language_learning.dto.lessons.LessonDTO;
+import com.example.language_learning.dto.lessons.VocabularyLessonDTO;
 import com.example.language_learning.entity.lessons.PracticeLesson;
 import com.example.language_learning.entity.models.Question;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.QuestionRepository;
+import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.requests.PracticeLessonCheckRequest;
-import com.example.language_learning.requests.PracticeLessonCheckResponse;
+import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class PracticeLessonService {
 
-    private final DtoMapper mapper;
+    private final DtoMapper dtoMapper;
     private final AIService aiService;
     private final QuestionRepository questionRepository;
 
-    @Transactional(propagation = Propagation.MANDATORY)
-    public PracticeLesson createPracticeLesson(PracticeLessonDTO dto) {
-        return (PracticeLesson) mapper.toEntity(dto);
+    /**
+     * Generates a PracticeLesson entity by calling the AI service and mapping the resulting DTO.
+     * This service is responsible for creating the lesson entity, but not for persisting it.
+     */
+    public Mono<PracticeLesson> generateLesson(ChapterGenerationRequest request, VocabularyLessonDTO vocabularyLesson, LessonDTO specificLesson) {
+        return aiService.generatePracticeLesson(request, vocabularyLesson, specificLesson)
+                .map(dto -> (PracticeLesson) dtoMapper.toEntity(dto));
     }
 
     public PracticeLessonCheckResponse checkSentence(PracticeLessonCheckRequest request) {

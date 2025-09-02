@@ -4,14 +4,12 @@ import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.QuestionType;
-import com.example.language_learning.requests.PracticeLessonCheckResponse;
+import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.services.FuriganaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

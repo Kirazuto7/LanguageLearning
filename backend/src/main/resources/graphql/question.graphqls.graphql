@@ -1,0 +1,7 @@
+type Question {
+    id: ID!
+    questionType: String!
+    questionText: String!
+    answer: String
+    answerChoices: [String]!
+}

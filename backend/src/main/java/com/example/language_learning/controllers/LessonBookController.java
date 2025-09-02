@@ -1,7 +1,7 @@
 package com.example.language_learning.controllers;
 
 import com.example.language_learning.requests.PracticeLessonCheckRequest;
-import com.example.language_learning.requests.PracticeLessonCheckResponse;
+import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.services.PracticeLessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

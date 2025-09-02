@@ -1,0 +1,6 @@
+type ProgressUpdate {
+    taskId: ID!
+    progress: Int!
+    message: String!
+    data: Page # send each page as it is generated
+}

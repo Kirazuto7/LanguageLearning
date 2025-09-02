@@ -1,0 +1,7 @@
+type ConjugationExample {
+    id: ID!
+    infinitive: String!
+    conjugatedForm: String!
+    exampleSentence: String!
+    sentenceTranslation: String!
+}

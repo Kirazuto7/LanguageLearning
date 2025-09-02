@@ -6,6 +6,25 @@ type Chapter {
     pages: [Page!]!
 }
 
+input ChapterGenerationRequestInput {
+    language: String!
+    difficulty: String!
+    topic: String!
+    userId: ID!
+}
+
+type GenerationTask {
+    taskId: ID!
+}
+
 extend type Query {
     getChapterById(id: ID!): Chapter
+}
+
+extend type Mutation {
+    generateChapter(request: ChapterGenerationRequestInput!): GenerationTask
+}
+
+extend type Subscription {
+    chapterGenerationProgress(taskId: ID!): ProgressUpdate
 }

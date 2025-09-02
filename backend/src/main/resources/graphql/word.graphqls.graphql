@@ -1,0 +1,10 @@
+scalar JSON
+
+type Word {
+    id: ID!
+    englishTranslation: String!
+    language: String!
+    nativeWord: String!
+    phoneticSpelling: String!
+    details: JSON
+}

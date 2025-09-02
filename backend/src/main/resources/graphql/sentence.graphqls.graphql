@@ -1,0 +1,5 @@
+type Sentence {
+    id: ID!
+    text: String!
+    translation: String!
+}

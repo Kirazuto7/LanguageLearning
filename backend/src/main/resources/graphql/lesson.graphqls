@@ -6,8 +6,50 @@ enum LessonType {
     READING_COMPREHENSION
 }
 
-type Lesson {
+interface Lesson {
     id: ID!
     type: LessonType!
     title: String!
+}
+
+type VocabularyLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    vocabularies: [Word!]!
+}
+
+type GrammarLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    grammarConcept: String!
+    nativeGrammarConcept: String!
+    explanation: String!
+    exampleSentences: [Sentence!]!
+}
+
+type ConjugationLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    conjugationRuleName: String!
+    explanation: String!
+    conjugatedWords: [ConjugationExample!]!
+}
+
+type PracticeLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    instructions: String!
+    questions: [Question!]!
+}
+
+type ReadingComprehensionLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    story: String!
+    questions: [Question!]!
 }
