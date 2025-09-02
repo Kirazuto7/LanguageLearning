@@ -3,4 +3,5 @@ type ProgressUpdate {
     progress: Int!
     message: String!
     data: Page # send each page as it is generated
+    error: String
 }

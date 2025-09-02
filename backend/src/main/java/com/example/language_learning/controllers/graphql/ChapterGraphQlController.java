@@ -3,8 +3,6 @@ package com.example.language_learning.controllers.graphql;
 import com.example.language_learning.dto.models.ChapterDTO;
 import com.example.language_learning.dto.progress.ProgressUpdateDTO;
 import com.example.language_learning.entity.user.User;
-import com.example.language_learning.mapper.DtoMapper;
-import com.example.language_learning.repositories.ChapterRepository;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.responses.GenerationTask;
 import com.example.language_learning.services.ChapterService;
@@ -23,10 +21,8 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 public class ChapterGraphQlController {
-    private final ChapterRepository chapterRepository;
     private final ChapterService chapterService;
     private final ProgressService progressService;
-    private final DtoMapper dtoMapper;
 
     @QueryMapping
     public ChapterDTO getChapterById(@Argument Long id, @AuthenticationPrincipal User user) {

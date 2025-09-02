@@ -32,7 +32,7 @@ public class ProgressService {
     public void sendError(String taskId, Throwable error) {
         String errorMessage = "Chapter generation failed: " + error.getMessage();
         log.error("Task {} failed with error: {}", taskId, errorMessage, error); // Log the full stack trace
-        ProgressUpdateDTO update = new ProgressUpdateDTO(taskId, 100, errorMessage);
+        ProgressUpdateDTO update = new ProgressUpdateDTO(taskId, 0, null, null, errorMessage);
         sink.tryEmitNext(update);
     }
 }
