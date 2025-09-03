@@ -1,7 +1,8 @@
-import React, { LazyExoticComponent } from "react";
+import React, { LazyExoticComponent, FC } from "react";
 import {MascotName} from "../../types/types";
+import Jinny from "./mascots/Jinny"; // Eagerly load the default mascot
 
-const Jinny = React.lazy(() => import("./mascots/Jinny"));
+// Lazy load only the non-default mascots
 const Sakura = React.lazy(() => import("./mascots/Sakura"));
 const Riku = React.lazy(() => import("./mascots/Riku"));
 const Yuna = React.lazy(() => import("./mascots/Yuna"));
@@ -13,8 +14,8 @@ interface MascotCharacterProps {
     celebrate?: boolean;
 }
 
-const mascotMap: Record<MascotName, LazyExoticComponent<React.FC<MascotCharacterProps>>> = {
-    jinny: Jinny,
+// The map now holds only the lazy-loaded components
+const lazyMascotMap: Record<Exclude<MascotName, 'jinny'>, LazyExoticComponent<FC<MascotCharacterProps>>> = {
     sakura: Sakura,
     riku: Riku,
     yuna: Yuna,
@@ -26,7 +27,17 @@ interface MascotProps extends MascotCharacterProps {
 }
 
 const Mascot: React.FC<MascotProps> = ({ character = 'jinny', hop, celebrate }) => {
-    const MascotComponent = mascotMap[character] || mascotMap.jinny;
+    // Handle the default, non-lazy mascot separately for instant loading on critical pages
+    if (character === 'jinny') {
+        return <Jinny hop={hop} celebrate={celebrate} />;
+    }
+
+    const MascotComponent = lazyMascotMap[character];
+
+    // Fallback to the default mascot if an invalid character name is passed
+    if (!MascotComponent) {
+        return <Jinny hop={hop} celebrate={celebrate} />;
+    }
 
     return <MascotComponent hop={hop} celebrate={celebrate} />;
 };

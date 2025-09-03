@@ -3,8 +3,8 @@ spring:
     name: language-learning
   jpa:
     hibernate:
-      #ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
-      ddl-auto: update
+      ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
+      #ddl-auto: update
   datasource:
     url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
@@ -61,3 +61,11 @@ application:
     jwt:
       secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
       expiration: 86400000
+    public-paths:
+      - "/api/users/health"
+      - "/api/users/register"
+      - "/api/users/login"
+      - "/api/users/logout"
+      - "/graphql"
+      - "/graphiql"
+      - "/actuator/**"

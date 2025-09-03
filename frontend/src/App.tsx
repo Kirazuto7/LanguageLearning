@@ -14,9 +14,8 @@ import '@fontsource/inter/500.css'; // Medium
 import '@fontsource/inter/600.css'; // Semi-Bold
 import '@fontsource/inter/700.css'; // Bold
 import './_global.scss';
-
+import LoginPage from "./pages/login/LoginPage";
 const LandingPage = lazy(() => import('./pages/home/LandingPage'));
-const LoginPage = lazy(() => import('./pages/login/LoginPage'));
 const HomePage = lazy(() => import('./pages/home/HomePage'));
 const StudyBookPage = lazy(() => import('./pages/lessontools/StudyBookPage'));
 

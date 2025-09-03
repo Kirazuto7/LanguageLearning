@@ -1,4 +1,4 @@
-import {useProofreadMutation} from "../features/api/lessonBookApiSlice";
+import { useProofreadMutation } from "../features/api/practiceLessonApiSlice";
 import {useSettingsManager} from "./useSettingsManager";
 import {PracticeLessonCheckResponse} from "../types/dto";
 
