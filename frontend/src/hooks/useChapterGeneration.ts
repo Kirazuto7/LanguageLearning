@@ -1,77 +1,69 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { useGenerateChapterMutation } from "../features/api/bookApiSlice";
-import {ChapterDTO, ChapterGenerationRequest} from "../types/dto";
-import { apiSlice } from "../features/api/apiSlice";
+import { useState, useEffect, useCallback } from "react";
+import { useAppDispatch } from "../app/hooks";
+import { useGenerateChapterMutation, useChapterGenerationProgressQuery } from "../features/api/chapterApiSlice";
+import { lessonBookApiSlice } from "../features/api/lessonBookApiSlice";
+
+/**
+ * A custom hook to manage the entire chapter generation workflow.
+ * It orchestrates the mutation to start the generation, the optimistic UI update,
+ * and the real-time cache updates from the progress subscription.
+ *
+ * @param language The language of the book being updated.
+ * @param difficulty The difficulty of the book being updated.
+ */
+export const useChapterGeneration = (language: string, difficulty: string) => {
+    const [taskId, setTaskId] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
+    const [generateChapter, { isLoading: isMutationLoading, error: mutationError }] = useGenerateChapterMutation();
+    const { data: progressData, error: subscriptionError } = useChapterGenerationProgressQuery(taskId!, {
+        skip: !taskId,
+    });
+
+    // Listens for new pages retrieved from the subscription and patches the main book cache.
+    useEffect(() => {
+        if (progressData?.data && progressData.chapterId) {
+            const newPage  = progressData.data;
+            const chapterIdToUpdate = progressData.chapterId;
+
+            dispatch(
+                lessonBookApiSlice.util.updateQueryData(
+                    'getLessonBook',
+                    { language, difficulty },
+                    (draft) => {
+                        const chapter = draft.chapters.find(c => c.id === chapterIdToUpdate);
+                        if (chapter) {
+                            // Check to avoid adding a page that is already in the 'pages' array
+                            if (!chapter.pages.some(p => p.id === newPage.id)) {
+                                chapter.pages.push(newPage);
+                            }
+                        }
+                    }
+                )
+            );
+        }
+
+    }, [progressData, dispatch, language, difficulty]);
 
 
-interface ProgressUpdate {
-    progress: number;
-    message: string;
-}
-
-interface CompleteUpdate {
-    progress: number;
-    message: string;
-    data: ChapterDTO;
-}
-
-export const useChapterGeneration = () => {
-    const [progress, setProgress] = useState(0);
-    const [message, setMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [newChapter, setNewChapter] = useState<ChapterDTO | null>(null);
-
-    const [generateChapter, { isLoading: isMutationLoading }] = useGenerateChapterMutation();
-    const dispatch = useDispatch();
-
-    const startGeneration = useCallback(async (request: ChapterGenerationRequest) => {
-        setIsLoading(true);
-        setError(null);
-        setProgress(0);
-        setMessage('Requesting new chapter...');
-
+    const startGeneration = useCallback(async (topic: string) => {
+        setTaskId(null);
         try {
-            const { taskId } = await generateChapter(request).unwrap();
-            const eventSource = new EventSource(`http://localhost:8080/api/chapters/progress/${taskId}`);
-
-            eventSource.addEventListener('progress-update', (event) => {
-                const data: ProgressUpdate = JSON.parse(event.data);
-                setProgress(data.progress);
-                setMessage(data.message);
-            });
-
-            eventSource.addEventListener('complete', (event) => {
-                const update: CompleteUpdate = JSON.parse(event.data);
-                setProgress(100);
-                setMessage('Chapter generation complete!');
-                setNewChapter(update.data);
-                setIsLoading(false);
-                eventSource.close();
-
-                // Manually invalidate to trigger refetch
-                dispatch(
-                    apiSlice.util.invalidateTags([
-                        { type: 'Book', id: `${request.language}-${request.difficulty}-${request.userId}` }
-                    ])
-                );
-            });
-
-            eventSource.onerror = (err) => {
-                console.error('EventSource failed:', err);
-                setError('A connection error occurred during chapter generation.');
-                setIsLoading(false);
-                eventSource.close();
-            };
+            const { taskId: newTaskId } = await generateChapter({ language, difficulty, topic }).unwrap();
+            setTaskId(newTaskId); // Trigger the subscription query to begin
         }
         catch (err) {
             console.error('Failed to start chapter generation:', err);
-            setError('Failed to initiate chapter generation.');
-            setIsLoading(false);
         }
+    }, [generateChapter, language, difficulty]);
 
-    }, [generateChapter, dispatch]);
+    const isLoading = isMutationLoading || (taskId != null && !progressData);
 
-    return { startGeneration, isLoading: isLoading || isMutationLoading, progress, message, error, newChapter };
+    return {
+        startGeneration,
+        isLoading,
+        progress: progressData?.progress ?? 0,
+        message: progressData?.message ?? (isLoading ? 'Initiating...' : ''),
+        error: mutationError || subscriptionError || progressData?.error ? 'Chapter generation failed.' : null,
+        isComplete: progressData?.progress === 100,
+    };
 };

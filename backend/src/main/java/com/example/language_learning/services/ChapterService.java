@@ -9,11 +9,14 @@ import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.ChapterRepository;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.entity.models.LessonBook;
+import com.example.language_learning.responses.GenerationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -49,24 +52,44 @@ public class ChapterService {
                 .orElse(null);
     }
 
-    public void generateNewChapterStream(ChapterGenerationRequest request, Long userId, String taskId) {
-        getBookContext(request, userId)
-                .subscribeOn(Schedulers.boundedElastic()) // Switch to a blocking-safe scheduler for the entire pipeline
-                .flatMap(bookContext -> {
-                    progressService.sendUpdate(taskId, 10, "Generating chapter outline...");
-                    return aiService.generateChapterMetadata(request)
-                            .flatMap(metadata -> createInitialChapter(bookContext, metadata))
-                            .flatMap(chapter -> generateAndStreamPages(request, taskId, chapter, bookContext.nextPageNumber()));
-                })
-                .doOnError(error -> {
-                    log.error("Chapter generation failed for task {}: {}", taskId, error.getMessage(), error);
-                    progressService.sendError(taskId, error);
-                })
-                .subscribe(
-                    null,
-                    error -> log.warn("Error propagated to subscribe for task {}. Should be handled by doOnError.", taskId, error),
-                        () -> log.info("Chapter generation stream for task {} completed.", taskId)
-                );
+    public GenerationResponse prepareChapterGeneration(ChapterGenerationRequest request, Long userId) {
+        String taskId = UUID.randomUUID().toString();
+
+        // 1. Prepare the reactive pipelines for the setup tasks.
+        Mono<BookContext> bookContextMono = getBookContext(request, userId).cache();
+        Mono<ChapterMetadataDTO> metadataDTOMono = aiService.generateChapterMetadata(request);
+
+        // 2. Synchronously create the chapter shell required content for initial response
+        Chapter chapter = Mono.zip(bookContextMono, metadataDTOMono)
+                .flatMap(tuple -> createInitialChapter(tuple.getT1(), tuple.getT2()))
+                .block();
+        BookContext bookContext = bookContextMono.block();
+
+        // 3. Asynchronously start the page(s) generation for the chapter in the background
+        generateNewChapterStream(request, taskId, chapter, bookContext);
+
+        // 4. Return the chapter shell response to the client as the pages are building
+        return GenerationResponse.builder()
+                .taskId(taskId)
+                .chapter(dtoMapper.toDto(chapter))
+                .build();
+    }
+
+    private void generateNewChapterStream(ChapterGenerationRequest request, String taskId, Chapter chapter, BookContext bookContext) {
+        Mono.fromRunnable(() ->
+                progressService.sendUpdate(taskId, 10, "Generating chapter outline...")
+        )
+        .subscribeOn(Schedulers.boundedElastic())
+        .then(generateAndStreamPages(request, taskId, chapter, bookContext.nextPageNumber()))
+        .doOnError(error -> {
+            log.error("Chapter generation failed for task {}: {}", taskId, error.getMessage(), error);
+            progressService.sendError(taskId, error);
+        })
+        .subscribe(
+                null,
+                error -> log.warn("Error propagated to subscribe for task {}. Should be handled by doOnError.", taskId, error),
+                () -> log.info("Chapter generation stream for task {} completed.", taskId)
+        );
     }
 
     private Mono<BookContext> getBookContext(ChapterGenerationRequest request, Long userId) {
@@ -111,7 +134,7 @@ public class ChapterService {
         progressService.sendUpdate(taskId, 25, "Creating vocabulary lesson...");
         return vocabularyLessonService.generateLesson(request, metadata)
                 .flatMap(lesson -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
-                .doOnNext(page -> progressService.sendPageUpdate(taskId, 40, "Vocabulary created.", dtoMapper.toDto(page)))
+                .doOnNext(page -> progressService.sendPageUpdate(taskId, 40, "Vocabulary created.", chapter.getId(), dtoMapper.toDto(page)))
                 .map(page -> {
                     VocabularyLessonDTO vocabDto = (VocabularyLessonDTO) dtoMapper.toDto(page.getLesson());
                     return new GenerationContext(vocabDto, null);
@@ -125,7 +148,7 @@ public class ChapterService {
 
             return grammarLessonService.generateLesson(request, context.vocabulary())
                     .flatMap(lesson -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
-                    .doOnNext(page -> progressService.sendPageUpdate(taskId, 60, "Grammar rules explained.", dtoMapper.toDto(page)))
+                    .doOnNext(page -> progressService.sendPageUpdate(taskId, 60, "Grammar rules explained.", chapter.getId(), dtoMapper.toDto(page)))
                     .map(page -> new GenerationContext(context.vocabulary(), dtoMapper.toDto(page.getLesson())));
         }
         else {
@@ -133,7 +156,7 @@ public class ChapterService {
 
             return conjugationLessonService.generateLesson(request, context.vocabulary())
                     .flatMap(lesson -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
-                    .doOnNext(page -> progressService.sendPageUpdate(taskId, 60, "Conjugation rules explained.", dtoMapper.toDto(page)))
+                    .doOnNext(page -> progressService.sendPageUpdate(taskId, 60, "Conjugation rules explained.", chapter.getId(), dtoMapper.toDto(page)))
                     .map(page -> new GenerationContext(context.vocabulary(), dtoMapper.toDto(page.getLesson())));
         }
     }
@@ -143,7 +166,7 @@ public class ChapterService {
 
         return practiceLessonService.generateLesson(request, context.vocabulary(), context.specificLesson())
                 .flatMap(lesson -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
-                .doOnNext(page -> progressService.sendPageUpdate(taskId, 85, "Practice exercises built.", dtoMapper.toDto(page)))
+                .doOnNext(page -> progressService.sendPageUpdate(taskId, 85, "Practice exercises built.", chapter.getId(), dtoMapper.toDto(page)))
                 .thenReturn(context);
     }
 
@@ -152,7 +175,7 @@ public class ChapterService {
 
         return readingComprehensionLessonService.generateLesson(request, context.vocabulary(), context.specificLesson())
                 .flatMap(lesson -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
-                .doOnNext(page -> progressService.sendPageUpdate(taskId, 100, "Chapter generation complete.", dtoMapper.toDto(page)))
+                .doOnNext(page -> progressService.sendPageUpdate(taskId, 100, "Chapter generation complete.", chapter.getId(), dtoMapper.toDto(page)))
                 .thenReturn(context);
     }
 

@@ -122,7 +122,6 @@ export interface LoginRequest {
 }
 
 export interface LessonBookRequest {
-    userId: number;
     language: string;
     difficulty: string;
 }
@@ -131,23 +130,31 @@ export interface ChapterGenerationRequest {
     language: string;
     difficulty: string;
     topic: string;
-    userId: number;
 }
 
 export interface AuthenticationResponse {
-    token: string,
-    user: UserDTO
+    token: string;
+    user: UserDTO;
 }
 
 export interface PracticeLessonCheckRequest {
-    language: string,
-    difficulty: string,
-    questionId: number,
-    userSentence: string
+    language: string;
+    difficulty: string;
+    questionId: number;
+    userSentence: string;
 }
 
 export interface PracticeLessonCheckResponse {
-    isCorrect: boolean,
-    correctedSentence: string,
-    feedback: string
+    isCorrect: boolean;
+    correctedSentence: string;
+    feedback: string;
+}
+
+export interface ProgressUpdateDTO {
+    taskId: string;
+    progress: number;
+    message: string;
+    chapterId?: number;
+    data?: PageDTO;
+    error?: string;
 }

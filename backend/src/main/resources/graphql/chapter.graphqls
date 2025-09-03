@@ -12,8 +12,9 @@ input ChapterGenerationRequestInput {
     topic: String!
 }
 
-type GenerationTask {
+type GenerationResponse {
     taskId: ID!
+    chapter: Chapter!
 }
 
 extend type Query {
@@ -21,7 +22,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    generateChapter(request: ChapterGenerationRequestInput!): GenerationTask
+    generateChapter(request: ChapterGenerationRequestInput!): GenerationResponse
 }
 
 extend type Subscription {

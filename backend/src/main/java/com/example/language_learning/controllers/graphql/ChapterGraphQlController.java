@@ -4,7 +4,7 @@ import com.example.language_learning.dto.models.ChapterDTO;
 import com.example.language_learning.dto.progress.ProgressUpdateDTO;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.requests.ChapterGenerationRequest;
-import com.example.language_learning.responses.GenerationTask;
+import com.example.language_learning.responses.GenerationResponse;
 import com.example.language_learning.services.ChapterService;
 import com.example.language_learning.services.ProgressService;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +33,11 @@ public class ChapterGraphQlController {
     }
 
     @MutationMapping
-    public GenerationTask generateChapter(@Argument ChapterGenerationRequest request, @AuthenticationPrincipal User user) {
+    public GenerationResponse generateChapter(@Argument ChapterGenerationRequest request, @AuthenticationPrincipal User user) {
         if (user == null) {
             throw new SecurityException("Authentication is required to generate a chapter.");
         }
-        String taskId = UUID.randomUUID().toString();
-        chapterService.generateNewChapterStream(request, user.getId(), taskId);
-        return new GenerationTask(taskId);
+        return chapterService.prepareChapterGeneration(request, user.getId());
     }
 
     @SubscriptionMapping

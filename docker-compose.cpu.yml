@@ -25,6 +25,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - SPRING_AI_OLLAMA_BASE_URL=${SPRING_AI_OLLAMA_BASE_URL}
       - SPRING_PROFILES_ACTIVE=cpu
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
       - backend-gradle-cache:/root/.gradle

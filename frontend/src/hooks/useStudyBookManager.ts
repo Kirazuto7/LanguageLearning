@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
 import { ChapterDTO } from '../types/dto';
-import { useSelector } from 'react-redux';
-import { useFetchBookQuery } from '../features/api/bookApiSlice';
+import { useAppSelector } from "../app/hooks";
+import { useGetLessonBookQuery } from "../features/api/lessonBookApiSlice";
 import { RootState } from '../app/store';
 
 
@@ -10,27 +9,28 @@ interface StudyBookManagerResult {
     chapters: ChapterDTO[];
     isLoading: boolean;
     error: string | null;
+    language: string;
+    difficulty: string;
 }
 
 export function useStudyBookManager(): StudyBookManagerResult {
     // 1. Fetch user from global Redux state
-    const { user } = useSelector((state: RootState) => state.auth);
-    const { settings } = useSelector((state: RootState) => state.settings);
+    const { user } = useAppSelector((state: RootState) => state.auth);
+    const { settings } = useAppSelector((state: RootState) => state.settings);
     const language = settings?.language || '';
     const difficulty = settings?.difficulty || '';
     
     // 2. Fetch the book data
-    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useFetchBookQuery(
-        { language, difficulty, userId: user?.id as number },
+    const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useGetLessonBookQuery(
+        { language, difficulty },
         { skip: !user || !settings});
 
-
-    const title = bookData?.bookTitle || 'Book Title';
-    const chapters = bookData?.chapters || [];
-    const error = useMemo(() => {
-        if (fetchBookError) return 'Failed to fetch the book.';
-        return null;
-    }, [fetchBookError]);
-
-    return { title, chapters, isLoading: isFetchingBook, error };
+    return {
+        title: bookData?.bookTitle || 'Book Title',
+        chapters: bookData?.chapters || [],
+        isLoading: isFetchingBook,
+        error: fetchBookError ? 'Failed to fetch the book.' : null,
+        language,
+        difficulty
+    };
 }

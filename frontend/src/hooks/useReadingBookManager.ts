@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { buildPagesFromBookData } from '../utils/buildPagesFromData';
 import { ChapterDTO } from '../types/dto';
 import { useSelector } from 'react-redux';
-import { useFetchBookQuery, useGenerateChapterMutation } from '../features/api/bookApiSlice';
+import { useFetchBookQuery, useGenerateChapterMutation } from '../features/api/lessonBookApiSlice';
 import { RootState } from '../app/store';
 
 /*

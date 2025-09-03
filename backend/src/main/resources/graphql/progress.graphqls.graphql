@@ -2,6 +2,7 @@ type ProgressUpdate {
     taskId: ID!
     progress: Int!
     message: String!
+    chapterId: Int
     data: Page # send each page as it is generated
     error: String
 }

@@ -19,20 +19,20 @@ public class ProgressService {
 
     public void sendUpdate(String taskId, int progress, String message) {
         log.info("Progress Update for Task {}: {}% - {}", taskId, progress, message);
-        ProgressUpdateDTO update = new ProgressUpdateDTO(taskId, progress, message);
+        ProgressUpdateDTO update = ProgressUpdateDTO.forMessage(taskId, progress, message);
         sink.tryEmitNext(update);
     }
 
-    public void sendPageUpdate(String taskId, int progress, String message, PageDTO page) {
+    public void sendPageUpdate(String taskId, int progress, String message, Long chapterId, PageDTO page) {
         log.info("Progress Update for Task {}: {}% - {} (Page: {})", taskId, progress, message, page.lesson().type());
-        ProgressUpdateDTO update = new ProgressUpdateDTO(taskId, progress, message, page);
+        ProgressUpdateDTO update = ProgressUpdateDTO.forPage(taskId, progress, message, chapterId, page);
         sink.tryEmitNext(update);
     }
 
     public void sendError(String taskId, Throwable error) {
         String errorMessage = "Chapter generation failed: " + error.getMessage();
         log.error("Task {} failed with error: {}", taskId, errorMessage, error); // Log the full stack trace
-        ProgressUpdateDTO update = new ProgressUpdateDTO(taskId, 0, null, null, errorMessage);
+        ProgressUpdateDTO update = ProgressUpdateDTO.forError(taskId, errorMessage);
         sink.tryEmitNext(update);
     }
 }
