@@ -1,8 +1,9 @@
 import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
 import {ChapterDTO, ChapterGenerationRequest, ProgressUpdateDTO, LessonBookRequest } from "../../types/dto";
-import { createClient } from "graphql-ws";
 import { lessonBookApiSlice } from "./lessonBookApiSlice";
+import { createSubscription } from "./subscriptionClient";
+import {logToServer} from "../../utils/loggingService";
 
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({
@@ -92,14 +93,10 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                 taskId,
                 { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
             ) {
-                const client = createClient({
-                    url: 'ws://localhost:8080/graphql',
-                });
+                try {
+                    await cacheDataLoaded;
 
-                await cacheDataLoaded;
-
-                const unsubscribe = client.subscribe(
-                    {
+                    const subscription = createSubscription<ProgressUpdateDTO>({
                         query: gql`
                             subscription ChapterGenerationProgress($taskId: ID!) {
                                 chapterGenerationProgress(taskId: $taskId) {
@@ -170,21 +167,19 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                             }
                         `,
                         variables: { taskId },
-                    },
-                    {
-                        next: (result: { data?: { chapterGenerationProgress?: ProgressUpdateDTO } }) => {
-                            const data = result.data?.chapterGenerationProgress;
-                            if (data) {
-                                updateCachedData(() => data);
-                            }
-                        },
-                        error: (error) => { console.error('Subscription error:', error); },
-                        complete: () => {},
-                    }
-                );
+                        transformResponse: (response: any) => response.data?.chapterGenerationProgress,
+                    });
 
-                await cacheEntryRemoved;
-                unsubscribe();
+                    for await (const data of subscription) {
+                        if (data) {
+                            updateCachedData(() => data);
+                        }
+                    }
+                }
+                catch (error) {
+                    logToServer('error', 'Subscription failed:', { error });
+                    console.error('Subscription failed:', error);
+                }
             }
         }),
 

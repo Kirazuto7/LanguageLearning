@@ -1,11 +1,17 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 import { logOut } from '../state/authSlice';
+import {logToServer} from "../../utils/loggingService";
 
 
-const baseQuery = fetchBaseQuery({
+/*const baseQuery = fetchBaseQuery({
     baseUrl: "http://localhost:8080/api",
     credentials: "include",
-});
+});*/
+
+const baseQuery = fetchBaseQuery({
+    baseUrl: "/api",
+    credentials: "include",
+})
 
 const baseQueryWrapper: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
@@ -15,6 +21,7 @@ const baseQueryWrapper: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryE
         // Handle specific HTTP status codes for authentication
         if (result.error.status === 401 || result.error.status === 403 || result.error.status === 'FETCH_ERROR') {
             console.error('Session invalid, logging out client.');
+            logToServer('error', 'Session invalid, logging out client.', { error: result.error });
             api.dispatch(logOut());
             window.location.replace('/login');
         }

@@ -42,25 +42,30 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 1m
 
   ai:
     build:
       context: ./backend/dockerfiles
-      dockerfile: DockerfileAI_GPU
+      dockerfile: DockerfileAI
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - AI_PROFILE=gpu
     ports:
       - "11434:11434"
     deploy:
       resources:
         reservations:
-          devices:
-            - capabilities: [ gpu ] # Optional / Can remove to use CPU
+          devices: [ { capabilities: [ gpu ] } ]
+    volumes:
+      - ollama-data:/root/.ollama
     healthcheck:
-      test: [ "CMD", "ollama", "list" ]
+      test: [ "CMD-SHELL", "test -f /root/.ollama/models_pulled.marker && ollama list > /dev/null" ]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 6
+      start_period: 15m
 
   postgres:
     image: postgres:16-alpine
@@ -79,3 +84,4 @@ services:
 volumes:
   backend-gradle-cache:
   postgres-data:
+  ollama-data:

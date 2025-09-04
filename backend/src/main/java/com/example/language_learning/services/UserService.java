@@ -6,7 +6,6 @@ import com.example.language_learning.entity.user.User;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.CreateUserRequest;
-import com.example.language_learning.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,19 +24,25 @@ public class UserService implements UserDetailsService {
     private final DtoMapper mapper;
     private final JwtService jwtService;
 
+    @Transactional
     public AuthenticationResponse register(CreateUserRequest request) {
         User user = createNewUser(request);
         String jwtToken = jwtService.generateToken(user);
-        return new AuthenticationResponse(jwtToken, mapper.toDto(user));
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .user(mapper.toDto(user))
+                .build();
     }
 
-    public AuthenticationResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
+    public AuthenticationResponse login(User user) {
         String jwtToken = jwtService.generateToken(user);
-        return new AuthenticationResponse(jwtToken, mapper.toDto(user));
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .user(mapper.toDto(user))
+                .build();
     }
 
+    @Transactional
     public User createNewUser(CreateUserRequest request) {
         userRepository.findByUsername(request.username()).ifPresent(u -> {
             throw new IllegalArgumentException("Username already exists");
@@ -58,11 +64,13 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found after authentication"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found during authentication process"));
     }
 
+    @Transactional
     public SettingsDTO updateSettings(String username, SettingsDTO updateRequest) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));

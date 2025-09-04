@@ -37,11 +37,17 @@ public class ChapterGraphQlController {
         if (user == null) {
             throw new SecurityException("Authentication is required to generate a chapter.");
         }
-        return chapterService.prepareChapterGeneration(request, user.getId());
+        GenerationResponse response = chapterService.prepareChapterGeneration(request, user.getId());
+        chapterService.generateChapterAsync(request, user.getId(), response.taskId(), response.chapter().id());
+        return response;
     }
 
     @SubscriptionMapping
-    public Publisher<ProgressUpdateDTO> chapterGenerationProgress(@Argument String taskId) {
+    public Publisher<ProgressUpdateDTO> chapterGenerationProgress(@Argument String taskId, @AuthenticationPrincipal User user) {
+        if (user == null) {
+            throw new SecurityException("Authentication is required to subscribe to chapter generation progress updates.");
+        }
+
         return progressService.getPublisher()
                 .filter(update -> taskId.equals(update.taskId()));
     }

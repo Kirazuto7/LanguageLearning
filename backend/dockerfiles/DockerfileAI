@@ -1,0 +1,10 @@
+FROM ollama/ollama:latest
+
+COPY scripts/ai_entrypoint.sh /ai_entrypoint.sh
+
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    chmod +x /ai_entrypoint.sh
+
+ENTRYPOINT ["/ai_entrypoint.sh"]

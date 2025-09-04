@@ -47,8 +47,8 @@ spring:
 
 logging:
   level:
-    org.springframework.security: WARN
-    org.springframework.boot.actuate.health: WARN
+    org.springframework.security: DEBUG
+    #org.springframework.boot.actuate.health: WARN
 
 management:
   endpoints:
@@ -66,6 +66,6 @@ application:
       - "/api/users/register"
       - "/api/users/login"
       - "/api/users/logout"
+      - "/error"
       - "/graphql"
       - "/graphiql"
-      - "/actuator/**"

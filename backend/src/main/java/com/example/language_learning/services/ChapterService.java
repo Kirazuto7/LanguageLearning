@@ -13,6 +13,7 @@ import com.example.language_learning.responses.GenerationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -52,6 +53,7 @@ public class ChapterService {
                 .orElse(null);
     }
 
+    @Transactional
     public GenerationResponse prepareChapterGeneration(ChapterGenerationRequest request, Long userId) {
         String taskId = UUID.randomUUID().toString();
 
@@ -63,16 +65,24 @@ public class ChapterService {
         Chapter chapter = Mono.zip(bookContextMono, metadataDTOMono)
                 .flatMap(tuple -> createInitialChapter(tuple.getT1(), tuple.getT2()))
                 .block();
-        BookContext bookContext = bookContextMono.block();
 
-        // 3. Asynchronously start the page(s) generation for the chapter in the background
-        generateNewChapterStream(request, taskId, chapter, bookContext);
+        // 3. Save the parent entity so that the cascade will handle persisting the new Chapter.
+        LessonBook persistedBook = lessonBookService.save(bookContextMono.block().book());
+        Chapter persistedChapter = persistedBook.getChapters().getLast();
 
         // 4. Return the chapter shell response to the client as the pages are building
         return GenerationResponse.builder()
                 .taskId(taskId)
-                .chapter(dtoMapper.toDto(chapter))
+                .chapter(dtoMapper.toDto(persistedChapter))
                 .build();
+    }
+
+    public void generateChapterAsync(ChapterGenerationRequest request, Long userId, String taskId, Long chapterId) {
+        // Asynchronously start the page(s) generation for the chapter generation subscription
+        Chapter chapter = chapterRepository.findById(chapterId).orElseThrow();
+        getBookContext(request, userId).subscribe(bookContext ->
+            generateNewChapterStream(request, taskId, chapter, bookContext)
+        );
     }
 
     private void generateNewChapterStream(ChapterGenerationRequest request, String taskId, Chapter chapter, BookContext bookContext) {
@@ -115,7 +125,7 @@ public class ChapterService {
                             .nativeTitle(metadata.nativeTitle())
                             .build();
             bookContext.book().addChapter(newChapter);
-            return chapterRepository.save(newChapter);
+            return newChapter;
         });
     }
 

@@ -1,0 +1,167 @@
+{
+  "groups": [
+    {
+      "name": "application.security",
+      "type": "com.example.language_learning.config.properties.SecurityProperties",
+      "sourceType": "com.example.language_learning.config.properties.SecurityProperties"
+    },
+    {
+      "name": "spring.ai.ollama1",
+      "type": "com.example.language_learning.config.properties.DefaultAIProperties",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties"
+    },
+    {
+      "name": "spring.ai.ollama1.chat",
+      "type": "com.example.language_learning.config.properties.DefaultAIProperties$ChatProperties",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties",
+      "sourceMethod": "chat()"
+    },
+    {
+      "name": "spring.ai.ollama1.chat.options",
+      "type": "com.example.language_learning.config.properties.DefaultAIProperties$Options",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties$ChatProperties",
+      "sourceMethod": "options()"
+    },
+    {
+      "name": "spring.ai.ollama2",
+      "type": "com.example.language_learning.config.properties.KoreanAIProperties",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties"
+    },
+    {
+      "name": "spring.ai.ollama2.chat",
+      "type": "com.example.language_learning.config.properties.KoreanAIProperties$ChatProperties",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties",
+      "sourceMethod": "chat()"
+    },
+    {
+      "name": "spring.ai.ollama2.chat.options",
+      "type": "com.example.language_learning.config.properties.KoreanAIProperties$Options",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties$ChatProperties",
+      "sourceMethod": "options()"
+    },
+    {
+      "name": "spring.ai.ollama3",
+      "type": "com.example.language_learning.config.properties.JapaneseAIProperties",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties"
+    },
+    {
+      "name": "spring.ai.ollama3.chat",
+      "type": "com.example.language_learning.config.properties.JapaneseAIProperties$ChatProperties",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties",
+      "sourceMethod": "chat()"
+    },
+    {
+      "name": "spring.ai.ollama3.chat.options",
+      "type": "com.example.language_learning.config.properties.JapaneseAIProperties$Options",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties$ChatProperties",
+      "sourceMethod": "options()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "application.security.public-paths",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.example.language_learning.config.properties.SecurityProperties"
+    },
+    {
+      "name": "spring.ai.ollama1.base-url",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties"
+    },
+    {
+      "name": "spring.ai.ollama1.chat.model",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties$ChatProperties"
+    },
+    {
+      "name": "spring.ai.ollama1.chat.options.format",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties$Options"
+    },
+    {
+      "name": "spring.ai.ollama1.chat.options.num-ctx",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama1.chat.options.num-predict",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama1.chat.options.temperature",
+      "type": "java.lang.Double",
+      "sourceType": "com.example.language_learning.config.properties.DefaultAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama2.base-url",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties"
+    },
+    {
+      "name": "spring.ai.ollama2.chat.model",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties$ChatProperties"
+    },
+    {
+      "name": "spring.ai.ollama2.chat.options.format",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties$Options"
+    },
+    {
+      "name": "spring.ai.ollama2.chat.options.num-ctx",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama2.chat.options.num-predict",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama2.chat.options.temperature",
+      "type": "java.lang.Double",
+      "sourceType": "com.example.language_learning.config.properties.KoreanAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama3.base-url",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties"
+    },
+    {
+      "name": "spring.ai.ollama3.chat.model",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties$ChatProperties"
+    },
+    {
+      "name": "spring.ai.ollama3.chat.options.format",
+      "type": "java.lang.String",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties$Options"
+    },
+    {
+      "name": "spring.ai.ollama3.chat.options.num-ctx",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama3.chat.options.num-predict",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties$Options",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.ai.ollama3.chat.options.temperature",
+      "type": "java.lang.Double",
+      "sourceType": "com.example.language_learning.config.properties.JapaneseAIProperties$Options",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}
