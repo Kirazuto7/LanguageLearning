@@ -1,11 +1,25 @@
 # ===================================================================
-# Root .gitignore for LanguageLearning project
+# General
 # ===================================================================
-
+# Environment variables - ignores .env, .env.local, .env.production etc.
 .env
+.env.*
+# It's a good practice to track an example file
+!/.env.example
+
+# GCP specific
 .gcp
 
-# IDE specific files
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+hs_err_pid*
+
+# ===================================================================
+# IDE & OS Files
 # ===================================================================
 # IntelliJ
 .idea/
@@ -25,53 +39,30 @@ out/
 .settings/
 *.class
 
-# Backend (Springboot)
+# OS
+.DS_Store
+Thumbs.db
+
+# ===================================================================
+# Build Artifacts, Dependencies & Compiled Output
 # ===================================================================
 
 # Gradle
-/backend/build/
-/backend/.gradle/
-/backend/bin/
+.gradle/
+build/
+bin/
 
 # Maven
-/backend/target/
 /backend/.mvn/
+target/
 
-# Compiled output
-/backend/*.jar
-/backend/*.war
-/backend/*.ear
+# Node
+node_modules/
+.pnp
+.pnp.*
+coverage/
 
-# Logs
-/backend/*.log
-/backend/hs_err_pid*
-
-# Frontend (React)
-# ===================================================================
-
-# Dependencies
-/frontend/node_modules/
-/frontend/.pnp
-/frontend/.pnp.js
-/frontend/.pnp.loader.mjs
-
-# Build output
-/frontend/build/
-
-# Testing
-/frontend/coverage/
-
-# Local environment variables
-/frontend/.env.local
-/frontend/.env.development.local
-/frontend/.env.test.local
-/frontend/.env.production.local
-
-# Logs
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-/frontend/pnpm-debug.log*
-
-# Misc
-/frontend/.DS_Store
+# Compiled Java output
+*.jar
+*.war
+*.ear
