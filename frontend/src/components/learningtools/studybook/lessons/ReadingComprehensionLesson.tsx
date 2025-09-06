@@ -21,14 +21,14 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     const { speak, cancel } = useTextToSpeech();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
-    const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string }>({});
-    const [results, setResults] = useState<{[key: number]: boolean } | null>(null);
+    const [selectedAnswers, setSelectedAnswers] = useState<{[key: string]: string }>({});
+    const [results, setResults] = useState<{[key: string]: boolean } | null>(null);
 
     useEffect(() => {
         const initialAnswers = lesson.questions.reduce((curr, question) => {
             curr[question.id] = '';
             return curr;
-        }, {} as { [key: number]: string});
+        }, {} as { [key: string]: string});
         setSelectedAnswers(initialAnswers);
         setResults(null);
     }, [lesson]);
@@ -48,7 +48,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
         return <Component className={className}>{text}</Component>;
     };
 
-    const handleAnswerSelect = (questionId: number, selectedAnswerChoice: string) => {
+    const handleAnswerSelect = (questionId: string, selectedAnswerChoice: string) => {
         setSelectedAnswers(prev => ({...prev, [questionId]: selectedAnswerChoice}));
         setResults(null);
     };
@@ -59,7 +59,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
             const correctAnswer = question.answer || '';
             curr[question.id] = userAnswer.trim() === correctAnswer.trim();
             return curr;
-        }, {} as { [key: number]: boolean });
+        }, {} as { [key: string]: boolean });
         setResults(newResults);
 
         const allCorrect = Object.values(newResults).every(result => result === true);

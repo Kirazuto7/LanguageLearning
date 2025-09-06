@@ -1,10 +1,7 @@
 package com.example.language_learning.entity.lessons;
 
 import com.example.language_learning.entity.models.ConjugationExample;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -24,7 +21,8 @@ public class ConjugationLesson extends Lesson {
     @Column(columnDefinition = "TEXT")
     private String explanation;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("id ASC")
     @Builder.Default
     private List<ConjugationExample> conjugatedWords = new ArrayList<>();
 

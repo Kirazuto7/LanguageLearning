@@ -34,11 +34,14 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public AuthenticationResponse login(User user) {
-        String jwtToken = jwtService.generateToken(user);
+        User managedUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + user.getUsername()));
+        String jwtToken = jwtService.generateToken(managedUser);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
-                .user(mapper.toDto(user))
+                .user(mapper.toDto(managedUser))
                 .build();
     }
 

@@ -3,11 +3,10 @@ import { ClientError, GraphQLClient } from "graphql-request";
 import { logOut } from "../state/authSlice";
 import {logToServer} from "../../utils/loggingService";
 
-/*const client = new GraphQLClient('http://localhost:8080/graphql', {
-    credentials: 'include',
-});*/
 
-const client = new GraphQLClient('/graphql');
+const client = new GraphQLClient(`${window.location.origin}/graphql`, {
+    credentials: 'include',
+});
 
 const graphqlBaseQuery: BaseQueryFn<
         { body: string; variables?: any },

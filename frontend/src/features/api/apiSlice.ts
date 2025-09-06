@@ -3,14 +3,9 @@ import { logOut } from '../state/authSlice';
 import {logToServer} from "../../utils/loggingService";
 
 
-/*const baseQuery = fetchBaseQuery({
-    baseUrl: "http://localhost:8080/api",
-    credentials: "include",
-});*/
-
 const baseQuery = fetchBaseQuery({
     baseUrl: "/api",
-    credentials: "include",
+    //credentials: "include",
 })
 
 const baseQueryWrapper: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {

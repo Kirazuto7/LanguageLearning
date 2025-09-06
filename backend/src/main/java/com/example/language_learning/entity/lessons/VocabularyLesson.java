@@ -17,13 +17,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class VocabularyLesson extends Lesson {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinTable(
             name = "vocabulary_lesson_words",
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "word_id")
     )
-    @OrderColumn(name = "word_order")
+    @OrderBy("id ASC")
     @Builder.Default
     private List<Word> vocabularies = new ArrayList<>();
 

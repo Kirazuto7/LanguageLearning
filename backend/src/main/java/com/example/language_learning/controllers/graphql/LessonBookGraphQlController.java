@@ -7,6 +7,7 @@ import com.example.language_learning.services.LessonBookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
@@ -18,18 +19,14 @@ public class LessonBookGraphQlController {
     private final LessonBookService lessonBookService;
 
     @QueryMapping
+    @PreAuthorize("isAuthenticated()")
     public List<LessonBookDTO> getLessonBooks(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            throw new SecurityException("Authentication is required to fetch lesson books.");
-        }
         return lessonBookService.fetchUserLessonBooks(user.getId());
     }
 
     @QueryMapping
+    @PreAuthorize("isAuthenticated()")
     public LessonBookDTO getLessonBook(@Argument LessonBookRequest request, @AuthenticationPrincipal User user) {
-        if (user == null) {
-            throw new SecurityException("Authentication is required to fetch a lesson book.");
-        }
         return lessonBookService.fetchLessonBook(request, user.getId());
     }
 }

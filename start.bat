@@ -2,12 +2,18 @@
 setlocal enabledelayedexpansion
 
 set "DO_CLEANUP=false"
+set "DO_CPU=false"
+set "DO_GPU=false"
 
 :arg_loop
-if "%~1"=="" goto :args_done
+if "%~1"=="" goto :main_logic
 if /i "%~1"=="-remove" set "DO_CLEANUP=true"
-:args_done
+if /i "%~1"=="-cpu" set "DO_CPU=true"
+if /i "%~1"=="-gpu" set "DO_GPU=true"
+shift
+goto :arg_loop
 
+:main_logic
 if "%DO_CLEANUP%" == "true" (
     call :DockerStartup
     call :DockerHardCleanup
@@ -68,8 +74,11 @@ goto :eof
     echo *        Removing Docker Container(s)        *
     echo **********************************************
     echo.
-
-    docker-compose down
+    if "%DO_GPU%" == "true" (
+        docker-compose -f docker-compose.gpu.yml down
+    ) else (
+        docker-compose -f docker-compose.cpu.yml down
+    )
     echo Closing any existing DockerWindow...
     taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
     exit /b 0
@@ -81,8 +90,13 @@ goto :eof
     echo **********************************************
     echo.
 
-    docker-compose down -v
+    if "%DO_GPU%" == "true" (
+            docker-compose -f docker-compose.gpu.yml down -v
+        ) else (
+            docker-compose -f docker-compose.cpu.yml down -v
+        )
     docker builder prune -f
+
     echo Closing any existing DockerWindow...
     taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
     exit /b 0
@@ -94,7 +108,11 @@ echo.
     echo **********************************************
     echo.
 
-    start "DockerWindow" cmd /k "docker-compose up --build --force-recreate"
+    if "%DO_GPU%" == "true" (
+        start "DockerWindow" cmd /k "docker-compose -f docker-compose.gpu.yml up --build -d"
+    ) else (
+        start "DockerWindow" cmd /k "docker-compose -f docker-compose.cpu.yml up --build -d"
+    )
     exit /b 0
 
 :end

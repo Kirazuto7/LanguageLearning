@@ -29,7 +29,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "settings_id")
     private Settings settings;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("id ASC")
     @Builder.Default
     private List<LessonBook> lessonBookList = new ArrayList<>();
 

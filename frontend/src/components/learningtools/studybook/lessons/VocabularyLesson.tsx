@@ -18,7 +18,7 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
     const { speak, cancel } = useTextToSpeech();
 
-    const isJapanese = lesson.vocabularies.length > 0 && lesson.vocabularies[0].language.toLowerCase() === 'japanese';
+    const isJapanese = settings?.language.toLowerCase() === 'japanese';
 
     const handleSpeak = (text: string) => {
         if (settings?.language) {

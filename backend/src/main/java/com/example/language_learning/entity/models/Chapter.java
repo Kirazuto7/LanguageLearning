@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 
 @Entity
@@ -22,8 +23,9 @@ public class Chapter {
     private String title;
     private String nativeTitle;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "chapter")
-    @OrderColumn(name = "page_order")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "chapter", fetch = FetchType.LAZY)
+    @OrderBy("pageNumber ASC")
+    @BatchSize(size = 25)
     @Builder.Default
     private List<Page> pages = new ArrayList<>();
 

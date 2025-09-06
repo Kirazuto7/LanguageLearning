@@ -16,3 +16,7 @@
         console.error("Failed to send log to server:", err);
     });
  };
+
+ export const toString = (object: any) => {
+    return JSON.stringify(object, null, 2);
+ }

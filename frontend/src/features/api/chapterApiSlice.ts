@@ -2,184 +2,65 @@ import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
 import {ChapterDTO, ChapterGenerationRequest, ProgressUpdateDTO, LessonBookRequest } from "../../types/dto";
 import { lessonBookApiSlice } from "./lessonBookApiSlice";
-import { createSubscription } from "./subscriptionClient";
-import {logToServer} from "../../utils/loggingService";
+import { logToServer, toString } from "../../utils/loggingService";
+import { subscribe } from "../clients/wsClient";
+import { chapterGenerationProgressQuery } from "../gqlQueries/queryExports";
+import { chapterFragment } from "../gqlQueries/queryFragments";
+
 
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({
         // Query to fetch a Chapter by id
-        getChapter: builder.query<ChapterDTO, number>({
+        getChapter: builder.query<ChapterDTO, string>({
             query:(id) => ({
                 body: gql`
+                    ${chapterFragment}
                     query GetChapter($id: ID!) {
                         getChapterById(id: $id) {
-                            id
-                            chapterNumber
-                            title
-                            nativeTitle
-                            pages {
-                                id
-                                pageNumber
-                                lesson {
-                                    id
-                                    type
-                                    title
-                                    ... on VocabularyLesson {
-                                        vocabularies {
-                                            id
-                                            nativeWord
-                                            englishTranslation
-                                            phoneticSpelling
-                                        }
-                                    }
-                                    ... on GrammarLesson {
-                                        grammarConcept
-                                        nativeGrammarConcept
-                                        explanation
-                                        exampleSentences {
-                                            id
-                                            text
-                                            translation
-                                        }
-                                    }
-                                    ... on ConjugationLesson {
-                                        conjugationRuleName
-                                        explanation
-                                        conjugatedWords {
-                                            id
-                                            infinitive
-                                            conjugatedForm
-                                            exampleSentence
-                                            sentenceTranslation
-                                        }
-                                    }
-                                    ... on PracticeLesson {
-                                        instructions
-                                        questions {
-                                            id
-                                            questionType
-                                            questionText
-                                            answerChoices
-                                            answer
-                                        }
-                                    }
-                                    ... on ReadingComprehensionLesson {
-                                        story
-                                        questions {
-                                            id
-                                            questionText
-                                            questionType
-                                            answerChoices
-                                            answer
-                                        }
-                                    }
-                                }
-                            }
+                            ...ChapterFragment
                         }
                     }
                 `,
                 variables: { id },
             }),
             transformResponse: (response: { getChapterById: ChapterDTO }) => response.getChapterById,
-            providesTags: (result) => (result ? [{ type: 'Chapter', id: String(result.id) }] : []),
+            providesTags: (result) => (result ? [{ type: 'Chapter', id: result.id }] : []),
         }),
 
-        // Query endpoint to handle the real-time progress subscription for a new chapter generation
-        chapterGenerationProgress: builder.query<ProgressUpdateDTO, string>({
-            query: () => ({
-                body: `query { __typename }`,
-            }),
-            async onCacheEntryAdded(
-                taskId,
-                { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
-            ) {
-                try {
-                    await cacheDataLoaded;
-
-                    const subscription = createSubscription<ProgressUpdateDTO>({
-                        query: gql`
-                            subscription ChapterGenerationProgress($taskId: ID!) {
-                                chapterGenerationProgress(taskId: $taskId) {
-                                    taskId
-                                    progress
-                                    message
-                                    chapterId
-                                    data {
-                                        id
-                                        pageNumber
-                                        lesson {
-                                            id
-                                            type
-                                            title
-                                            ... on VocabularyLesson {
-                                                vocabularies {
-                                                    id
-                                                    nativeWord
-                                                    englishTranslation
-                                                    phoneticSpelling
-                                                }
-                                            }
-                                            ... on GrammarLesson {
-                                                grammarConcept
-                                                nativeGrammarConcept
-                                                explanation
-                                                exampleSentences {
-                                                    id
-                                                    text
-                                                    translation
-                                                }
-                                            }
-                                            ... on ConjugationLesson {
-                                                conjugationRuleName
-                                                explanation
-                                                conjugatedWords {
-                                                    id
-                                                    infinitive
-                                                    conjugatedForm
-                                                    exampleSentence
-                                                    sentenceTranslation
-                                                }
-                                            }
-                                            ... on PracticeLesson {
-                                                instructions
-                                                questions {
-                                                    id
-                                                    questionType
-                                                    questionText
-                                                    answerChoices
-                                                    answer
-                                                }
-                                            }
-                                            ... on ReadingComprehensionLesson {
-                                                story
-                                                questions {
-                                                    id
-                                                    questionText
-                                                    questionType
-                                                    answerChoices
-                                                    answer
-                                                }
-                                            }
-                                        }
-                                    }
-                                    error
-                                }
+        chapterGenerationProgress: builder.query<
+            { chapterGenerationProgress?: ProgressUpdateDTO },
+            { taskId: string }
+        >({
+            queryFn: () => ({ data: { chapterGenerationProgress: undefined } }),
+            async onCacheEntryAdded({ taskId }, { updateCachedData, cacheEntryRemoved, cacheDataLoaded }) {
+                await cacheDataLoaded;
+                let unsubscribe: () => void;
+                const wsClosedPromise = new Promise<void>(resolve => {
+                    unsubscribe = subscribe<{ chapterGenerationProgress: ProgressUpdateDTO; }>(
+                        chapterGenerationProgressQuery,
+                        { taskId },
+                        (progressData) => {
+                            updateCachedData((draft) => {
+                                logToServer('info', "Incoming Data:", toString(progressData));
+                                Object.assign(draft, progressData);
+                            });
+                            if (progressData.chapterGenerationProgress?.progress === 100 || progressData.chapterGenerationProgress?.error) {
+                                resolve();
                             }
-                        `,
-                        variables: { taskId },
-                        transformResponse: (response: any) => response.data?.chapterGenerationProgress,
-                    });
-
-                    for await (const data of subscription) {
-                        if (data) {
-                            updateCachedData(() => data);
+                        },
+                        (err) => {
+                            logToServer('error', "WS error", { error: err });
+                            resolve();
+                        },
+                        () => {
+                            logToServer('info', "WS complete", null);
+                            resolve();
                         }
-                    }
-                }
-                catch (error) {
-                    logToServer('error', 'Subscription failed:', { error });
-                    console.error('Subscription failed:', error);
-                }
+                    );
+                });
+
+                await Promise.race([cacheEntryRemoved, wsClosedPromise]);
+                unsubscribe!();
             }
         }),
 
@@ -213,7 +94,9 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                         })
                     );
                 }
-                catch {}
+                catch (err) {
+                    logToServer('error', "Failed to start chapter generation:", { error: err });
+                }
             }
         }),
 

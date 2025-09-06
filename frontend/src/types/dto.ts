@@ -17,7 +17,7 @@ export interface SettingsDTO {
 }
 
 export interface LessonBookDTO {
-    id: number;
+    id: string;
     bookTitle: string;
     difficulty: string;
     language: string;
@@ -25,7 +25,7 @@ export interface LessonBookDTO {
 }
 
 export interface ChapterDTO {
-    id: number;
+    id: string;
     title: string;
     nativeTitle: string;
     chapterNumber: number;
@@ -33,19 +33,19 @@ export interface ChapterDTO {
 }
 
 export interface PageDTO {
-    id: number;
+    id: string;
     pageNumber: number;
     lesson: AnyLessonDTO;
 }
 
 export interface LessonDTO {
-    id: number;
+    id: string;
     title: string;
     type: 'VOCABULARY' | 'GRAMMAR' | 'CONJUGATION' | 'PRACTICE' | 'READING_COMPREHENSION';
 }
 
 export interface WordDTO {
-    id: number;
+    id: string;
     englishTranslation: string;
     language: string;
     nativeWord: string;
@@ -54,7 +54,7 @@ export interface WordDTO {
 }
 
 export interface SentenceDTO {
-    id: number;
+    id: string;
     text: string;
     translation: string;
 }
@@ -73,7 +73,7 @@ export interface GrammarLessonDTO extends LessonDTO {
 }
 
 export interface QuestionDTO {
-    id: number;
+    id: string;
     questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;
     answerChoices?: string[];
@@ -88,7 +88,7 @@ export interface ConjugationLessonDTO extends LessonDTO {
 }
 
 export interface ConjugationExampleDTO {
-    id: number;
+    id: string;
     infinitive: string;
     conjugatedForm: string;
     exampleSentence: string;
@@ -140,7 +140,7 @@ export interface AuthenticationResponse {
 export interface PracticeLessonCheckRequest {
     language: string;
     difficulty: string;
-    questionId: number;
+    questionId: string;
     userSentence: string;
 }
 

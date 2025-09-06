@@ -23,8 +23,8 @@ public class LessonBook {
     private String difficulty;
     private String language;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonBook")
-    @OrderColumn(name = "chapter_order")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonBook", fetch = FetchType.LAZY)
+    @OrderBy("chapterNumber ASC")
     @Builder.Default
     private List<Chapter> chapters = new ArrayList<>();
 

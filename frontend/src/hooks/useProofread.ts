@@ -3,7 +3,7 @@ import {useSettingsManager} from "./useSettingsManager";
 import {PracticeLessonCheckResponse} from "../types/dto";
 
 type ProofreadHookRequest = {
-    questionId: number;
+    questionId: string;
     userSentence: string;
 }
 

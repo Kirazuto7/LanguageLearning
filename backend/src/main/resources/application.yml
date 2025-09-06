@@ -12,7 +12,11 @@ spring:
     driver-class-name: org.postgresql.Driver
   mvc:
     async:
-      request-timeout: 90000
+      request-timeout: -1
+  graphql:
+    path: /graphql
+    websocket:
+      path: /graphql
   ai:
     # Disable auto-configuration to allow for full manual bean definition.
     model:
@@ -48,6 +52,10 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
+    # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.
+    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
+    org.springframework.graphql: DEBUG
+    org.springframework.web.socket: DEBUG
     #org.springframework.boot.actuate.health: WARN
 
 management:
@@ -62,7 +70,6 @@ application:
       secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
       expiration: 86400000
     public-paths:
-      - "/api/users/health"
       - "/api/users/register"
       - "/api/users/login"
       - "/api/users/logout"

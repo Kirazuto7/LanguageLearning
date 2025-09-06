@@ -2,6 +2,7 @@ package com.example.language_learning.entity.models;
 
 import com.example.language_learning.entity.lessons.Lesson;
 import com.example.language_learning.enums.QuestionType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.Builder.Default;
@@ -30,14 +31,15 @@ public class Question {
     private String answer;
 
     // For multiple choice, a list of options as answer choices. Otherwise, null.
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "question_answer_choices", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "answer_choice", columnDefinition = "TEXT")
     @Default
     private List<String> answerChoices = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id", nullable = false)
+    @JsonBackReference("lesson-questions")
     private Lesson lesson;
 
     public Question(QuestionType questionType, String questionText) {

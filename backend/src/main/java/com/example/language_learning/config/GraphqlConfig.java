@@ -1,8 +1,12 @@
 package com.example.language_learning.config;
 
+import com.example.language_learning.dto.lessons.LessonDTO;
+import com.example.language_learning.entity.lessons.*;
+import com.example.language_learning.enums.LessonType;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.scalars.ExtendedScalars;
+import graphql.schema.TypeResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.DataFetcherExceptionResolver;
@@ -17,7 +21,23 @@ public class GraphqlConfig {
 
     @Bean
     public RuntimeWiringConfigurer runtimeWiringConfigurer() {
-        return wiringBuilder -> wiringBuilder.scalar(ExtendedScalars.Json);
+        TypeResolver lessonTypeResolver = env -> {
+            Object javaObject = env.getObject();
+            if (javaObject instanceof LessonDTO lessonDTO) {
+                return switch (lessonDTO.type()) {
+                    case LessonType.VOCABULARY -> env.getSchema().getObjectType("VocabularyLesson");
+                    case LessonType.GRAMMAR -> env.getSchema().getObjectType("GrammarLesson");
+                    case LessonType.PRACTICE -> env.getSchema().getObjectType("PracticeLesson");
+                    case LessonType.CONJUGATION -> env.getSchema().getObjectType("ConjugationLesson");
+                    case LessonType.READING_COMPREHENSION -> env.getSchema().getObjectType("ReadingComprehensionLesson");
+                    default -> null;
+                };
+            }
+            return null;
+        };
+        return wiringBuilder -> wiringBuilder
+                                .scalar(ExtendedScalars.Json)
+                                .type("Lesson", typeWiring -> typeWiring.typeResolver(lessonTypeResolver));
     }
 
     @Bean

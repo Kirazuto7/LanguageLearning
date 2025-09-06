@@ -9,6 +9,7 @@ import com.example.language_learning.repositories.UserRepository;
 import com.example.language_learning.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class LessonBookService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public List<LessonBookDTO> fetchUserLessonBooks(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return lessonBookRepository.findAllByUser(user).stream()
@@ -40,6 +42,7 @@ public class LessonBookService {
                 .toList();
     }
 
+    @Transactional
     public LessonBookDTO fetchLessonBook(LessonBookRequest request, Long userId) {
         LessonBook book = findOrCreateBook(request.language(), request.difficulty(), userId);
         return dtoMapper.toDto(book);

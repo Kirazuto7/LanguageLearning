@@ -26,13 +26,13 @@ public class GrammarLesson extends Lesson {
     @Column(columnDefinition = "TEXT")
     private String explanation;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinTable(
             name = "grammar_lesson_sentences",
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "sentence_id")
     )
-    @OrderColumn(name = "sentence_order")
+    @OrderBy("id ASC")
     @Builder.Default
     private List<Sentence> exampleSentences = new ArrayList<>();
 

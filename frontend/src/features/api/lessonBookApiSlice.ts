@@ -1,5 +1,6 @@
 import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
+import { lessonBookFragment } from "../gqlQueries/queryFragments";
 import { LessonBookDTO, LessonBookRequest } from "../../types/dto";
 
 export const lessonBookApiSlice = graphqlApiSlice.injectEndpoints({
@@ -30,76 +31,10 @@ export const lessonBookApiSlice = graphqlApiSlice.injectEndpoints({
         getLessonBook: builder.query<LessonBookDTO, LessonBookRequest>({
             query: (request) => ({
                 body: gql`
+                    ${lessonBookFragment}
                     query GetLessonBook($request: LessonBookRequestInput!) {
                         getLessonBook(request: $request) {
-                            id
-                            bookTitle
-                            difficulty
-                            language
-                            chapters {
-                                id
-                                title
-                                nativeTitle
-                                chapterNumber
-                                pages {
-                                    id
-                                    pageNumber
-                                    lesson {
-                                        id
-                                        type
-                                        title
-                                        ... on VocabularyLesson {
-                                            vocabularies {
-                                                id
-                                                nativeWord
-                                                englishTranslation
-                                                phoneticSpelling
-                                            }
-                                        }
-                                        ... on GrammarLesson {
-                                            grammarConcept
-                                            nativeGrammarConcept
-                                            explanation
-                                            exampleSentences {
-                                                id
-                                                text
-                                                translation
-                                            }
-                                        }
-                                        ... on ConjugationLesson {
-                                            conjugationRuleName
-                                            explanation
-                                            conjugatedWords {
-                                                id
-                                                infinitive
-                                                conjugatedForm
-                                                exampleSentence
-                                                sentenceTranslation
-                                            }
-                                        }
-                                        ... on PracticeLesson {
-                                            instructions
-                                            questions {
-                                                id
-                                                questionType
-                                                questionText
-                                                answerChoices
-                                                answer
-                                            }
-                                        }
-                                        ... on ReadingComprehensionLesson {
-                                            story
-                                            questions {
-                                                id
-                                                questionText
-                                                questionType
-                                                answerChoices
-                                                answer
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            ...LessonBookFragment
                         }
                     }
                 `,

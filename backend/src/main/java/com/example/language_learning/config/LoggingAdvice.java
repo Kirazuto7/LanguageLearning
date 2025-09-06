@@ -12,7 +12,7 @@ public class LoggingAdvice {
     @ModelAttribute
     public void logRequest(HttpServletRequest request) {
         String path = request.getRequestURI();
-        if (path.startsWith("/actuator")) {
+        if (path.startsWith("/actuator") || path.equals("/api/users/health")) {
             return;
         }
 

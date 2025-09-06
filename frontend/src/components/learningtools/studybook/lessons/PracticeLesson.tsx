@@ -21,9 +21,9 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
     const { speak, cancel } = useTextToSpeech();
     const isJapanese = settings?.language.toLowerCase() === "japanese";
 
-    const [answers, setAnswers] = useState<{[key: number]: string}>({});
-    const [feedback, setFeedback] = useState<{[key: number]: PracticeLessonCheckResponse | null}>({});
-    const [checkingQuestionId, setCheckingQuestionId] = useState<number | null>(null);
+    const [answers, setAnswers] = useState<{[key: string]: string}>({});
+    const [feedback, setFeedback] = useState<{[key: string]: PracticeLessonCheckResponse | null}>({});
+    const [checkingQuestionId, setCheckingQuestionId] = useState<string | null>(null);
 
     const { checkSentence, isLoading: isProofreading } = useProofread();
 
@@ -33,24 +33,24 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
         const initialAnswers = lesson.questions.reduce((curr, question) => {
             curr[question.id] = '';
             return curr;
-        }, {} as { [key: number]: string});
+        }, {} as { [key: string]: string});
 
         const initialFeedback = lesson.questions.reduce((curr, question) => {
             curr[question.id] = null;
             return curr;
-        }, {} as { [key: number]: PracticeLessonCheckResponse | null});
+        }, {} as { [key: string]: PracticeLessonCheckResponse | null});
 
         setAnswers(initialAnswers);
         setFeedback(initialFeedback);
     }, [lesson.questions]);
 
-    const handleAnswerChange = (questionId: number, value: string) => {
+    const handleAnswerChange = (questionId: string, value: string) => {
         const filteredValue = filterInputByLanguage(value, settings?.language);
         setAnswers(prevAnswers => ({...prevAnswers, [questionId]: filteredValue}));
         setFeedback(prev => ({...prev, [questionId]: null})); // Clear feedback when new input is received
     };
 
-    const onSubmit = async (questionId: number) => {
+    const onSubmit = async (questionId: string) => {
        setCheckingQuestionId(questionId);
        try {
             const result = await checkSentence({questionId, userSentence: answers[questionId]});

@@ -20,7 +20,8 @@ public class PracticeLesson extends Lesson {
     @Column(columnDefinition = "TEXT")
     private String instructions; // e.g., "Use the vocabulary you've learned to complete the exercises."
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("id ASC")
     @Builder.Default
     private List<Question> questions = new ArrayList<>();
 

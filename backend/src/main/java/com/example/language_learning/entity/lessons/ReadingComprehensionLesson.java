@@ -19,8 +19,8 @@ public class ReadingComprehensionLesson extends Lesson {
     @Column(columnDefinition = "TEXT")
     private String story;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderColumn(name = "question_order")
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("id ASC")
     @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
