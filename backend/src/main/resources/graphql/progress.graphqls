@@ -5,4 +5,5 @@ type ProgressUpdate {
     chapterId: Int
     data: Page # send each page as it is generated
     error: String
+    isComplete: Boolean!
 }

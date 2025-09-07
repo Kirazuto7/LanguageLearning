@@ -4,10 +4,10 @@ const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
 const wsClient: Client = createClient({
     url: `${wsProtocol}//${window.location.host}/graphql`,
-    webSocketImpl: WebSocket,
 });
 
 export function subscribe<T = any>(
+    //client: Client,
     query: string,
     variables: Record<string, any>,
     onNext: (data: T) => void,

@@ -6,6 +6,7 @@ import { logToServer, toString } from "../../utils/loggingService";
 import { subscribe } from "../clients/wsClient";
 import { chapterGenerationProgressQuery } from "../gqlQueries/queryExports";
 import { chapterFragment } from "../gqlQueries/queryFragments";
+import {Client, createClient} from "graphql-ws";
 
 
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
@@ -29,38 +30,76 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
 
         chapterGenerationProgress: builder.query<
             { chapterGenerationProgress?: ProgressUpdateDTO },
-            { taskId: string }
+            { taskId: string, language: string, difficulty: string }
         >({
             queryFn: () => ({ data: { chapterGenerationProgress: undefined } }),
-            async onCacheEntryAdded({ taskId }, { updateCachedData, cacheEntryRemoved, cacheDataLoaded }) {
-                await cacheDataLoaded;
-                let unsubscribe: () => void;
-                const wsClosedPromise = new Promise<void>(resolve => {
-                    unsubscribe = subscribe<{ chapterGenerationProgress: ProgressUpdateDTO; }>(
-                        chapterGenerationProgressQuery,
-                        { taskId },
-                        (progressData) => {
-                            updateCachedData((draft) => {
-                                logToServer('info', "Incoming Data:", toString(progressData));
-                                Object.assign(draft, progressData);
-                            });
-                            if (progressData.chapterGenerationProgress?.progress === 100 || progressData.chapterGenerationProgress?.error) {
-                                resolve();
-                            }
-                        },
-                        (err) => {
-                            logToServer('error', "WS error", { error: err });
-                            resolve();
-                        },
-                        () => {
-                            logToServer('info', "WS complete", null);
-                            resolve();
-                        }
-                    );
-                });
+            serializeQueryArgs: ({ queryArgs }) => {
+                //return queryArgs.taskId;
+                return `${queryArgs.taskId}-${queryArgs.language}-${queryArgs.difficulty}`;
+            },
+            keepUnusedDataFor: 3600,
+            async onCacheEntryAdded({ taskId, language, difficulty }, { updateCachedData, cacheEntryRemoved, cacheDataLoaded, dispatch }) {
+                try {
+                    await cacheDataLoaded;
 
-                await Promise.race([cacheEntryRemoved, wsClosedPromise]);
-                unsubscribe!();
+                    let unsubscribe: (() => void) | undefined;
+                    /*const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+                    const wsClient: Client = createClient({
+                        url: `${wsProtocol}//${window.location.host}/graphql`,
+                    });*/
+
+                    // Create a promise that resolves when the WebSocket stream is completed or errors out.
+                    const wsCompletionPromise = new Promise<void>((resolve) => {
+                        unsubscribe = subscribe<{ chapterGenerationProgress: ProgressUpdateDTO; }>(
+                            chapterGenerationProgressQuery,
+                            { taskId },
+                            (progressData) => { // onNext
+                                updateCachedData((draft) => {
+                                    Object.assign(draft, progressData);
+                                });
+
+                                // If the update contains a new page, patch the main lesson book cache
+                                const update = progressData.chapterGenerationProgress;
+                                logToServer('info', "Incoming Data:", toString(progressData));
+                                if (update && update.data && update.chapterId) {
+                                    const newPage = update.data;
+                                    dispatch(
+                                        lessonBookApiSlice.util.updateQueryData(
+                                            'getLessonBook',
+                                            { language, difficulty },
+                                            (draft) => {
+                                                const chapter = draft.chapters.find(c => c.id === String(update.chapterId));
+                                                if (chapter && !chapter.pages.some(p => p.id === newPage.id)) {
+                                                    chapter.pages.push(newPage);
+                                                }
+                                            }
+                                        )
+                                    );
+                                }
+                            },
+                            (err) => { // onError
+                                logToServer('error', "WS error", { error: err, taskId });
+                                resolve(); // Resolve the promise on error to trigger cleanup
+                            },
+                            () => { // onComplete
+                                logToServer('info', "WS stream from server has completed.", { taskId });
+                                resolve(); // Resolve the promise on completion to trigger cleanup
+                            }
+                        );
+                    });
+
+                    // Wait for either the WebSocket to complete or the cache entry to be removed.
+                    await Promise.race([cacheEntryRemoved, wsCompletionPromise]);
+
+                    // Unsubscribe from the WebSocket connection if it's still active.
+                    if (unsubscribe) {
+                        unsubscribe();
+                        logToServer('info', "Unsubscribed due to cache entry removal or WS completion.", { taskId });
+                    }
+                } catch {
+                    // The cache entry was removed before the subscription could be established.
+                    // This is a normal part of the lifecycle and requires no action.
+                }
             }
         }),
 

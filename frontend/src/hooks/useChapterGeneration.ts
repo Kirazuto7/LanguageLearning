@@ -1,8 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAppDispatch } from "../app/hooks";
 import { useGenerateChapterMutation, useChapterGenerationProgressQuery } from "../features/api/chapterApiSlice";
-import { lessonBookApiSlice } from "../features/api/lessonBookApiSlice";
-import { logToServer, toString } from "../utils/loggingService";
 
 /**
  * A custom hook to manage the entire chapter generation workflow.
@@ -14,58 +11,50 @@ import { logToServer, toString } from "../utils/loggingService";
  */
 export const useChapterGeneration = (language: string, difficulty: string) => {
     const [taskId, setTaskId] = useState<string | null>(null);
-    const dispatch = useAppDispatch();
     const [generateChapter, { isLoading: isMutationLoading, error: mutationError }] = useGenerateChapterMutation();
-    const { data: progressData, error: subscriptionError } = useChapterGenerationProgressQuery(
-        { taskId: taskId! },
+    const { data: progressData, error: subscriptionError, isFetching: isQueryFetching } = useChapterGenerationProgressQuery(
+        { taskId: taskId!, language, difficulty },
         { skip: !taskId }
     );
 
-    // Listens for new pages retrieved from the subscription and patches the main book cache.
+    // Reset state on component unmount
     useEffect(() => {
-        const update = progressData?.chapterGenerationProgress;
-        //console.log("Update: \n" + toString(update) + "\n");
-        //logToServer('info', "Progress Data:", toString(progressData));
-        if (update && update.data && update.chapterId) {
-            const newPage  = update.data;
-            const chapterIdToUpdate = update.chapterId;
-            //console.log("Page Data: " + JSON.stringify(update.data, null, 2) + "\n");
+        return () => {
+            setTaskId(null);
+        };
+    }, []);
 
-            dispatch(
-                lessonBookApiSlice.util.updateQueryData(
-                    'getLessonBook',
-                    { language, difficulty },
-                    (draft) => {
-                        const chapter = draft.chapters.find(c => c.id === String(chapterIdToUpdate));
-                        if (chapter) {
-                            // Check to avoid adding a page that is already in the 'pages' array
-                            if (!chapter.pages.some(p => p.id === newPage.id)) {
-                                chapter.pages.push(newPage);
-                            }
-                        }
-                    }
-                )
-            );
+    // Reset the taskId when the language or difficulty changes
+    useEffect(() => {
+        if (taskId) return; // Don't reset in the middle of generation
+        setTaskId(null);
+    }, [language, difficulty, taskId]);
+
+    // Triggered when the generation is complete or fails to reset
+    useEffect(() => {
+        const progress = progressData?.chapterGenerationProgress;
+        if (progress?.isComplete || progress?.error) {
+            setTaskId(null);
         }
-
-    }, [progressData, dispatch, language, difficulty]);
-
+    }, [progressData?.chapterGenerationProgress?.isComplete, progressData?.chapterGenerationProgress?.error]);
 
     const startGeneration = useCallback(async (topic: string) => {
-        setTaskId(null);
+        if (taskId) return; // Prevent starting a new generation if one is active
+
         try {
             const { taskId: newTaskId } = await generateChapter({ language, difficulty, topic }).unwrap();
             setTaskId(newTaskId); // Trigger the subscription query to begin
         }
         catch (err) {
             console.error('Failed to start chapter generation:', err);
+            setTaskId(null);
         }
-    }, [generateChapter, language, difficulty]);
+    }, [generateChapter, language, difficulty, taskId]);
 
     const progress = progressData?.chapterGenerationProgress;
     const progressValue = progress?.progress;
     const progressMessage = progress?.message;
-    const isComplete = progress?.progress === 100;
+    const isComplete = progress?.isComplete && !isQueryFetching;
     const generationError = mutationError || subscriptionError || progress?.error;
 
     const isLoading = isMutationLoading || (!!taskId && !isComplete && !generationError);

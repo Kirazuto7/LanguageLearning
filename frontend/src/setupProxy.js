@@ -13,12 +13,7 @@ module.exports = function(app) {
         createProxyMiddleware({
             target: 'http://backend:8080',
             changeOrigin: true,
-            pathRewrite: (path, req) => '/api' + path,
-            /*on: {
-                proxyReq: (proxyReq, req, res) => {
-                    console.log(`[HPM] /api proxy: original: ${req.originalUrl} -> rewritten: ${proxyReq.path}`);
-                }
-            }*/
+            pathRewrite: (path, req) => "/api" + path,
         })
     );
 
@@ -28,7 +23,12 @@ module.exports = function(app) {
             target: 'http://backend:8080',
             changeOrigin: true,
             ws: true,
-            pathRewrite: (path, req) => '/graphql',
+            pathRewrite: (path, req) => req.originalUrl,
+            on: {
+                proxyReqWs: (proxyReq, req, socket, options, head) => {
+                    console.log(`[HPM] WS proxy ${req.url} -> ${JSON.stringify(options.target, null, 2)}${proxyReq.path}`);
+                }
+            },
         })
     );
 };

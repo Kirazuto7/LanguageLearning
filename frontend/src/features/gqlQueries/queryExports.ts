@@ -8,6 +8,7 @@ export const chapterGenerationProgressQuery = gql`
             progress
             message
             chapterId
+            isComplete
             data {
                 ...PageFragment
             }

@@ -157,4 +157,5 @@ export interface ProgressUpdateDTO {
     chapterId?: number;
     data?: PageDTO;
     error?: string;
+    isComplete: boolean;
 }

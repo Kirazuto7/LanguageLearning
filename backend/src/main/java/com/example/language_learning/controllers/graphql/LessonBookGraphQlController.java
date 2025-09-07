@@ -21,12 +21,12 @@ public class LessonBookGraphQlController {
     @QueryMapping
     @PreAuthorize("isAuthenticated()")
     public List<LessonBookDTO> getLessonBooks(@AuthenticationPrincipal User user) {
-        return lessonBookService.fetchUserLessonBooks(user.getId());
+        return lessonBookService.fetchUserLessonBooks(user);
     }
 
     @QueryMapping
     @PreAuthorize("isAuthenticated()")
     public LessonBookDTO getLessonBook(@Argument LessonBookRequest request, @AuthenticationPrincipal User user) {
-        return lessonBookService.fetchLessonBook(request, user.getId());
+        return lessonBookService.findOrCreateBookDTO(request, user);
     }
 }

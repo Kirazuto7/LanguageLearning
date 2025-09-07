@@ -37,7 +37,9 @@ public class WebSocketConfig {
     @Bean
     public WebSocketHandler webSocketHandler(WebGraphQlHandler graphQlHandler) {
         HttpMessageConverter<?> converter = new MappingJackson2HttpMessageConverter();
-        return new GraphQlWebSocketHandler(graphQlHandler, converter, Duration.ofMinutes(15), Duration.ofMinutes(15));
+        Duration initTimeout = Duration.ofMinutes(1);
+        Duration keepAliveDuration = Duration.ofSeconds(30);
+        return new GraphQlWebSocketHandler(graphQlHandler, converter, initTimeout, keepAliveDuration);
 
     }
 
@@ -49,7 +51,6 @@ public class WebSocketConfig {
             @Override
             @NonNull
             public Mono<Object> handleConnectionInitialization(@NonNull WebSocketSessionInfo sessionInfo, @NonNull Map<String, Object> payload) {
-                //log.info("SUBSCRIPTION COOKIE: {}", sessionInfo.getHeaders().getFirst(HttpHeaders.COOKIE));
                 String authorizationHeader = (String) payload.get(HttpHeaders.AUTHORIZATION);
                 Optional<String> token = jwtService.extractJwtFromCookieHeader(authorizationHeader);
                 if (token.isEmpty()) {

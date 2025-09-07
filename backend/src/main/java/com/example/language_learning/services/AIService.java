@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
 import org.springframework.core.io.Resource;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
  * <p>
  * This service acts as a bridge between the application's standard (blocking) MVC architecture
  * and the AI client's reactive (non-blocking) nature. It returns reactive types (Mono)
- * so that calling services (like {@link ChapterService}) can create a sequential, multi-stage
+ * so that calling services (like {@link ChapterGenerationService}) can create a sequential, multi-stage
  * generation pipeline. Each step can build on the context of the previous one, leading to
  * more coherent and contextually relevant content.
  */

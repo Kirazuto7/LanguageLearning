@@ -23,7 +23,7 @@ export function useStudyBookManager(): StudyBookManagerResult {
     // 2. Fetch the book data
     const { data: bookData, isLoading: isFetchingBook, error: fetchBookError } = useGetLessonBookQuery(
         { language, difficulty },
-        { skip: !user || !settings});
+        { skip: !user || !settings || !language || !difficulty });
 
     return {
         title: bookData?.bookTitle || 'Book Title',
