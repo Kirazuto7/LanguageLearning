@@ -2,6 +2,7 @@ package com.example.language_learning.services;
 
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
+import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.entity.models.Chapter;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.mapper.DtoMapper;
@@ -18,6 +19,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +39,8 @@ public class ChapterGenerationService {
     private final ChapterService chapterService;
     private final PageService pageService;
     private final DtoMapper dtoMapper;
+    private final Duration shortDelay = Duration.ofSeconds(2);
+    private final Duration longDelay = Duration.ofSeconds(4);
 
     /**
      * A public record to act as a clean data carrier for the various DTOs
@@ -107,10 +111,14 @@ public class ChapterGenerationService {
     private void generateChapterAsync(ChapterGenerationRequest request, String taskId, Long chapterId, int startingPageNumber) {
         // Asynchronously start the page(s) generation for the chapter generation subscription
         Mono.fromRunnable(() -> progressService.sendUpdate(taskId, 10, "Generating chapter outline..."))
+             .then(Mono.delay(shortDelay)) // Give UI enough time to render the initial message
              .then(Mono.fromCallable(() -> chapterService.getChapter(chapterId)
                         .orElseThrow(() -> new RuntimeException("Chapter not found for async generation: " + chapterId))
              ))
-            .flatMap(chapter -> generateAndStreamPages(request, taskId, chapter, startingPageNumber))
+            .flatMap(chapter -> generateAndStreamPages(request, taskId, chapter, startingPageNumber)
+                                            .then(Mono.delay(shortDelay))
+                                            .then(Mono.fromRunnable(() -> progressService.sendCompletion(taskId, "Chapter generation complete.")))
+            )
             .doOnError(error -> {
                 log.error("Chapter generation failed for task {}: {}", taskId, error.getMessage(), error);
                 progressService.sendError(taskId, error);
@@ -125,69 +133,59 @@ public class ChapterGenerationService {
         AtomicInteger pageCounter = new AtomicInteger(startingPageNumber);
 
         return generateVocabularyLessonPage(request, taskId, chapter, metadata, pageCounter)
-                .flatMap(context -> generateGrammarOrConjugationLessonPage(request, taskId, chapter, pageCounter, context))
-                .flatMap(context -> generatePracticeLessonPage(request, taskId, chapter, pageCounter, context))
-                .flatMap(context -> generateReadingLessonPage(request, taskId, chapter, pageCounter, context))
+                .flatMap(vocabContext -> generateGrammarOrConjugationLessonPage(request, taskId, chapter, pageCounter, vocabContext))
+                .flatMap(grammarContext -> generatePracticeLessonPage(request, taskId, chapter, pageCounter, grammarContext))
+                .flatMap(practiceContext -> generateReadingLessonPage(request, taskId, chapter, pageCounter, practiceContext))
                 .then();
     }
 
+    private Mono<LessonDTO> generateAndPersist(
+        String taskId, Chapter chapter, AtomicInteger pageCounter, int startProgress, String startMessage,
+        Mono<? extends Lesson> lessonGenerationMono,
+        int endProgress, String endMessage
+    ) {
+        return Mono.fromRunnable(() -> progressService.sendUpdate(taskId, startProgress, startMessage))
+                .then(Mono.delay(shortDelay)) // Introduce a delay to give the UI time to render the "start" message & progress
+                .then(lessonGenerationMono)
+                .flatMap(lesson ->
+                    Mono.fromCallable(() -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
+                ).flatMap(page ->
+                    Mono.fromRunnable(() -> progressService.sendPageUpdate(taskId, endProgress, endMessage, chapter.getId(), dtoMapper.toDto(page)))
+                            .thenReturn(page)
+                )
+                .delayElement(longDelay)
+                .map(page -> dtoMapper.toDto(page.getLesson()));
+    }
+
     private Mono<GenerationContext> generateVocabularyLessonPage(ChapterGenerationRequest request, String taskId, Chapter chapter, ChapterMetadataDTO metadata, AtomicInteger pageCounter) {
-        return Mono.fromRunnable(() -> progressService.sendUpdate(taskId, 25, "Creating vocabulary lesson..."))
-                //.subscribeOn(Schedulers.boundedElastic())
-                .then(Mono.defer(() -> vocabularyLessonService.generateLesson(request, metadata)))
-                .flatMap(lesson -> Mono.fromCallable(() ->
-                    pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement())
-                ))
-                .doOnNext(page -> progressService.sendPageUpdate(taskId, 40, "Vocabulary created.", chapter.getId(), dtoMapper.toDto(page)))
-                .map(page -> {
-                    VocabularyLessonDTO vocabDto = (VocabularyLessonDTO) dtoMapper.toDto(page.getLesson());
-                    return new GenerationContext(vocabDto, null);
-                });
+        Mono<VocabularyLesson> lessonMono = Mono.defer(() -> vocabularyLessonService.generateLesson(request, metadata));
+        return generateAndPersist(taskId, chapter, pageCounter, 25, "Creating vocabulary lesson...", lessonMono, 40, "Vocabulary created.")
+                .map(lessonDto -> new GenerationContext((VocabularyLessonDTO) lessonDto, null));
     }
 
     private Mono<GenerationContext> generateGrammarOrConjugationLessonPage(ChapterGenerationRequest request, String taskId, Chapter chapter, AtomicInteger pageCounter, GenerationContext context) {
         // Generate Grammar Lesson for odd chapters and Conjugation Lesson for even chapters
         if (chapter.getChapterNumber() % 2 != 0) {
-            return Mono.fromRunnable(() ->  progressService.sendUpdate(taskId, 50, "Explaining grammar rules..."))
-                    //.subscribeOn(Schedulers.boundedElastic())
-                    .then(Mono.defer(() -> grammarLessonService.generateLesson(request, context.vocabulary())))
-                    .flatMap(lesson -> Mono.fromCallable(() ->
-                        pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement())
-                    ))
-                    .doOnNext(page -> progressService.sendPageUpdate(taskId, 60, "Grammar rules explained.", chapter.getId(), dtoMapper.toDto(page)))
-                    .map(page -> new GenerationContext(context.vocabulary(), dtoMapper.toDto(page.getLesson())));
+            Mono<GrammarLesson> lessonMono = Mono.defer(() -> grammarLessonService.generateLesson(request, context.vocabulary()));
+            return generateAndPersist(taskId, chapter, pageCounter, 50, "Explaining grammar rules...", lessonMono, 60, "Grammar rules explained.")
+                    .map(lessonDto -> new GenerationContext(context.vocabulary(), lessonDto));
         }
         else {
-            return Mono.fromRunnable(() -> progressService.sendUpdate(taskId, 50, "Explaining conjugation rules..."))
-                    //.subscribeOn(Schedulers.boundedElastic())
-                    .then(Mono.defer(() -> conjugationLessonService.generateLesson(request, context.vocabulary())))
-                    .flatMap(lesson -> Mono.fromCallable(() ->
-                        pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement())
-                    ))
-                    .doOnNext(page -> progressService.sendPageUpdate(taskId, 60, "Conjugation rules explained.", chapter.getId(), dtoMapper.toDto(page)))
-                    .map(page -> new GenerationContext(context.vocabulary(), dtoMapper.toDto(page.getLesson())));
+            Mono<ConjugationLesson> lessonMono = Mono.defer(() -> conjugationLessonService.generateLesson(request, context.vocabulary()));
+            return generateAndPersist(taskId, chapter, pageCounter, 50, "Explaining conjugation rules...", lessonMono, 60, "Conjugation rules explained.")
+                    .map(lessonDto -> new GenerationContext(context.vocabulary(), lessonDto));
         }
     }
 
     private Mono<GenerationContext> generatePracticeLessonPage(ChapterGenerationRequest request, String taskId, Chapter chapter, AtomicInteger pageCounter, GenerationContext context) {
-        return Mono.fromRunnable(() -> progressService.sendUpdate(taskId, 75, "Building practice exercises..."))
-                //.subscribeOn(Schedulers.boundedElastic())
-                .then(Mono.defer(() -> practiceLessonService.generateLesson(request, context.vocabulary(), context.specificLesson())))
-                .flatMap(lesson -> Mono.fromCallable(() ->
-                    pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement())
-                ))
-                .doOnNext(page -> progressService.sendPageUpdate(taskId, 85, "Practice exercises built.", chapter.getId(), dtoMapper.toDto(page)))
+        Mono<PracticeLesson> lessonMono = Mono.defer(() -> practiceLessonService.generateLesson(request, context.vocabulary(), context.specificLesson()));
+        return generateAndPersist(taskId, chapter, pageCounter, 75, "Building practice exercises...", lessonMono, 85, "Practice exercises built.")
                 .thenReturn(context);
     }
 
     private Mono<GenerationContext> generateReadingLessonPage(ChapterGenerationRequest request, String taskId, Chapter chapter, AtomicInteger pageCounter, GenerationContext context) {
-        return Mono.fromRunnable(() -> progressService.sendUpdate(taskId, 90, "Writing reading passage..."))
-                //.subscribeOn(Schedulers.boundedElastic())
-                .then(Mono.defer(() -> readingComprehensionLessonService.generateLesson(request, context.vocabulary(), context.specificLesson())))
-                .flatMap(lesson -> Mono.fromCallable(() ->
-                    pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement())
-                ))
-                .doOnNext(page -> progressService.sendPageUpdate(taskId, 100, "Chapter generation complete.", chapter.getId(), dtoMapper.toDto(page)))
+        Mono<ReadingComprehensionLesson> lessonMono = Mono.defer(() -> readingComprehensionLessonService.generateLesson(request, context.vocabulary(), context.specificLesson()));
+        return generateAndPersist(taskId, chapter, pageCounter, 90, "Writing reading passage...", lessonMono, 100, "Chapter generation complete.")
                 .thenReturn(context);
     }
 

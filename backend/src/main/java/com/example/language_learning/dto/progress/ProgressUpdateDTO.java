@@ -11,11 +11,15 @@ public record ProgressUpdateDTO(String taskId, int progress, String message, Lon
         return new ProgressUpdateDTO(taskId, progress, message, null, null, null, false);
     }
 
-    public static ProgressUpdateDTO forPage(String taskId, int progress, String message, Long chapterId, PageDTO data, boolean isComplete) {
+    public static ProgressUpdateDTO forPage(String taskId, int progress, String message, Long chapterId, PageDTO data) {
         if (chapterId == null) {
             throw new IllegalArgumentException("The chapterId cannot be null for a page update.");
         }
-        return new ProgressUpdateDTO(taskId, progress, message, chapterId, data, null, isComplete);
+        return new ProgressUpdateDTO(taskId, progress, message, chapterId, data, null, false);
+    }
+
+    public static ProgressUpdateDTO forCompletion(String taskId, String message) {
+        return new ProgressUpdateDTO(taskId, 100, message, null, null, null, true);
     }
 
     public static ProgressUpdateDTO forError (String taskId, String errorMessage) {

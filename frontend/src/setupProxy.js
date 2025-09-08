@@ -26,7 +26,9 @@ module.exports = function(app) {
             pathRewrite: (path, req) => req.originalUrl,
             on: {
                 proxyReqWs: (proxyReq, req, socket, options, head) => {
-                    console.log(`[HPM] WS proxy ${req.url} -> ${JSON.stringify(options.target, null, 2)}${proxyReq.path}`);
+                    const originalUrl = req.originalUrl;
+                    const rewrittenPath = proxyReq.path;
+                    console.log(`[HPM] WS Proxying: [Original: ${originalUrl}] [Current: ${req.url}] -> [Rewritten: ${rewrittenPath}]`);
                 }
             },
         })

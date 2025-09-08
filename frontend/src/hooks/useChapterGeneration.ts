@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { useGenerateChapterMutation, useChapterGenerationProgressQuery } from "../features/api/chapterApiSlice";
+import { useGenerateChapterMutation } from "../features/api/chapterApiSlice";
+import { useAppSelector } from "../app/hooks";
+import { selectProgressByTaskId } from "../features/state/progressSlice";
 
 /**
  * A custom hook to manage the entire chapter generation workflow.
- * It orchestrates the mutation to start the generation, the optimistic UI update,
- * and the real-time cache updates from the progress subscription.
+ * It orchestrates the mutation to start the generation and reads real-time
+ * progress from the global state, which is managed by the subscriptionManager.
  *
  * @param language The language of the book being updated.
  * @param difficulty The difficulty of the book being updated.
@@ -12,10 +14,8 @@ import { useGenerateChapterMutation, useChapterGenerationProgressQuery } from ".
 export const useChapterGeneration = (language: string, difficulty: string) => {
     const [taskId, setTaskId] = useState<string | null>(null);
     const [generateChapter, { isLoading: isMutationLoading, error: mutationError }] = useGenerateChapterMutation();
-    const { data: progressData, error: subscriptionError, isFetching: isQueryFetching } = useChapterGenerationProgressQuery(
-        { taskId: taskId!, language, difficulty },
-        { skip: !taskId }
-    );
+
+    const progress = useAppSelector(state => taskId ? selectProgressByTaskId(state, taskId) : undefined);
 
     // Reset state on component unmount
     useEffect(() => {
@@ -24,46 +24,49 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
         };
     }, []);
 
-    // Reset the taskId when the language or difficulty changes
+    // If the language/difficulty changes, the lesson book instance changes as well.
+    // Therefore, we reset the state for tracking the new context.
     useEffect(() => {
-        if (taskId) return; // Don't reset in the middle of generation
+        if (taskId) return;
         setTaskId(null);
-    }, [language, difficulty, taskId]);
+    }, [language, difficulty]);
 
-    // Triggered when the generation is complete or fails to reset
+    // Triggered when the generation is complete or fails to reset after a short delay
+    // to allow the UI to show the final "complete" or "error" state.
     useEffect(() => {
-        const progress = progressData?.chapterGenerationProgress;
         if (progress?.isComplete || progress?.error) {
-            setTaskId(null);
+            const timer = setTimeout(() => {
+                setTaskId(null);
+            }, 5000);
+            return () => {
+                clearTimeout(timer);
+            }
         }
-    }, [progressData?.chapterGenerationProgress?.isComplete, progressData?.chapterGenerationProgress?.error]);
+    }, [progress?.isComplete, progress?.error]);
 
     const startGeneration = useCallback(async (topic: string) => {
-        if (taskId) return; // Prevent starting a new generation if one is active
+        if (isMutationLoading || taskId) return; // Prevent starting a new generation if one is active
 
         try {
             const { taskId: newTaskId } = await generateChapter({ language, difficulty, topic }).unwrap();
-            setTaskId(newTaskId); // Trigger the subscription query to begin
+            // By setting the taskId, we trigger the subscription query to begin tracking progress updates.
+            setTaskId(newTaskId);
         }
         catch (err) {
             console.error('Failed to start chapter generation:', err);
             setTaskId(null);
         }
-    }, [generateChapter, language, difficulty, taskId]);
+    }, [generateChapter, language, difficulty, taskId, isMutationLoading]);
 
-    const progress = progressData?.chapterGenerationProgress;
-    const progressValue = progress?.progress;
-    const progressMessage = progress?.message;
-    const isComplete = progress?.isComplete && !isQueryFetching;
-    const generationError = mutationError || subscriptionError || progress?.error;
-
+    const isComplete = !!progress?.isComplete;
+    const generationError = mutationError || progress?.error;
     const isLoading = isMutationLoading || (!!taskId && !isComplete && !generationError);
 
     return {
         startGeneration,
         isLoading,
-        progress: progressValue ?? 0,
-        message: progressMessage ?? (isLoading ? 'Initiating...' : ''),
+        progress: progress?.progress ?? 0,
+        message: progress?.message ?? (isLoading ? 'Initiating...' : ''),
         error: generationError ? 'Chapter generation failed.' : null,
         isComplete: isComplete,
     };

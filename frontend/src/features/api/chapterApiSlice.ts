@@ -1,13 +1,13 @@
 import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
-import {ChapterDTO, ChapterGenerationRequest, ProgressUpdateDTO, LessonBookRequest } from "../../types/dto";
+import { ChapterDTO, ChapterGenerationRequest, ProgressUpdateDTO } from "../../types/dto";
 import { lessonBookApiSlice } from "./lessonBookApiSlice";
-import { logToServer, toString } from "../../utils/loggingService";
-import { subscribe } from "../clients/wsClient";
-import { chapterGenerationProgressQuery } from "../gqlQueries/queryExports";
+import {logToServer, toString} from "../../utils/loggingService";
 import { chapterFragment } from "../gqlQueries/queryFragments";
-import {Client, createClient} from "graphql-ws";
-
+import { startSubscription } from "../../managers/subscriptionManager";
+import { chapterGenerationProgressQuery } from "../gqlQueries/queryExports";
+import { clearProgress, updateProgress } from "../state/progressSlice";
+import { store } from "../../app/store";
 
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({
@@ -26,81 +26,6 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
             }),
             transformResponse: (response: { getChapterById: ChapterDTO }) => response.getChapterById,
             providesTags: (result) => (result ? [{ type: 'Chapter', id: result.id }] : []),
-        }),
-
-        chapterGenerationProgress: builder.query<
-            { chapterGenerationProgress?: ProgressUpdateDTO },
-            { taskId: string, language: string, difficulty: string }
-        >({
-            queryFn: () => ({ data: { chapterGenerationProgress: undefined } }),
-            serializeQueryArgs: ({ queryArgs }) => {
-                //return queryArgs.taskId;
-                return `${queryArgs.taskId}-${queryArgs.language}-${queryArgs.difficulty}`;
-            },
-            keepUnusedDataFor: 3600,
-            async onCacheEntryAdded({ taskId, language, difficulty }, { updateCachedData, cacheEntryRemoved, cacheDataLoaded, dispatch }) {
-                try {
-                    await cacheDataLoaded;
-
-                    let unsubscribe: (() => void) | undefined;
-                    /*const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-                    const wsClient: Client = createClient({
-                        url: `${wsProtocol}//${window.location.host}/graphql`,
-                    });*/
-
-                    // Create a promise that resolves when the WebSocket stream is completed or errors out.
-                    const wsCompletionPromise = new Promise<void>((resolve) => {
-                        unsubscribe = subscribe<{ chapterGenerationProgress: ProgressUpdateDTO; }>(
-                            chapterGenerationProgressQuery,
-                            { taskId },
-                            (progressData) => { // onNext
-                                updateCachedData((draft) => {
-                                    Object.assign(draft, progressData);
-                                });
-
-                                // If the update contains a new page, patch the main lesson book cache
-                                const update = progressData.chapterGenerationProgress;
-                                logToServer('info', "Incoming Data:", toString(progressData));
-                                if (update && update.data && update.chapterId) {
-                                    const newPage = update.data;
-                                    dispatch(
-                                        lessonBookApiSlice.util.updateQueryData(
-                                            'getLessonBook',
-                                            { language, difficulty },
-                                            (draft) => {
-                                                const chapter = draft.chapters.find(c => c.id === String(update.chapterId));
-                                                if (chapter && !chapter.pages.some(p => p.id === newPage.id)) {
-                                                    chapter.pages.push(newPage);
-                                                }
-                                            }
-                                        )
-                                    );
-                                }
-                            },
-                            (err) => { // onError
-                                logToServer('error', "WS error", { error: err, taskId });
-                                resolve(); // Resolve the promise on error to trigger cleanup
-                            },
-                            () => { // onComplete
-                                logToServer('info', "WS stream from server has completed.", { taskId });
-                                resolve(); // Resolve the promise on completion to trigger cleanup
-                            }
-                        );
-                    });
-
-                    // Wait for either the WebSocket to complete or the cache entry to be removed.
-                    await Promise.race([cacheEntryRemoved, wsCompletionPromise]);
-
-                    // Unsubscribe from the WebSocket connection if it's still active.
-                    if (unsubscribe) {
-                        unsubscribe();
-                        logToServer('info', "Unsubscribed due to cache entry removal or WS completion.", { taskId });
-                    }
-                } catch {
-                    // The cache entry was removed before the subscription could be established.
-                    // This is a normal part of the lifecycle and requires no action.
-                }
-            }
         }),
 
         // Mutation to generate a new Chapter
@@ -125,13 +50,55 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
             transformResponse: (response: { generateChapter: { taskId: string; chapter: ChapterDTO } }) => response.generateChapter,
             async onQueryStarted({ language, difficulty }, { dispatch, queryFulfilled }) {
                 try {
-                    const { data: { chapter: newChapter } } = await queryFulfilled;
+                    const { data } = await queryFulfilled;
+                    const { taskId, chapter: newChapter } = data;
 
+                    // 1. Adds the chapter shell to the lesson book
                     dispatch(
                         lessonBookApiSlice.util.updateQueryData('getLessonBook', { language, difficulty }, (draft) => {
                             draft.chapters.push(newChapter);
                         })
                     );
+
+                    // 2. Start the subscription to get progress & page updates for the chapter
+                    startSubscription<{ chapterGenerationProgress: ProgressUpdateDTO; }>(taskId, {
+                        query: chapterGenerationProgressQuery,
+                        variables: { taskId },
+                        onNext: (progressData) => {
+                            const update = progressData.chapterGenerationProgress;
+                            if (!update) return;
+
+                            logToServer("info", "Subscription Update:", toString(update));
+
+                            // Dispatch the raw progress update to the progress slice
+                            store.dispatch(updateProgress(update));
+
+                            // If the update contains a new page, patch the main lesson book cache
+                            if (update.data && update.chapterId) {
+                                const newPage = update.data;
+                                store.dispatch(
+                                    lessonBookApiSlice.util.updateQueryData(
+                                        "getLessonBook",
+                                        { language, difficulty },
+                                        (draft) => {
+                                            const chapter = draft.chapters.find((c) => c.id === String(update.chapterId));
+                                            if (chapter && !chapter.pages.some((p) => p.id === newPage.id)) {
+                                                chapter.pages.push(newPage);
+                                            }
+                                        }
+                                    )
+                                );
+                            }
+                        },
+                        onComplete: () => {
+                            // Force a refetch to ensure data integrity between the client & server.
+                            dispatch(lessonBookApiSlice.endpoints.getLessonBook.initiate({ language, difficulty }, { forceRefetch: true }));
+
+                            setTimeout(() => {
+                                store.dispatch(clearProgress(taskId));
+                            }, 5000);
+                        }
+                    });
                 }
                 catch (err) {
                     logToServer('error', "Failed to start chapter generation:", { error: err });
@@ -142,4 +109,4 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
     })
 });
 
-export const { useGetChapterQuery, useLazyGetChapterQuery, useLazyChapterGenerationProgressQuery, useChapterGenerationProgressQuery, useGenerateChapterMutation } = chapterApiSlice;
+export const { useGetChapterQuery, useLazyGetChapterQuery, useGenerateChapterMutation } = chapterApiSlice;

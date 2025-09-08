@@ -1,7 +1,8 @@
 import { createApi, BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import { ClientError, GraphQLClient } from "graphql-request";
-import { logOut } from "../state/authSlice";
-import {logToServer} from "../../utils/loggingService";
+import { userApiSlice } from "./userApiSlice";
+import { logToServer } from "../../utils/loggingService";
+import { toString } from "../../utils/loggingService";
 
 
 const client = new GraphQLClient(`${window.location.origin}/graphql`, {
@@ -26,17 +27,14 @@ const graphqlBaseQuery: BaseQueryFn<
                 if (isAuthError) {
                     console.error('GraphQL Authentication Error, logging out client.');
                     logToServer('error', 'GraphQL Authentication Error, logging out client.', { error });
-                    dispatch(logOut());
+                    dispatch(userApiSlice.endpoints.logout.initiate());
                     window.location.replace('/login');
                 }
 
+                logToServer('error', "Client error occurred.", toString(error.response.errors));
                 return { error: { status: error.response.status, data: error.response.errors } };
             }
-            if (error instanceof Error) {
-                logToServer('error', error.message, { error });
-                return { error: { status: 'FETCH_ERROR', data: error.message } };
-            }
-            return { error: { status: 500, data: 'An unknown error occurred' } };
+            return { error: { status: 500, data: 'An unknown server error occurred' } };
         }
     };
 

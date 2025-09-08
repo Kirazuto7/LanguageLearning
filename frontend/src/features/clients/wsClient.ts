@@ -1,13 +1,10 @@
 import { createClient, Client } from "graphql-ws";
 
-const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-
 const wsClient: Client = createClient({
-    url: `${wsProtocol}//${window.location.host}/graphql`,
+    url: `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/graphql`,
 });
 
 export function subscribe<T = any>(
-    //client: Client,
     query: string,
     variables: Record<string, any>,
     onNext: (data: T) => void,

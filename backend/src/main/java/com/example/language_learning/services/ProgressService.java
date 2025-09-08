@@ -33,8 +33,13 @@ public class ProgressService {
 
     public void sendPageUpdate(String taskId, int progress, String message, Long chapterId, PageDTO page) {
         log.info("Progress Update for Task {}: {}% - {} (Page: {})", taskId, progress, message, page.lesson().type());
-        boolean isComplete = (progress >= 100);
-        ProgressUpdateDTO update = ProgressUpdateDTO.forPage(taskId, progress, message, chapterId, page, isComplete);
+        ProgressUpdateDTO update = ProgressUpdateDTO.forPage(taskId, progress, message, chapterId, page);
+        send(taskId, update);
+    }
+
+    public void sendCompletion(String taskId, String message) {
+        log.info("Completion for Task {}: {}", taskId, message);
+        ProgressUpdateDTO update = ProgressUpdateDTO.forCompletion(taskId, message);
         send(taskId, update);
     }
 
@@ -46,6 +51,15 @@ public class ProgressService {
     }
 
     private void send(String taskId, ProgressUpdateDTO update) {
+        // Enhanced logging to debug the exact content of every update being sent.
+        if (update.data() != null) {
+            log.info("SENDING update for task {} with page data of type {}", taskId, update.data().lesson().type());
+        } else if (update.error() != null) {
+            log.info("SENDING error update for task {}: {}", taskId, update.error());
+        } else {
+            log.info("SENDING message-only update for task {}: {}", taskId, update.message());
+        }
+
         Sinks.Many<ProgressUpdateDTO> sink = taskSinks.computeIfAbsent(taskId, k -> {
             log.info("Creating new sink for task {} on first update.", taskId);
             return Sinks.many().multicast().onBackpressureBuffer();
@@ -54,6 +68,7 @@ public class ProgressService {
         sink.tryEmitNext(update);
 
         if (update.isComplete() || update.error() != null) {
+            log.info("SENDING COMPLETE signal for task {}", taskId);
             sink.tryEmitComplete();
         }
     }

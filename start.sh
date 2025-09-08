@@ -65,6 +65,7 @@ docker_hard_cleanup() {
     echo ""
     docker-compose -f "$COMPOSE_FILE" down -v
     docker builder prune -f
+    docker volume prune -f
 }
 
 # --- Main Logic ---

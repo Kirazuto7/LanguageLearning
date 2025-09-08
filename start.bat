@@ -96,6 +96,7 @@ goto :eof
             docker-compose -f docker-compose.cpu.yml down -v
         )
     docker builder prune -f
+    docker volume prune -f
 
     echo Closing any existing DockerWindow...
     taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul

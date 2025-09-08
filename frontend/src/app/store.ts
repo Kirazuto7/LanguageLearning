@@ -3,6 +3,7 @@ import { apiSlice } from "../features/api/apiSlice";
 import authReducer from "../features/state/authSlice";
 import settingsReducer from "../features/state/settingsSlice";
 import {graphqlApiSlice} from "../features/api/graphqlApiSlice";
+import progressReducer from "../features/state/progressSlice";
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         [graphqlApiSlice.reducerPath]: graphqlApiSlice.reducer,
         auth: authReducer,
         settings: settingsReducer,
+        progress: progressReducer
     },
     /*//////////////////////////////////////////////////////////////*/
     /* Adding the api middleware enables rtk-query features such as */

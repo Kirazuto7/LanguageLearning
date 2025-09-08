@@ -34,6 +34,7 @@ public class ApiDtoMapper {
         return VocabularyLessonDTO.builder()
                 .title(response.title())
                 .vocabularies(response.vocabularies().stream()
+                        .filter(aiVocabulary -> aiVocabulary.nativeWord() != null && !aiVocabulary.nativeWord().isBlank())
                         .map(aiVocabulary -> {
                             return WordDTO.builder()
                                     .nativeWord(aiVocabulary.nativeWord())
@@ -50,6 +51,7 @@ public class ApiDtoMapper {
         return VocabularyLessonDTO.builder()
                 .title(response.title())
                 .vocabularies(response.vocabularies().stream()
+                        .filter(aiVocabulary -> aiVocabulary.englishTranslation() != null && !aiVocabulary.englishTranslation().isBlank())
                         .map(furiganaService::verifyAndMapJapaneseWord)
                         .collect(Collectors.toList()))
                 .build();
@@ -62,6 +64,7 @@ public class ApiDtoMapper {
                 .nativeGrammarConcept(response.nativeGrammarConcept())
                 .explanation(response.explanation())
                 .exampleSentences(response.exampleSentences().stream()
+                        .filter(aiSentence -> aiSentence.text() != null && !aiSentence.text().isBlank())
                         .map(aiSentence -> {
                             String text = "japanese".equalsIgnoreCase(language)
                                     ? furiganaService.addFurigana(aiSentence.text())
@@ -80,6 +83,7 @@ public class ApiDtoMapper {
                 .explanation(response.explanation())
                 .conjugationRuleName(response.conjugationRuleName())
                 .conjugatedWords(response.conjugatedWords().stream()
+                        .filter(aiConjugationWord -> aiConjugationWord.conjugatedForm() != null && !aiConjugationWord.conjugatedForm().isBlank())
                         .map(aiConjugationExample -> {
                             if("japanese".equalsIgnoreCase(language)) {
                                 String infinitive = furiganaService.addFurigana(aiConjugationExample.infinitive());
@@ -107,6 +111,7 @@ public class ApiDtoMapper {
                 .title(response.title())
                 .instructions(response.instructions())
                 .questions(response.questions().stream()
+                        .filter(aiQuestion -> aiQuestion.questionText() != null && !aiQuestion.questionText().isBlank())
                         .map(aiQuestion -> {
                             String questionText = "japanese".equalsIgnoreCase(language)
                                     ? furiganaService.addFurigana(aiQuestion.questionText())
@@ -129,6 +134,7 @@ public class ApiDtoMapper {
                 .title(response.title())
                 .story(story)
                 .questions(response.questions().stream()
+                        .filter(aiQuestion -> aiQuestion.questionText() != null && !aiQuestion.questionText().isBlank())
                         .map(aiQuestion -> {
                             return QuestionDTO.builder()
                                     .questionText(aiQuestion.questionText())

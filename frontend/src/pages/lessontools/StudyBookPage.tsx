@@ -18,7 +18,6 @@ const StudyBookPage: React.FC<StudyBookPageProps> = () => {
         progress,
         message,
         error: generationError,
-        isComplete
     } = useChapterGeneration(language, difficulty);
 
     // For Practice Lesson Callback Function
