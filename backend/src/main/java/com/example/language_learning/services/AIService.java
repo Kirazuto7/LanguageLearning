@@ -3,8 +3,7 @@ package com.example.language_learning.services;
 import com.example.language_learning.config.AIConfig;
 import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.WordDTO;
-import com.example.language_learning.dto.models.ChapterMetadataDTO;
+import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.mapper.ApiDtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
@@ -254,7 +253,25 @@ public class AIService {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(WordDTO::nativeWord)
+                .map(wordDto -> {
+                    WordDetailsDTO details = wordDto.details();
+                    if (details == null) return "";
+
+                    return switch (details) {
+                        case JapaneseWordDetailsDTO japaneseWord -> {
+                            if (japaneseWord.kanji() != null && !japaneseWord.kanji().isBlank()) {
+                                yield japaneseWord.kanji();
+                            }
+                            if (japaneseWord.hiragana() != null && !japaneseWord.hiragana().isBlank()) {
+                                yield japaneseWord.hiragana();
+                            }
+                            yield japaneseWord.katakana();
+                        }
+                        case GenericWordDetailsDTO genericWord -> genericWord.nativeWord();
+                        default -> "";
+                    };
+                })
+                .filter(s -> s != null && !s.isBlank())
                 .collect(Collectors.joining(", "));
     }
 

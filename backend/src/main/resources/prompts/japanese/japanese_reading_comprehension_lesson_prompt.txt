@@ -32,7 +32,7 @@ Your entire response MUST be a single, valid JSON object with the following fiel
 Each question object in the "questions" array must have:
 - "questionText": The comprehension question in English.
 - "answer": The correct answer in English.
-- "options": An array of 3 strings (the correct answer and 2 distractors).
+- "options": An array of 3 strings in English (the correct answer and 2 distractors).
 
 ---
 

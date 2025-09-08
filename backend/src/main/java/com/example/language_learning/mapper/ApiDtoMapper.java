@@ -35,15 +35,8 @@ public class ApiDtoMapper {
                 .title(response.title())
                 .vocabularies(response.vocabularies().stream()
                         .filter(aiVocabulary -> aiVocabulary.nativeWord() != null && !aiVocabulary.nativeWord().isBlank())
-                        .map(aiVocabulary -> {
-                            return WordDTO.builder()
-                                    .nativeWord(aiVocabulary.nativeWord())
-                                    .language(language)
-                                    .phoneticSpelling(aiVocabulary.phoneticSpelling())
-                                    .englishTranslation(aiVocabulary.englishTranslation())
-                                    .details(aiVocabulary.details())
-                                    .build();
-                        }).collect(Collectors.toList()))
+                        .map(aiVocab -> toWordDTO(aiVocab, language))
+                        .collect(Collectors.toList()))
                 .build();
     }
 
@@ -52,7 +45,7 @@ public class ApiDtoMapper {
                 .title(response.title())
                 .vocabularies(response.vocabularies().stream()
                         .filter(aiVocabulary -> aiVocabulary.englishTranslation() != null && !aiVocabulary.englishTranslation().isBlank())
-                        .map(furiganaService::verifyAndMapJapaneseWord)
+                        .map(aiVocab -> toWordDTO(aiVocab, language))
                         .collect(Collectors.toList()))
                 .build();
     }
@@ -154,4 +147,25 @@ public class ApiDtoMapper {
                 .build();
     }
 
+    private WordDTO toWordDTO(AIVocabularyItemDTO aiVocab, String language) {
+        GenericWordDetailsDTO details = GenericWordDetailsDTO.builder()
+                .nativeWord(aiVocab.nativeWord())
+                .phoneticSpelling(aiVocab.phoneticSpelling())
+                .build();
+        return WordDTO.builder()
+                .language(language)
+                .englishTranslation(aiVocab.englishTranslation())
+                .details(details)
+                .build();
+    }
+
+    private WordDTO toWordDTO(AIJapaneseVocabularyItemDTO aiVocab, String language) {
+        JapaneseWordDetailsDTO details = furiganaService.verifyAndMapJapaneseWord(aiVocab);
+
+        return WordDTO.builder()
+                .language(language)
+                .englishTranslation(aiVocab.englishTranslation())
+                .details(details)
+                .build();
+    }
 }

@@ -286,11 +286,29 @@ public class DtoMapper {
         if (dto == null) return null;
         return Word.builder()
                 .englishTranslation(dto.englishTranslation())
-                .nativeWord(dto.nativeWord())
                 .language(dto.language())
-                .phoneticSpelling(dto.phoneticSpelling())
-                .details(dto.details())
+                .details(toEntity(dto.details()))
                 .build();
+    }
+
+    private WordDetails toEntity(WordDetailsDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return switch (dto) {
+            case GenericWordDetailsDTO genericDto -> GenericWordDetails.builder()
+                        .nativeWord(genericDto.nativeWord())
+                        .phoneticSpelling(genericDto.phoneticSpelling())
+                        .build();
+            case JapaneseWordDetailsDTO japaneseDto -> JapaneseWordDetails.builder()
+                        .kanji(japaneseDto.kanji())
+                        .hiragana(japaneseDto.hiragana())
+                        .katakana(japaneseDto.katakana())
+                        .romaji(japaneseDto.romaji())
+                        .build();
+            default -> throw new IllegalArgumentException("Unknown WordDetailsDTO type: " + dto.getClass().getSimpleName());
+        };
     }
 
     public WordDTO toDto(Word entity) {
@@ -299,10 +317,26 @@ public class DtoMapper {
                 .id(entity.getId())
                 .englishTranslation(entity.getEnglishTranslation())
                 .language(entity.getLanguage())
-                .nativeWord(entity.getNativeWord())
-                .phoneticSpelling(entity.getPhoneticSpelling())
-                .details(entity.getDetails())
+                .details(toDto(entity.getDetails()))
                 .build();
+    }
+
+    public WordDetailsDTO toDto(WordDetails entity) {
+        if (entity == null) return null;
+
+        return switch (entity) {
+            case GenericWordDetails genericWord -> GenericWordDetailsDTO.builder()
+                    .nativeWord(genericWord.nativeWord())
+                    .phoneticSpelling(genericWord.phoneticSpelling())
+                    .build();
+            case JapaneseWordDetails japaneseWord -> JapaneseWordDetailsDTO.builder()
+                    .kanji(japaneseWord.kanji())
+                    .hiragana(japaneseWord.hiragana())
+                    .katakana(japaneseWord.katakana())
+                    .romaji(japaneseWord.romaji())
+                    .build();
+            default -> throw new IllegalArgumentException("Unknown WordDetails entity type: " + entity.getClass().getSimpleName());
+        };
     }
 
     /* ********************* */

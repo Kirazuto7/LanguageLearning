@@ -1,10 +1,22 @@
 scalar JSON
 
+union WordDetails = GenericWordDetails | JapaneseWordDetails
+
+type GenericWordDetails {
+    nativeWord: String!
+    phoneticSpelling: String!
+}
+
+type JapaneseWordDetails {
+    kanji: String
+    hiragana: String!
+    katakana: String
+    romaji: String
+}
+
 type Word {
     id: ID!
     englishTranslation: String!
     language: String!
-    nativeWord: String!
-    phoneticSpelling: String!
-    details: JSON
+    details: WordDetails!
 }
