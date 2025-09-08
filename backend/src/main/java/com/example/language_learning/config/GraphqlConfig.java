@@ -1,6 +1,7 @@
 package com.example.language_learning.config;
 
 import com.example.language_learning.dto.lessons.LessonDTO;
+import com.example.language_learning.dto.models.PageDTO;
 import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.enums.LessonType;
 import graphql.ErrorType;
@@ -35,9 +36,19 @@ public class GraphqlConfig {
             }
             return null;
         };
+
+        TypeResolver progressDataTypeResolver = env -> {
+            Object javaObject = env.getObject();
+            if (javaObject instanceof PageDTO) {
+                return env.getSchema().getObjectType("Page");
+            }
+            return null;
+        };
+
         return wiringBuilder -> wiringBuilder
-                                .scalar(ExtendedScalars.Json)
-                                .type("Lesson", typeWiring -> typeWiring.typeResolver(lessonTypeResolver));
+            .scalar(ExtendedScalars.Json)
+            .type("Lesson", typeWiring -> typeWiring.typeResolver(lessonTypeResolver))
+            .type("ProgressData", typeWiring -> typeWiring.typeResolver(progressDataTypeResolver));
     }
 
     @Bean

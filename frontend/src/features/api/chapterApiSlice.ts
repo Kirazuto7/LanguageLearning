@@ -1,6 +1,6 @@
 import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
-import { ChapterDTO, ChapterGenerationRequest, ProgressUpdateDTO } from "../../types/dto";
+import {ChapterDTO, ChapterGenerationRequest, isPageDTO, ProgressUpdateDTO} from "../../types/dto";
 import { lessonBookApiSlice } from "./lessonBookApiSlice";
 import {logToServer, toString} from "../../utils/loggingService";
 import { chapterFragment } from "../gqlQueries/queryFragments";
@@ -74,16 +74,17 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                             store.dispatch(updateProgress(update));
 
                             // If the update contains a new page, patch the main lesson book cache
-                            if (update.data && update.chapterId) {
+                            if (update.data && isPageDTO(update.data)) {
                                 const newPage = update.data;
                                 store.dispatch(
                                     lessonBookApiSlice.util.updateQueryData(
                                         "getLessonBook",
                                         { language, difficulty },
                                         (draft) => {
-                                            const chapter = draft.chapters.find((c) => c.id === String(update.chapterId));
+                                            const chapter = draft.chapters.find((c) => c.id === newChapter.id);
                                             if (chapter && !chapter.pages.some((p) => p.id === newPage.id)) {
                                                 chapter.pages.push(newPage);
+                                                chapter.pages.sort((a, b) => a.pageNumber - b.pageNumber);
                                             }
                                         }
                                     )

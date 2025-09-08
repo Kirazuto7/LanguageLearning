@@ -31,9 +31,9 @@ public class ProgressService {
         send(taskId, update);
     }
 
-    public void sendPageUpdate(String taskId, int progress, String message, Long chapterId, PageDTO page) {
-        log.info("Progress Update for Task {}: {}% - {} (Page: {})", taskId, progress, message, page.lesson().type());
-        ProgressUpdateDTO update = ProgressUpdateDTO.forPage(taskId, progress, message, chapterId, page);
+    public void sendPageUpdate(String taskId, int progress, String message, PageDTO page) {
+        log.info("Progress Update for Task {}: {}% - {} (Data: {})", taskId, progress, message, page.lesson().type());
+        ProgressUpdateDTO update = ProgressUpdateDTO.forData(taskId, progress, message, page);
         send(taskId, update);
     }
 
@@ -53,11 +53,11 @@ public class ProgressService {
     private void send(String taskId, ProgressUpdateDTO update) {
         // Enhanced logging to debug the exact content of every update being sent.
         if (update.data() != null) {
-            log.info("SENDING update for task {} with page data of type {}", taskId, update.data().lesson().type());
+            log.debug("SENDING update for task {} with data {}", taskId, update.data());
         } else if (update.error() != null) {
-            log.info("SENDING error update for task {}: {}", taskId, update.error());
+            log.debug("SENDING error update for task {}: {}", taskId, update.error());
         } else {
-            log.info("SENDING message-only update for task {}: {}", taskId, update.message());
+            log.debug("SENDING message-only update for task {}: {}", taskId, update.message());
         }
 
         Sinks.Many<ProgressUpdateDTO> sink = taskSinks.computeIfAbsent(taskId, k -> {

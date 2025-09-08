@@ -150,12 +150,17 @@ export interface PracticeLessonCheckResponse {
     feedback: string;
 }
 
+export type ProgressDataDTO = PageDTO;
+
+export function isPageDTO(data: any): boolean {
+    return data && typeof data.pageNumber === 'number' && data.lesson !== undefined;
+}
+
 export interface ProgressUpdateDTO {
     taskId: string;
     progress: number;
     message: string;
-    chapterId?: number;
-    data?: PageDTO;
+    data?: ProgressDataDTO;
     error?: string;
     isComplete: boolean;
 }

@@ -7,10 +7,12 @@ export const chapterGenerationProgressQuery = gql`
             taskId
             progress
             message
-            chapterId
             isComplete
             data {
-                ...PageFragment
+                __typename
+                ...on Page{
+                    ...PageFragment
+                }
             }
             error
         }

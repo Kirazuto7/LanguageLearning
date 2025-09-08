@@ -51,11 +51,11 @@ spring:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: INFO
     # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.
     org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
     org.springframework.graphql: DEBUG
-    org.springframework.web.socket: TRACE
+    org.springframework.web.socket: DEBUG
     #org.springframework.boot.actuate.health: WARN
 
 management:

@@ -150,7 +150,7 @@ public class ChapterGenerationService {
                 .flatMap(lesson ->
                     Mono.fromCallable(() -> pageService.createAndPersistPage(chapter, lesson, pageCounter.getAndIncrement()))
                 ).flatMap(page ->
-                    Mono.fromRunnable(() -> progressService.sendPageUpdate(taskId, endProgress, endMessage, chapter.getId(), dtoMapper.toDto(page)))
+                    Mono.fromRunnable(() -> progressService.sendPageUpdate(taskId, endProgress, endMessage, dtoMapper.toDto(page)))
                             .thenReturn(page)
                 )
                 .delayElement(longDelay)

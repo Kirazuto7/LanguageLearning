@@ -26,7 +26,6 @@ const progressSlice = createSlice({
                     progress: 0,
                     message: 'Initializing...',
                     isComplete: false,
-                    chapterId: undefined,
                     data: undefined,
                     error: undefined,
                 },
