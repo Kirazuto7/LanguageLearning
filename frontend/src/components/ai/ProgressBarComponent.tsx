@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {ProgressBar} from "react-bootstrap";
+import { ProgressBar } from "react-bootstrap";
 import styles from './progress-bar.module.scss';
 
 interface ProgressBarComponentProps {
@@ -9,6 +9,8 @@ interface ProgressBarComponentProps {
 
 const ProgressBarComponent:React.FC<ProgressBarComponentProps> = ({isLoading, progress}) => {
     const [show, setShow] = useState(false);
+    const [animatedProgress, setAnimatedProgress] = useState(0);
+
     useEffect(() => {
         let timerId: NodeJS.Timeout;
 
@@ -25,14 +27,33 @@ const ProgressBarComponent:React.FC<ProgressBarComponentProps> = ({isLoading, pr
         return () => clearTimeout(timerId);
     }, [isLoading, show]);
 
+    // Effect to smoothly animate the progress value towards the target 'progress' property
+    useEffect(() => {
+        if (show) {
+            const interval = setInterval(() => {
+                setAnimatedProgress(prev => {
+                    if (prev < progress) {
+                        return Math.min(prev + 1, progress);
+                    }
+                    clearInterval(interval);
+                    return prev;
+                })
+            }, 30);
+            return () => clearInterval(interval);
+        }
+        else {
+            setAnimatedProgress(0);
+        }
+    }, [progress, show]);
+
     if (!show) return null;
 
     return(
         <ProgressBar
             className={styles.progressBar}
-            now={progress}
+            now={animatedProgress}
             animated
-            label={`${Math.round(progress)}%`}
+            label={`${Math.round(animatedProgress)}%`}
         />
     )
 }

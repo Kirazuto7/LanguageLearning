@@ -12,8 +12,7 @@ import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
 import org.springframework.core.io.Resource;
@@ -38,9 +37,9 @@ import java.util.stream.Collectors;
  * more coherent and contextually relevant content.
  */
 @Service
+@Slf4j
 public class AIService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AIService.class);
     private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
     private final ObjectMapper objectMapper;
@@ -51,15 +50,15 @@ public class AIService {
         this.apiDtoMapper = apiDtoMapper;
         this.objectMapper = objectMapper;
         this.chatClients = chatClients;
-        logger.info("--- Verifying Injected ChatClients ---");
-        logger.info("Found {} ChatClient bean(s):", chatClients.size());
-        chatClients.keySet().forEach(key -> logger.info(" -> Bean name: '{}'", key));
-        logger.info("--------------------------------------");
+        log.info("--- Verifying Injected ChatClients ---");
+        log.info("Found {} ChatClient bean(s):", chatClients.size());
+        chatClients.keySet().forEach(key -> log.info(" -> Bean name: '{}'", key));
+        log.info("--------------------------------------");
     }
 
     /** Practice Lesson Methods **/
     public Mono<PracticeLessonCheckResponse> proofRead(String originalQuestion, String userSentence, String language, String difficulty) {
-        logger.info("Proofreading question: {}", originalQuestion);
+        log.info("Proofreading question: {}", originalQuestion);
 
         Map<String, Object> params = new HashMap<>();
         params.put("language", language);
@@ -72,7 +71,7 @@ public class AIService {
         var outputParser = new BeanOutputConverter<>(AIProofreadResponse.class);
         PromptTemplate promptTemplate = createPromptTemplate(promptResource);
         var prompt = promptTemplate.create(params);
-        logger.debug("Rendered Prompt: {}", prompt.getContents());
+        log.debug("Rendered Prompt: {}", prompt.getContents());
 
         ChatClient chatClient = selectClient(language);
 
@@ -80,13 +79,13 @@ public class AIService {
                 .user(prompt.getContents())
                 .stream().content().collectList()
                 .map(list -> String.join("", list).trim())
-                .doOnNext(rawResponse -> logger.info("Raw AI Response: {}", rawResponse))
+                .doOnNext(rawResponse -> log.info("Raw AI Response: {}", rawResponse))
                 .map(this::extractAndSanitizeJson)
-                .doOnNext(json -> logger.debug("Extracted JSON: {}", json))
+                .doOnNext(json -> log.debug("Extracted JSON: {}", json))
                 .map(outputParser::convert)
                 .map(apiDtoMapper::toPracticeLessonCheckResponse)
-                .doOnNext(mapped -> logger.info("Mapped to internal DTO: {}", mapped))
-                .doOnError(e -> logger.error("Failed to generate or parse AI response.", e));
+                .doOnNext(mapped -> log.info("Mapped to internal DTO: {}", mapped))
+                .doOnError(e -> log.error("Failed to generate or parse AI response.", e));
     }
 
     /** Chapter Generation Methods **/
@@ -219,12 +218,12 @@ public class AIService {
             Class<T_API> apiDtoClass,
             Function<T_API, T_INTERNAL> mapperFunction) {
         String componentName = apiDtoClass.getSimpleName().replace("Response", "").replace("AI", "");
-        logger.info("Generating a {} for topic: {}", componentName, params.get("topic"));
+        log.info("Generating a {} for topic: {}", componentName, params.get("topic"));
         var outputParser = new BeanOutputConverter<>(apiDtoClass);
         PromptTemplate promptTemplate = createPromptTemplate(promptResource);
 
         var prompt = promptTemplate.create(params);
-        logger.debug("Rendered Prompt for {}: {}", componentName, prompt.getContents());
+        log.debug("Rendered Prompt for {}: {}", componentName, prompt.getContents());
         String language = (String) params.get("language");
         ChatClient chatClient = selectClient(language);
 
@@ -232,13 +231,13 @@ public class AIService {
                 .user(prompt.getContents())
                 .stream().content().collectList()
                 .map(list -> String.join("", list).trim())
-                .doOnNext(rawResponse -> logger.info("Raw AI Response for {}: {}", componentName, rawResponse))
+                .doOnNext(rawResponse -> log.info("Raw AI Response for {}: {}", componentName, rawResponse))
                 .map(this::extractAndSanitizeJson)
-                .doOnNext(json -> logger.debug("Extracted JSON for {}: {}", componentName, json))
+                .doOnNext(json -> log.debug("Extracted JSON for {}: {}", componentName, json))
                 .map(outputParser::convert)
                 .map(mapperFunction)
-                .doOnNext(mapped -> logger.info("Mapped to internal DTO {}: {}", componentName, mapped))
-                .doOnError(e -> logger.error("Failed to generate or parse AI response for {}.", componentName, e));
+                .doOnNext(mapped -> log.info("Mapped to internal DTO {}: {}", componentName, mapped))
+                .doOnError(e -> log.error("Failed to generate or parse AI response for {}.", componentName, e));
     }
 
 
@@ -263,7 +262,7 @@ public class AIService {
         try {
             return new PromptTemplate(resource);
         } catch (Exception e) {
-            logger.error("Failed to create prompt template from resource: {}. Check for syntax errors like unclosed '<' or '>'.", resource.getFilename(), e);
+            log.error("Failed to create prompt template from resource: {}. Check for syntax errors like unclosed '<' or '>'.", resource.getFilename(), e);
             throw new IllegalArgumentException("Invalid prompt template: " + resource.getFilename(), e);
         }
     }
@@ -282,7 +281,7 @@ public class AIService {
             Map<String, Object> objectMap = objectMapper.readValue(extractedJson, new TypeReference<>(){});
             return objectMapper.writeValueAsString(objectMap);
         } catch (Exception e) {
-            logger.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
+            log.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
             return extractedJson;
         }
     }
@@ -294,12 +293,43 @@ public class AIService {
      */
     private String extractJson(String rawResponse) {
         int firstBrace = rawResponse.indexOf('{');
-        int lastBrace = rawResponse.lastIndexOf('}');
+        if (firstBrace == -1) {
+            log.warn("AI response did not contain a JSON object. Raw response: {}", rawResponse);
+            return "{}";
+        }
+        //int lastBrace = rawResponse.lastIndexOf('}');
+        int braceCount = 0;
+        int lastBrace = -1;
+        boolean inString = false;
 
-        if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+        for (int i = firstBrace; i < rawResponse.length(); i++) {
+            char c = rawResponse.charAt(i);
+
+            // Handle entering/exiting strings & ignoring escaped quotes
+            if (c == '"' && (i == 0 || rawResponse.charAt(i - 1) != '\\')) {
+                inString = !inString;
+            }
+
+            if (!inString) {
+                if (c == '{') {
+                    braceCount++;
+                }
+                else if (c == '}') {
+                    braceCount--;
+                }
+            }
+
+            if (braceCount == 0) {
+                lastBrace = i;
+                break;
+            }
+        }
+
+        if (lastBrace != -1) {
             return rawResponse.substring(firstBrace, lastBrace + 1);
         }
-        return rawResponse; 
+        log.warn("Could not find a balanced JSON object in the AI response. Raw response: {}", rawResponse);
+        return "{}";
     }
 
     /**
@@ -317,7 +347,7 @@ public class AIService {
         ChatClient client = chatClients.get(modelName);
 
         if (client == null) {
-            logger.error("Could not find a ChatClient bean named '{}'. Available beans are: {}", modelName, chatClients.keySet());
+            log.error("Could not find a ChatClient bean named '{}'. Available beans are: {}", modelName, chatClients.keySet());
             throw new IllegalStateException("AI model client not configured: " + modelName);
         }
         return client;

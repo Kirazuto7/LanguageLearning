@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGenerateChapterMutation } from "../features/api/chapterApiSlice";
-import { useAppSelector } from "../app/hooks";
-import { selectProgressByTaskId } from "../features/state/progressSlice";
+import { useAppSelector, useAppDispatch } from "../app/hooks";
+import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext } from "../features/state/progressSlice";
 
 /**
  * A custom hook to manage the entire chapter generation workflow.
@@ -12,22 +12,23 @@ import { selectProgressByTaskId } from "../features/state/progressSlice";
  * @param difficulty The difficulty of the book being updated.
  */
 export const useChapterGeneration = (language: string, difficulty: string) => {
+    const dispatch = useAppDispatch();
     const [taskId, setTaskId] = useState<string | null>(null);
     const [generateChapter, { isLoading: isMutationLoading, error: mutationError }] = useGenerateChapterMutation();
 
+    // Check if there is an active task in the global state
+    const activeTaskId = useAppSelector(state => selectActiveTaskIdForContext(state, { language, difficulty }));
+    useEffect(() => {
+        if (activeTaskId) {
+            setTaskId(activeTaskId);
+        }
+    }, [activeTaskId]);
+
+
     const progress = useAppSelector(state => taskId ? selectProgressByTaskId(state, taskId) : undefined);
 
-    // Reset state on component unmount
+    // If the language/difficulty changes, reset the local taskId.
     useEffect(() => {
-        return () => {
-            setTaskId(null);
-        };
-    }, []);
-
-    // If the language/difficulty changes, the lesson book instance changes as well.
-    // Therefore, we reset the state for tracking the new context.
-    useEffect(() => {
-        if (taskId) return;
         setTaskId(null);
     }, [language, difficulty]);
 
@@ -49,6 +50,7 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
 
         try {
             const { taskId: newTaskId } = await generateChapter({ language, difficulty, topic }).unwrap();
+            dispatch(startGenerationTracking({ taskId: newTaskId, language, difficulty }));
             // By setting the taskId, we trigger the subscription query to begin tracking progress updates.
             setTaskId(newTaskId);
         }
@@ -56,7 +58,7 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
             console.error('Failed to start chapter generation:', err);
             setTaskId(null);
         }
-    }, [generateChapter, language, difficulty, taskId, isMutationLoading]);
+    }, [generateChapter, language, difficulty, taskId, isMutationLoading, dispatch]);
 
     const isComplete = !!progress?.isComplete;
     const generationError = mutationError || progress?.error;
