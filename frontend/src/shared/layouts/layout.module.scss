@@ -1,0 +1,61 @@
+@import '../assets/theme';
+
+.content {
+  display: flex;
+  flex-direction: column;
+  // Place the content in the grid and ensure it's on top
+  grid-row: 1;
+  grid-column: 1;
+  z-index: 1;
+}
+
+.layoutContainer {
+  min-height: calc(100vh - 56px);
+  // Use grid to create a robust layering context
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.backgroundCanvas {
+  grid-row: 1;
+  grid-column: 1;
+  position: relative; // Needed for the absolute positioned children
+  z-index: 0; // Ensure it's behind the content
+}
+
+
+:global(body.themed-body) {
+  position: relative;
+  overflow-x: hidden;
+  transition: background 0.5s ease;
+  background: var(--body-bg);
+}
+
+:global(body.themed-body.light) {
+  @include generate-theme(map-get($themes, light));
+}
+
+:global(body.themed-body.sunset) {
+  @include generate-theme(map-get($themes, sunset));
+}
+
+:global(body.themed-body.nebula) {
+  @include generate-theme(map-get($themes, nebula));
+}
+
+:global(body.themed-body.cafe) {
+  @include generate-theme(map-get($themes, cafe));
+}
+
+:global(body.themed-body.hanok) {
+  @include generate-theme(map-get($themes, hanok));
+}
+
+:global(body.themed-body.fuji) {
+  @include generate-theme(map-get($themes, fuji));
+}
+
+:global(body.themed-body.school) {
+  @include generate-theme(map-get($themes, school));
+}
