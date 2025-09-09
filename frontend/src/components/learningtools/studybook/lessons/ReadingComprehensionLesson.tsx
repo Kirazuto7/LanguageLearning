@@ -7,6 +7,7 @@ import styles from "./lesson.module.scss";
 import useTextToSpeech from "../../../../hooks/useTextToSpeech";
 import { mascotGenders, MascotName } from "../../../../types/types";
 import { VolumeUpFill, Book } from "react-bootstrap-icons";
+import { getPhoneticText } from '../../../../utils/textUtils';
 
 interface ReadingComprehensionLessonProps {
     lesson: ReadingComprehensionLessonDTO;
@@ -36,8 +37,9 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     const handleSpeak = (text: string) => {
         if (settings?.language) {
             const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+            const textToSpeech = isJapanese ? getPhoneticText(text) : text;
             cancel();
-            speak(text, settings.language, gender);
+            speak(textToSpeech, settings.language, gender);
         }
     };
 

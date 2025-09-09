@@ -17,12 +17,12 @@ The language of the story MUST be `{language}`.
 3.  Create 3-4 multiple-choice questions that test comprehension of the story.
 4.  For each question, the `answer` must be directly supported by the text in the story.
 5.  The `answerChoices` for each question must include the correct answer and 2-3 plausible but incorrect distractors.
-6.  Each option in the `answerChoices` array should be a distinct, simple phrase. Avoid creating options that are lists of multiple items.
-7.  CRITICAL: The string value in the `answer` field MUST be an exact, word-for-word match to one of the strings in its corresponding `answerChoices` array.
+6.  Each string in the `answerChoices` array must be a simple, distinct phrase. Do not use "and", "or", or commas to create a list within a single choice.
+7.  CRITICAL: The string value in the `answer` field MUST be an exact, word-for-word, case-sensitive copy of one of the strings from its corresponding `answerChoices` array. Do not summarize or rephrase the answer.
 
 ## LANGUAGE & DIFFICULTY RULES
 1.  The `story` field MUST be written entirely in `{language}`. It MUST NOT contain any English.
-2.  CRITICAL: The `title`, `questionText`, `answer`, and all strings inside the `options` array MUST be in **English only**. The `answer` field must be the English translation of the correct answer found in the story. Do not use `{language}` characters in these fields.
+2.  CRITICAL: The `title`, `questionText`, `answer`, and all strings inside the `answerChoices` array MUST be in **English only**. The `answer` field must be the English translation of the correct answer found in the story. Do not use `{language}` characters in these fields.
 3.  All text in `{language}` must be appropriate for a `{difficulty}` learner.
 
 ## JSON STRUCTURE

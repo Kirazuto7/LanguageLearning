@@ -6,6 +6,7 @@ import { useSettingsManager } from '../../../../hooks/useSettingsManager';
 import useTextToSpeech from "../../../../hooks/useTextToSpeech";
 import {mascotGenders, MascotName} from "../../../../types/types";
 import { VolumeUpFill } from "react-bootstrap-icons";
+import { getPhoneticText } from '../../../../utils/textUtils';
 
 interface ConjugationLessonProps {
     lesson: ConjugationLessonDTO;
@@ -22,8 +23,9 @@ const ConjugationLesson: React.FC<ConjugationLessonProps> = ({ lesson }) => {
     const handleSpeak = (text: string) => {
         if (settings?.language) {
             const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+            const textToSpeech = isJapanese ? getPhoneticText(text) : text;
             cancel();
-            speak(text, settings.language, gender);
+            speak(textToSpeech, settings.language, gender);
         }
     };
 

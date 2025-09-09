@@ -4,12 +4,15 @@ import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.QuestionType;
+import com.example.language_learning.mapper.util.AIResponseSanitizer;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.services.FuriganaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class ApiDtoMapper {
 
     private final FuriganaService furiganaService;
+    private final AIResponseSanitizer sanitizer;
 
     public ChapterMetadataDTO toChapterMetadataDTO(AIChapterMetadataResponse response, String topic) {
         return ChapterMetadataDTO.builder()
@@ -53,7 +57,7 @@ public class ApiDtoMapper {
     public GrammarLessonDTO toGrammarLessonDTO(AIGrammarLessonResponse response, String language) {
         return GrammarLessonDTO.builder()
                 .title(response.title())
-                .grammarConcept(response.grammarConcept())
+                .grammarConcept(sanitizer.sanitizeEnglishSentence(response.grammarConcept()))
                 .nativeGrammarConcept(response.nativeGrammarConcept())
                 .explanation(response.explanation())
                 .exampleSentences(response.exampleSentences().stream()
@@ -64,7 +68,7 @@ public class ApiDtoMapper {
                                     : aiSentence.text();
                             return SentenceDTO.builder()
                                     .text(text)
-                                    .translation(aiSentence.translation())
+                                    .translation(sanitizer.sanitizeEnglishSentence(aiSentence.translation()))
                                     .build();
                         }).collect(Collectors.toList()))
                 .build();
@@ -86,14 +90,14 @@ public class ApiDtoMapper {
                                         .conjugatedForm(conjugatedForm)
                                         .infinitive(infinitive)
                                         .exampleSentence(exampleSentence)
-                                        .sentenceTranslation(aiConjugationExample.sentenceTranslation())
+                                        .sentenceTranslation(sanitizer.sanitizeEnglishSentence(aiConjugationExample.sentenceTranslation()))
                                         .build();
                             }
                             return ConjugationExampleDTO.builder()
                                     .conjugatedForm(aiConjugationExample.conjugatedForm())
                                     .infinitive(aiConjugationExample.infinitive())
                                     .exampleSentence(aiConjugationExample.exampleSentence())
-                                    .sentenceTranslation(aiConjugationExample.sentenceTranslation())
+                                    .sentenceTranslation(sanitizer.sanitizeEnglishSentence(aiConjugationExample.sentenceTranslation()))
                                     .build();
                         }).collect(Collectors.toList()))
                 .build();
@@ -129,11 +133,18 @@ public class ApiDtoMapper {
                 .questions(response.questions().stream()
                         .filter(aiQuestion -> aiQuestion.questionText() != null && !aiQuestion.questionText().isBlank())
                         .map(aiQuestion -> {
+                            String sanitizedAnswer = sanitizer.sanitizeEnglishField(aiQuestion.answer());
+                            List<String> sanitizedOptions = aiQuestion.answerChoices() != null
+                                ? aiQuestion.answerChoices().stream()
+                                    .map(sanitizer::sanitizeEnglishField)
+                                    .filter(Objects::nonNull)
+                                    .collect(Collectors.toList())
+                                : Collections.emptyList();
                             return QuestionDTO.builder()
-                                    .questionText(aiQuestion.questionText())
+                                    .questionText(sanitizer.sanitizeEnglishSentence(aiQuestion.questionText()))
                                     .questionType(QuestionType.MULTIPLE_CHOICE.name())
-                                    .answer(aiQuestion.answer())
-                                    .answerChoices(aiQuestion.answerChoices())
+                                    .answer(sanitizedAnswer)
+                                    .answerChoices(sanitizedOptions)
                                     .build();
                         }).collect(Collectors.toList()))
                 .build();
@@ -154,7 +165,7 @@ public class ApiDtoMapper {
                 .build();
         return WordDTO.builder()
                 .language(language)
-                .englishTranslation(aiVocab.englishTranslation())
+                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
                 .details(details)
                 .build();
     }
@@ -164,7 +175,7 @@ public class ApiDtoMapper {
 
         return WordDTO.builder()
                 .language(language)
-                .englishTranslation(aiVocab.englishTranslation())
+                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
                 .details(details)
                 .build();
     }
