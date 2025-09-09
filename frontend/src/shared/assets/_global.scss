@@ -1,4 +1,4 @@
-@use 'shared/assets/theme' as theme;
+@use 'theme' as theme;
 
 @include theme.apply-responsive-typography;
 

@@ -38,7 +38,6 @@ const MidRoof: React.FC = () => {
 
 const MainRoof: React.FC = () => {
     const mainTilePairs = 30;
-    const upperTierTilePairs = 20;
     return (
         <div className={styles.mainRoof}>
             <div className={styles.roofTileLayer}>
