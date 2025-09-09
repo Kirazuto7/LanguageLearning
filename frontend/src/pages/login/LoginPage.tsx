@@ -3,8 +3,8 @@ import {RootState} from "../../app/store";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import Container from "react-bootstrap/Container";
-import Login from "./Login";
-import Register from "./Register";
+import Login from "../../features/authentication/components/Login";
+import Register from "../../features/authentication/components/Register";
 import styles from './loginpage.module.scss';
 
 const LoginPage = () => {

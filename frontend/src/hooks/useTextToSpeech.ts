@@ -1,5 +1,5 @@
 import {useState, useEffect, useCallback} from "react";
-import { MascotGender } from "../types/types";
+import { MascotGender } from "../shared/types/types";
 
 interface TextToSpeechHook {
     speak: (text: string, lang: string, gender?: MascotGender) => void;
