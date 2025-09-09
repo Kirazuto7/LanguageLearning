@@ -8,6 +8,7 @@ import FeedbackDisplay from "./extra/FeedbackDisplay";
 import {VolumeUpFill} from "react-bootstrap-icons";
 import useTextToSpeech from "../../../../hooks/useTextToSpeech";
 import {mascotGenders, MascotName} from "../../../../types/types";
+import { getPhoneticText } from '../../../../utils/textUtils';
 
 interface PracticeLessonProps {
     lesson: PracticeLessonDTO;
@@ -74,8 +75,9 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
     const handleSpeak = (text: string) => {
         if (settings?.language) {
             const gender = mascotGenders[settings.mascot as MascotName] || 'female';
+            const textToSpeech = isJapanese ? getPhoneticText(text) : text;
             cancel();
-            speak(text, settings.language, gender);
+            speak(textToSpeech, settings.language, gender);
         }
     };
 

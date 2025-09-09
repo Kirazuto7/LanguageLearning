@@ -1,48 +1,50 @@
 package com.example.language_learning.mapper.util;
 
+import com.example.language_learning.entity.models.WordDetails;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Converter
-@Component
 @Slf4j
-@RequiredArgsConstructor
-public class JpaMapConverter implements AttributeConverter<Map<String, Object>, String> {
-    private final ObjectMapper objectMapper;
+public class JpaMapConverter implements AttributeConverter<WordDetails, String> {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public JpaMapConverter() {
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @Override
-    public String convertToDatabaseColumn(Map<String, Object> attribute) {
-        if(attribute == null || attribute.isEmpty()) {
+    public String convertToDatabaseColumn(WordDetails attribute) {
+        if(attribute == null) {
             return null;
         }
         try {
             return objectMapper.writeValueAsString(attribute);
         } catch(JsonProcessingException e) {
-            log.error("Error converting map to JSON string", e);
-            throw new IllegalArgumentException("Error converting map to JSON string", e);
+            log.error("Error converting WordDetails to JSON string", e);
+            throw new IllegalArgumentException("Error converting WordDetails to JSON string", e);
         }
     }
 
     @Override
-    public Map<String, Object> convertToEntityAttribute(String dbData) {
+    public WordDetails convertToEntityAttribute(String dbData) {
         if(dbData == null || dbData.isEmpty()) {
-            return new HashMap<>();
+            return null;
         }
         try {
-            return objectMapper.readValue(dbData, new TypeReference<>() {});
+            return objectMapper.readValue(dbData, WordDetails.class);
         } catch(IOException e) {
-            log.error("Error converting JSON string to map", e);
-            throw new IllegalArgumentException("Error converting JSON string to map", e);
+            log.error("Error converting JSON string to WordDetails", e);
+            throw new IllegalArgumentException("Error converting JSON string to WordDetails", e);
         }
     }
 }

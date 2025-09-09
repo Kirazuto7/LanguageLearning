@@ -3,14 +3,11 @@ package com.example.language_learning.services;
 import com.atilika.kuromoji.ipadic.Token;
 import com.atilika.kuromoji.ipadic.Tokenizer;
 import com.example.language_learning.dto.api.AIJapaneseVocabularyItemDTO;
-import com.example.language_learning.dto.models.WordDTO;
+import com.example.language_learning.dto.models.JapaneseWordDetailsDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
-import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
 @Service
@@ -51,7 +48,7 @@ public class FuriganaService {
      * Utilizing the Kuromoji tokenizer we can derive the proper forms of (Kanji, Katakana) from hiragana
      * to combat AI inconsistencies and protect data integrity.
      */
-    public WordDTO verifyAndMapJapaneseWord(AIJapaneseVocabularyItemDTO aiWord) {
+    public JapaneseWordDetailsDTO verifyAndMapJapaneseWord(AIJapaneseVocabularyItemDTO aiWord) {
         // 1. First verify AI output with REGEX
         String hiragana = patternVerifier(aiWord.hiragana(), HIRAGANA_PATTERN);
         String katakana = patternVerifier(aiWord.katakana(), KATAKANA_PATTERN);
@@ -100,21 +97,13 @@ public class FuriganaService {
         if(katakana == null) {
             katakana = katakanaBuilder.toString();
         }
-        // 3. Create the details map
-        Map<String, Object> details = new HashMap<>();
-        details.put("kanji", kanji);
-        details.put("hiragana", hiragana);
-        details.put("katakana", katakana);
 
-        // 4. Build and return the word object
-        String nativeWord = determineNativeWord(kanji, katakana, hiragana);
-
-        return WordDTO.builder()
-                .language("japanese")
-                .nativeWord(nativeWord)
-                .englishTranslation(aiWord.englishTranslation())
-                .phoneticSpelling(hiragana)
-                .details(details)
+        // 3. Build and return the word object
+        return JapaneseWordDetailsDTO.builder()
+                .kanji(kanji)
+                .hiragana(hiragana)
+                .katakana(katakana)
+                .romaji(aiWord.romaji())
                 .build();
     }
 
@@ -136,15 +125,5 @@ public class FuriganaService {
             return word;
         }
         return null;
-    }
-
-    private String determineNativeWord(String kanji, String katakana, String hiragana) {
-        if (kanji != null && !kanji.isBlank()) {
-            return kanji;
-        }
-        if (katakana != null && !katakana.isBlank()) {
-            return katakana;
-        }
-        return hiragana;
     }
 }

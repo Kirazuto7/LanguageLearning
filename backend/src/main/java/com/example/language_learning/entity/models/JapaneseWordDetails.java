@@ -1,11 +1,12 @@
-package com.example.language_learning.dto.api;
+package com.example.language_learning.entity.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
-public record AIJapaneseVocabularyItemDTO(
-    @JsonProperty("englishTranslation") String englishTranslation,
+@Builder
+public record JapaneseWordDetails(
     @JsonProperty("kanji") String kanji,
     @JsonProperty("hiragana") String hiragana,
     @JsonProperty("katakana") String katakana,
     @JsonProperty("romaji") String romaji
-) {}
+) implements WordDetails {}
