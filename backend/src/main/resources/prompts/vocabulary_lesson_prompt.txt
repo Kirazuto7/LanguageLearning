@@ -23,20 +23,13 @@ The language of the vocabulary MUST be `{language}`.
 
 ## JSON STRUCTURE
 Your entire response MUST be a single, valid JSON object with the following fields:
-- "title": A title for the vocabulary section, like "Key Vocabulary for {topic}".
+- "title": A title for the vocabulary section in English, like "Key Vocabulary for {topic}".
 - "vocabularies": An array of 10–15 relevant vocabulary items.
 
 Each vocabulary item in the "vocabularies" array must be a single, ordered word object with the following fields:
 - "englishTranslation": The accurate English translation of the word.
-- "nativeWord": The primary representation of the word in `{language}`. For Japanese, this should be the Kanji (if available). For Korean, this should be the Hangeul.
-- "phoneticSpelling": A phonetic guide for the native word. For Japanese, this should be the Hiragana reading. For Korean, this should be the Romaja spelling.
-- "details": A JSON object for language-specific metadata.
-  - For `{language}` = "japanese", this object MUST contain the following keys: "kanji", "hiragana", and "katakana".
-       - "kanji": The Kanji form of the word. Provide `null` if it doesn't exist or isn't common.
-       - "hiragana": The Hiragana form or reading of the word. This is a CRITICAL field and should only be `null` if the word is exclusively written in Katakana.
-       - "katakana": The Katakana form of the word. Provide `null` if it's not a Katakana word.
-     - For other languages, this can be an empty object `\{\}`.
-
+- "nativeWord": The primary representation of the word in `{language}`.
+- "phoneticSpelling": A phonetic guide for the native word (e.g., pinyin for Chinese, romaja for Korean).
 
  ---
 
@@ -52,57 +45,34 @@ EXAMPLE 1: Korean lesson on the topic "weather":
     \{
       "englishTranslation": "weather",
       "nativeWord": "날씨",
-      "phoneticSpelling": "nalssi",
-      "details": \{\}
+      "phoneticSpelling": "nalssi"
     \},
     \{
       "englishTranslation": "to be sunny",
       "nativeWord": "맑다",
-      "phoneticSpelling": "makda",
-      "details": \{\}
+      "phoneticSpelling": "makda"
     \},
     \{
       "englishTranslation": "rain",
       "nativeWord": "비",
-      "phoneticSpelling": "bi",
-      "details": \{\}
+      "phoneticSpelling": "bi"
     \}
   ]
 \}
 
-EXAMPLE 2: Japanese lesson on the topic "food":
+EXAMPLE 2: Spanish lesson on the topic "food":
 \{
   "title": "Key Vocabulary for Food",
   "vocabularies": [
     \{
-      "englishTranslation": "sushi",
-      "nativeWord": "寿司",
-      "phoneticSpelling": "すし",
-      "details": \{
-        "kanji": "寿司",
-        "hiragana": "すし",
-        "katakana": null
-      \}
+      "englishTranslation": "apple",
+      "nativeWord": "manzana",
+      "phoneticSpelling": "mahn-zah-nah"
     \},
     \{
-      "englishTranslation": "ramen",
-      "nativeWord": "ラーメン",
-      "phoneticSpelling": "ラーメン",
-      "details": \{
-        "kanji": null,
-        "hiragana": null,
-        "katakana": "ラーメン"
-      \}
-    \},
-    \{
-      "englishTranslation": "delicious",
-      "nativeWord": "おいしい",
-      "phoneticSpelling": "おいしい",
-      "details": \{
-        "kanji": null,
-        "hiragana": "おいしい",
-        "katakana": null
-      \}
+      "englishTranslation": "bread",
+      "nativeWord": "pan",
+      "phoneticSpelling": "pahn"
     \}
   ]
 \}

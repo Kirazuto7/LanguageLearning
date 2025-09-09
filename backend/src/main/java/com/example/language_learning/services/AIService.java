@@ -3,15 +3,13 @@ package com.example.language_learning.services;
 import com.example.language_learning.config.AIConfig;
 import com.example.language_learning.dto.api.*;
 import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.WordDTO;
-import com.example.language_learning.dto.models.ChapterMetadataDTO;
+import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.mapper.ApiDtoMapper;
+import com.example.language_learning.mapper.util.AIResponseSanitizer;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
@@ -42,14 +40,14 @@ public class AIService {
 
     private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
-    private final ObjectMapper objectMapper;
     private final AIConfig aiConfig;
+    private final AIResponseSanitizer sanitizer;
 
-    public AIService(AIConfig aiConfig, ApiDtoMapper apiDtoMapper, ObjectMapper objectMapper, Map<String, ChatClient> chatClients) {
+    public AIService(AIConfig aiConfig, ApiDtoMapper apiDtoMapper, Map<String, ChatClient> chatClients, AIResponseSanitizer sanitizer) {
         this.aiConfig = aiConfig;
         this.apiDtoMapper = apiDtoMapper;
-        this.objectMapper = objectMapper;
         this.chatClients = chatClients;
+        this.sanitizer = sanitizer;
         log.info("--- Verifying Injected ChatClients ---");
         log.info("Found {} ChatClient bean(s):", chatClients.size());
         chatClients.keySet().forEach(key -> log.info(" -> Bean name: '{}'", key));
@@ -80,7 +78,7 @@ public class AIService {
                 .stream().content().collectList()
                 .map(list -> String.join("", list).trim())
                 .doOnNext(rawResponse -> log.info("Raw AI Response: {}", rawResponse))
-                .map(this::extractAndSanitizeJson)
+                .map(sanitizer::extractAndSanitizeJson)
                 .doOnNext(json -> log.debug("Extracted JSON: {}", json))
                 .map(outputParser::convert)
                 .map(apiDtoMapper::toPracticeLessonCheckResponse)
@@ -232,7 +230,7 @@ public class AIService {
                 .stream().content().collectList()
                 .map(list -> String.join("", list).trim())
                 .doOnNext(rawResponse -> log.info("Raw AI Response for {}: {}", componentName, rawResponse))
-                .map(this::extractAndSanitizeJson)
+                .map(sanitizer::extractAndSanitizeJson)
                 .doOnNext(json -> log.debug("Extracted JSON for {}: {}", componentName, json))
                 .map(outputParser::convert)
                 .map(mapperFunction)
@@ -254,7 +252,25 @@ public class AIService {
             return "No specific vocabulary provided.";
         }
         return vocabularies.stream()
-                .map(WordDTO::nativeWord)
+                .map(wordDto -> {
+                    WordDetailsDTO details = wordDto.details();
+                    if (details == null) return "";
+
+                    return switch (details) {
+                        case JapaneseWordDetailsDTO japaneseWord -> {
+                            if (japaneseWord.kanji() != null && !japaneseWord.kanji().isBlank()) {
+                                yield japaneseWord.kanji();
+                            }
+                            if (japaneseWord.hiragana() != null && !japaneseWord.hiragana().isBlank()) {
+                                yield japaneseWord.hiragana();
+                            }
+                            yield japaneseWord.katakana();
+                        }
+                        case GenericWordDetailsDTO genericWord -> genericWord.nativeWord();
+                        default -> "";
+                    };
+                })
+                .filter(s -> s != null && !s.isBlank())
                 .collect(Collectors.joining(", "));
     }
 
@@ -265,71 +281,6 @@ public class AIService {
             log.error("Failed to create prompt template from resource: {}. Check for syntax errors like unclosed '<' or '>'.", resource.getFilename(), e);
             throw new IllegalArgumentException("Invalid prompt template: " + resource.getFilename(), e);
         }
-    }
-
-    /**
-     * Extracts a JSON object from a raw string response that may contain conversational text.
-     * Sanitize the response string before passing it to the convertor to remove any suspicious/duplicate fields.
-     * @param rawResponse The raw string response from the AI.
-     * @return A string containing only the JSON object.
-     */
-    private String extractAndSanitizeJson(String rawResponse) {
-        String extractedJson = extractJson(rawResponse);
-
-        try {
-            // Convert the json string into a map and then back into a string
-            Map<String, Object> objectMap = objectMapper.readValue(extractedJson, new TypeReference<>(){});
-            return objectMapper.writeValueAsString(objectMap);
-        } catch (Exception e) {
-            log.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
-            return extractedJson;
-        }
-    }
-
-    /**
-     * Extracts a JSON object from a raw string response that may contain conversational text.
-     * @param rawResponse The raw string response from the AI.
-     * @return A string containing only the JSON object.
-     */
-    private String extractJson(String rawResponse) {
-        int firstBrace = rawResponse.indexOf('{');
-        if (firstBrace == -1) {
-            log.warn("AI response did not contain a JSON object. Raw response: {}", rawResponse);
-            return "{}";
-        }
-        //int lastBrace = rawResponse.lastIndexOf('}');
-        int braceCount = 0;
-        int lastBrace = -1;
-        boolean inString = false;
-
-        for (int i = firstBrace; i < rawResponse.length(); i++) {
-            char c = rawResponse.charAt(i);
-
-            // Handle entering/exiting strings & ignoring escaped quotes
-            if (c == '"' && (i == 0 || rawResponse.charAt(i - 1) != '\\')) {
-                inString = !inString;
-            }
-
-            if (!inString) {
-                if (c == '{') {
-                    braceCount++;
-                }
-                else if (c == '}') {
-                    braceCount--;
-                }
-            }
-
-            if (braceCount == 0) {
-                lastBrace = i;
-                break;
-            }
-        }
-
-        if (lastBrace != -1) {
-            return rawResponse.substring(firstBrace, lastBrace + 1);
-        }
-        log.warn("Could not find a balanced JSON object in the AI response. Raw response: {}", rawResponse);
-        return "{}";
     }
 
     /**

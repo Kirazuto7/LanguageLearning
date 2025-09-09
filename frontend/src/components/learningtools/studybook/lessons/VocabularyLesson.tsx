@@ -1,11 +1,12 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import { VocabularyLessonDTO, WordDTO } from '../../../../types/dto';
+import { VocabularyLessonDTO, WordDTO, GenericWordDetailsDTO, JapaneseWordDetailsDTO } from '../../../../types/dto';
 import styles from "./lesson.module.scss";
 import { VolumeUpFill } from "react-bootstrap-icons";
 import useTextToSpeech from "../../../../hooks/useTextToSpeech";
 import {useSettingsManager} from "../../../../hooks/useSettingsManager";
 import { mascotGenders, MascotName } from "../../../../types/types";
+import {instanceOf} from "graphql/jsutils/instanceOf";
 
 interface VocabularyLessonProps {
     lesson: VocabularyLessonDTO;
@@ -17,8 +18,6 @@ interface VocabularyLessonProps {
 const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
     const { settings } = useSettingsManager();
     const { speak, cancel } = useTextToSpeech();
-
-    const isJapanese = settings?.language.toLowerCase() === 'japanese';
 
     const handleSpeak = (text: string) => {
         if (settings?.language) {
@@ -35,32 +34,51 @@ const VocabularyLesson: React.FC<VocabularyLessonProps> = ({ lesson }) => {
             </Card.Header>
 
             <Card.Body style={{ overflowY: 'auto' }} className="p-4">
-                {lesson.vocabularies.map((word: WordDTO, index) => (
-                    <div key={word.id} className={styles.vocabCard}>
-                        <div className={styles.sentenceNumber}>
-                            <div className={styles.circularNumber}>{index + 1}</div>
+                {lesson.vocabularies.map((word: WordDTO, index) => {
+                    const { details } = word;
+                    let nativeWordDisplay: string | JSX.Element = '';
+                    let textToSpeak: string = '';
+
+                    if (details?.__typename === 'JapaneseWordDetails') {
+                        if (details.kanji && details.hiragana) {
+                            nativeWordDisplay = <ruby>{details.kanji}<rt>{details.hiragana}</rt></ruby>;
+                        }
+                        else {
+                            nativeWordDisplay = details.kanji ||details.hiragana || details.katakana || details.romaji || '';
+                        }
+                        textToSpeak = details.hiragana;
+                    }
+                    else if (details?.__typename === 'GenericWordDetails') {
+                        nativeWordDisplay = details.nativeWord;
+                        textToSpeak = details.nativeWord;
+                    }
+
+                    return (
+                        <div key={word.id} className={styles.vocabCard}>
+                            <div className={styles.sentenceNumber}>
+                                <div className={styles.circularNumber}>{index + 1}</div>
+                            </div>
+                            <div className={styles.vocabContent}>
+                                <h4 className={styles.vocabWord}>{nativeWordDisplay}</h4>
+                                <p className={styles.vocabTranslation}>{word.englishTranslation}</p>
+                                {details.__typename === 'JapaneseWordDetails' && (
+                                    <div className={styles.vocabDetails}>
+                                        {details.kanji && <p><strong>Kanji:</strong> {details.kanji}</p>}
+                                        {details.hiragana && <p><strong>Hiragana:</strong> {details.hiragana}</p>}
+                                        {details.katakana && <p><strong>Katakana:</strong> {details.katakana}</p>}
+                                        {details.romaji && <p><strong>Romaji:</strong> {details.romaji}</p>}
+                                    </div>
+                                )}
+                            </div>
+                            <div className={styles.sentenceActions}>
+                                <VolumeUpFill
+                                    className={styles.speakIcon}
+                                    onClick={() => handleSpeak(textToSpeak)}
+                                />
+                            </div>
                         </div>
-                        <div className={styles.vocabContent}>
-                            {isJapanese ? (
-                                <h4 className={styles.vocabWord}>
-                                    <ruby className={styles.vocabRuby}>
-                                        {word.details?.kanji || word.nativeWord}
-                                        <rt>{word.details?.hiragana}</rt>
-                                    </ruby>
-                                </h4>
-                            ) : (
-                                <h4 className={styles.vocabWord}>{word.nativeWord}</h4>
-                            )}
-                            <p className={styles.vocabTranslation}>{word.englishTranslation}</p>
-                        </div>
-                        <div className={styles.sentenceActions}>
-                            <VolumeUpFill
-                                className={styles.speakIcon}
-                                onClick={() => handleSpeak(word.nativeWord)}
-                            />
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </Card.Body>
         </Card>
     );

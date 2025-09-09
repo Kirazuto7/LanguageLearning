@@ -1,16 +1,36 @@
 import { gql } from "graphql-request";
 
+
+export const wordFragment = gql`
+    fragment WordFragment on Word {
+        id
+        englishTranslation
+        language
+        details {
+            __typename
+            ... on GenericWordDetails {
+                nativeWord
+                phoneticSpelling
+            }
+            ... on JapaneseWordDetails {
+                kanji
+                hiragana
+                katakana
+                romaji
+            }
+        }
+    }
+`;
+
 export const lessonFragment = gql`
+    ${wordFragment}
     fragment LessonFragment on Lesson {
         id
         type
         title
         ... on VocabularyLesson {
             vocabularies {
-                id
-                nativeWord
-                englishTranslation
-                phoneticSpelling
+                ...WordFragment
             }
         }
         ... on GrammarLesson {

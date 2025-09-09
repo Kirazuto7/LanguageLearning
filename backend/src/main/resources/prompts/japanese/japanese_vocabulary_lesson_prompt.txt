@@ -22,6 +22,7 @@ Each vocabulary item in the "vocabularies" array must be a single, ordered word 
 - "kanji": The (Kanji) 漢字 characters for the word. If the word has no common Kanji form, this MUST be `null`.
 - "hiragana": The full (hiragana) ひらがな reading of the word. This field is mandatory.
 - "katakana": The (katakana) カタカナ characters if the word is a loanword. If not, this MUST be `null`.
+ - "romaji": The Romaji (romanized) spelling of the word. This field is mandatory.
 
 ---
 
@@ -34,7 +35,8 @@ IMPORTANT: The following examples demonstrate the rules for different word types
   "englishTranslation": "train",
   "kanji": "電車",
   "hiragana": "でんしゃ",
-  "katakana": null
+  "katakana": null,
+  "romaji": "densha"
 \}
 ```
 
@@ -44,7 +46,8 @@ IMPORTANT: The following examples demonstrate the rules for different word types
   "englishTranslation": "bus",
   "kanji": null,
   "hiragana": "ばす",
-  "katakana": "バス"
+  "katakana": "バス",
+  "romaji": "busu"
 \}
 ```
 
@@ -54,6 +57,7 @@ IMPORTANT: The following examples demonstrate the rules for different word types
   "englishTranslation": "thank you",
   "kanji": null,
   "hiragana": "ありがとう",
-  "katakana": null
+  "katakana": null,
+  "romaji": "arigato"
 \}
 ```

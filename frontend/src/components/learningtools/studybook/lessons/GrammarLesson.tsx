@@ -2,9 +2,10 @@ import React from 'react';
 import { GrammarLessonDTO, SentenceDTO } from '../../../../types/dto';
 import { useSettingsManager } from '../../../../hooks/useSettingsManager';
 import useTextToSpeech from "../../../../hooks/useTextToSpeech";
-import {mascotGenders, MascotName} from "../../../../types/types";
+import { mascotGenders, MascotName } from "../../../../types/types";
 import styles from "./lesson.module.scss";
-import {VolumeUpFill} from "react-bootstrap-icons";
+import { VolumeUpFill } from "react-bootstrap-icons";
+import { getPhoneticText } from "../../../../utils/textUtils";
 
 interface GrammarLessonProps {
     lesson: GrammarLessonDTO;
@@ -22,7 +23,8 @@ const GrammarLesson: React.FC<GrammarLessonProps> = ({ lesson }) => {
         if (settings?.language) {
             const gender = mascotGenders[settings.mascot as MascotName] || 'female';
             cancel();
-            speak(text, settings.language, gender);
+            const textToSpeech = isJapanese ? getPhoneticText(text) : text;
+            speak(textToSpeech, settings.language, gender);
         }
     };
 

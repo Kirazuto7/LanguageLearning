@@ -44,13 +44,27 @@ export interface LessonDTO {
     type: 'VOCABULARY' | 'GRAMMAR' | 'CONJUGATION' | 'PRACTICE' | 'READING_COMPREHENSION';
 }
 
+export interface GenericWordDetailsDTO {
+    __typename: 'GenericWordDetails';
+    nativeWord: string;
+    phoneticSpelling: string;
+}
+
+export interface JapaneseWordDetailsDTO {
+    __typename: 'JapaneseWordDetails';
+    kanji?: string;
+    hiragana: string;
+    katakana?: string;
+    romaji?: string;
+}
+
+export type WordDetailsDTO = GenericWordDetailsDTO | JapaneseWordDetailsDTO;
+
 export interface WordDTO {
     id: string;
     englishTranslation: string;
     language: string;
-    nativeWord: string;
-    phoneticSpelling: string;
-    details?: { [key: string]: any };
+    details: WordDetailsDTO;
 }
 
 export interface SentenceDTO {
