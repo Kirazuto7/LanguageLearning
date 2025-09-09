@@ -4,6 +4,9 @@
 // the style properties pertaining to the theme.
 // =============================================================================
 
+@use "sass:map";
+@use "sass:color";
+
 $themes: (
   default: (
     // Palette
@@ -229,31 +232,31 @@ $themes: (
 // Map containing the variable values of styles for each theme.
 @mixin generate-theme($theme-map) {
   // Palette
-  --primary-color: #{map-get($theme-map, primary-color)};
-  --primary-color-rgb: #{red(map-get($theme-map, primary-color))}, #{green(map-get($theme-map, primary-color))}, #{blue(map-get($theme-map, primary-color))};
-  --primary-color-dark: #{map-get($theme-map, primary-color-dark)};
-  --primary-color-darker: #{map-get($theme-map, primary-color-darker)};
-  --text-color-light: #{map-get($theme-map, text-color-light)};
-  --text-color-dark: #{map-get($theme-map, text-color-dark)};
-  --navbar-text-color: #{map-get($theme-map, navbar-text-color)};
-  --title-color: #{map-get($theme-map, title-color)};
-  --navbar-text-hover-color: #{map-get($theme-map, navbar-text-hover-color)};
+  --primary-color: #{map.get($theme-map, primary-color)};
+  --primary-color-rgb: #{red(map.get($theme-map, primary-color))}, #{green(map.get($theme-map, primary-color))}, #{blue(map.get($theme-map, primary-color))};
+  --primary-color-dark: #{map.get($theme-map, primary-color-dark)};
+  --primary-color-darker: #{map.get($theme-map, primary-color-darker)};
+  --text-color-light: #{map.get($theme-map, text-color-light)};
+  --text-color-dark: #{map.get($theme-map, text-color-dark)};
+  --navbar-text-color: #{map.get($theme-map, navbar-text-color)};
+  --title-color: #{map.get($theme-map, title-color)};
+  --navbar-text-hover-color: #{map.get($theme-map, navbar-text-hover-color)};
 
   // Gradients
-  --primary-gradient: #{map-get($theme-map, primary-gradient)};
-  --primary-gradient-hover: #{map-get($theme-map, primary-gradient-hover)};
+  --primary-gradient: #{map.get($theme-map, primary-gradient)};
+  --primary-gradient-hover: #{map.get($theme-map, primary-gradient-hover)};
 
   // Backgrounds
-  --body-bg: #{map-get($theme-map, body-bg)};
+  --body-bg: #{map.get($theme-map, body-bg)};
 
   // Components
-  --glass-bg: #{map-get($theme-map, glass-bg)};
-  --glass-border-color: #{map-get($theme-map, glass-border-color)};
-  --glass-shadow: #{map-get($theme-map, glass-shadow)};
-  --glass-text-color: #{map-get($theme-map, glass-text-color)};
-  --glass-text-shadow: #{map-get($theme-map, glass-text-shadow)};
-  --button-shadow-hover: #{map-get($theme-map, button-shadow-hover)};
-  --pagination-shadow: #{map-get($theme-map, pagination-shadow)}
+  --glass-bg: #{map.get($theme-map, glass-bg)};
+  --glass-border-color: #{map.get($theme-map, glass-border-color)};
+  --glass-shadow: #{map.get($theme-map, glass-shadow)};
+  --glass-text-color: #{map.get($theme-map, glass-text-color)};
+  --glass-text-shadow: #{map.get($theme-map, glass-text-shadow)};
+  --button-shadow-hover: #{map.get($theme-map, button-shadow-hover)};
+  --pagination-shadow: #{map.get($theme-map, pagination-shadow)}
 }
 
 // =============================================================================
@@ -270,7 +273,7 @@ $themes: (
 
  @mixin respond-to($breakpoint) {
     @if map-has-key($breakpoints, $breakpoint) {
-        @media (max-width: #{map-get($breakpoints, $breakpoint)}) {
+        @media (max-width: #{map.get($breakpoints, $breakpoint)}) {
             @content;
         }
     } @else {
@@ -280,7 +283,7 @@ $themes: (
 
 @mixin respond-to-min($breakpoint) {
     @if map-has-key($breakpoints, $breakpoint) {
-        @media (min-width: #{map-get($breakpoints, $breakpoint)}) {
+        @media (min-width: #{map.get($breakpoints, $breakpoint)}) {
             @content;
         }
     } @else {
@@ -339,9 +342,9 @@ $typography: (
           $selector: "#{$tag}, .#{$tag}, .btn";
         }
         #{$selector} {
-          font-size: map-get($properties, size);
-          font-weight: map-get($properties, weight);
-          line-height: map-get($properties, line-height);
+          font-size: map.get($properties, size);
+          font-weight: map.get($properties, weight);
+          line-height: map.get($properties, line-height);
         }
       }
     } @else {
@@ -352,7 +355,7 @@ $typography: (
             $selector: "#{$tag}, .#{$tag}, .btn";
           }
           #{$selector} {
-            font-size: map-get($properties, size);
+            font-size: map.get($properties, size);
           }
         }
       }

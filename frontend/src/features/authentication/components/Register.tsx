@@ -5,7 +5,7 @@ import {CreateUserRequest} from "../../../shared/types/dto";
 import {Alert, Button, Form} from "react-bootstrap";
 import Blackboard from "../../../shared/components/blackboard/Blackboard";
 import Jinny from "../../../shared/components/mascot/common/Jinny";
-import { languages, difficulties, mascots } from "../../../shared/types/options";
+import { languages, difficulties } from "../../../shared/types/options";
 import { mascotGenders } from "../../../shared/types/types";
 
 interface RegisterProps {

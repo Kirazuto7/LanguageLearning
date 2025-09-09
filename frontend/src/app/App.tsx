@@ -19,11 +19,12 @@ const LandingPage = lazy(() => import('../pages/home/LandingPage'));
 const HomePage = lazy(() => import('../pages/home/HomePage'));
 const StudyBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
 
+const themedPaths = ['/home', '/study', '/read'];
+
 const App: React.FC = () => {
     const location = useLocation();
     const userTheme = useSelector(selectCurrentTheme);
 
-    const themedPaths = ['/home', '/study', '/read'];
 
     useEffect(() => {
         const isThemedPage = themedPaths.some(path => location.pathname.startsWith(path));

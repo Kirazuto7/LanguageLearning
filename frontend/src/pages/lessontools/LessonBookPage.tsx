@@ -8,7 +8,7 @@ import LessonBookMascot from "../../widgets/lessonBookMascot/LessonBookMascot";
 interface StudyBookPageProps{}
 
 const LessonBookPage: React.FC<StudyBookPageProps> = () => {
-    const { title, chapters, isLoading: isBookLoading, error: bookError, language, difficulty } = useLessonBookManager();
+    const { title, chapters, isLoading: isBookLoading, language, difficulty } = useLessonBookManager();
     const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0);
     const [celebrationTrigger, setCelebrationTrigger] = useState(0);
 
