@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "../features/api/apiSlice";
-import authReducer from "../features/state/authSlice";
-import settingsReducer from "../features/state/settingsSlice";
-import {graphqlApiSlice} from "../features/api/graphqlApiSlice";
-import progressReducer from "../features/state/progressSlice";
+import { apiSlice } from "../shared/api/apiSlice";
+import authReducer from "../features/authentication/authSlice";
+import settingsReducer from "../features/userSettings/settingsSlice";
+import {graphqlApiSlice} from "../shared/api/graphqlApiSlice";
+import progressReducer from "../widgets/progressBar/progressSlice";
 
 export const store = configureStore({
     reducer: {
