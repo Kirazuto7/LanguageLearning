@@ -8,15 +8,48 @@ export const wordFragment = gql`
         language
         details {
             __typename
-            ... on GenericWordDetails {
-                nativeWord
-                phoneticSpelling
-            }
             ... on JapaneseWordDetails {
                 kanji
                 hiragana
                 katakana
                 romaji
+            }
+            ... on KoreanWordDetails {
+                hangul
+                hanja
+                romaja
+            }
+            ... on ChineseWordDetails {
+                simplified
+                traditional
+                pinyin
+                toneNumber
+            }
+            ... on ThaiWordDetails {
+                thaiScript
+                romanization
+                tonePattern
+            }
+            ... on ItalianWordDetails {
+                lemma
+                gender
+                pluralForm
+            }
+            ... on SpanishWordDetails {
+                lemma
+                gender
+                pluralForm
+            }
+            ... on FrenchWordDetails {
+                lemma
+                gender
+                pluralForm
+            }
+            ... on GermanWordDetails {
+                lemma
+                gender
+                pluralForm
+                separablePrefix
             }
         }
     }

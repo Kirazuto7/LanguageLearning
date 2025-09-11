@@ -1,10 +1,9 @@
 scalar JSON
 
-union WordDetails = GenericWordDetails | JapaneseWordDetails
-
-type GenericWordDetails {
-    nativeWord: String!
-    phoneticSpelling: String!
+type KoreanWordDetails {
+    hangul: String!
+    hanja: String
+    romaja: String
 }
 
 type JapaneseWordDetails {
@@ -13,6 +12,46 @@ type JapaneseWordDetails {
     katakana: String
     romaji: String
 }
+
+type ChineseWordDetails {
+    simplified: String!
+    traditional: String
+    pinyin: String
+    toneNumber: String
+}
+
+type ThaiWordDetails {
+    thaiScript: String!
+    romanization: String
+    tonePattern: String
+}
+
+type ItalianWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+}
+
+type SpanishWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+}
+
+type FrenchWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+}
+
+type GermanWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+    separablePrefix: String
+}
+
+union WordDetails = JapaneseWordDetails | KoreanWordDetails | ChineseWordDetails | ThaiWordDetails | ItalianWordDetails | SpanishWordDetails | FrenchWordDetails | GermanWordDetails
 
 type Word {
     id: ID!

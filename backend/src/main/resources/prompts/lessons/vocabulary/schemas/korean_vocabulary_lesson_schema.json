@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanVocabularyLesson",
+  "description": "A schema for a Korean vocabulary lesson component.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the vocabulary lesson in English."
+    },
+    "vocabularies": {
+      "type": "array",
+      "description": "A list of vocabulary words related to the topic.",
+      "minItems": 10,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishTranslation": {
+            "type": "string",
+            "description": "The English translation of the word.",
+            "pattern": "^[A-Za-z0-9'() -]+$"
+          },
+          "hangul": {
+            "type": "string",
+            "description": "단어를 한국어 한글로 표기합니다.",
+            "pattern": "^[\\uAC00-\\uD7A3 ,.?!'\"-;:()…“”‘’·]+$"
+          },
+          "hanja": {
+            "description": "해당하는 경우, 한자로 표기합니다. 한자가 없으면 null입니다.",
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "string",
+                "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF ,.?!'\"-;:()…“”‘’·]+$"
+              }
+            ]
+          },
+          "romaja": {
+            "type": "string",
+            "description": "The romaja (romanized) spelling of the word.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F -]+$"
+          }
+        },
+        "required": ["englishTranslation", "hangul"]
+      }
+    }
+  },
+  "required": ["title", "vocabularies"]
+}

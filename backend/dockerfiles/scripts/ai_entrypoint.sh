@@ -25,11 +25,9 @@ if [ ! -f "$MARKER_FILE" ]; then
   if [ "$AI_PROFILE" = "gpu" ]; then
     ollama pull qwen3:8b
     ollama pull exaone3.5:7.8b
-    ollama pull summerwind/japanese-starling-chatv:7b
   else
     ollama pull qwen3:4b
     ollama pull exaone3.5:2.4b
-    ollama pull summerwind/japanese-starling-chatv:7b
   fi
     echo "--- Models pulled successfully. ---"
     touch "$MARKER_FILE"

@@ -1,5 +1,6 @@
 package com.example.language_learning.dto.models;
 
+import com.example.language_learning.dto.models.details.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -14,8 +15,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     property = "type"
 )
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = GenericWordDetailsDTO.class, name = "GenericWord"),
-    @JsonSubTypes.Type(value = JapaneseWordDetailsDTO.class, name = "JapaneseWord")
+    @JsonSubTypes.Type(value = JapaneseWordDetailsDTO.class, name = "JapaneseWord"),
+    @JsonSubTypes.Type(value = KoreanWordDetailsDTO.class, name = "KoreanWord"),
+    @JsonSubTypes.Type(value = ChineseWordDetailsDTO.class, name = "ChineseWord"),
+    @JsonSubTypes.Type(value = ThaiWordDetailsDTO.class, name = "ThaiWord"),
+    @JsonSubTypes.Type(value = ItalianWordDetailsDTO.class, name = "ItalianWord"),
+    @JsonSubTypes.Type(value = SpanishWordDetailsDTO.class, name = "SpanishWord"),
+    @JsonSubTypes.Type(value = FrenchWordDetailsDTO.class, name = "FrenchWord"),
+    @JsonSubTypes.Type(value = GermanWordDetailsDTO.class, name = "GermanWord")
 })
 public interface WordDetailsDTO {
 }

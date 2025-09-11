@@ -44,12 +44,6 @@ export interface LessonDTO {
     type: 'VOCABULARY' | 'GRAMMAR' | 'CONJUGATION' | 'PRACTICE' | 'READING_COMPREHENSION';
 }
 
-export interface GenericWordDetailsDTO {
-    __typename: 'GenericWordDetails';
-    nativeWord: string;
-    phoneticSpelling: string;
-}
-
 export interface JapaneseWordDetailsDTO {
     __typename: 'JapaneseWordDetails';
     kanji?: string;
@@ -58,7 +52,66 @@ export interface JapaneseWordDetailsDTO {
     romaji?: string;
 }
 
-export type WordDetailsDTO = GenericWordDetailsDTO | JapaneseWordDetailsDTO;
+export interface KoreanWordDetailsDTO {
+    __typename: 'KoreanWordDetails';
+    hangul: string;
+    hanja?: string;
+    romaja?: string;
+}
+
+export interface ChineseWordDetailsDTO {
+    __typename: 'ChineseWordDetails';
+    simplified: string;
+    traditional?: string;
+    pinyin?: string;
+    toneNumber?: string;
+}
+
+export interface ThaiWordDetailsDTO {
+    __typename: 'ThaiWordDetails';
+    thaiScript: string;
+    romanization?: string;
+    tonePattern?: string;
+}
+
+export interface ItalianWordDetailsDTO {
+    __typename: 'ItalianWordDetails';
+    lemma: string;
+    gender?: string;
+    pluralForm?: string;
+}
+
+export interface SpanishWordDetailsDTO {
+    __typename: 'SpanishWordDetails';
+    lemma: string;
+    gender?: string;
+    pluralForm?: string;
+}
+
+export interface FrenchWordDetailsDTO {
+    __typename: 'FrenchWordDetails';
+    lemma: string;
+    gender?: string;
+    pluralForm?: string;
+}
+
+export interface GermanWordDetailsDTO {
+    __typename: 'GermanWordDetails';
+    lemma: string;
+    gender?: string;
+    pluralForm?: string;
+    separablePrefix?: string;
+}
+
+export type WordDetailsDTO =
+    | JapaneseWordDetailsDTO
+    | KoreanWordDetailsDTO
+    | ChineseWordDetailsDTO
+    | ThaiWordDetailsDTO
+    | ItalianWordDetailsDTO
+    | SpanishWordDetailsDTO
+    | FrenchWordDetailsDTO
+    | GermanWordDetailsDTO;
 
 export interface WordDTO {
     id: string;
