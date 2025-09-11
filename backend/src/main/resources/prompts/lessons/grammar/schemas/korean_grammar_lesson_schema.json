@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanGrammarLesson",
+  "description": "A schema for a Korean grammar lesson.",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string", "description": "The title of the lesson in English." },
+    "grammarConcept": {
+      "type": "string",
+      "description": "The name of the grammar concept in English.",
+      "pattern": "^[A-Za-z\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·]+$"
+    },
+    "nativeGrammarConcept": {
+      "type": "string",
+      "description": "문법 개념의 한국어 이름입니다.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "A clear explanation of the grammar concept, allowing both English and Korean characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+    },
+    "exampleSentences": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "한국어로 된 전체 예문입니다.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+          },
+          "translation": {
+            "type": "string",
+            "description": "The English translation of the sentence.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
+          }
+        },
+        "required": ["text", "translation"]
+      }
+    }
+  },
+  "required": ["title", "grammarConcept", "nativeGrammarConcept", "explanation", "exampleSentences"]
+}

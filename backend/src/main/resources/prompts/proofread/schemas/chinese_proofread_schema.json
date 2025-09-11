@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChineseProofreadResponse",
+  "description": "A schema for a proofread response for a Chinese sentence.",
+  "type": "object",
+  "properties": {
+    "correctedSentence": {
+      "type": ["string", "null"],
+      "description": "修正后的中文句子，如果原文正确则为null。必须只使用中文字符。",
+      "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Encouraging feedback and explanation, allowing both English and Chinese characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+    }
+  },
+  "required": ["correctedSentence", "feedback"]
+}

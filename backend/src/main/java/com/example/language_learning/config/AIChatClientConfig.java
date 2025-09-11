@@ -1,8 +1,7 @@
 package com.example.language_learning.config;
 
-import com.example.language_learning.config.properties.KoreanAIProperties;
-import com.example.language_learning.config.properties.DefaultAIProperties;
-import com.example.language_learning.config.properties.JapaneseAIProperties;
+import com.example.language_learning.config.properties.ExaoneAIProperties;
+import com.example.language_learning.config.properties.Qwen3AIProperties;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -18,37 +17,28 @@ import org.springframework.core.io.Resource;
  * This provides full control and avoids auto-configuration issues.
  */
 @Configuration
-@EnableConfigurationProperties({DefaultAIProperties.class, KoreanAIProperties.class, JapaneseAIProperties.class})
+@EnableConfigurationProperties({Qwen3AIProperties.class, ExaoneAIProperties.class})
 public class AIChatClientConfig {
 
-    @Value("classpath:prompts/default_system_prompt.txt")
+    @Value("classpath:prompts/system/system_prompt.txt")
     private Resource systemPrompt;
-
-    @Value("classpath:prompts/japanese/japanese_system_prompt.txt")
-    private Resource japaneseSystemPrompt;
 
     // 1. Create separate OllamaApi beans for each instance using the builder
     @Bean
-    public OllamaApi ollamaApi1(DefaultAIProperties props) {
+    public OllamaApi ollamaApi1(Qwen3AIProperties props) {
         return OllamaApi.builder()
                 .baseUrl(props.baseUrl()).build();
     }
 
     @Bean
-    public OllamaApi ollamaApi2(KoreanAIProperties props) {
-        return OllamaApi.builder()
-                .baseUrl(props.baseUrl()).build();
-    }
-
-    @Bean
-    public OllamaApi ollamaApi3(JapaneseAIProperties props) {
+    public OllamaApi ollamaApi2(ExaoneAIProperties props) {
         return OllamaApi.builder()
                 .baseUrl(props.baseUrl()).build();
     }
 
     // 2. Create OllamaChatModel beans using the builder pattern
     @Bean
-    public OllamaChatModel defaultChatModel(OllamaApi ollamaApi1, DefaultAIProperties props) {
+    public OllamaChatModel qwen3ChatModel(OllamaApi ollamaApi1, Qwen3AIProperties props) {
         OllamaOptions options = OllamaOptions.builder()
                 .model(props.chat().model())
                 .format(props.chat().options().format())
@@ -64,7 +54,7 @@ public class AIChatClientConfig {
     }
 
     @Bean
-    public OllamaChatModel koreanChatModel(OllamaApi ollamaApi2, KoreanAIProperties props) {
+    public OllamaChatModel exaoneChatModel(OllamaApi ollamaApi2, ExaoneAIProperties props) {
         OllamaOptions options = OllamaOptions.builder()
                 .model(props.chat().model())
                 .format(props.chat().options().format())
@@ -79,34 +69,15 @@ public class AIChatClientConfig {
                 .build();
     }
 
-    @Bean
-    public OllamaChatModel japaneseChatModel(OllamaApi ollamaApi3, JapaneseAIProperties props) {
-        OllamaOptions options = OllamaOptions.builder()
-                .model(props.chat().model())
-                .format(props.chat().options().format())
-                .numCtx(props.chat().options().numCtx())
-                .numPredict(props.chat().options().numPredict())
-                .temperature(props.chat().options().temperature())
-                .build();
-        return OllamaChatModel.builder()
-                .ollamaApi(ollamaApi3)
-                .defaultOptions(options)
-                .build();
-    }
 
     // 3. Create ChatClient beans based on the specific ChatModels
     @Bean("qwen3")
-    public ChatClient defaultChatClient(OllamaChatModel defaultChatModel) {
-        return ChatClient.builder(defaultChatModel).defaultSystem(systemPrompt).build();
+    public ChatClient qwen3ChatClient(OllamaChatModel qwen3ChatModel) {
+        return ChatClient.builder(qwen3ChatModel).defaultSystem(systemPrompt).build();
     }
 
     @Bean("exaone")
-    public ChatClient koreanChatClient(OllamaChatModel koreanChatModel) {
-        return ChatClient.builder(koreanChatModel).defaultSystem(systemPrompt).build();
-    }
-
-    @Bean("starling")
-    public ChatClient japaneseChatClient(OllamaChatModel japaneseChatModel) {
-        return ChatClient.builder(japaneseChatModel).defaultSystem(japaneseSystemPrompt).build();
+    public ChatClient exaoneChatClient(OllamaChatModel exaoneChatModel) {
+        return ChatClient.builder(exaoneChatModel).defaultSystem(systemPrompt).build();
     }
 }

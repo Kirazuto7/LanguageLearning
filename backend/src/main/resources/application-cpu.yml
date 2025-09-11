@@ -6,6 +6,3 @@ spring:
     ollama2:
       chat:
         model: exaone3.5:2.4b
-    ollama3:
-      chat:
-        model: summerwind/japanese-starling-chatv:7b

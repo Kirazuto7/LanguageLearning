@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanReadingComprehensionLesson",
+  "description": "A schema for a Korean reading comprehension lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the reading lesson in English."
+    },
+    "story": {
+      "type": "string",
+      "description": "한국어로 된 짧은 이야기. 반드시 한글만 사용하고, 괄호 안에 영어 번역이나 로마자 표기를 포함하지 마세요.",
+      "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "한국어로 된 이해력 질문. 반드시 한글만 사용하고, 괄호 안에 영어 번역이나 로마자 표기를 포함하지 마세요.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+          },
+          "answer": {
+            "type": "string",
+            "description": "이야기에서 발췌한 한국어 정답. 반드시 한글만 사용하고, 괄호 안에 영어 번역이나 로마자 표기를 포함하지 마세요.",
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+          },
+          "answerChoices": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "description": "가능한 한국어 답변 선택지. 반드시 한글만 사용하고, 괄호 안에 영어 번역이나 로마자 표기를 포함하지 마세요.",
+              "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+            }
+          }
+        },
+        "required": ["questionText", "answer", "answerChoices"]
+      }
+    }
+  },
+  "required": ["title", "story", "questions"]
+}

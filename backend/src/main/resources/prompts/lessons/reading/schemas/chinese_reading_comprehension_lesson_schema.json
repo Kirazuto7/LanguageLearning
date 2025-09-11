@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChineseReadingComprehensionLesson",
+  "description": "A schema for a Chinese reading comprehension lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the reading lesson in English."
+    },
+    "story": {
+      "type": "string",
+      "description": "中文短篇故事。必须只使用中文字符。",
+      "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "中文的理解问题。必须只使用中文字符。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+          },
+          "answer": {
+            "type": "string",
+            "description": "从故事中提取的中文正确答案。必须只使用中文字符。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+          },
+          "answerChoices": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "description": "一个可能的中文答案选项。必须只使用中文字符。",
+              "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+            }
+          }
+        },
+        "required": ["questionText", "answer", "answerChoices"]
+      }
+    }
+  },
+  "required": ["title", "story", "questions"]
+}

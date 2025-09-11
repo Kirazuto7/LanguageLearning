@@ -1,10 +1,12 @@
 package com.example.language_learning.mapper;
 
+import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.dto.user.SettingsDTO;
 import com.example.language_learning.dto.user.UserDTO;
 import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
+import com.example.language_learning.entity.models.details.*;
 import com.example.language_learning.entity.user.Settings;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.entity.models.Word;
@@ -297,15 +299,48 @@ public class DtoMapper {
         }
 
         return switch (dto) {
-            case GenericWordDetailsDTO genericDto -> GenericWordDetails.builder()
-                        .nativeWord(genericDto.nativeWord())
-                        .phoneticSpelling(genericDto.phoneticSpelling())
-                        .build();
             case JapaneseWordDetailsDTO japaneseDto -> JapaneseWordDetails.builder()
                         .kanji(japaneseDto.kanji())
                         .hiragana(japaneseDto.hiragana())
                         .katakana(japaneseDto.katakana())
                         .romaji(japaneseDto.romaji())
+                        .build();
+            case KoreanWordDetailsDTO koreanDto -> KoreanWordDetails.builder()
+                        .hangul(koreanDto.hangul())
+                        .hanja(koreanDto.hanja())
+                        .romaja(koreanDto.romaja())
+                        .build();
+            case ChineseWordDetailsDTO chineseDto -> ChineseWordDetails.builder()
+                        .simplified(chineseDto.simplified())
+                        .traditional(chineseDto.traditional())
+                        .pinyin(chineseDto.pinyin())
+                        .toneNumber(chineseDto.toneNumber())
+                        .build();
+            case ThaiWordDetailsDTO thaiDto -> ThaiWordDetails.builder()
+                        .thaiScript(thaiDto.thaiScript())
+                        .romanization(thaiDto.romanization())
+                        .tonePattern(thaiDto.tonePattern())
+                        .build();
+            case ItalianWordDetailsDTO italianDto -> ItalianWordDetails.builder()
+                        .lemma(italianDto.lemma())
+                        .gender(italianDto.gender())
+                        .pluralForm(italianDto.pluralForm())
+                        .build();
+            case SpanishWordDetailsDTO spanishDto -> SpanishWordDetails.builder()
+                        .lemma(spanishDto.lemma())
+                        .gender(spanishDto.gender())
+                        .pluralForm(spanishDto.pluralForm())
+                        .build();
+            case FrenchWordDetailsDTO frenchDto -> FrenchWordDetails.builder()
+                        .lemma(frenchDto.lemma())
+                        .gender(frenchDto.gender())
+                        .pluralForm(frenchDto.pluralForm())
+                        .build();
+            case GermanWordDetailsDTO germanDto -> GermanWordDetails.builder()
+                        .lemma(germanDto.lemma())
+                        .gender(germanDto.gender())
+                        .pluralForm(germanDto.pluralForm())
+                        .separablePrefix(germanDto.separablePrefix())
                         .build();
             default -> throw new IllegalArgumentException("Unknown WordDetailsDTO type: " + dto.getClass().getSimpleName());
         };
@@ -325,15 +360,48 @@ public class DtoMapper {
         if (entity == null) return null;
 
         return switch (entity) {
-            case GenericWordDetails genericWord -> GenericWordDetailsDTO.builder()
-                    .nativeWord(genericWord.nativeWord())
-                    .phoneticSpelling(genericWord.phoneticSpelling())
-                    .build();
             case JapaneseWordDetails japaneseWord -> JapaneseWordDetailsDTO.builder()
                     .kanji(japaneseWord.kanji())
                     .hiragana(japaneseWord.hiragana())
                     .katakana(japaneseWord.katakana())
                     .romaji(japaneseWord.romaji())
+                    .build();
+            case KoreanWordDetails koreanWord -> KoreanWordDetailsDTO.builder()
+                    .hangul(koreanWord.hangul())
+                    .hanja(koreanWord.hanja())
+                    .romaja(koreanWord.romaja())
+                    .build();
+            case ChineseWordDetails chineseWord -> ChineseWordDetailsDTO.builder()
+                    .simplified(chineseWord.simplified())
+                    .traditional(chineseWord.traditional())
+                    .pinyin(chineseWord.pinyin())
+                    .toneNumber(chineseWord.toneNumber())
+                    .build();
+            case ThaiWordDetails thaiWord -> ThaiWordDetailsDTO.builder()
+                    .thaiScript(thaiWord.thaiScript())
+                    .romanization(thaiWord.romanization())
+                    .tonePattern(thaiWord.tonePattern())
+                    .build();
+            case ItalianWordDetails italianWord -> ItalianWordDetailsDTO.builder()
+                    .lemma(italianWord.lemma())
+                    .gender(italianWord.gender())
+                    .pluralForm(italianWord.pluralForm())
+                    .build();
+            case SpanishWordDetails spanishWord -> SpanishWordDetailsDTO.builder()
+                    .lemma(spanishWord.lemma())
+                    .gender(spanishWord.gender())
+                    .pluralForm(spanishWord.pluralForm())
+                    .build();
+            case FrenchWordDetails frenchWord -> FrenchWordDetailsDTO.builder()
+                    .lemma(frenchWord.lemma())
+                    .gender(frenchWord.gender())
+                    .pluralForm(frenchWord.pluralForm())
+                    .build();
+            case GermanWordDetails germanWord -> GermanWordDetailsDTO.builder()
+                    .lemma(germanWord.lemma())
+                    .gender(germanWord.gender())
+                    .pluralForm(germanWord.pluralForm())
+                    .separablePrefix(germanWord.separablePrefix())
                     .build();
             default -> throw new IllegalArgumentException("Unknown WordDetails entity type: " + entity.getClass().getSimpleName());
         };
