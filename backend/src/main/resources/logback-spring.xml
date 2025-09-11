@@ -1,6 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource ="org/springframework/boot/logging/logback/base.xml"/>
+    <property name="LOGS_PATH" value="./logs"/>
+    <timestamp key="RUN_TIMESTAMP" datePattern="yyyy-MM-dd_HH-mm-ss" timeReference="America/New_York"/>
+
+    <!-- Appender for the main application log -->
+    <appender name="FILE_APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/application.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for GraphQL specific logs -->
+    <appender name="FILE_GRAPHQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/graphql.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/graphql.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for AI Service specific logs -->
+    <appender name="FILE_AI" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/ai.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/ai.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for Spring Security specific logs -->
+    <appender name="FILE_SECURITY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/security.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/security.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
 
     <appender name="STDOUT_ERROR_LEVEL" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -23,8 +73,47 @@
         </filter>
     </appender>
 
+    <!-- Default root logger for non-dev profiles -->
     <root level="INFO">
         <appender-ref ref="STDOUT_ERROR_LEVEL"/>
         <appender-ref ref="STDOUT_INFO_LEVEL"/>
     </root>
+
+    <!-- Configuration for the 'dev' profile -->
+    <springProfile name="dev">
+        <!-- AI Service Logger -->
+        <logger name="com.example.language_learning.services.AIService" level="INFO" additivity="false">
+            <appender-ref ref="FILE_AI"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- Sanitizer Logger -->
+        <logger name="com.example.language_learning.mapper.util" level="INFO" additivity="false">
+            <appender-ref ref="FILE_AI"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- GraphQL Logger -->
+        <logger name="org.springframework.graphql" level="DEBUG" additivity="false">
+            <appender-ref ref="FILE_GRAPHQL"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- Security Logger -->
+        <logger name="org.springframework.security" level="INFO" additivity="false">
+            <appender-ref ref="FILE_SECURITY"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- Root logger for everything else in 'dev' profile -->
+        <root level="INFO">
+            <appender-ref ref="FILE_APP"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </root>
+    </springProfile>
 </configuration>
