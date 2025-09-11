@@ -256,7 +256,30 @@ public class AIService {
                             String errorDetails = errors.stream()
                                 .map(ValidationMessage::getMessage)
                                 .collect(Collectors.joining(", "));
+
                             log.warn("Attempt {} for {} failed schema validation: {}", attempt, promptType, errorDetails);
+
+                            // Attempt to Sanitize the AI response errors
+                            JsonNode fixedNode = sanitizer.sanitizeJsonValidationErrors(responseNode, errors);
+
+                            // Check if anything was fixed
+                            if (fixedNode != responseNode) {
+                                log.info("Sanitization applied. Re-validating the modified JSON for {}.", promptType);
+                                Set<ValidationMessage> newErrors = schema.validate(fixedNode);
+
+                                if (newErrors.isEmpty()) {
+                                    log.info("Sanitization successful! {} passed schema validation after fix.", promptType);
+                                    return Mono.just(objectMapper.convertValue(fixedNode, apiDtoType));
+                                }
+                                else {
+                                    String newErrorDetails = newErrors.stream()
+                                        .map(ValidationMessage::getMessage)
+                                        .collect(Collectors.joining(", "));
+                                    log.warn("Sanitization attempt failed for {}. New errors: {}", promptType, newErrorDetails);
+                                    // Return to retry mechanism
+                                }
+                            }
+
                             params.put("invalidJson", jsonString);
                             params.put("validationFeedback", "Your previous response failed schema validation with the following errors: " + errorDetails + ". You MUST fix these errors.");
                             return generateWithRetry(params, aiPrompt, apiDtoType, attempt + 1);

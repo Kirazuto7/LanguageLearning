@@ -24,7 +24,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - SPRING_AI_OLLAMA_BASE_URL=${SPRING_AI_OLLAMA_BASE_URL}
-      - SPRING_PROFILES_ACTIVE=gpu
+      - SPRING_PROFILES_ACTIVE=dev,gpu
     env_file:
       - .env
     volumes:
