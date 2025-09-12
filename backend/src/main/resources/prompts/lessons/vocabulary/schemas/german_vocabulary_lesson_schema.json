@@ -1,3 +1,4 @@
+
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "GermanVocabularyLesson",
@@ -23,19 +24,23 @@
           },
           "lemma": {
             "type": "string",
-            "description": "The base form (lemma) of the word in German."
+            "description": "The base form (lemma) of the word in German.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]+$"
           },
           "gender": {
             "type": ["string", "null"],
-            "description": "The grammatical gender (e.g., 'der', 'die', 'das'), if applicable."
+            "description": "The grammatical gender. MUST be one of 'der' (masculine), 'die' (feminine), or 'das' (neuter).",
+            "pattern": "^(der|die|das)$"
           },
           "pluralForm": {
             "type": ["string", "null"],
-            "description": "The plural form of the word, if applicable."
+            "description": "The plural form of the word, if applicable.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]*$"
           },
           "separablePrefix": {
             "type": ["string", "null"],
-            "description": "The separable prefix for verbs, if applicable."
+            "description": "The separable prefix for verbs, if applicable.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]*$"
           }
         },
         "required": ["englishTranslation", "lemma"]

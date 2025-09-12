@@ -24,7 +24,7 @@
           "text": {
             "type": "string",
             "description": "The full example sentence in Thai.",
-            "pattern": "^[\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()\\[\\]…ฯๆ\\n]+$"
+            "pattern": "^[\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:/\\[\\]…ฯๆ\\n]+$"
           },
           "translation": {
             "type": "string",

@@ -6,13 +6,13 @@
   "properties": {
     "correctedSentence": {
       "type": ["string", "null"],
-      "description": "修正后的中文句子，如果原文正确则为null。必须只使用中文字符。",
-      "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+      "description": "修正后的中文句子，如果原文正确则为null。",
+      "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F0-9 ,.?!'\"-;:/\\[\\]…。「」“”‘’《》【】、：；—·～？！，\\n]+$"
     },
     "feedback": {
       "type": "string",
       "description": "Encouraging feedback and explanation, allowing both English and Chinese characters.",
-      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\n]+$"
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F0-9 ,.?!'\"-;:()*\\-/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！，\\n]+$"
     }
   },
   "required": ["correctedSentence", "feedback"]

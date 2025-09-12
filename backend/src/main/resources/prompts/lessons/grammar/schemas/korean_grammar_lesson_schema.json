@@ -8,12 +8,12 @@
     "grammarConcept": {
       "type": "string",
       "description": "The name of the grammar concept, allowing both English and Korean characters.",
-      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
     },
     "explanation": {
       "type": "string",
       "description": "A clear explanation of the grammar concept, allowing both English and Korean characters.",
-      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
     },
     "exampleSentences": {
       "type": "array",
@@ -24,7 +24,7 @@
           "text": {
             "type": "string",
             "description": "한국어로 된 전체 예문입니다.",
-            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:*\\-/\\[\\]…“”‘’·\\n]+$"
           },
           "translation": {
             "type": "string",

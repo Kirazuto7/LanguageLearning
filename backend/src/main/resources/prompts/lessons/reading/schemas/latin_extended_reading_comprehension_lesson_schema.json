@@ -11,7 +11,7 @@
     "story": {
       "type": "string",
       "description": "A short story in the native language.",
-      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:¿¡*\\-/\\[\\]…\\n]+$"
     },
     "questions": {
       "type": "array",
@@ -28,7 +28,7 @@
           "answer": {
             "type": "string",
             "description": "The correct answer in the native language, extracted from the story.",
-            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:¿¡*\\-/\\[\\]…\\n]+$"
           },
           "answerChoices": {
             "type": "array",
@@ -37,7 +37,7 @@
             "items": {
               "type": "string",
               "description": "A possible answer choice in the native language.",
-              "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+              "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:¿¡*\\-/\\[\\]…\\n]+$"
             }
           }
         },

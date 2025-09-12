@@ -25,17 +25,17 @@
           "infinitive": {
             "type": "string",
             "description": "단어의 한국어 기본형입니다.",
-            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF ,.?!'\"-;:()…“”‘’·]+$"
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF ]+$"
           },
           "conjugated_form": {
             "type": "string",
             "description": "활용 후의 한국어 단어입니다.",
-            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF ,.?!'\"-;:()…“”‘’·]+$"
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF ]+$"
           },
           "example_sentence": {
             "type": "string",
             "description": "활용된 형태를 사용한 완전한 한국어 문장입니다.",
-            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:*\\-/\\[\\]…“”‘’·\\n]+$"
           },
           "sentence_translation": {
             "type": "string",

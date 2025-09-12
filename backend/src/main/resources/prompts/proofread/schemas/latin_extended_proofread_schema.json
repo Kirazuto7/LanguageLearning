@@ -7,7 +7,7 @@
     "correctedSentence": {
       "type": ["string", "null"],
       "description": "The corrected sentence in the native language, or null if the original was correct.",
-      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:¿¡*\\-/\\[\\]…\\n]+$"
     },
     "feedback": {
       "type": "string",

@@ -22,7 +22,7 @@
           "questionText": {
             "type": "string",
             "description": "The open-ended question in Thai.",
-            "pattern": "^[\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()\\[\\]…ฯๆ\\n]+$"
+            "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()/\\[\\]…ฯๆ\\n]+$"
           },
           "answer": {
             "type": "null",

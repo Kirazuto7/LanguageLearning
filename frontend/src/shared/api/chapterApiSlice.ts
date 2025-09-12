@@ -91,13 +91,13 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                                 );
                             }
                         },
+                        onError: (error) => {
+                            const errorMessage = error?.message || 'Subscription failed';
+                            dispatch(updateProgress({ taskId, error: errorMessage, isComplete: false, progress: 0, message: 'Error' }));
+                        },
                         onComplete: () => {
                             // Force a refetch to ensure data integrity between the client & server.
                             dispatch(lessonBookApiSlice.endpoints.getLessonBook.initiate({ language, difficulty }, { forceRefetch: true }));
-
-                            setTimeout(() => {
-                                store.dispatch(clearProgress(taskId));
-                            }, 5000);
                         }
                     });
                 }

@@ -40,12 +40,12 @@ export function startSubscription<T = any>(subscriptionId: string, options: Subs
         (err) => { // onError
             logToServer("error", "WS error", { error: err, subscriptionId });
             if (onError) onError(err);
-            cleanup(subscriptionId);
+            stopSubscription(subscriptionId);
         },
         () => { // onComplete
             logToServer("info", "WS stream from server has completed.", { subscriptionId });
             if (onComplete) onComplete();
-            cleanup(subscriptionId);
+            stopSubscription(subscriptionId);
         }
     );
 
@@ -63,12 +63,4 @@ export function stopSubscription(subscriptionId: string) {
         activeSubs.delete(subscriptionId);
         logToServer("info", "Unsubscribed and cleaned up task.", { subscriptionId });
     }
-}
-
-/**
- * Cleans up the subscription and associated state after completion.
- * @param subscriptionId The unique identifier for the subscription.
- */
-function cleanup(subscriptionId: string) {
-    stopSubscription(subscriptionId);
 }

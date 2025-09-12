@@ -24,17 +24,17 @@
         "properties": {
           "infinitive": {
             "type": "string",
-            "description": "単語の基本形を日本語で。必ず日本の文字（漢字、ひらがな、カタカナ）のみを使用してください。",
+            "description": "単語の基本形を日本語で。",
             "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]+$"
           },
           "conjugated_form": {
             "type": "string",
-            "description": "活用後の単語を日本語で。必ず日本の文字（漢字、ひらがな、カタカナ）のみを使用してください。",
+            "description": "活用後の単語を日本語で。",
             "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]+$"
           },
           "example_sentence": {
             "type": "string",
-            "description": "活用形を使った完全な例文を日本語で。必ず日本の文字（漢字、ひらがな、カタカナ）のみを使用してください。",
+            "description": "活用形を使った完全な例文を日本語で。",
             "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
           },
           "sentence_translation": {
