@@ -196,7 +196,6 @@ public class DtoMapper {
                 .title(dto.title())
                 .type(LessonType.GRAMMAR)
                 .grammarConcept(dto.grammarConcept())
-                .nativeGrammarConcept(dto.nativeGrammarConcept())
                 .explanation(dto.explanation())
                 .build();
 
@@ -214,7 +213,6 @@ public class DtoMapper {
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .grammarConcept(entity.getGrammarConcept())
-                .nativeGrammarConcept(entity.getNativeGrammarConcept())
                 .explanation(entity.getExplanation())
                 .exampleSentences(entity.getExampleSentences().stream()
                         .map(this::toDto)

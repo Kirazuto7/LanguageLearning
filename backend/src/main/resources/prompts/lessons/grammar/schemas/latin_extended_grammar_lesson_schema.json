@@ -7,12 +7,7 @@
     "title": { "type": "string", "description": "The title of the lesson in English." },
     "grammarConcept": {
       "type": "string",
-      "description": "The name of the grammar concept in English.",
-      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()/\\[\\]…\\-]+$"
-    },
-    "nativeGrammarConcept": {
-      "type": "string",
-      "description": "The name of the grammar concept in the native language.",
+      "description": "The name of the grammar concept, allowing both English and the native language's characters.",
       "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()/\\[\\]…\\-]+$"
     },
     "explanation": {
@@ -41,5 +36,5 @@
       }
     }
   },
-  "required": ["title", "grammarConcept", "nativeGrammarConcept", "explanation", "exampleSentences"]
+  "required": ["title", "grammarConcept", "explanation", "exampleSentences"]
 }

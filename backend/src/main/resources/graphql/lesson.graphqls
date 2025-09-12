@@ -24,7 +24,6 @@ type GrammarLesson implements Lesson {
     type: LessonType!
     title: String!
     grammarConcept: String!
-    nativeGrammarConcept: String!
     explanation: String!
     exampleSentences: [Sentence!]!
 }

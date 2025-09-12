@@ -7,13 +7,8 @@
     "title": { "type": "string", "description": "The title of the lesson in English." },
     "grammarConcept": {
       "type": "string",
-      "description": "The name of the grammar concept in English.",
-      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()/\\[\\]…\\-]+$"
-    },
-    "nativeGrammarConcept": {
-      "type": "string",
-      "description": "语法概念的中文名称。必须只使用中文字符。",
-      "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！]+$"
+      "description": "The name of the grammar concept, allowing both English and Chinese characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！\\-]+$"
     },
     "explanation": {
       "type": "string",
@@ -41,5 +36,5 @@
       }
     }
   },
-  "required": ["title", "grammarConcept", "nativeGrammarConcept", "explanation", "exampleSentences"]
+  "required": ["title", "grammarConcept", "explanation", "exampleSentences"]
 }

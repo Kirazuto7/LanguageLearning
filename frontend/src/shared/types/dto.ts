@@ -134,7 +134,6 @@ export interface VocabularyLessonDTO extends LessonDTO {
 export interface GrammarLessonDTO extends LessonDTO {
     type: 'GRAMMAR';
     grammarConcept: string;
-    nativeGrammarConcept: string;
     explanation: string;
     exampleSentences: SentenceDTO[];
 }

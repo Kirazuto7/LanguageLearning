@@ -5,12 +5,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.*;
+import com.networknt.schema.JsonSchema;
 import com.networknt.schema.ValidationMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import java.util.regex.PatternSyntaxException;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -134,7 +138,7 @@ public class AIResponseSanitizer {
      * @param errors   The set of validation errors from the schema validator.
      * @return A new, potentially fixed JsonNode. Returns the original node if no fixes were applied.
      */
-    public JsonNode sanitizeJsonValidationErrors(JsonNode rootNode, Set<ValidationMessage> errors) {
+    public JsonNode sanitizeJsonValidationErrors(JsonNode rootNode, Set<ValidationMessage> errors, JsonSchema schema) {
         // We need a mutable copy to apply fixes.
         JsonNode mutableRoot = rootNode.deepCopy();
         boolean sanitized = false;
@@ -142,15 +146,15 @@ public class AIResponseSanitizer {
         for (ValidationMessage error : errors) {
             String errorMessage = error.getMessage();
 
-            // RULE 1: If a string was found where null was expected, we set the field to null.
-            if (errorMessage.contains("string found, null expected")) {
-                if (setFieldToNull(mutableRoot, error.getInstanceLocation().toString())) {
+            // RULE 1: If the error is a 'type' mismatch, attempt to coerce or nullify the value.
+            if ("type".equals(error.getMessageKey())) {
+                if (coerceOrNullField(mutableRoot, error, schema)) {
                     sanitized = true;
                 }
             }
-            // Rule 2: If it's a regex mismatch, attempt to strip invalid characters.
-            else if (error.getMessage().contains("does not match the regex pattern")) {
-                if (fixValidationError(mutableRoot, error)) {
+            // RULE 2: If it's a 'pattern' mismatch, attempt to strip invalid characters.
+            else if ("pattern".equals(error.getMessageKey())) {
+                if (fixValidationError(mutableRoot, error, schema)) {
                     sanitized = true;
                 }
             }
@@ -158,50 +162,157 @@ public class AIResponseSanitizer {
         return sanitized ? mutableRoot : rootNode;
     }
 
-    private boolean setFieldToNull(JsonNode rootNode, String jsonPointerPath) {
+    private boolean coerceOrNullField(JsonNode rootNode, ValidationMessage error, JsonSchema schema)  {
+        String jsonPointerPath = "";
         try {
-            String parentPath = jsonPointerPath.substring(0, jsonPointerPath.lastIndexOf('/'));
-            String fieldOrIndex = jsonPointerPath.substring(jsonPointerPath.lastIndexOf('/') + 1);
+            jsonPointerPath = error.getInstanceLocation().toString();
+            // Convert JSONPath to JSON Pointer format
+            jsonPointerPath = jsonPointerPath.replace("$.", "/")
+                                             .replace("][", "/")
+                                             .replace("[", "/")
+                                             .replace("]", "")
+                                             .replace(".", "/");
+
+            int lastSlash = jsonPointerPath.lastIndexOf('/');
+            String parentPath = (lastSlash == -1) ? "" : jsonPointerPath.substring(0, lastSlash);
+            String fieldOrIndex = (lastSlash == -1) ? jsonPointerPath.substring(1) : jsonPointerPath.substring(lastSlash + 1);
 
             JsonNode parentNode = rootNode.at(parentPath);
-
             if (parentNode.isMissingNode()) {
                 return false;
             }
 
-            log.info("Hot-fixing field '{}' by setting it to null due to type mismatch.", jsonPointerPath);
-            if (parentNode.isObject()) {
-                ((ObjectNode) parentNode).putNull(fieldOrIndex);
+            JsonNode invalidNode = parentNode.isObject()
+                    ? parentNode.get(fieldOrIndex)
+                    : parentNode.get(Integer.parseInt(fieldOrIndex));
+
+            if (invalidNode == null || invalidNode.isNull()) {
+                return false;
             }
-            else if (parentNode.isArray()) {
-                ((ArrayNode) parentNode).set(Integer.parseInt(fieldOrIndex), objectMapper.getNodeFactory().nullNode());
+
+            // Look up schema node
+            String schemaPointer = error.getSchemaLocation().toString();
+            // The schema path can sometimes point to the keyword itself (e.g., #/properties/foo/type).
+            // We need to navigate to the parent object that contains the type definition.
+            if (schemaPointer.endsWith("/pattern") || schemaPointer.endsWith("/type")) {
+                schemaPointer = schemaPointer.substring(0, schemaPointer.lastIndexOf('/'));
             }
-            else {
-                return false; // Fallback if the JSON path is invalid
+            JsonNode schemaNode = schema.getSchemaNode().at(schemaPointer.substring(1)); // Remove leading '#'
+
+
+            // Determine allowed types from the schema
+            List<String> allowedTypes = new ArrayList<>();
+            if (schemaNode.has("type")) {
+                JsonNode typeNode = schemaNode.get("type");
+                if (typeNode.isTextual()) {
+                    allowedTypes.add(typeNode.asText());
+                } else if (typeNode.isArray()) {
+                    for (JsonNode t : typeNode) {
+                        if (t.isTextual()) {
+                            allowedTypes.add(t.asText());
+                        }
+                    }
+                }
             }
-            return true;
+            // Also check inside oneOf for allowed types
+            if (schemaNode.has("oneOf")) {
+                for (JsonNode subSchema : schemaNode.get("oneOf")) {
+                    if (subSchema.has("type")) {
+                        String type = subSchema.get("type").asText();
+                        if (!allowedTypes.contains(type)) {
+                            allowedTypes.add(type);
+                        }
+                    }
+                }
+            }
+
+            boolean nullAllowed = allowedTypes.contains("null");
+
+            // Try coercion
+            String original = invalidNode.asText();
+            JsonNode coercedNode = null;
+
+            if (allowedTypes.contains("integer")) {
+                try {
+                    coercedNode = IntNode.valueOf(Integer.parseInt(original));
+                } catch (NumberFormatException ignored) {}
+            } else if (allowedTypes.contains("number")) {
+                try {
+                    coercedNode = DoubleNode.valueOf(Double.parseDouble(original));
+                } catch (NumberFormatException ignored) {}
+            } else if (allowedTypes.contains("boolean")) {
+                if ("true".equalsIgnoreCase(original) || "false".equalsIgnoreCase(original)) {
+                    coercedNode = BooleanNode.valueOf(Boolean.parseBoolean(original));
+                }
+            } else if (allowedTypes.contains("string")) {
+                coercedNode = TextNode.valueOf(original);
+            }
+
+            if (coercedNode != null) {
+                log.info("Hot-fixing field '{}' by coercing value: '{}' -> {}", jsonPointerPath, original, coercedNode);
+                if (parentNode.isObject()) {
+                    ((ObjectNode) parentNode).set(fieldOrIndex, coercedNode);
+                } else if (parentNode.isArray()) {
+                    ((ArrayNode) parentNode).set(Integer.parseInt(fieldOrIndex), coercedNode);
+                }
+                return true;
+            }
+
+            // If coercion fails, fallback to null if allowed
+            if (nullAllowed) {
+                log.info("Hot-fixing field '{}' by setting to null (coercion failed).", jsonPointerPath);
+                if (parentNode.isObject()) {
+                    ((ObjectNode) parentNode).putNull(fieldOrIndex);
+                } else if (parentNode.isArray()) {
+                    ((ArrayNode) parentNode).set(Integer.parseInt(fieldOrIndex), NullNode.getInstance());
+                }
+                return true;
+            }
+
+            log.warn("Cannot coerce or nullify field '{}'. Schema requires one of {} but value='{}'.",
+                    jsonPointerPath, allowedTypes, original);
         }
         catch (Exception e) {
-            log.warn("Could not apply 'setFieldToNull' hot-fix for path '{}': {}", jsonPointerPath, e.getMessage());
+            log.warn("Could not apply 'coerceOrNullField' hot-fix for path '{}': {}", jsonPointerPath, e.getMessage());
         }
         return false;
     }
 
-    private boolean fixValidationError(JsonNode rootNode, ValidationMessage error) {
-        String jsonPointerPath = error.getInstanceLocation().toString();
-        String errorMessage = error.getMessage();
+    private boolean fixValidationError(JsonNode rootNode, ValidationMessage error, JsonSchema schema) {
+        String jsonPointerPath = "";
 
-        // 1. Extract the expected regex pattern from the error message
-        String patternString = extractPatternFromMessage(errorMessage);
-        if (patternString == null) {
+        // 1. Resolve schema node
+        String schemaPath = error.getSchemaLocation().toString();
+        String pointer = schemaPath.startsWith("#") ? schemaPath.substring(1) : schemaPath;
+        JsonNode schemaNode = schema.getSchemaNode().at(pointer);
+        if (schemaNode.isMissingNode() || !schemaNode.isTextual()) {
+            log.warn("Cannot apply regex hot-fix for path '{}': schema node missing or not textual.", error.getInstanceLocation().toString());
+            return false;
+        }
+
+        String patternString = schemaNode.asText();
+        if (patternString.isBlank()) {
+            log.warn("Cannot apply regex hot-fix for path '{}': pattern is empty.", error.getInstanceLocation().toString());
             return false;
         }
 
         try {
-            // 2. Navigate to the parent of the invalid node.
-            String parentPath = jsonPointerPath.substring(0, jsonPointerPath.lastIndexOf('/'));
-            String fieldOrIndex = jsonPointerPath.substring(jsonPointerPath.lastIndexOf('/') + 1);
+            jsonPointerPath = error.getInstanceLocation().toString();
+            // Convert JSONPath to JSON Pointer format
+            jsonPointerPath = jsonPointerPath
+                    .replace("$.", "/")
+                    .replace("][", "/")
+                    .replace("[", "/")
+                    .replace("]", "")
+                    .replace(".", "/");
 
+            int lastSlash = jsonPointerPath.lastIndexOf('/');
+            if (lastSlash == -1) {
+                return false;
+            }
+
+            String parentPath = jsonPointerPath.substring(0, lastSlash);
+            String fieldOrIndex = jsonPointerPath.substring(lastSlash + 1);
             JsonNode parentNode = rootNode.at(parentPath);
 
             if (parentNode.isMissingNode()) {
@@ -209,25 +320,47 @@ public class AIResponseSanitizer {
             }
 
             JsonNode invalidNode = parentNode.isObject() ? parentNode.get(fieldOrIndex) : parentNode.get(Integer.parseInt(fieldOrIndex));
-
-            // 3. Dynamically build a "removal" pattern from the schema's "allow" pattern.
             if (invalidNode != null && invalidNode.isTextual()) {
                 String originalText = invalidNode.asText();
-                String allowedChars = extractAllowedChars(patternString);
-                if (allowedChars == null) return false;
 
-                // Match any character NOT allowed in the set.
-                Pattern removalPattern = Pattern.compile("[^" + allowedChars + "]");
-                String sanitizedText = removalPattern.matcher(originalText).replaceAll("");
+                // 2. Try to compile the regex as a per-character pattern
+                String corePattern = patternString;
+                // Remove start/end anchors if present
+                if (corePattern.startsWith("^")) corePattern = corePattern.substring(1);
+                if (corePattern.endsWith("$")) corePattern = corePattern.substring(0, corePattern.length() - 1);
+                // Remove quantifiers like + or *
+                corePattern = corePattern.replaceAll("[+*]$", "");
 
-                // 4. If a change was made, update the node.
+                // Compile pattern for single-character matching
+                Pattern singleCharMatcher;
+                try {
+                    singleCharMatcher = Pattern.compile(corePattern);
+                } catch (PatternSyntaxException e) {
+                    log.warn("Regex pattern '{}' is too complex for hot-fix. Skipping.", patternString);
+                    return false;
+                }
+
+                // 3. Sanitize text
+                StringBuilder sanitizedBuilder = new StringBuilder();
+                for (char c : originalText.toCharArray()) {
+                    if (singleCharMatcher.matcher(String.valueOf(c)).matches()) {
+                        sanitizedBuilder.append(c);
+                    }
+                }
+
+                String sanitizedText = sanitizedBuilder.toString();
+                if (sanitizedText.isBlank()) {
+                    log.warn("Regex hot-fix for '{}' resulted in a blank string. Skipping.", jsonPointerPath);
+                    return false;
+                }
+
                 if (!originalText.equals(sanitizedText)) {
-                    log.debug("Hot-fixing field '{}' by enforcing regex. Original: '{}', Fixed: '{}'", jsonPointerPath, originalText, sanitizedText);
+                    log.info("Hot-fixing field '{}' by enforcing regex. Original: '{}', Fixed: '{}'", jsonPointerPath, originalText, sanitizedText);
                     if (parentNode.isObject()) {
                         ((ObjectNode) parentNode).put(fieldOrIndex, sanitizedText);
                     }
                     else if (parentNode.isArray()) {
-                        ((ArrayNode) parentNode).set(Integer.parseInt(fieldOrIndex), sanitizedText);
+                        ((ArrayNode) parentNode).set(Integer.parseInt(fieldOrIndex), new TextNode(sanitizedText));
                     }
                     return true;
                 }
@@ -237,27 +370,6 @@ public class AIResponseSanitizer {
             log.warn("Could not apply regex hot-fix for path '{}': {}", jsonPointerPath, e.getMessage());
         }
         return false;
-    }
-
-    private String extractPatternFromMessage(String message) {
-        String keyword = "the regex pattern ";
-        int startIndex = message.indexOf(keyword);
-        if (startIndex != -1) {
-            return message.substring(startIndex + keyword.length());
-        }
-        return null;
-    }
-
-    private String extractAllowedChars(String schemaPattern) {
-        int start = schemaPattern.indexOf('[');
-        int end = schemaPattern.lastIndexOf(']');
-        if (start != -1 && end != -1 && start < end) {
-            // Escape characters that are special inside a regex character class `[]`
-            // including the backslash itself.
-            return schemaPattern.substring(start + 1, end).replace("\\", "\\\\");
-        }
-        log.warn("Could not extract character set from regex pattern: {}", schemaPattern);
-        return null;
     }
 
     private boolean stripParenthical(JsonNode rootNode, String jsonPath) {

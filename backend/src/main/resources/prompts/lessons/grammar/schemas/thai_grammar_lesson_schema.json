@@ -7,13 +7,8 @@
     "title": { "type": "string", "description": "The title of the lesson in English." },
     "grammarConcept": {
       "type": "string",
-      "description": "The name of the grammar concept in English.",
-      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()/\\[\\]…\\-]+$"
-    },
-    "nativeGrammarConcept": {
-      "type": "string",
-      "description": "The name of the grammar concept in Thai.",
-      "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()/\\[\\]…ฯๆ]+$"
+      "description": "The name of the grammar concept, allowing both English and Thai characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()/\\[\\]…ฯๆ\\-]+$"
     },
     "explanation": {
       "type": "string",
@@ -41,5 +36,5 @@
       }
     }
   },
-  "required": ["title", "grammarConcept", "nativeGrammarConcept", "explanation", "exampleSentences"]
+  "required": ["title", "grammarConcept", "explanation", "exampleSentences"]
 }

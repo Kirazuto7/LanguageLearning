@@ -51,8 +51,7 @@ public class ApiDtoMapper {
     public GrammarLessonDTO toGrammarLessonDTO(AIGrammarLessonResponse response, String language) {
         return GrammarLessonDTO.builder()
                 .title(response.title())
-                .grammarConcept(sanitizer.sanitizeEnglishSentence(response.grammarConcept()))
-                .nativeGrammarConcept(response.nativeGrammarConcept())
+                .grammarConcept(response.grammarConcept())
                 .explanation(response.explanation())
                 .exampleSentences(response.exampleSentences().stream()
                         .filter(aiSentence -> aiSentence.text() != null && !aiSentence.text().isBlank())

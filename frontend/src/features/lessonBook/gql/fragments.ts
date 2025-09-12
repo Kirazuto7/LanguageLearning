@@ -68,7 +68,6 @@ export const lessonFragment = gql`
         }
         ... on GrammarLesson {
             grammarConcept
-            nativeGrammarConcept
             explanation
             exampleSentences {
                 id

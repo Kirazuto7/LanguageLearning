@@ -11,7 +11,6 @@ public record GrammarLessonDTO(
         Long id,
         String title,
         String grammarConcept,
-        String nativeGrammarConcept,
         String explanation,
         List<SentenceDTO> exampleSentences
 ) implements LessonDTO {
