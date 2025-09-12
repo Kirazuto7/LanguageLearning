@@ -12,7 +12,7 @@
     "nativeTitle": {
       "type": "string",
       "description": "ชื่อเรื่องที่แปลเป็นภาษาไทยอย่างถูกต้อง",
-      "pattern": "^[\\u0E00-\\u0E7F0-9 ,.?!'\"-;:()\\[\\]…―]+$"
+      "pattern": "^[\\u0E00-\\u0E7F0-9 ,.?!'\"-;:\\[\\]…―]+$"
     }
   },
   "required": ["title", "nativeTitle"]

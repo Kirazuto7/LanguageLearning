@@ -350,8 +350,43 @@ public class AIResponseSanitizer {
 
                 String sanitizedText = sanitizedBuilder.toString();
                 if (sanitizedText.isBlank()) {
-                    log.warn("Regex hot-fix for '{}' resulted in a blank string. Skipping.", jsonPointerPath);
-                    return false;
+                    log.warn("Regex hot-fix for '{}' resulted in a blank string. Checking if field is nullable...", jsonPointerPath);
+
+                    // Find the schema definition for the field itself, not just the pattern keyword.
+                    String propertySchemaPointer = error.getSchemaLocation().toString();
+                    if (propertySchemaPointer.endsWith("/pattern")) {
+                        propertySchemaPointer = propertySchemaPointer.substring(0, propertySchemaPointer.lastIndexOf('/'));
+                    }
+                    JsonNode propertySchemaNode = schema.getSchemaNode().at(propertySchemaPointer.substring(1));
+
+                    // Check if null is an allowed type for this field.
+                    boolean nullAllowed = false;
+                    if (propertySchemaNode.has("type")) {
+                        JsonNode typeNode = propertySchemaNode.get("type");
+                        if (typeNode.isTextual() && "null".equals(typeNode.asText())) {
+                            nullAllowed = true;
+                        } else if (typeNode.isArray()) {
+                            for (JsonNode t : typeNode) {
+                                if ("null".equals(t.asText(null))) {
+                                    nullAllowed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (nullAllowed) {
+                        log.info("Hot-fixing field '{}' by setting to null (regex sanitization resulted in blank string).", jsonPointerPath);
+                        if (parentNode.isObject()) {
+                            ((ObjectNode) parentNode).putNull(fieldOrIndex);
+                        } else if (parentNode.isArray()) {
+                            ((ArrayNode) parentNode).set(Integer.parseInt(fieldOrIndex), NullNode.getInstance());
+                        }
+                        return true; // The fix was successful (by setting to null).
+                    } else {
+                        log.warn("Regex hot-fix for '{}' resulted in a blank string, and schema does not allow null. Skipping.", jsonPointerPath);
+                        return false; // The fix failed.
+                    }
                 }
 
                 if (!originalText.equals(sanitizedText)) {

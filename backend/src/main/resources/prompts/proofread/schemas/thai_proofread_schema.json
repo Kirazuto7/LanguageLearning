@@ -7,7 +7,7 @@
     "correctedSentence": {
       "type": ["string", "null"],
       "description": "The corrected sentence in Thai, or null if the original was correct.",
-      "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
+      "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
     },
     "feedback": {
       "type": "string",

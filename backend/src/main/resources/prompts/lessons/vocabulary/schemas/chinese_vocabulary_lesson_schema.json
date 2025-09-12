@@ -24,12 +24,12 @@
           "simplified": {
             "type": "string",
             "description": "简体中文字符。",
-            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF·]+$"
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F· ]*$"
           },
           "traditional": {
             "type": ["string", "null"],
             "description": "繁体中文字符（如果不同）。",
-            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF·]*$"
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F· ]*$"
           },
           "pinyin": {
             "type": "string",

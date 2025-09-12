@@ -11,7 +11,7 @@
     "story": {
       "type": "string",
       "description": "A short story in Thai.",
-      "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
+      "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
     },
     "questions": {
       "type": "array",
@@ -23,12 +23,12 @@
           "questionText": {
             "type": "string",
             "description": "The comprehension question in Thai.",
-            "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
+            "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()/\\[\\]…\\n]+$"
           },
           "answer": {
             "type": "string",
             "description": "The correct answer in Thai, extracted from the story.",
-            "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
+            "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
           },
           "answerChoices": {
             "type": "array",
@@ -37,7 +37,7 @@
             "items": {
               "type": "string",
               "description": "A possible answer choice in Thai.",
-              "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
+              "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
             }
           }
         },

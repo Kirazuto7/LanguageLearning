@@ -27,9 +27,9 @@
             "pattern": "^[\\u0E00-\\u0E7F \\u200B]+$"
           },
           "romanization": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "The romanized (RTGS) spelling of the word.",
-            "pattern": "^[a-zA-Z- ]+$"
+            "pattern": "^[a-zA-Z\\u00C0-\\u00FF\\u0100-\\u017F- ]*$"
           },
           "tonePattern": {
             "type": ["string", "null"],

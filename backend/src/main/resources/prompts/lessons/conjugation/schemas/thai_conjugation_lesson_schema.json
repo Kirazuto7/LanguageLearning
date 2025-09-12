@@ -35,7 +35,7 @@
           "example_sentence": {
             "type": "string",
             "description": "A full sentence in Thai using the conjugated form.",
-            "pattern": "^[\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()\\[\\]…ฯๆ\\n]+$"
+            "pattern": "^[\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:/\\[\\]…ฯๆ\\n]+$"
           },
           "sentence_translation": {
             "type": "string",

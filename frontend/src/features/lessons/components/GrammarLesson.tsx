@@ -1,5 +1,6 @@
 import React from 'react';
 import { GrammarLessonDTO, SentenceDTO } from '../../../shared/types/dto';
+import parse from 'html-react-parser';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
 import useTextToSpeech from "../../../hooks/useTextToSpeech";
 import { mascotGenders, MascotName } from "../../../shared/types/types";
@@ -29,10 +30,7 @@ const GrammarLesson: React.FC<GrammarLessonProps> = ({ lesson }) => {
     };
 
     const renderText = (text: string, { as: Component = 'div' as React.ElementType, className = '' } = {}) => {
-        if (isJapanese) {
-            return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
-        }
-        return <Component className={className}>{text}</Component>;
+        return <Component className={className}>{parse(text)}</Component>;
     };
 
     return (
