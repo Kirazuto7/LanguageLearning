@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LatinExtendedProofreadResponse",
+  "description": "A schema for a proofread response for a sentence in a Latin-based language.",
+  "type": "object",
+  "properties": {
+    "correctedSentence": {
+      "type": ["string", "null"],
+      "description": "The corrected sentence in the native language, or null if the original was correct.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:¿¡*\\-/\\[\\]…\\n]+$"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Encouraging feedback and explanation, allowing both English and the native language's characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
+    }
+  },
+  "required": ["correctedSentence", "feedback"]
+}

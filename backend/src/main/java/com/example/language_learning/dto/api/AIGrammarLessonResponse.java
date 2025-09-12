@@ -14,7 +14,6 @@ import java.util.List;
 public record AIGrammarLessonResponse(
     @JsonProperty("title") String title,
     @JsonProperty("grammarConcept") String grammarConcept,
-    @JsonProperty("nativeGrammarConcept") String nativeGrammarConcept,
     @JsonProperty("explanation") String explanation,
     @JsonProperty("exampleSentences") List<SentenceDTO> exampleSentences
 ) { }

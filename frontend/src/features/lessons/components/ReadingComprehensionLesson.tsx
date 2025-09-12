@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { ReadingComprehensionLessonDTO, QuestionDTO } from '../../../shared/types/dto';
+import parse from 'html-react-parser';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
 import {Button, Form, Card} from "react-bootstrap";
 import AnswerFeedback from "./common/AnswerFeedback";
@@ -44,10 +45,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     };
 
     const renderText = (text: string, { as: Component = 'p' as React.ElementType, className = '' } = {}) => {
-        if (isJapanese) {
-            return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
-        }
-        return <Component className={className}>{text}</Component>;
+        return <Component className={className}>{parse(text)}</Component>;
     };
 
     const handleAnswerSelect = (questionId: string, selectedAnswerChoice: string) => {
@@ -104,13 +102,13 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
                             <span>Question {index + 1}</span>
                         </Card.Header>
                         <Card.Body>
-                            <p className={styles.questionText}>{question.questionText}</p>
+                            {renderText(question.questionText, { as: 'p', className: styles.questionText })}
                             <Form>
                                 { answerChoices?.map((choice, choiceIndex) => (
                                     <Form.Check
                                         key={`choice-${question.id}-${choiceIndex}`}
                                         className={styles.customRadio}
-                                        label={choice}
+                                        label={parse(choice)}
                                         name={`question-${question.id}`}
                                         type={'radio'}
                                         id={`choice-${question.id}-${choiceIndex}`}

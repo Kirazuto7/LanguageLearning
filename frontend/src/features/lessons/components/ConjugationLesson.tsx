@@ -1,5 +1,6 @@
 import React from 'react';
 import { ConjugationLessonDTO, ConjugationExampleDTO } from '../../../shared/types/dto';
+import parse from 'html-react-parser';
 import { Card } from 'react-bootstrap';
 import styles from './lesson.module.scss';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
@@ -30,10 +31,7 @@ const ConjugationLesson: React.FC<ConjugationLessonProps> = ({ lesson }) => {
     };
 
     const renderText = (text: string, { as: Component = 'div' as React.ElementType, className = '' } = {}) => {
-        if (isJapanese) {
-            return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
-        }
-        return <Component className={className}>{text}</Component>;
+        return <Component className={className}>{parse(text)}</Component>;
     };
 
     return (
