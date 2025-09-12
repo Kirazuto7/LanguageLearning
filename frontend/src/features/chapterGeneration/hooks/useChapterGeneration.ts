@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGenerateChapterMutation } from "../../../shared/api/chapterApiSlice";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext } from "../../../widgets/progressBar/progressSlice";
+import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, clearProgress } from "../../../widgets/progressBar/progressSlice";
 
 /**
  * A custom hook to manage the entire chapter generation workflow.
@@ -26,6 +26,7 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
 
 
     const progress = useAppSelector(state => taskId ? selectProgressByTaskId(state, taskId) : undefined);
+    const wasClearedPrematurely = !!taskId && !progress;
 
     // If the language/difficulty changes, reset the local taskId.
     useEffect(() => {
@@ -35,15 +36,18 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
     // Triggered when the generation is complete or fails to reset after a short delay
     // to allow the UI to show the final "complete" or "error" state.
     useEffect(() => {
-        if (progress?.isComplete || progress?.error) {
+        if (progress?.isComplete || progress?.error || wasClearedPrematurely) {
             const timer = setTimeout(() => {
+                if (taskId) {
+                    dispatch(clearProgress(taskId));
+                }
                 setTaskId(null);
             }, 5000);
             return () => {
                 clearTimeout(timer);
             }
         }
-    }, [progress?.isComplete, progress?.error]);
+    }, [progress?.isComplete, progress?.error, wasClearedPrematurely, taskId, dispatch]);
 
     const startGeneration = useCallback(async (topic: string) => {
         if (isMutationLoading || taskId) return; // Prevent starting a new generation if one is active
@@ -61,15 +65,15 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
     }, [generateChapter, language, difficulty, taskId, isMutationLoading, dispatch]);
 
     const isComplete = !!progress?.isComplete;
-    const generationError = mutationError || progress?.error;
-    const isLoading = isMutationLoading || (!!taskId && !isComplete && !generationError);
+    const generationError = mutationError || progress?.error || (wasClearedPrematurely ? 'Connection to the server was lost.' : undefined);
+    const isLoading = isMutationLoading || (!!taskId && !isComplete && !generationError && !wasClearedPrematurely);
 
     return {
         startGeneration,
         isLoading,
         progress: progress?.progress ?? 0,
         message: progress?.message ?? (isLoading ? 'Initiating...' : ''),
-        error: generationError ? 'Chapter generation failed.' : null,
+        error: generationError ? `Chapter generation failed: ${generationError}` : null,
         isComplete: isComplete,
     };
 };

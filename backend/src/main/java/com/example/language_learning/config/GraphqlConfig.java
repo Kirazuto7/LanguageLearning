@@ -1,10 +1,8 @@
 package com.example.language_learning.config;
 
 import com.example.language_learning.dto.lessons.LessonDTO;
-import com.example.language_learning.dto.models.GenericWordDetailsDTO;
-import com.example.language_learning.dto.models.JapaneseWordDetailsDTO;
+import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.dto.models.PageDTO;
-import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.enums.LessonType;
 import graphql.ErrorType;
 import graphql.GraphQLError;
@@ -49,13 +47,17 @@ public class GraphqlConfig {
 
         TypeResolver wordDetailsTypeResolver = env -> {
             Object javaObject = env.getObject();
-            if (javaObject instanceof GenericWordDetailsDTO) {
-                return env.getSchema().getObjectType("GenericWordDetails");
-            }
-            if (javaObject instanceof JapaneseWordDetailsDTO) {
-                return env.getSchema().getObjectType("JapaneseWordDetails");
-            }
-            return null;
+            return switch (javaObject) {
+                case JapaneseWordDetailsDTO j -> env.getSchema().getObjectType("JapaneseWordDetails");
+                case KoreanWordDetailsDTO k -> env.getSchema().getObjectType("KoreanWordDetails");
+                case ChineseWordDetailsDTO c -> env.getSchema().getObjectType("ChineseWordDetails");
+                case ThaiWordDetailsDTO t -> env.getSchema().getObjectType("ThaiWordDetails");
+                case ItalianWordDetailsDTO i -> env.getSchema().getObjectType("ItalianWordDetails");
+                case SpanishWordDetailsDTO s -> env.getSchema().getObjectType("SpanishWordDetails");
+                case FrenchWordDetailsDTO f -> env.getSchema().getObjectType("FrenchWordDetails");
+                case GermanWordDetailsDTO g -> env.getSchema().getObjectType("GermanWordDetails");
+                default -> null;
+            };
         };
 
         return wiringBuilder -> wiringBuilder

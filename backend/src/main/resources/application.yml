@@ -40,15 +40,6 @@ spring:
           num-predict: 8192
           temperature: 0.5
 
-    ollama3:
-      base-url: ${SPRING_AI_OLLAMA_BASE_URL}
-      chat:
-        options:
-          format: json
-          num-ctx: 8192
-          num-predict: 8192
-          temperature: 0.5
-
 logging:
   level:
     org.springframework.security: INFO

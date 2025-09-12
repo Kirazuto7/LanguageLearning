@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { PracticeLessonDTO, QuestionDTO, PracticeLessonCheckResponse } from '../../../shared/types/dto';
+import parse from 'html-react-parser';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
 import {filterInputByLanguage} from "../../../shared/utils/languageValidation";
 import styles from "./lesson.module.scss";
@@ -85,11 +86,7 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
         text: string,
         { as: Component = 'p' as React.ElementType, className = '' } = {}
     ) => {
-        if (isJapanese) {
-            // Assuming `text` might contain ruby syntax that needs to be rendered as HTML
-            return <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />;
-        }
-        return <Component className={className}>{text}</Component>;
+        return <Component className={className}>{parse(text)}</Component>;
     };
 
     return (
