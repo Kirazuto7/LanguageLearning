@@ -7,13 +7,8 @@
     "title": { "type": "string", "description": "The title of the lesson in English." },
     "grammarConcept": {
       "type": "string",
-      "description": "The name of the grammar concept in English.",
-      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()/\\[\\]…\\-]+$"
-    },
-    "nativeGrammarConcept": {
-      "type": "string",
-      "description": "文法概念の日本語名。必ず日本の文字（漢字、ひらがな、カタカナ）のみを使用してください。",
-      "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
+      "description": "The name of the grammar concept, allowing both English and Japanese characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:()/\\[\\]…。「」“”\\n、\\-]+$"
     },
     "explanation": {
       "type": "string",
@@ -28,7 +23,7 @@
         "properties": {
           "text": {
             "type": "string",
-            "description": "完全な例文を日本語で。必ず日本の文字（漢字、ひらがな、カタカナ）のみを使用してください。",
+            "description": "日本語の完全な例文です。",
             "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
           },
           "translation": {
@@ -41,5 +36,5 @@
       }
     }
   },
-  "required": ["title", "grammarConcept", "nativeGrammarConcept", "explanation", "exampleSentences"]
+  "required": ["title", "grammarConcept", "explanation", "exampleSentences"]
 }

@@ -260,7 +260,7 @@ public class AIService {
                             log.warn("Attempt {} for {} failed schema validation: {}", attempt, promptType, errorDetails);
 
                             // Attempt to Sanitize the AI response errors
-                            JsonNode fixedNode = sanitizer.sanitizeJsonValidationErrors(responseNode, errors);
+                            JsonNode fixedNode = sanitizer.sanitizeJsonValidationErrors(responseNode, errors, schema);
 
                             // Check if anything was fixed
                             if (fixedNode != responseNode) {
