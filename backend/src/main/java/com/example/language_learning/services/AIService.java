@@ -8,7 +8,7 @@ import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.exceptions.LanguageException;
 import com.example.language_learning.mapper.ApiDtoMapper;
-import com.example.language_learning.mapper.util.AIResponseSanitizer;
+import com.example.language_learning.utils.AIResponseSanitizer;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
