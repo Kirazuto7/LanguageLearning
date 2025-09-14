@@ -19,6 +19,7 @@
     "react-bootstrap": "^2.10.4",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^18.3.1",
+    "react-draggable": "^4.5.0",
     "react-pageflip": "^2.0.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.1",

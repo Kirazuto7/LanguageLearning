@@ -46,6 +46,7 @@ public class AIConfig {
             Resource conjugationInstruction,
             Resource practiceInstruction,
             Resource readingInstruction,
+            Resource translationInstruction,
             Resource proofreadInstruction,
             // Schemas
             Resource metadataSchema,
@@ -54,6 +55,7 @@ public class AIConfig {
             Resource conjugationSchema,
             Resource practiceSchema,
             Resource readingSchema,
+            Resource translationSchema,
             Resource proofreadSchema
     ) { }
 
@@ -71,15 +73,15 @@ public class AIConfig {
     private Map<String, LanguageAssetResources> defineLanguageResources() {
         Map<String, LanguageAssetResources> map = new HashMap<>();
         // Asian Languages - Using specific vocabulary instructions but sharing others
-        map.put("japanese", new LanguageAssetResources("exaone", metadataInstruction, japaneseVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, japaneseMetadataSchema, japaneseVocabularySchema, japaneseGrammarSchema, japaneseConjugationSchema, japanesePracticeSchema, japaneseReadingSchema, japaneseProofreadSchema));
-        map.put("korean", new LanguageAssetResources("exaone", metadataInstruction, koreanVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, koreanMetadataSchema, koreanVocabularySchema, koreanGrammarSchema, koreanConjugationSchema, koreanPracticeSchema, koreanReadingSchema, koreanProofreadSchema));
-        map.put("chinese", new LanguageAssetResources("qwen3", metadataInstruction, chineseVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, chineseMetadataSchema, chineseVocabularySchema, chineseGrammarSchema, chineseConjugationSchema, chinesePracticeSchema, chineseReadingSchema, chineseProofreadSchema));
-        map.put("thai", new LanguageAssetResources("qwen3", metadataInstruction, thaiVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, thaiMetadataSchema, thaiVocabularySchema, thaiGrammarSchema, thaiConjugationSchema, thaiPracticeSchema, thaiReadingSchema, thaiProofreadSchema));
+        map.put("japanese", new LanguageAssetResources("exaone", metadataInstruction, japaneseVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, japaneseMetadataSchema, japaneseVocabularySchema, japaneseGrammarSchema, japaneseConjugationSchema, japanesePracticeSchema, japaneseReadingSchema, translationSchema, japaneseProofreadSchema));
+        map.put("korean", new LanguageAssetResources("exaone", metadataInstruction, koreanVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, koreanMetadataSchema, koreanVocabularySchema, koreanGrammarSchema, koreanConjugationSchema, koreanPracticeSchema, koreanReadingSchema, translationSchema, koreanProofreadSchema));
+        map.put("chinese", new LanguageAssetResources("qwen3", metadataInstruction, chineseVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, chineseMetadataSchema, chineseVocabularySchema, chineseGrammarSchema, chineseConjugationSchema, chinesePracticeSchema, chineseReadingSchema, translationSchema, chineseProofreadSchema));
+        map.put("thai", new LanguageAssetResources("qwen3", metadataInstruction, thaiVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, thaiMetadataSchema, thaiVocabularySchema, thaiGrammarSchema, thaiConjugationSchema, thaiPracticeSchema, thaiReadingSchema, translationSchema, thaiProofreadSchema));
         // European Languages - Using specific vocabulary instructions but sharing others
-        map.put("italian", new LanguageAssetResources("qwen3", metadataInstruction, italianVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, latinExtendedMetadataSchema, italianVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, latinExtendedProofreadSchema));
-        map.put("spanish", new LanguageAssetResources("qwen3", metadataInstruction, spanishVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, latinExtendedMetadataSchema, spanishVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, latinExtendedProofreadSchema));
-        map.put("french", new LanguageAssetResources("qwen3", metadataInstruction, frenchVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, latinExtendedMetadataSchema, frenchVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, latinExtendedProofreadSchema));
-        map.put("german", new LanguageAssetResources("qwen3", metadataInstruction, germanVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, proofreadInstruction, latinExtendedMetadataSchema, germanVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, latinExtendedProofreadSchema));
+        map.put("italian", new LanguageAssetResources("qwen3", metadataInstruction, italianVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, latinExtendedMetadataSchema, italianVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, translationSchema, latinExtendedProofreadSchema));
+        map.put("spanish", new LanguageAssetResources("qwen3", metadataInstruction, spanishVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, latinExtendedMetadataSchema, spanishVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, translationSchema, latinExtendedProofreadSchema));
+        map.put("french", new LanguageAssetResources("qwen3", metadataInstruction, frenchVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, latinExtendedMetadataSchema, frenchVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, translationSchema, latinExtendedProofreadSchema));
+        map.put("german", new LanguageAssetResources("qwen3", metadataInstruction, germanVocabularyInstruction, grammarInstruction, conjugationInstruction, practiceInstruction, readingInstruction, translationInstruction, proofreadInstruction, latinExtendedMetadataSchema, germanVocabularySchema, latinExtendedGrammarSchema, latinExtendedConjugationSchema, latinExtendedPracticeSchema, latinExtendedReadingSchema, translationSchema, latinExtendedProofreadSchema));
         return map;
     }
 
@@ -130,6 +132,7 @@ public class AIConfig {
         prompts.put(PromptType.CONJUGATION, AIPrompt.builder().instruction(resources.conjugationInstruction()).schema(readSchemaAsJsonNode(resources.conjugationSchema())).build());
         prompts.put(PromptType.PRACTICE, AIPrompt.builder().instruction(resources.practiceInstruction()).schema(readSchemaAsJsonNode(resources.practiceSchema())).build());
         prompts.put(PromptType.READING_COMPREHENSION, AIPrompt.builder().instruction(resources.readingInstruction()).schema(readSchemaAsJsonNode(resources.readingSchema())).build());
+        prompts.put(PromptType.TRANSLATE, AIPrompt.builder().instruction(resources.translationInstruction()).schema(readSchemaAsJsonNode(resources.translationSchema())).build());
         prompts.put(PromptType.PROOFREAD, AIPrompt.builder().instruction(resources.proofreadInstruction()).schema(readSchemaAsJsonNode(resources.proofreadSchema())).build());
         return AIAsset.builder().modelName(modelName).prompts(prompts).build();
     }
@@ -154,6 +157,8 @@ public class AIConfig {
     private Resource practiceInstruction;
     @Value("classpath:prompts/lessons/reading/instructions/reading_comprehension_lesson_prompt.txt")
     private Resource readingInstruction;
+    @Value("classpath:prompts/translation/instructions/translation_prompt.txt")
+    private Resource translationInstruction;
     @Value("classpath:prompts/proofread/instructions/proofread_prompt.txt")
     private Resource proofreadInstruction;
     @Value("classpath:prompts/lessons/vocabulary/instructions/japanese_vocabulary_lesson_prompt.txt")
@@ -230,6 +235,8 @@ public class AIConfig {
     private Resource thaiPracticeSchema;
     @Value("classpath:prompts/lessons/practice/schemas/latin_extended_practice_lesson_schema.json")
     private Resource latinExtendedPracticeSchema;
+    @Value("classpath:prompts/translation/schemas/translation_schema.json")
+    private Resource translationSchema;
     @Value("classpath:prompts/lessons/reading/schemas/japanese_reading_comprehension_lesson_schema.json")
     private Resource japaneseReadingSchema;
     @Value("classpath:prompts/lessons/reading/schemas/korean_reading_comprehension_lesson_schema.json")
