@@ -2,7 +2,7 @@ package com.example.language_learning.utils;
 
 import lombok.RequiredArgsConstructor;
 import com.example.language_learning.utils.ReactiveStateMachine.*;
-import java.util.List;
+import java.util.Map;
 
 /**
  * A factory for creating new instances of a ReactiveStateMachine.
@@ -11,13 +11,13 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class ReactiveStateMachineFactory<S, C> {
-    private final List<Transition<S, C>> transitions;
+    private final Map<Class<? extends S>, Action<S, C>> actionMap;
     private final S initialState;
 
     public ReactiveStateMachine<S, C> createInstance() {
         return new ReactiveStateMachine.Builder<S, C>()
                 .initialState(initialState)
-                .transitions(transitions)
+                .actionMap(actionMap)
                 .build();
     }
 }

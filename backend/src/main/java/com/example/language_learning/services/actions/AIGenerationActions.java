@@ -44,11 +44,11 @@ public class AIGenerationActions {
                 .collectList()
                 .map(list -> String.join("", list).trim())
                 .doOnNext(rawResponse -> log.info("Raw AI Response for {} (Attempt {}): {}", promptType, attempt, rawResponse))
-                .map(AIGenerationState.GENERATION::new);
+                .map(AIGenerationState::VALIDATION);
     }
 
     public Mono<AIGenerationState> handleValidation(AIGenerationState fromState, AIGenerationContext context) {
-        String rawResponse = ((AIGenerationState.GENERATION) fromState).rawResponse();
+        String rawResponse = ((AIGenerationState.VALIDATION) fromState).rawResponse();
         String jsonString = sanitizer.extractAndSanitizeJson(rawResponse);
         int attempt = context.attemptCounter().get();
         PromptType promptType = (PromptType) context.params().get("promptType");
@@ -60,78 +60,65 @@ public class AIGenerationActions {
             JsonSchema schema = jsonSchemaFactory.getSchema(context.aiPrompt().schema());
             Set<ValidationMessage> errors = schema.validate(responseNode);
 
-            if (!errors.isEmpty()) {
+            if (errors.isEmpty()) {
+                // If validation passes, we are done. Convert to DTO and complete.
+                log.info("Attempt {} for {} passed schema validation.", attempt, promptType);
+                Object result = objectMapper.convertValue(responseNode, context.apiDtoType());
+                return Mono.just(AIGenerationState.COMPLETED(result));
+            }
+            else {
+                // If validation fails, the next state is SANITIZING, which needs the node and errors.
                 String errorDetails = errors.stream()
                         .map(ValidationMessage::getMessage)
                         .collect(Collectors.joining(", "));
                 log.warn("Attempt {} for {} failed schema validation: {}", attempt, promptType, errorDetails);
                 context.params().put("invalidJson", jsonString);
                 context.params().put("validationFeedback", "Your previous response failed schema validation with the following errors: " + errorDetails + ". You MUST fix these errors.");
+                return Mono.just(AIGenerationState.SANITIZING(responseNode, errors));
             }
-
-            // Always return a VALIDATION state, which holds the parsed node and any errors (which might be an empty set)
-            return Mono.just(new AIGenerationState.VALIDATION(responseNode, errors));
         }
         catch (JsonProcessingException e) { // If parsing fails, go directly to retry
             log.warn("Attempt {} for {} failed due to a JSON processing error: {}", context.attemptCounter().get(), promptType, e.getMessage());
             context.params().put("invalidJson", jsonString);
             context.params().put("validationFeedback", "Your previous response could not be parsed as valid JSON. It might be malformed or incomplete. You MUST provide a complete and valid JSON object that strictly adheres to the schema.");
-            return Mono.just(new AIGenerationState.RETRYING("JSON processing error"));
-        }
-    }
-
-    public Mono<AIGenerationState> handleValidationCompletion(AIGenerationState fromState, AIGenerationContext context) {
-        JsonNode responseNode = ((AIGenerationState.VALIDATION) fromState).responseNode();
-        try {
-            Object result = objectMapper.convertValue(responseNode, context.apiDtoType());
-            return Mono.just(new AIGenerationState.COMPLETED(result));
-        }
-        catch (Exception e) {
-            log.error("Failed to convert validated JSON to DTO: {}", e.getMessage());
-            return Mono.just(new AIGenerationState.FAILED("DTO conversion failed after validation."));
+            return Mono.just(AIGenerationState.RETRYING);
         }
     }
 
     public Mono<AIGenerationState> handleSanitization(AIGenerationState fromState, AIGenerationContext context) {
-        AIGenerationState.VALIDATION validationState = (AIGenerationState.VALIDATION) fromState;
-        JsonNode responseNode = validationState.responseNode();
-        Set<ValidationMessage> errors = validationState.errors();
+        // 1. Correctly cast to SANITIZING to get the required input data.
+        AIGenerationState.SANITIZING sanitizingState = (AIGenerationState.SANITIZING) fromState;
+        JsonNode responseNode = sanitizingState.responseNode();
+        Set<ValidationMessage> errors = sanitizingState.errors();
         PromptType promptType = (PromptType) context.params().get("promptType");
         JsonSchema schema = jsonSchemaFactory.getSchema(context.aiPrompt().schema());
-        JsonNode fixedNode = sanitizer.sanitizeJsonValidationErrors(responseNode, errors, schema);
 
-        if (fixedNode != responseNode) {
-            log.info("Sanitization applied for {}. Re-evaluating result.", promptType);
+        // 2. Perform the sanitization and re-validation.
+        JsonNode fixedNode = sanitizer.sanitizeJsonValidationErrors(responseNode, errors, schema);
+        Set<ValidationMessage> newErrors = schema.validate(fixedNode);
+
+        // 3. Decide the next state based on the sanitization outcome.
+        if (newErrors.isEmpty()) {
+            // If sanitization succeeds, we are done. Convert to DTO and complete.
+            log.info("Sanitization successful! {} passed schema validation after fix.", promptType);
+            try {
+                Object result = objectMapper.convertValue(fixedNode, context.apiDtoType());
+                return Mono.just(AIGenerationState.COMPLETED(result));
+            }
+            catch (Exception e) {
+                log.error("Failed to convert sanitized JSON to DTO: {}", e.getMessage());
+                return Mono.just(AIGenerationState.FAILED("DTO conversion failed after sanitization."));
+            }
         }
         else {
-            log.info("Sanitization was not applicable for {}. Proceeding with original errors.", promptType);
+            // If sanitization fails, prepare feedback and go to the RETRYING state.
+            String errorDetails = newErrors.stream()
+                    .map(ValidationMessage::getMessage)
+                    .collect(Collectors.joining(", "));
+            log.warn("Sanitization attempt failed for {}. Final errors: {}", promptType, errorDetails);
+            context.params().put("validationFeedback", "After attempting to sanitize, your response still has errors: " + errorDetails + ". You MUST fix these errors.");
+            return Mono.just(AIGenerationState.RETRYING);
         }
-
-        // After sanitizing we revalidate the sanitized node, and then we create a SANITIZING state that holds the result of the attempt.
-        Set<ValidationMessage> newErrors = schema.validate(fixedNode);
-        return Mono.just(new AIGenerationState.SANITIZING(fixedNode, newErrors));
-    }
-
-    public Mono<AIGenerationState> handleSanitizationCompletion(AIGenerationState fromState, AIGenerationContext context) {
-        PromptType promptType = (PromptType) context.params().get("promptType");
-        JsonNode responseNode = ((AIGenerationState.SANITIZING) fromState).responseNode();
-        try {
-            log.info("Sanitization successful! {} passed schema validation after fix.", promptType);
-            Object result = objectMapper.convertValue(responseNode, context.apiDtoType());
-            return Mono.just(new AIGenerationState.COMPLETED(result));
-        }
-        catch (Exception e) {
-            log.error("Failed to convert sanitized JSON to DTO: {}", e.getMessage());
-            return Mono.just(new AIGenerationState.FAILED("DTO conversion failed after sanitization."));
-        }
-    }
-
-    public Mono<AIGenerationState> prepareForRetry(AIGenerationState fromState, AIGenerationContext context) {
-        Set<ValidationMessage> errors = ((AIGenerationState.SANITIZING) fromState).originalErrors();
-        String errorDetails = errors.stream().map(ValidationMessage::getMessage).collect(Collectors.joining(", "));
-        log.warn("Sanitization attempt failed. Final errors: {}", errorDetails);
-        context.params().put("validationFeedback", "After attempting to sanitize, your response still has errors: " + errorDetails + ". You MUST fix these errors.");
-        return Mono.just(new AIGenerationState.RETRYING("Proceeding to retry check after failed sanitization."));
     }
 
     public Mono<AIGenerationState> handleRetry(AIGenerationState fromState, AIGenerationContext context) {
@@ -140,7 +127,7 @@ public class AIGenerationActions {
             String reason = String.format("AI response validation failed after %d retries for prompt type: %s.", context.maxRetries(), promptType);
             return Mono.just(new AIGenerationState.FAILED(reason));
         }
-        return Mono.just(new AIGenerationState.IDLE());
+        return Mono.just(AIGenerationState.GENERATION);
     }
 
 

@@ -4,38 +4,13 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class StateMachine<S, C>  {
     @Getter
     private S currentState;
     private final Graph<S, C> graph;
-    public record Transition<S, C>(Class<? extends S> from, Class<? extends S> to, BiPredicate<S, C> condition, Action<S, C> action) {
-
-        public boolean matches(S fromState, C context) {
-            return condition.test(fromState, context);
-        }
-
-        public S apply(S fromState, C context) {
-            return action.execute(fromState, context);
-        }
-
-        public Class<? extends S> getTo() {
-            return to;
-        }
-
-        public String getFromName() {
-            return from.getSimpleName();
-        }
-
-        public String getToName() {
-            return to.getSimpleName();
-        }
-    }
-
 
     /**
      * A marker interface for states that should terminate the state machine's execution.
@@ -66,24 +41,24 @@ public class StateMachine<S, C>  {
         }
     }
 
-    private StateMachine(List<Transition<S, C>> transitions, S initialState) {
-        this.graph = new Graph<>(transitions);
+    private StateMachine(Map<Class<? extends S>, Action<S, C>> actionMap, S initialState) {
+        this.graph = new Graph<>(actionMap);
         this.currentState = initialState;
     }
 
     public synchronized void handle(C context) {
         S fromState = currentState;
-        graph.findTransition(fromState, context)
+        graph.findAction(fromState)
             .ifPresentOrElse(
-                transition -> {
-                    log.debug("Executing transition from {} to {}", transition.getFromName(), transition.getToName());
-                    S nextState = transition.apply(fromState, context);
+                action -> {
+                    log.debug("Executing action from state {}", fromState.getClass().getSimpleName());
+                    S nextState = action.execute(fromState, context);
                     if (nextState != null) {
                         log.debug("State transition: {} -> {}", fromState.getClass().getSimpleName(), nextState.getClass().getSimpleName());
                         currentState = nextState;
                     }
                 },
-                () -> log.error("No valid transition found for state {} with context {}", fromState, context)
+                () -> log.error("No action found for state {} with context {}", fromState.getClass().getSimpleName(), context)
             );
     }
 
@@ -124,30 +99,23 @@ public class StateMachine<S, C>  {
     }
 
     private static class Graph<S, C> {
-        private final Map<Class<? extends S>, List<Transition<S, C>>> transitionMap;
+        private final Map<Class<? extends S>, Action<S, C>> actionMap;
 
-        public Graph(List<Transition<S, C>> transitions) {
-            this.transitionMap = transitions.stream()
-                    .collect(Collectors.groupingBy(Transition::from));
+        public Graph(Map<Class<? extends S>, Action<S, C>> actionMap) {
+            this.actionMap = actionMap;
         }
 
-        public Optional<Transition<S, C>> findTransition(S fromState, C context) {
-            List<Transition<S, C>> possibleTransitions = transitionMap.get(fromState.getClass());
-            if (possibleTransitions == null) {
-                return Optional.empty();
-            }
-            return possibleTransitions.stream()
-                    .filter(transition -> transition.matches(fromState, context))
-                    .findFirst();
+        public Optional<Action<S, C>> findAction(S fromState) {
+            return Optional.ofNullable(actionMap.get(fromState.getClass()));
         }
     }
 
-    public static class Builder<S, C> {
-        private List<Transition<S, C>> transitions;
+    static class Builder<S, C> {
+        private Map<Class<? extends S>, Action<S, C>> actionMap;
         private S initialState;
 
-        public Builder<S, C> transitions(List<Transition<S, C>> transitions) {
-            this.transitions = transitions;
+        public Builder<S, C> actionMap(Map<Class<? extends S>, Action<S, C>> actionMap) {
+            this.actionMap = actionMap;
             return this;
         }
 
@@ -157,23 +125,23 @@ public class StateMachine<S, C>  {
         }
 
         public StateMachine<S, C> build() {
-            if (initialState == null || transitions == null) {
-                throw new IllegalStateException("Initial state and transitions must be set before building the state machine.");
+            if (initialState == null || actionMap == null) {
+                throw new IllegalStateException("Initial state and action map must be set before building the state machine.");
             }
-            return new StateMachine<>(transitions, initialState);
+            return new StateMachine<>(actionMap, initialState);
         }
     }
 
     public static class GraphBuilder<S, C> {
-        private final List<Transition<S, C>> transitions = new ArrayList<>();
+        private final Map<Class<? extends S>, Action<S, C>> actionMap = new HashMap<>();
 
-        public GraphBuilder<S, C> addTransition(Class<? extends S> from, Class<? extends S> to, BiPredicate<S, C> condition, Action<S, C> action) {
-            this.transitions.add(new Transition<>(from, to, condition, action));
+        public GraphBuilder<S, C> addState(Class<? extends S> state, Action<S, C> action) {
+            this.actionMap.put(state, action);
             return this;
         }
 
-        public List<Transition<S, C>> build() {
-            return List.copyOf(transitions);
+        public Map<Class<? extends S>, Action<S, C>> build() {
+            return Map.copyOf(actionMap);
         }
     }
 }
