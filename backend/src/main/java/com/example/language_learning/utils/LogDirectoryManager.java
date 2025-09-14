@@ -59,10 +59,12 @@ public class LogDirectoryManager {
                     log.info("Deleting old log directory: {}", dir);
                     FileSystemUtils.deleteRecursively(dir);
                 }
-            } else {
+            }
+            else {
                 log.info("Found {} log directories. No cleanup needed (retention count is {}).", timestampedDirs.size(), maxDirectoriesToKeep);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("Error while scanning log directory for cleanup: {}", logsPath, e);
         }
     }

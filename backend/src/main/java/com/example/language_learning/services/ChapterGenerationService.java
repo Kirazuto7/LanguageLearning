@@ -1,7 +1,5 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.entity.models.Chapter;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.exceptions.PageGenerationException;
@@ -9,8 +7,8 @@ import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.entity.models.LessonBook;
 import com.example.language_learning.responses.GenerationResponse;
-import com.example.language_learning.services.contexts.GenerationContext;
-import com.example.language_learning.services.states.GenerationState;
+import com.example.language_learning.services.contexts.ChapterGenerationContext;
+import com.example.language_learning.services.states.ChapterGenerationState;
 import com.example.language_learning.utils.StateMachineFactory;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @RequiredArgsConstructor
 public class ChapterGenerationService {
-    private final StateMachineFactory<GenerationState, GenerationContext> stateMachineFactory;
+    private final StateMachineFactory<ChapterGenerationState, ChapterGenerationContext> stateMachineFactory;
     private final LessonBookService lessonBookService;
     private final JobQueueService jobQueueService;
     private final ProgressService progressService;
@@ -99,15 +97,15 @@ public class ChapterGenerationService {
                 Chapter chapter = chapterService.getChapter(chapterId)
                         .orElseThrow(() -> new RuntimeException("Chapter not found for async generation: " + chapterId));
 
-                GenerationContext context = new GenerationContext(request, taskId, chapter, new AtomicInteger(startingPageNumber));
+                ChapterGenerationContext context = new ChapterGenerationContext(request, taskId, chapter, new AtomicInteger(startingPageNumber));
 
                 var sm = stateMachineFactory.createInstance();
 
                 sm.runToCompletion(context)
-                    .onCompletion(GenerationState.COMPLETED.class, completed ->
+                    .onCompletion(ChapterGenerationState.COMPLETED.class, completed ->
                         log.info("Chapter generation process completed successfully.")
                     )
-                    .onError(GenerationState.FAILED.class, failedState -> {
+                    .onError(ChapterGenerationState.FAILED.class, failedState -> {
                         handleFailure(failedState, context);
                         log.error("Chapter generation process finished with an error state: {}", failedState.getClass().getSimpleName());
                     })
@@ -122,7 +120,7 @@ public class ChapterGenerationService {
         jobQueueService.submitJob(chapterGenerationJob);
     }
 
-    private void handleFailure(GenerationState.FAILED failedState, GenerationContext context) {
+    private void handleFailure(ChapterGenerationState.FAILED failedState, ChapterGenerationContext context) {
         Exception error = new PageGenerationException(failedState.reason());
         log.error("Chapter generation failed for task {}: {}", context.taskId(), error.getMessage(), error);
         progressService.sendError(context.taskId(), error);

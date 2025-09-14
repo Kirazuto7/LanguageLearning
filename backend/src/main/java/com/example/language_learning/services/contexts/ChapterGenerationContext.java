@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * The context object that holds all the data that persists across all states of the chapter generation process.
  */
-public record GenerationContext(
+public record ChapterGenerationContext(
         ChapterGenerationRequest request,
         String taskId,
         Chapter chapter,

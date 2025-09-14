@@ -1,8 +1,8 @@
 package com.example.language_learning.config;
 
 import com.example.language_learning.services.actions.ChapterGenerationActions;
-import com.example.language_learning.services.contexts.GenerationContext;
-import com.example.language_learning.services.states.GenerationState;
+import com.example.language_learning.services.contexts.ChapterGenerationContext;
+import com.example.language_learning.services.states.ChapterGenerationState;
 import com.example.language_learning.utils.StateMachine;
 import com.example.language_learning.utils.StateMachine.Transition;
 import com.example.language_learning.utils.StateMachineFactory;
@@ -15,33 +15,33 @@ import java.util.List;
 public class StateMachineConfig {
 
     @Bean
-    public StateMachineFactory<GenerationState, GenerationContext> chapterGenerationStateMachineFactory(ChapterGenerationActions actions) {
-        List<Transition<GenerationState, GenerationContext>> transitions =
-                new StateMachine.GraphBuilder<GenerationState, GenerationContext>()
-                        .addTransition(GenerationState.IDLE.class, GenerationState.METADATA.class,
+    public StateMachineFactory<ChapterGenerationState, ChapterGenerationContext> chapterGenerationStateMachineFactory(ChapterGenerationActions actions) {
+        List<Transition<ChapterGenerationState, ChapterGenerationContext>> transitions =
+                new StateMachine.GraphBuilder<ChapterGenerationState, ChapterGenerationContext>()
+                        .addTransition(ChapterGenerationState.IDLE.class, ChapterGenerationState.METADATA.class,
                                 (s, c) -> true, actions::handleMetadataGeneration
                         )
-                        .addTransition(GenerationState.METADATA.class, GenerationState.VOCABULARY_LESSON.class,
+                        .addTransition(ChapterGenerationState.METADATA.class, ChapterGenerationState.VOCABULARY_LESSON.class,
                                 (s, c) -> true, actions::handleVocabularyGeneration
                         )
-                        .addTransition(GenerationState.VOCABULARY_LESSON.class, GenerationState.GRAMMAR_LESSON.class,
+                        .addTransition(ChapterGenerationState.VOCABULARY_LESSON.class, ChapterGenerationState.GRAMMAR_LESSON.class,
                                 (s, c) -> c.chapter().getChapterNumber() % 2 != 0, actions::handleGrammarGeneration
                         )
-                        .addTransition(GenerationState.VOCABULARY_LESSON.class, GenerationState.CONJUGATION_LESSON.class,
+                        .addTransition(ChapterGenerationState.VOCABULARY_LESSON.class, ChapterGenerationState.CONJUGATION_LESSON.class,
                                 (s, c) -> c.chapter().getChapterNumber() % 2 == 0, actions::handleConjugationGeneration
                         )
-                        .addTransition(GenerationState.GRAMMAR_LESSON.class, GenerationState.PRACTICE_LESSON.class,
+                        .addTransition(ChapterGenerationState.GRAMMAR_LESSON.class, ChapterGenerationState.PRACTICE_LESSON.class,
                                 (s, c) -> true, actions::handlePracticeGeneration
                         )
-                        .addTransition(GenerationState.CONJUGATION_LESSON.class, GenerationState.PRACTICE_LESSON.class,
+                        .addTransition(ChapterGenerationState.CONJUGATION_LESSON.class, ChapterGenerationState.PRACTICE_LESSON.class,
                                 (s, c) -> true, actions::handlePracticeGeneration
                         )
-                        .addTransition(GenerationState.PRACTICE_LESSON.class, GenerationState.READING_LESSON.class,
+                        .addTransition(ChapterGenerationState.PRACTICE_LESSON.class, ChapterGenerationState.READING_LESSON.class,
                                 (s, c) -> true, actions::handleReadingGeneration
                         )
-                        .addTransition(GenerationState.READING_LESSON.class, GenerationState.COMPLETED.class,
+                        .addTransition(ChapterGenerationState.READING_LESSON.class, ChapterGenerationState.COMPLETED.class,
                                 (s, c) -> true, actions::handleCompletion)
                         .build();
-        return new StateMachineFactory<>(transitions, new GenerationState.IDLE());
+        return new StateMachineFactory<>(transitions, new ChapterGenerationState.IDLE());
     }
 }
