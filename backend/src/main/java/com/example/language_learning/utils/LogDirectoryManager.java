@@ -28,7 +28,7 @@ public class LogDirectoryManager {
     private static final Pattern TIMESTAMP_DIR_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}");
 
     public LogDirectoryManager(
-            @Value("${logging.file.path}") String logsPath,
+            @Value("${app.logging.path}") String logsPath,
             @Value("${app.logging.max-run-history:5}") int maxDirectoriesToKeep
     ) {
         this.logsPath = logsPath;
