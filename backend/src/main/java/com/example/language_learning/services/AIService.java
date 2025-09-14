@@ -7,6 +7,7 @@ import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.exceptions.LanguageException;
+import com.example.language_learning.responses.TranslationResponse;
 import com.example.language_learning.services.contexts.AIGenerationContext;
 import com.example.language_learning.services.states.AIGenerationState;
 import com.example.language_learning.utils.ReactiveStateMachineFactory;
@@ -59,7 +60,23 @@ public class AIService {
         log.info("--------------------------------------");
     }
 
-    /** Practice Lesson Methods **/
+    /** Translation Method(s) **/
+    public Mono<TranslationResponse> translate(String text, String sourceLanguage) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language", sourceLanguage);
+        params.put("textToTranslate", text);
+        params.put("sourceLanguage", sourceLanguage);
+        params.put("promptType", PromptType.TRANSLATE);
+
+        AIConfig.AIPrompt aiPrompt = getPrompt(sourceLanguage, PromptType.TRANSLATE);
+
+        return this.generateAndValidate(params, aiPrompt, AITranslationResponse.class)
+                .map(apiDtoMapper::toTranslationResponse)
+                .doOnNext(mapped -> log.info("Mapped to internal DTO: {}", mapped))
+                .doOnError(e -> log.error("Failed to generate or parse AI response.", e));
+    }
+
+    /** Practice Lesson Method(s) **/
     public Mono<PracticeLessonCheckResponse> proofRead(String originalQuestion, String userSentence, String language, String difficulty) {
         log.info("Proofreading question: {}", originalQuestion);
 
@@ -77,7 +94,7 @@ public class AIService {
                 .doOnError(e -> log.error("Failed to generate or parse AI response.", e));
     }
 
-    /** Chapter Generation Methods **/
+    /** Chapter Generation Method(s) **/
 
     public Mono<ChapterMetadataDTO> generateChapterMetadata(ChapterGenerationRequest request) {
         Map<String, Object> params = createBaseParams(request);
@@ -202,6 +219,12 @@ public class AIService {
     }
 
     private Mono<Object> generateAndValidate(Map<String, Object> params, AIConfig.AIPrompt aiPrompt, JavaType apiDtoType) {
+        Object langObj = params.get("language");
+        if (langObj == null || !(langObj instanceof  String) || ((String) langObj).isBlank()) {
+            String errorMessage = "The 'language' parameter is missing or invalid in the AI service call. This is a required parameter for selecting the correct AI model and prompt.";
+            return Mono.error(new LanguageException(errorMessage));
+        }
+
         String language = (String) params.get("language");
         ChatClient chatClient = selectClient(language);
         int maxRetries = 3;

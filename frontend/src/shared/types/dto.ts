@@ -230,3 +230,12 @@ export interface ProgressUpdateDTO {
     error?: string;
     isComplete: boolean;
 }
+
+export interface TranslationRequest {
+    textToTranslate: string;
+    sourceLanguage: string;
+}
+
+export interface TranslationResponse {
+    translatedText: string;
+}

@@ -5,9 +5,10 @@ import NavigationBar from '../widgets/navigationBar/NavigationBar';
 import SessionManager from './SessionManager';
 import BackgroundLayout from "../shared/layouts/BackgroundLayout";
 import ProtectedRoute from "../features/authentication/components/ProtectedRoute";
-import {useSelector} from "react-redux";
-import {selectCurrentTheme} from "../features/userSettings/settingsSlice";
-import { Container, Spinner } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { selectCurrentTheme } from "../features/userSettings/settingsSlice";
+import { selectIsAuthenticated } from "../features/authentication/authSlice";
+import FullScreenLoader from "../shared/components/fullscreenLoader/FullScreenLoader";
 
 import '@fontsource/inter/400.css'; // Regular
 import '@fontsource/inter/500.css'; // Medium
@@ -15,6 +16,8 @@ import '@fontsource/inter/600.css'; // Semi-Bold
 import '@fontsource/inter/700.css'; // Bold
 import '../shared/assets/_global.scss';
 import LoginPage from "../pages/login/LoginPage";
+import { TranslationToolButton } from "../widgets/translationTool/components";
+
 const LandingPage = lazy(() => import('../pages/home/LandingPage'));
 const HomePage = lazy(() => import('../pages/home/HomePage'));
 const StudyBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
@@ -24,7 +27,7 @@ const themedPaths = ['/home', '/study', '/read'];
 const App: React.FC = () => {
     const location = useLocation();
     const userTheme = useSelector(selectCurrentTheme);
-
+    const isAuthenticated = useSelector(selectIsAuthenticated);
 
     useEffect(() => {
         const isThemedPage = themedPaths.some(path => location.pathname.startsWith(path));
@@ -37,14 +40,7 @@ const App: React.FC = () => {
         <SessionManager/>
         <NavigationBar />
 
-        <Suspense fallback={
-            <Container
-                className="d-flex justify-content-center align-items-center"
-                style={{ minHeight: '100vh'}}
-            >
-                <Spinner animation="border" />
-            </Container>
-        }>
+        <Suspense fallback={<FullScreenLoader/>}>
             <Routes>
                 <Route path="/" element={<LandingPage/>} />
                 <Route path="/login" element={<LoginPage/>} />
@@ -57,6 +53,8 @@ const App: React.FC = () => {
                 </Route>
             </Routes>
         </Suspense>
+
+          {isAuthenticated && <TranslationToolButton/>}
       </>
   );
 }

@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserDTO } from "../../shared/types/dto";
 import { userApiSlice } from "../../shared/api/userApiSlice";
+import { RootState } from "../../app/store";
 
 /*//////////////////////////////////////////////////////////////////////////////////////*/
 /*     This Redux "slice" will manage the user's authentication state on                */
@@ -76,3 +77,9 @@ const authSlice = createSlice({
 
 export const { logOut } = authSlice.actions;
 export default authSlice.reducer;
+
+/*/////////////////////////////////////////////////////*/
+/*                    Selectors                        */
+/*/////////////////////////////////////////////////////*/
+export const selectCurrentUser = (state: RootState) => state.auth.user;
+export const selectIsAuthenticated = (state: RootState) => !!state.auth.user;
