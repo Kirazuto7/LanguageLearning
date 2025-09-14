@@ -1,4 +1,4 @@
-package com.example.language_learning.mapper.util;
+package com.example.language_learning.utils;
 
 import com.example.language_learning.enums.SanitizationPattern;
 import com.fasterxml.jackson.core.type.TypeReference;

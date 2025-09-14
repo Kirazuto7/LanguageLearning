@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource ="org/springframework/boot/logging/logback/base.xml"/>
-    <property name="LOGS_PATH" value="./logs"/>
+    <springProperty scope="context" name="LOGS_PATH" source="app.logging.path" defaultValue="./logs"/>
     <timestamp key="RUN_TIMESTAMP" datePattern="yyyy-MM-dd_HH-mm-ss" timeReference="America/New_York"/>
 
     <!-- Appender for the main application log -->
@@ -12,7 +12,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/application.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
     </appender>
 
@@ -24,7 +24,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/graphql.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
     </appender>
 
@@ -36,7 +36,19 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/ai.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for Job Queue Service specific logs -->
+    <appender name="FILE_JOBS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/jobs.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/jobs.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
     </appender>
 
@@ -48,7 +60,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/security.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
     </appender>
 
@@ -91,6 +103,20 @@
         <!-- Sanitizer Logger -->
         <logger name="com.example.language_learning.mapper.util" level="INFO" additivity="false">
             <appender-ref ref="FILE_AI"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- Job Queue Service Logger -->
+        <logger name="com.example.language_learning.services.JobQueueService" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JOBS"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- State Machine Logger -->
+        <logger name="com.example.language_learning.utils.StateMachine" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JOBS"/>
             <appender-ref ref="STDOUT_ERROR_LEVEL"/>
             <appender-ref ref="STDOUT_INFO_LEVEL"/>
         </logger>
