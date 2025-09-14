@@ -2,6 +2,10 @@
 
 An AI-powered language learning application designed to generate dynamic, personalized lessons. This project leverages large language models to create chapters, vocabulary, grammar explanations, and interactive exercises on demand.
 
+## Preview
+
+![Lesson Book Screenshot](docs/images/lessonbook-screenshot.png)
+
 ## Key Features
 
 *   **Dynamic Chapter Generation**: Users can request a new chapter on a specific topic, language, and difficulty level.
@@ -62,3 +66,72 @@ A dedicated Docker container runs the Ollama service, exposing the language mode
 
 1.  Create a `.env` file in the root directory of the project. You can copy `.env.example` as a template.
 2.  Populate the `.env` file with your desired database credentials. These will be used by both the `postgres` and `backend` services.
+
+```env
+# PostgreSQL Database Configuration
+POSTGRES_DB=your_db_name
+POSTGRES_USER=your_user
+POSTGRES_PASSWORD=your_password
+
+# AI Service Configuration
+# This URL points to the Ollama service. In the Docker Compose setup, 'ai' is the service name.
+SPRING_AI_OLLAMA_BASE_URL=http://ai:11434
+```
+
+## Running the Application
+
+The application can be run using one of two Docker Compose profiles, depending on your hardware.
+
+### With GPU Support (Recommended)
+
+This profile runs the AI service on an NVIDIA GPU for significantly faster performance.
+
+```sh
+docker-compose -f docker-compose.gpu.yml up --build
+```
+
+### With CPU Only
+
+This profile runs all services on the CPU. AI generation will be noticeably slower.
+
+```sh
+docker-compose -f docker-compose.cpu.yml up --build
+```
+
+### Accessing the Services
+
+*   **Frontend**: http://localhost:3000
+*   **Backend GraphQL Playground**: http://localhost:8080/graphiql
+*   **Ollama AI Service**: http://localhost:11434
+
+## Project Structure
+
+*   `/`
+    *   `backend/`
+        *   `src/main/java/com/example/language_learning/`
+            *   `config/` - Spring and State Machine configurations
+            *   `controllers/` - REST and GraphQL controllers
+            *   `dto/` - Data Transfer Objects
+            *   `entity/` - JPA entities
+            *   `mapper/` - MapStruct mappers
+            *   `repositories/` - Spring Data JPA repositories
+            *   `requests/` - API request models
+            *   `security/` - Spring Security configuration, JWT service
+            *   `services/`
+                *   `actions/` - Logic for State Machine actions
+                *   `states/` - State definitions for State Machines
+                *   `contexts/` - Context objects for State Machines
+            *   `utils/` - The custom StateMachine frameworks
+        *   `dockerfiles/` - Dockerfiles for the backend and AI services
+    *   `frontend/`
+        *   `src/`
+            *   `app/` - Redux store setup
+            *   `components/` - General reusable components
+            *   `features/` - Feature-specific components and logic
+            *   `pages/` - Top-level page components
+            *   `shared/`
+                *   `api/` - RTK Query API slices
+                *   `ui/` - Shared UI elements (buttons, inputs, etc.)
+    *   `docker-compose.gpu.yml` - Docker Compose configuration for GPU
+    *   `docker-compose.cpu.yml` - Docker Compose configuration for CPU
+    *   `.env.example` - Template for environment variables
