@@ -59,4 +59,9 @@ public class ChapterService {
         }
         return chapterRepository.save(chapter);
     }
+
+    @Transactional
+    public Chapter saveChapter(Chapter chapter) {
+        return chapterRepository.save(chapter);
+    }
 }

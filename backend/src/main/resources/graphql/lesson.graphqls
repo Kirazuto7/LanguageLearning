@@ -69,5 +69,5 @@ type PracticeLessonCheckResponse {
 }
 
 extend type Mutation {
-    checkPracticeSentence(request: PracticeLessonCheckRequestInput!): PracticeLessonCheckResponse
+    proofreadPracticeSentence(request: PracticeLessonCheckRequestInput!): PracticeLessonCheckResponse
 }

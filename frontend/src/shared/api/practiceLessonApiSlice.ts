@@ -8,8 +8,8 @@ export const practiceLessonApiSlice = graphqlApiSlice.injectEndpoints({
         proofread: builder.mutation<PracticeLessonCheckResponse, PracticeLessonCheckRequest>({
             query: (request) => ({
                 body: gql`
-                    mutation CheckPracticeSentence($request: PracticeLessonCheckRequestInput!) {
-                        checkPracticeSentence(request: $request) {
+                    mutation ProofReadPracticeSentence($request: PracticeLessonCheckRequestInput!) {
+                        proofreadPracticeSentence(request: $request) {
                             isCorrect
                             correctedSentence
                             feedback
@@ -18,7 +18,7 @@ export const practiceLessonApiSlice = graphqlApiSlice.injectEndpoints({
                 `,
                 variables: { request },
             }),
-            transformResponse: (response: { checkPracticeSentence: PracticeLessonCheckResponse }) => response.checkPracticeSentence,
+            transformResponse: (response: { proofreadPracticeSentence: PracticeLessonCheckResponse }) => response.proofreadPracticeSentence,
         }),
 
     })

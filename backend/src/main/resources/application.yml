@@ -3,8 +3,8 @@ spring:
     name: language-learning
   jpa:
     hibernate:
-      ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
-      #ddl-auto: update
+      #ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
+      ddl-auto: update
   datasource:
     url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
@@ -40,7 +40,17 @@ spring:
           num-predict: 8192
           temperature: 0.5
 
+app:
+  job-queue:
+    workers: 5
+  reactive-job-queue:
+    workers: 10
+  logging:
+    max-run-history: 5
+
 logging:
+  file:
+    path: ./logs
   level:
     org.springframework.security: INFO
     # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.
