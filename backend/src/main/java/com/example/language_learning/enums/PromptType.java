@@ -7,5 +7,6 @@ public enum PromptType {
     CONJUGATION,
     PRACTICE,
     READING_COMPREHENSION,
-    PROOFREAD
+    PROOFREAD,
+    TRANSLATE
 }

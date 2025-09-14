@@ -10,3 +10,12 @@ export const getPhoneticText = (text: string): string => {
     // A second replace is added to strip any other stray HTML tags.
     return text.replace(/<ruby>.*?<rt>(.*?)<\/rt><\/ruby>/g, '$1').replace(/<[^>]*>/g, '');
 };
+
+/**
+ * Formats a string into title case, capitalizing the first letter of each word.
+ * @param text The input string.
+ * @returns The formatted string.
+ */
+export const formatText = (text: string): string => {
+    return text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+};
