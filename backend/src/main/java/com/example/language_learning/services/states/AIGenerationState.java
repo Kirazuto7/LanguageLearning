@@ -7,11 +7,29 @@ import com.example.language_learning.utils.ReactiveStateMachine.ReactiveTerminal
 import java.util.Set;
 
 public sealed interface AIGenerationState {
-    record IDLE() implements AIGenerationState {}
-    record GENERATION(String rawResponse) implements AIGenerationState {}
-    record VALIDATION(JsonNode responseNode, Set<ValidationMessage> errors) implements AIGenerationState {}
-    record SANITIZING(JsonNode responseNode, Set<ValidationMessage> originalErrors) implements AIGenerationState {}
-    record RETRYING(String feedback) implements AIGenerationState {}
+    record GENERATION() implements AIGenerationState {}
+    record VALIDATION(String rawResponse) implements AIGenerationState {}
+    record SANITIZING(JsonNode responseNode, Set<ValidationMessage> errors) implements AIGenerationState {}
+    record RETRYING() implements AIGenerationState {}
     record COMPLETED(Object result) implements AIGenerationState, ReactiveTerminalState {}
     record FAILED(String reason) implements AIGenerationState, ReactiveTerminalState {}
+
+    static AIGenerationState GENERATION = new GENERATION();
+    static AIGenerationState RETRYING = new RETRYING();
+
+    public static AIGenerationState VALIDATION(String rawResponse) {
+        return new VALIDATION(rawResponse);
+    }
+
+    public static AIGenerationState SANITIZING(JsonNode responseNode, Set<ValidationMessage> errors) {
+        return new SANITIZING(responseNode, errors);
+    }
+
+    public static AIGenerationState COMPLETED(Object result) {
+        return new COMPLETED(result);
+    }
+
+    public static AIGenerationState FAILED(String reason) {
+        return new FAILED(reason);
+    }
 }

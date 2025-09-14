@@ -45,7 +45,7 @@ public class ChapterGraphQlController {
         return progressService.getPublisher(taskId)
                 .filter(update -> taskId.equals(update.taskId()))
                 .doOnSubscribe(sub -> log.info("User {} subscribed to {}", user.getUsername(), taskId))
-                //.takeUntil(progressUpdate -> progressUpdate.isComplete() || progressUpdate.error() != null)
+                .takeUntil(progressUpdate -> progressUpdate.isComplete() || progressUpdate.error() != null)
                 .doFinally(signal -> log.info("User {} unsubscribed from {}", user.getUsername(), taskId));
     }
 }
