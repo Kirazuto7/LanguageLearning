@@ -30,27 +30,29 @@ An AI-powered language learning application designed to generate dynamic, person
 
 The application is designed with a clean separation of concerns, containerized into four main services: `frontend`, `backend`, `ai`, and `postgres`.
 
-### Backend Architecture
+## Backend Architecture
 
-The backend is the core of the application, featuring a sophisticated architecture designed for robustness and maintainability.
+The backend is the core of the application, featuring a sophisticated architecture designed for robustness and maintainability. It is built around three custom-designed workflow tools, each chosen for a specific type of problem.
 
-#### State Machine Framework
-The backend utilizes custom-built State Machine frameworks to manage complex, multi-step processes, making the logic explicit and easy to follow.
+### `SyncWorkflow` (Synchronous Pipeline)
+Used for synchronous, transactional setup tasks that must complete atomically. The chapter preparation process is a perfect example, where a sequence of database operations (finding a book, creating a chapter shell) is executed in a clean, declarative pipeline. This ensures data integrity before handing off to a long-running asynchronous job.
 
-*   **`StateMachine` (Blocking)**: Used for the long-running, job-based chapter generation process. It orchestrates the sequential creation of lesson components (metadata, vocabulary, grammar, etc.) and sends progress updates to the frontend.
-*   **`ReactiveStateMachine` (Non-Blocking)**: Used internally by the `AIService` to handle the complex, branching logic of AI response generation. This state machine manages the entire lifecycle of an AI call, including:
+### `StateMachine` (Blocking, Asynchronous)
+Used for long-running, job-based processes like chapter generation. It orchestrates the sequential creation of lesson components (metadata, vocabulary, grammar, etc.) and sends progress updates to the frontend. It uses a clean `State -> Action` mapping in its configuration, making the workflow easy to read and maintain.
+
+### `ReactiveStateMachine` (Non-Blocking, Asynchronous)
+Used internally by the `AIService` to handle the complex, branching logic of AI response generation. This state machine also uses a `State -> Action` model and manages the entire lifecycle of an AI call, including:
     1.  **Generation**: Calling the AI model.
     2.  **Validation**: Parsing the response and validating it against a JSON schema.
     3.  **Sanitization**: Attempting to automatically fix common validation errors.
     4.  **Retrying**: Looping back to the generation step with feedback if validation or sanitization fails.
 
-#### Reactive Services
-The backend is built on a reactive foundation using Project Reactor.
+### Other Key Components
 
 *   **`AIService`**: A fully reactive service that acts as a generic, reusable engine for all AI interactions. It leverages the `ReactiveStateMachine` to provide a resilient and predictable interface for generating any type of content.
-*   **`ProofreadService`**: For simpler, linear workflows like proofreading, this service uses a direct reactive chain (`Mono.fromCallable`, `flatMap`). This demonstrates the principle of choosing the right tool for the job, avoiding the overhead of a full state machine for simple tasks.
+*   **Reactive Endpoints**: For simpler, linear reactive workflows like proofreading, the application uses direct reactive chains (`Mono.fromCallable`, `flatMap`) avoiding the overhead of a full state machine for simple tasks.
 
-### AI Service
+## AI Service
 
 A dedicated Docker container runs the Ollama service, exposing the language models to the backend. This isolates the heavy AI workload and allows for independent scaling and management (e.g., running on a dedicated GPU instance without affecting the rest of the application).
 
@@ -109,20 +111,25 @@ docker-compose -f docker-compose.cpu.yml up --build
 *   `/`
     *   `backend/`
         *   `src/main/java/com/example/language_learning/`
-            *   `config/` - Spring and State Machine configurations
+            *   `config/` - Spring, State Machine, and Pipeline configurations
             *   `controllers/` - REST and GraphQL controllers
             *   `dto/` - Data Transfer Objects
             *   `entity/` - JPA entities
+            *   `exceptions/` - Custom application exceptions
             *   `mapper/` - MapStruct mappers
             *   `repositories/` - Spring Data JPA repositories
             *   `requests/` - API request models
             *   `security/` - Spring Security configuration, JWT service
             *   `services/`
-                *   `actions/` - Logic for State Machine actions
+                *   `actions/` - Logic for State Machine and SyncWorkflow tasks
                 *   `states/` - State definitions for State Machines
                 *   `contexts/` - Context objects for State Machines
-            *   `utils/` - The custom StateMachine frameworks
+                *   `inputs/` - Input objects for synchronous workflows
+                *   `outputs/` - Output objects for synchronous workflows
+            *   `utils/` - The custom StateMachine and SyncWorkflow frameworks
         *   `dockerfiles/` - Dockerfiles for the backend and AI services
+    *   `docs/`
+        *   `images/` - Contains diagrams and other visual assets
     *   `frontend/`
         *   `src/`
             *   `app/` - Redux store setup
