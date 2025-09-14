@@ -31,7 +31,6 @@ services:
       - ./backend:/app
       - /app/build
       - /app/.gradle
-      - backend-logs:/app/logs
       - backend-gradle-cache:/root/.gradle
     depends_on:
       postgres:
@@ -80,6 +79,5 @@ services:
 
 volumes:
   backend-gradle-cache:
-  backend-logs:
   postgres-data:
   ollama-data:
