@@ -46,11 +46,10 @@ app:
   reactive-job-queue:
     workers: 10
   logging:
+    path: ./logs
     max-run-history: 5
 
 logging:
-  file:
-    path: ./logs
   level:
     org.springframework.security: INFO
     # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.

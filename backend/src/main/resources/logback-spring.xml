@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource ="org/springframework/boot/logging/logback/base.xml"/>
-    <springProperty scope="context" name="LOGS_PATH" source="logging.file.path" defaultValue="./logs"/>
+    <springProperty scope="context" name="LOGS_PATH" source="app.logging.path" defaultValue="./logs"/>
     <timestamp key="RUN_TIMESTAMP" datePattern="yyyy-MM-dd_HH-mm-ss" timeReference="America/New_York"/>
 
     <!-- Appender for the main application log -->
