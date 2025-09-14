@@ -5,33 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class ReactiveStateMachine<S, C> {
     @Getter
     private S currentState;
     private final Graph<S, C> graph;
-
-    public record Transition<S, C>(Class<? extends S> from, Class<? extends S> to, BiPredicate<S, C> condition, Action<S, C> action) {
-        public boolean matches(S fromState, C context) {
-            return condition.test(fromState, context);
-        }
-
-        public Mono<S> apply(S fromState, C context) {
-            return action.execute(fromState, context);
-        }
-
-        public String getFromName() {
-            return from.getSimpleName();
-        }
-
-        public String getToName() {
-            return to.getSimpleName();
-        }
-    }
 
     /**
      * A marker interface for states that should terminate the state machine's execution.
@@ -59,17 +39,17 @@ public class ReactiveStateMachine<S, C> {
         }
     }
 
-    private ReactiveStateMachine(List<Transition<S, C>> transitions, S initialState) {
-        this.graph = new Graph<>(transitions);
+    private ReactiveStateMachine(Map<Class<? extends S>, Action<S, C>> actionMap, S initialState) {
+        this.graph = new Graph<>(actionMap);
         this.currentState = initialState;
     }
 
     public Mono<Void> handle(C context) {
         S fromState = currentState;
-        return graph.findTransition(fromState, context)
-                .map(transition -> {
-                    log.debug("Executing reactive transition from {} to {}", transition.getFromName(), transition.getToName());
-                    return transition.apply(fromState, context)
+        return graph.findAction(fromState)
+                .map(action -> {
+                    log.debug("Executing reactive action from state {}", fromState.getClass().getSimpleName());
+                    return action.execute(fromState, context)
                             .doOnNext(nextState -> {
                                 synchronized (this) {
                                     log.debug("State transition: {} -> {}", fromState.getClass().getSimpleName(), nextState.getClass().getSimpleName());
@@ -78,8 +58,8 @@ public class ReactiveStateMachine<S, C> {
                             }).then();
                 })
                 .orElseGet(() -> {
-                    log.error("No valid transition found for state {} with context {}", fromState, context);
-                    return Mono.error(new IllegalStateException("No valid transition found for state " + fromState.getClass().getSimpleName()));
+                    log.error("No action found for state {} with context {}", fromState.getClass().getSimpleName(), context);
+                    return Mono.error(new IllegalStateException("No action found for state " + fromState.getClass().getSimpleName()));
                 });
     }
 
@@ -135,30 +115,23 @@ public class ReactiveStateMachine<S, C> {
     }
 
     private static class Graph<S, C> {
-        private final Map<Class<? extends S>, List<Transition<S, C>>> transitionMap;
+        private final Map<Class<? extends S>, Action<S, C>> actionMap;
 
-        public Graph(List<Transition<S, C>> transitions) {
-            this.transitionMap = transitions.stream()
-                    .collect(Collectors.groupingBy(Transition::from));
+        public Graph(Map<Class<? extends S>, Action<S, C>> actionMap) {
+            this.actionMap = actionMap;
         }
 
-        public Optional<Transition<S, C>> findTransition(S fromState, C context) {
-            List<Transition<S, C>> possibleTransitions = transitionMap.get(fromState.getClass());
-            if (possibleTransitions == null) {
-                return Optional.empty();
-            }
-            return possibleTransitions.stream()
-                    .filter(transition -> transition.matches(fromState, context))
-                    .findFirst();
+        public Optional<Action<S, C>> findAction(S fromState) {
+            return Optional.ofNullable(actionMap.get(fromState.getClass()));
         }
     }
 
-    public static class Builder<S, C> {
-        private List<Transition<S, C>> transitions;
+    static class Builder<S, C> {
+        private Map<Class<? extends S>, Action<S, C>> actionMap;
         private S initialState;
 
-        public Builder<S, C> transitions(List<Transition<S, C>> transitions) {
-            this.transitions = transitions;
+        public Builder<S, C> actionMap(Map<Class<? extends S>, Action<S, C>> actionMap) {
+            this.actionMap = actionMap;
             return this;
         }
 
@@ -168,23 +141,23 @@ public class ReactiveStateMachine<S, C> {
         }
 
         public ReactiveStateMachine<S, C> build() {
-            if (initialState == null || transitions == null) {
-                throw new IllegalStateException("Initial state and transitions must be set before building the state machine.");
+            if (initialState == null || actionMap == null) {
+                throw new IllegalStateException("Initial state and action map must be set before building the state machine.");
             }
-            return new ReactiveStateMachine<>(transitions, initialState);
+            return new ReactiveStateMachine<>(actionMap, initialState);
         }
     }
 
     public static class GraphBuilder<S, C> {
-        private final List<Transition<S, C>> transitions = new ArrayList<>();
+        private final Map<Class<? extends S>, Action<S, C>> actionMap = new HashMap<>();
 
-        public GraphBuilder<S, C> addTransition(Class<? extends S> from, Class<? extends S> to, BiPredicate<S, C> condition, Action<S, C> action) {
-            this.transitions.add(new Transition<>(from, to, condition, action));
+        public GraphBuilder<S, C> addState(Class<? extends S> state, Action<S, C> action) {
+            this.actionMap.put(state, action);
             return this;
         }
 
-        public List<Transition<S, C>> build() {
-            return List.copyOf(transitions);
+        public Map<Class<? extends S>, Action<S, C>> build() {
+            return Map.copyOf(actionMap);
         }
     }
 }
