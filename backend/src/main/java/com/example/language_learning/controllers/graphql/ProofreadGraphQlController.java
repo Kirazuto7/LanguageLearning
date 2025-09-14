@@ -3,7 +3,7 @@ package com.example.language_learning.controllers.graphql;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.requests.PracticeLessonCheckRequest;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
-import com.example.language_learning.services.PracticeLessonService;
+import com.example.language_learning.services.ProofreadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -14,13 +14,13 @@ import reactor.core.publisher.Mono;
 
 @Controller
 @RequiredArgsConstructor
-public class PracticeLessonGraphQlController {
+public class ProofreadGraphQlController {
 
-    private final PracticeLessonService practiceLessonService;
+    private final ProofreadService proofreadService;
 
     @MutationMapping
     @PreAuthorize("isAuthenticated()")
-    public Mono<PracticeLessonCheckResponse> checkPracticeSentence(@Argument PracticeLessonCheckRequest request, @AuthenticationPrincipal User user) {
-        return practiceLessonService.checkSentence(request, user);
+    public Mono<PracticeLessonCheckResponse> proofreadPracticeSentence(@Argument PracticeLessonCheckRequest request, @AuthenticationPrincipal User user) {
+        return proofreadService.checkSentence(request, user);
     }
 }

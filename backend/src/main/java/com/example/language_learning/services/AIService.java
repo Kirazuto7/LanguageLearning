@@ -7,31 +7,24 @@ import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.exceptions.LanguageException;
+import com.example.language_learning.services.contexts.AIGenerationContext;
+import com.example.language_learning.services.states.AIGenerationState;
+import com.example.language_learning.utils.ReactiveStateMachineFactory;
 import com.example.language_learning.mapper.ApiDtoMapper;
-import com.example.language_learning.mapper.util.AIResponseSanitizer;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.ValidationMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.prompt.PromptTemplate;
-
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.chat.client.ChatClient;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,17 +44,15 @@ public class AIService {
     private final Map<String, ChatClient> chatClients;
     private final ApiDtoMapper apiDtoMapper;
     private final AIConfig aiConfig;
-    private final AIResponseSanitizer sanitizer;
     private final ObjectMapper objectMapper;
-    private final JsonSchemaFactory jsonSchemaFactory;
+    private final ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory;
 
-    public AIService(AIConfig aiConfig, ApiDtoMapper apiDtoMapper, Map<String, ChatClient> chatClients, AIResponseSanitizer sanitizer, ObjectMapper objectMapper, JsonSchemaFactory jsonSchemaFactory) {
+    public AIService(AIConfig aiConfig, ApiDtoMapper apiDtoMapper, Map<String, ChatClient> chatClients, ObjectMapper objectMapper, ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory) {
         this.aiConfig = aiConfig;
         this.apiDtoMapper = apiDtoMapper;
         this.chatClients = chatClients;
-        this.sanitizer = sanitizer;
         this.objectMapper = objectMapper;
-        this.jsonSchemaFactory = jsonSchemaFactory;
+        this.aiGenerationStateMachineFactory = aiGenerationStateMachineFactory;
         log.info("--- Verifying Injected ChatClients ---");
         log.info("Found {} ChatClient bean(s):", chatClients.size());
         chatClients.keySet().forEach(key -> log.info(" -> Bean name: '{}'", key));
@@ -80,7 +71,7 @@ public class AIService {
         params.put("promptType", PromptType.PROOFREAD);
         AIConfig.AIPrompt aiPrompt = getPrompt(language, PromptType.PROOFREAD);
 
-        return generateWithRetry(params, aiPrompt, AIProofreadResponse.class, 1)
+        return generateAndValidate(params, aiPrompt, AIProofreadResponse.class)
                 .map(apiDtoMapper::toPracticeLessonCheckResponse)
                 .doOnNext(mapped -> log.info("Mapped to internal DTO: {}", mapped))
                 .doOnError(e -> log.error("Failed to generate or parse AI response.", e));
@@ -205,98 +196,30 @@ public class AIService {
                 PromptType.READING_COMPREHENSION);
     }
 
-    private <T_API> Mono<T_API> generateWithRetry(
-        Map<String, Object> params,
-        AIConfig.AIPrompt aiPrompt,
-        Class<T_API> apiDtoClass,
-        int attempt
-    ) {
-        // This is now a convenience method that calls the core `generateWithRetry` logic
-        // and is responsible for casting the result back to the specific type.
+    private <T_API> Mono<T_API> generateAndValidate(Map<String, Object> params, AIConfig.AIPrompt aiPrompt, Class<T_API> apiDtoClass) {
         JavaType javaType = objectMapper.getTypeFactory().constructType(apiDtoClass);
-        return generateWithRetry(params, aiPrompt, javaType, attempt)
-                .map(obj -> (T_API) obj); // Unchecked but safe cast
+        return generateAndValidate(params, aiPrompt, javaType).map(obj -> (T_API) obj);
     }
 
-    private Mono<Object> generateWithRetry(Map<String, Object> params, AIConfig.AIPrompt aiPrompt, JavaType apiDtoType, int attempt) {
-        // Base case: if we've exceeded the max attempts, fail fast.
-        if (attempt > 3) {
-            return Mono.error(new IllegalStateException(
-                    String.format("AI response validation failed after %d retries for prompt type: %s.", 3, (PromptType) params.get("promptType"))
-            ));
-        }
-        PromptType promptType = (PromptType) params.get("promptType");
-        String userMessage = buildUserMessage(aiPrompt, params);
-        log.debug("Rendered Prompt for {} (Attempt {}): {}", promptType, attempt, userMessage);
-
+    private Mono<Object> generateAndValidate(Map<String, Object> params, AIConfig.AIPrompt aiPrompt, JavaType apiDtoType) {
         String language = (String) params.get("language");
         ChatClient chatClient = selectClient(language);
+        int maxRetries = 3;
 
-        return chatClient.prompt()
-                .user(userMessage)
-                .stream()
-                .content()
-                .collectList()
-                .map(list -> String.join("", list).trim())
-                .doOnNext(rawResponse -> log.info("Raw AI Response for {} (Attempt {}): {}", promptType, attempt, rawResponse))
-                .map(sanitizer::extractAndSanitizeJson)
-                .doOnNext(json -> log.debug("Extracted JSON for {} (Attempt {}): {}", promptType, attempt, json))
-                .flatMap(jsonString -> {
-                    try {
-                        JsonNode responseNode = objectMapper.readTree(jsonString);
-                        JsonSchema schema = jsonSchemaFactory.getSchema(aiPrompt.schema());
-                        Set<ValidationMessage> errors = schema.validate(responseNode);
+        AIGenerationContext context = new AIGenerationContext(
+                chatClient,
+                params,
+                aiPrompt,
+                apiDtoType,
+                maxRetries,
+                new AtomicInteger(1)
+        );
 
-                        if (errors.isEmpty()) {
-                            log.info("Attempt {} for {} passed schema validation.", attempt, promptType);
-                            return Mono.just(objectMapper.convertValue(responseNode, apiDtoType)); // Returns Mono<Object>
-                        }
-                        else { // Validation failed
-                            // Validation Error
-                            String errorDetails = errors.stream()
-                                .map(ValidationMessage::getMessage)
-                                .collect(Collectors.joining(", "));
-
-                            log.warn("Attempt {} for {} failed schema validation: {}", attempt, promptType, errorDetails);
-
-                            // Attempt to Sanitize the AI response errors
-                            JsonNode fixedNode = sanitizer.sanitizeJsonValidationErrors(responseNode, errors, schema);
-
-                            // Check if anything was fixed
-                            if (fixedNode != responseNode) {
-                                log.info("Sanitization applied. Re-validating the modified JSON for {}.", promptType);
-                                Set<ValidationMessage> newErrors = schema.validate(fixedNode);
-
-                                if (newErrors.isEmpty()) {
-                                    log.info("Sanitization successful! {} passed schema validation after fix.", promptType);
-                                    return Mono.just(objectMapper.convertValue(fixedNode, apiDtoType));
-                                }
-                                else {
-                                    String newErrorDetails = newErrors.stream()
-                                        .map(ValidationMessage::getMessage)
-                                        .collect(Collectors.joining(", "));
-                                    log.warn("Sanitization attempt failed for {}. New errors: {}", promptType, newErrorDetails);
-                                    // Return to retry mechanism
-                                }
-                            }
-
-                            params.put("invalidJson", jsonString);
-                            params.put("validationFeedback", "Your previous response failed schema validation with the following errors: " + errorDetails + ". You MUST fix these errors.");
-                            return generateWithRetry(params, aiPrompt, apiDtoType, attempt + 1);
-                        }
-                    }
-                    catch (JsonProcessingException e) {
-                        log.warn("Attempt {} for {} failed due to a JSON processing error: {}", attempt, promptType, e.getMessage());
-                        params.put("invalidJson", jsonString);
-                        params.put("validationFeedback", "Your previous response could not be parsed as valid JSON. It might be malformed or incomplete. You MUST provide a complete and valid JSON object that strictly adheres to the schema.");
-                        return generateWithRetry(params, aiPrompt, apiDtoType, attempt + 1);
-                    }
-                    catch (Exception e) {
-                        log.error("An unexpected error occurred during response processing for {} on attempt {}: {}", promptType, attempt, e.getMessage());
-                        return Mono.error(e);
-                    }
-                });
-
+        return aiGenerationStateMachineFactory.createInstance()
+                .runToCompletion(context)
+                .onCompletion(AIGenerationState.COMPLETED.class, AIGenerationState.COMPLETED::result)
+                .onError(AIGenerationState.FAILED.class, failed -> new IllegalStateException(failed.reason()))
+                .asMono();
     }
     /**
      * A generic method to generate any lesson component.
@@ -321,7 +244,7 @@ public class AIService {
 
         params.put("promptType", promptType);
 
-        return generateWithRetry(params, aiPrompt, apiDtoClass, 1)
+        return generateAndValidate(params, aiPrompt, apiDtoClass)
                 .map(mapperFunction)
                 .doOnNext(mapped -> log.info("Mapped to internal DTO {}: {}", promptType, mapped))
                 .doOnError(e -> log.error("Failed to generate or parse AI response for {}.", promptType, e));
@@ -336,7 +259,7 @@ public class AIService {
     {
         log.info("Generating a {} for topic: {}", promptType, params.get("topic"));
         params.put("promptType", promptType);
-        return generateWithRetry(params, aiPrompt, apiDtoType, 1) // This returns Mono<Object>
+        return generateAndValidate(params, aiPrompt, apiDtoType) // This returns Mono<Object>
                 .map(obj -> (T_API) obj) // We must cast the object before applying the typed mapper function.
                 .map(mapperFunction)
                 .doOnNext(mapped -> log.info("Mapped to internal DTO {}: {}", promptType, mapped))
@@ -379,43 +302,6 @@ public class AIService {
                 })
                 .filter(s -> s != null && !s.isBlank())
                 .collect(Collectors.joining(", "));
-    }
-
-    private String renderPrompt(Resource resource, Map<String, Object> params) {
-        try {
-            String templateString = resource.getContentAsString(StandardCharsets.UTF_8);
-            PromptTemplate promptTemplate = new PromptTemplate(templateString);
-            return promptTemplate.render(params);
-        } catch (Exception e) {
-            log.error("Failed to render prompt template from resource: {}.", resource.getFilename(), e);
-            throw new IllegalArgumentException("Invalid prompt template rendering: " + resource.getFilename(), e);
-        }
-    }
-
-    private String buildUserMessage(AIConfig.AIPrompt aiPrompt, Map<String, Object> params) {
-        String instructionContent = renderPrompt(aiPrompt.instruction(), params);
-
-        // Check if this is a retry attempt and add specific feedback
-        if (params.containsKey("validationFeedback")) {
-            StringBuilder messageBuilder = new StringBuilder();
-            messageBuilder.append("Your previous response was invalid. You MUST correct it. ");
-            messageBuilder.append(params.get("validationFeedback"));
-            if (params.containsKey("invalidJson")) {
-                messageBuilder.append("\n\nInvalid JSON Response:\n```json\n")
-                              .append(params.get("invalidJson"))
-                              .append("\n```");
-            }
-            messageBuilder.append("\n\n--- Original Instructions ---\n");
-            messageBuilder.append(instructionContent); // Re-include original instructions
-            return messageBuilder.toString();
-        }
-
-        // For the initial request, send instructions AND schema.
-        JsonNode schemaNode = aiPrompt.schema();
-        String schemaContent = (schemaNode != null) ? schemaNode.toPrettyString() : "{}";
-        return instructionContent +
-            "\n\n## JSON Schema\nYour output MUST conform to the following JSON schema:\n```json\n" +
-            schemaContent + "\n```";
     }
 
     /**

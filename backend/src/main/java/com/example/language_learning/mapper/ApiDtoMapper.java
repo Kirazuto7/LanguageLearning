@@ -7,7 +7,7 @@ import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.enums.QuestionType;
-import com.example.language_learning.mapper.util.AIResponseSanitizer;
+import com.example.language_learning.utils.AIResponseSanitizer;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.services.FuriganaService;
 import lombok.RequiredArgsConstructor;
