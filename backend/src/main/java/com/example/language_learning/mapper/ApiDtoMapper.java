@@ -7,6 +7,7 @@ import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
 import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.enums.QuestionType;
+import com.example.language_learning.responses.TranslationResponse;
 import com.example.language_learning.utils.AIResponseSanitizer;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.services.FuriganaService;
@@ -157,6 +158,12 @@ public class ApiDtoMapper {
                 .isCorrect(response.correctedSentence() == null)
                 .correctedSentence(response.correctedSentence())
                 .feedback(response.feedback())
+                .build();
+    }
+
+    public TranslationResponse toTranslationResponse(AITranslationResponse response) {
+        return TranslationResponse.builder()
+                .translatedText(response.translatedText())
                 .build();
     }
 
