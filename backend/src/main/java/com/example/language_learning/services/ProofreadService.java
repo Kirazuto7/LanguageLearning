@@ -1,5 +1,11 @@
 package com.example.language_learning.services;
 
+import com.example.language_learning.ai.AIEngine;
+import com.example.language_learning.ai.components.AIRequest;
+import com.example.language_learning.ai.components.AIRequestFactory;
+import com.example.language_learning.ai.dtos.AIProofreadResponse;
+import com.example.language_learning.enums.PromptType;
+import com.example.language_learning.mapper.AIDtoMapper;
 import com.example.language_learning.repositories.QuestionRepository;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
@@ -14,25 +20,29 @@ import reactor.core.scheduler.Schedulers;
 public class ProofreadService {
 
     private final QuestionRepository questionRepository;
-    private final AIService aiService;
+    private final AIEngine aiEngine;
+    private final AIRequestFactory aiRequestFactory;
+    private final AIDtoMapper AIDtoMapper;
 
     public Mono<PracticeLessonCheckResponse> checkSentence(PracticeLessonCheckRequest request, User user) {
 
-        // Step 1: Fetch the question text (blocking I/O) and offload it to a background thread.
         return Mono.fromCallable(() ->
             questionRepository.findByIdAndUser(request.questionId(), user)
                 .orElseThrow(() -> new SecurityException("Question not found or does not belong to the user."))
                 .getQuestionText()
             )
             .subscribeOn(Schedulers.boundedElastic())
-            // Step 2: Use the fetched text to call the AI service.
-            .flatMap(originalQuestionText ->
-                aiService.proofRead(
-                    originalQuestionText,
-                    request.userSentence(),
-                    request.language(),
-                    request.difficulty()
-                )
-            );
+            .flatMap(originalQuestionText -> {
+                AIRequest<AIProofreadResponse, PracticeLessonCheckResponse> aiRequest = aiRequestFactory
+                        .builder(AIProofreadResponse.class, AIDtoMapper::toPracticeLessonCheckResponse)
+                        .promptType(PromptType.PROOFREAD)
+                        .language(request.language())
+                        .param("question", originalQuestionText)
+                        .param("sentence", request.userSentence())
+                        .param("difficulty", request.difficulty())
+                        .build();
+
+                return aiEngine.generate(aiRequest);
+            });
     }
 }
