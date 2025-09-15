@@ -1,6 +1,6 @@
 package com.example.language_learning.config;
 
-import com.example.language_learning.dto.api.details.*;
+import com.example.language_learning.ai.dtos.details.*;
 import com.example.language_learning.enums.PromptType;
 import com.example.language_learning.exceptions.LanguageException;
 import com.fasterxml.jackson.databind.JsonNode;

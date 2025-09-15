@@ -93,8 +93,8 @@
 
     <!-- Configuration for the 'dev' profile -->
     <springProfile name="dev">
-        <!-- AI Service Logger -->
-        <logger name="com.example.language_learning.services.AIService" level="INFO" additivity="false">
+        <!-- AI Subsystem Logger -->
+        <logger name="com.example.language_learning.ai" level="INFO" additivity="false">
             <appender-ref ref="FILE_AI"/>
             <appender-ref ref="STDOUT_ERROR_LEVEL"/>
             <appender-ref ref="STDOUT_INFO_LEVEL"/>
