@@ -1,6 +1,7 @@
 package com.example.language_learning.ai;
 
 import com.example.language_learning.ai.components.AIRequest;
+import com.example.language_learning.ai.components.AIResponseMapping;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
 import com.example.language_learning.config.AIConfig;
@@ -15,6 +16,13 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * The central "smart" engine for all AI interactions.
+ * This service takes a simple {@link AIRequest}, which describes the user's intent,
+ * and orchestrates the entire generation and mapping process. It uses the {@link AIResponseMapperRegistry}
+ * to dynamically look up the correct AI response type and mapping function, providing a fully
+ * type-safe, extensible, and clean public API for the rest of the application.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -22,9 +30,36 @@ public class AIEngine {
 
     private final Map<String, ChatClient> chatClients;
     private final AIConfig aiConfig;
+    private final AIResponseMapperRegistry mapperRegistry;
     private final ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory;
 
-    public <T_AI, T_INTERNAL> Mono<T_INTERNAL> generate(AIRequest<T_AI, T_INTERNAL> request) {
+    /**
+     * The main public entry point for the AIEngine.
+     * It takes a simple request and returns a strongly-typed Mono of the final internal DTO.
+     *
+     * @param request The AI request describing the user's intent.
+     * @param <T_INTERNAL> The final internal DTO type the caller expects.
+     * @return A {@link Mono} that emits the final, mapped DTO.
+     */
+    public <T_INTERNAL> Mono<T_INTERNAL> generate(AIRequest<T_INTERNAL> request) {
+        AIResponseMapping<?, T_INTERNAL> mapping = mapperRegistry.get(request.getPromptType());
+        if (mapping == null) {
+            return Mono.error(new IllegalStateException("No mapper registered for prompt type: " + request.getPromptType()));
+        }
+        return generateAndMap(request, mapping);
+    }
+
+    /**
+     * A private, generic helper method that ensures end-to-end type safety.
+     * By having this intermediate method with both {@code T_AI} and {@code T_INTERNAL} generic parameters,
+     * it allows the compiler to correctly link the type of the {@code Mono} returned by the state machine
+     * with the input type of the mapper function from the registry. This is a standard pattern to
+     * work around Java's type erasure and avoid unsafe casting in the public-facing API.
+     *
+     * @param request The original AI request.
+     * @param mapping The mapping strategy retrieved from the registry.
+     */
+    private <T_AI, T_INTERNAL> Mono<T_INTERNAL> generateAndMap(AIRequest<T_INTERNAL> request, AIResponseMapping<T_AI, T_INTERNAL> mapping) {
         String language = (String) request.getParams().get("language");
         if (language == null || language.isBlank()) {
             return Mono.error(new LanguageException("The 'language' parameter is missing from the AIRequest params."));
@@ -32,12 +67,13 @@ public class AIEngine {
 
         ChatClient chatClient = selectClient(language);
         AIConfig.AIPrompt aiPrompt = aiConfig.getPrompt(language, request.getPromptType());
+        var aiResponseType = mapping.javaTypeProvider().apply(request.getParams());
 
         AIGenerationContext context = new AIGenerationContext(
             chatClient,
             request.getParams(),
             aiPrompt,
-            request.getAiResponseType(),
+            aiResponseType,
             3,
             new AtomicInteger(1)
         );
@@ -48,7 +84,7 @@ public class AIEngine {
                 .onError(AIGenerationState.FAILED.class, failed -> new IllegalStateException(failed.reason()))
                 .asMono()
                 .map(obj -> (T_AI) obj);
-        return apiResponseMono.map(request.getResponseMapper());
+        return apiResponseMono.map(response -> mapping.mapper().apply(response, request.getParams()));
     }
 
     /**

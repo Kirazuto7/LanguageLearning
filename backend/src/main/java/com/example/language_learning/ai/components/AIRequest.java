@@ -14,69 +14,80 @@ import java.util.function.Function;
  * This class uses a Builder pattern to ensure that all required parameters are provided
  * before the request is created.
  *
- * @param <T_AI> The type of the DTO that the raw AI JSON response will be parsed into.
- *                For example, {@code AITranslationResponse.class}.
- * @param <T_INTERNAL> The type of the final, internal application DTO after mapping.
+ * @param <T_INTERNAL> The type of the final, internal application DTO that this request will produce.
  *                     For example, {@code TranslationResponse.class}.
  */
-public final class AIRequest<T_AI, T_INTERNAL> {
-    @Getter
-    private final JavaType aiResponseType;
+public final class AIRequest<T_INTERNAL> {
     @Getter
     private final PromptType promptType;
     @Getter
     private final Map<String, Object> params;
-    @Getter
-    private final Function<T_AI, T_INTERNAL> responseMapper;
 
-    private AIRequest(Builder<T_AI, T_INTERNAL> builder) {
-        this.aiResponseType = builder.aiResponseType;
+    private AIRequest(Builder<T_INTERNAL> builder) {
         this.promptType = builder.promptType;
         this.params = builder.params;
-        this.responseMapper = builder.responseMapper;
     }
 
-    public static class Builder<T_AI, T_INTERNAL> {
-        private final ObjectMapper objectMapper;
-        private JavaType aiResponseType;
+    public static IResponseClassStep builder() {
+        return new ResponseClassStep();
+    }
+
+    public interface IResponseClassStep {
+        <T_INTERNAL> IBuilder<T_INTERNAL> responseClass(Class<T_INTERNAL> targetClass);
+    }
+
+    public interface IBuilder<T_INTERNAL> {
+        IBuilder<T_INTERNAL> promptType(PromptType promptType);
+        IBuilder<T_INTERNAL> language(String language);
+        IBuilder<T_INTERNAL> param(String key, Object value);
+        AIRequest<T_INTERNAL> build();
+    }
+
+    /**
+     * An intermediate step in the builder chain to specify the target DTO type.
+     * This allows for a more fluent API and helps the compiler with type inference.
+     */
+    private static class ResponseClassStep implements IResponseClassStep {
+        private ResponseClassStep() {}
+
+        @Override
+        public <T_INTERNAL> IBuilder<T_INTERNAL> responseClass(Class<T_INTERNAL> targetClass) {
+            // The targetClass parameter's primary purpose is to provide a type hint to the
+            // Java compiler, enabling it to infer the generic type for the builder.
+            return new AIRequest.Builder<>();
+        }
+    }
+
+    private static class Builder<T_INTERNAL> implements IBuilder<T_INTERNAL> {
         private PromptType promptType;
         private String language;
         private final Map<String, Object> params = new HashMap<>();
-        private final Function<T_AI, T_INTERNAL> responseMapper;
 
-        Builder(ObjectMapper objectMapper, Function<T_AI, T_INTERNAL> responseMapper) { // Package-private constructor
-            this.objectMapper = objectMapper;
-            this.responseMapper = responseMapper;
+        private Builder() { // private constructor
         }
 
-        Builder<T_AI, T_INTERNAL> aiResponseType(JavaType responseType) { // Package-private
-            this.aiResponseType = responseType;
-            return this;
-        }
-
-        Builder<T_AI, T_INTERNAL> aiResponseType(Class<T_AI> responseClass) { // Package-private
-            this.aiResponseType = objectMapper.getTypeFactory().constructType(responseClass);
-            return this;
-        }
-
-        public Builder<T_AI, T_INTERNAL> promptType(PromptType promptType) {
+        @Override
+        public IBuilder<T_INTERNAL> promptType(PromptType promptType) {
             this.promptType = promptType;
             return this;
         }
 
-        public Builder<T_AI, T_INTERNAL> language(String language) {
+        @Override
+        public IBuilder<T_INTERNAL> language(String language) {
             this.language = language;
             return this;
         }
 
-        public Builder<T_AI, T_INTERNAL>  param(String key, Object value) {
+        @Override
+        public IBuilder<T_INTERNAL>  param(String key, Object value) {
             params.put(key, value);
             return this;
         }
 
-        public AIRequest<T_AI, T_INTERNAL>  build() {
-            if (aiResponseType == null || promptType == null || language == null || language.isBlank() || responseMapper == null) {
-                throw new IllegalStateException("AIResponseType, PromptType, ResponseMapper and Language must be set before building the AIRequest.");
+        @Override
+        public AIRequest<T_INTERNAL>  build() {
+            if (promptType == null || language == null || language.isBlank()) {
+                throw new IllegalStateException("PromptType and Language must be set before building the AIRequest.");
             }
 
             params.put("language", language);

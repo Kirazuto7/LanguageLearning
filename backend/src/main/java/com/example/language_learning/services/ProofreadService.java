@@ -2,10 +2,7 @@ package com.example.language_learning.services;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
-import com.example.language_learning.ai.components.AIRequestFactory;
-import com.example.language_learning.ai.dtos.AIProofreadResponse;
 import com.example.language_learning.enums.PromptType;
-import com.example.language_learning.mapper.AIDtoMapper;
 import com.example.language_learning.repositories.QuestionRepository;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;
@@ -21,8 +18,6 @@ public class ProofreadService {
 
     private final QuestionRepository questionRepository;
     private final AIEngine aiEngine;
-    private final AIRequestFactory aiRequestFactory;
-    private final AIDtoMapper AIDtoMapper;
 
     public Mono<PracticeLessonCheckResponse> checkSentence(PracticeLessonCheckRequest request, User user) {
 
@@ -33,8 +28,8 @@ public class ProofreadService {
             )
             .subscribeOn(Schedulers.boundedElastic())
             .flatMap(originalQuestionText -> {
-                AIRequest<AIProofreadResponse, PracticeLessonCheckResponse> aiRequest = aiRequestFactory
-                        .builder(AIProofreadResponse.class, AIDtoMapper::toPracticeLessonCheckResponse)
+                AIRequest<PracticeLessonCheckResponse> aiRequest = AIRequest.builder()
+                        .responseClass(PracticeLessonCheckResponse.class)
                         .promptType(PromptType.PROOFREAD)
                         .language(request.language())
                         .param("question", originalQuestionText)
