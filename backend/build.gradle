@@ -13,8 +13,8 @@ java {
 
 repositories {
 	mavenCentral()
-	//maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
 }
+
 dependencyManagement {
 	imports {
         // Manages the Spring AI BOM dependencies
@@ -44,9 +44,14 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // Mapping Dependencies
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
     // Lombok Dependencies
-    compileOnly 'org.projectlombok:lombok:1.18.32' // latest as of 2025
+    compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     // Other Dependencies
