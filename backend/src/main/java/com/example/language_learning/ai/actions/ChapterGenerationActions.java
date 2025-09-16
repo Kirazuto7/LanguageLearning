@@ -2,7 +2,6 @@ package com.example.language_learning.ai.actions;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
-import com.example.language_learning.ai.components.AIRequestFactory;
 import com.example.language_learning.ai.dtos.*;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
@@ -12,7 +11,6 @@ import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.entity.models.Chapter;
 import com.example.language_learning.entity.models.Page;
 import com.example.language_learning.enums.PromptType;
-import com.example.language_learning.mapper.AIDtoMapper;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.ai.contexts.ChapterGenerationContext;
 import com.example.language_learning.ai.states.ChapterGenerationState;
@@ -36,12 +34,10 @@ import java.util.stream.Collectors;
 public class ChapterGenerationActions {
 
     private final AIEngine aiEngine;
-    private final AIRequestFactory aiRequestFactory;
     private final ProgressService progressService;
     private final ChapterService chapterService;
     private final PageService pageService;
     private final DtoMapper dtoMapper;
-    private final AIDtoMapper AIDtoMapper;
     private final Duration shortDelay = Duration.ofSeconds(2);
     private final Duration longDelay = Duration.ofSeconds(4);
 
@@ -69,8 +65,8 @@ public class ChapterGenerationActions {
         try {
             progressService.sendUpdate(context.getTaskId(), 15, "Preparing lesson data...");
 
-            AIRequest<AIChapterMetadataResponse, ChapterMetadataDTO> aiRequest = aiRequestFactory
-                    .builder(AIChapterMetadataResponse.class, response -> AIDtoMapper.toChapterMetadataDTO(response, context.getRequest().topic()))
+            AIRequest<ChapterMetadataDTO> aiRequest = AIRequest.builder()
+                    .responseClass(ChapterMetadataDTO.class)
                     .promptType(PromptType.METADATA)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
@@ -99,8 +95,8 @@ public class ChapterGenerationActions {
             // 1. Cast to VOCABULARY_LESSON to get the required input data.
             ChapterMetadataDTO metadataDto = ((ChapterGenerationState.VOCABULARY_LESSON) fromState).metadataDto();
 
-            AIRequest<AIVocabularyLessonResponse<?>, VocabularyLessonDTO> aiRequest = aiRequestFactory
-                    .vocabularyBuilder(context.getRequest().language(), response -> AIDtoMapper.toVocabularyLessonDTO(response, context.getRequest().language()))
+            AIRequest<VocabularyLessonDTO> aiRequest = AIRequest.builder()
+                    .responseClass(VocabularyLessonDTO.class)
                     .promptType(PromptType.VOCABULARY)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
@@ -137,8 +133,8 @@ public class ChapterGenerationActions {
             // 1. Get the required vocabulary data from the current GRAMMAR_LESSON state.
             VocabularyLessonDTO vocabularyLessonDTO = ((ChapterGenerationState.GRAMMAR_LESSON) fromState).vocabularyDto();
 
-            AIRequest<AIGrammarLessonResponse, GrammarLessonDTO> aiRequest = aiRequestFactory
-                    .builder(AIGrammarLessonResponse.class, response -> AIDtoMapper.toGrammarLessonDTO(response, context.getRequest().language()))
+            AIRequest<GrammarLessonDTO> aiRequest = AIRequest.builder()
+                    .responseClass(GrammarLessonDTO.class)
                     .promptType(PromptType.GRAMMAR)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
@@ -169,8 +165,8 @@ public class ChapterGenerationActions {
             // 1. Get the required vocabulary data from the current CONJUGATION_LESSON state.
             VocabularyLessonDTO vocabularyLessonDTO = ((ChapterGenerationState.CONJUGATION_LESSON) fromState).vocabularyDto();
 
-            AIRequest<AIConjugationLessonResponse, ConjugationLessonDTO> aiRequest = aiRequestFactory
-                    .builder(AIConjugationLessonResponse.class, response -> AIDtoMapper.toConjugationLessonDTO(response, context.getRequest().language()))
+            AIRequest<ConjugationLessonDTO> aiRequest = AIRequest.builder()
+                    .responseClass(ConjugationLessonDTO.class)
                     .promptType(PromptType.CONJUGATION)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
@@ -214,8 +210,8 @@ public class ChapterGenerationActions {
                 throw new IllegalArgumentException("Unsupported lesson type for practice lesson generation: " + specificLesson.getClass().getName());
             }
 
-            AIRequest<AIPracticeLessonResponse, PracticeLessonDTO> aiRequest = aiRequestFactory
-                    .builder(AIPracticeLessonResponse.class, response -> AIDtoMapper.toPracticeLessonDTO(response, context.getRequest().language()))
+            AIRequest<PracticeLessonDTO> aiRequest = AIRequest.builder()
+                    .responseClass(PracticeLessonDTO.class)
                     .promptType(PromptType.PRACTICE)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
@@ -257,8 +253,8 @@ public class ChapterGenerationActions {
                 throw new IllegalArgumentException("Unsupported lesson type for reading comprehension lesson generation: " + currentState.specificLesson().getClass().getName());
             }
 
-            AIRequest<AIReadingComprehensionLessonResponse, ReadingComprehensionLessonDTO> aiRequest = aiRequestFactory
-                    .builder(AIReadingComprehensionLessonResponse.class, response -> AIDtoMapper.toReadingComprehensionLessonDTO(response, context.getRequest().language()))
+            AIRequest<ReadingComprehensionLessonDTO> aiRequest = AIRequest.builder()
+                    .responseClass(ReadingComprehensionLessonDTO.class)
                     .promptType(PromptType.READING_COMPREHENSION)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
