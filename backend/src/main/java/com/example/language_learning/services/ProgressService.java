@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
-public class ProgressService {
+public class  ProgressService {
     private final Map<String, Sinks.Many<ProgressUpdateDTO>> taskSinks = new ConcurrentHashMap<>();
 
     public Flux<ProgressUpdateDTO> getPublisher(String taskId) {
@@ -67,9 +67,9 @@ public class ProgressService {
 
         sink.tryEmitNext(update);
 
-        if (update.isComplete() || update.error() != null) {
+        /*if (update.isComplete() || update.error() != null) {
             log.info("SENDING COMPLETE signal for task {}", taskId);
             sink.tryEmitComplete();
-        }
+        }*/
     }
 }
