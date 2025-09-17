@@ -3,8 +3,8 @@ spring:
     name: language-learning
   jpa:
     hibernate:
-      #ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
-      ddl-auto: update
+      ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
+      #ddl-auto: update
   datasource:
     url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
@@ -54,8 +54,10 @@ logging:
     org.springframework.security: INFO
     # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.
     org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
-    org.springframework.graphql: DEBUG
-    org.springframework.web.socket: DEBUG
+    org.springframework.graphql: INFO
+    org.springframework.web: INFO
+    org.springframework.beans.factory: INFO
+    org.springframework.web.socket: INFO
     #org.springframework.boot.actuate.health: WARN
 
 management:
@@ -72,7 +74,15 @@ application:
     public-paths:
       - "/api/users/register"
       - "/api/users/login"
+      - "/api/logs/client"
       - "/api/users/logout"
       - "/error"
       - "/graphql"
       - "/graphiql"
+      # Paths for serving the bundled React frontend
+      - "/"
+      - "/index.html"
+      - "/favicon.ico"
+      - "/manifest.json"
+      - "/static/**"
+      - "/logo*.png"

@@ -1,8 +1,8 @@
 package com.example.language_learning.config;
 
-import com.example.language_learning.services.actions.ChapterPrepActions;
-import com.example.language_learning.services.inputs.ChapterPrepInput;
-import com.example.language_learning.services.outputs.ChapterPrepOutput;
+import com.example.language_learning.ai.actions.ChapterPrepActions;
+import com.example.language_learning.ai.inputs.ChapterPrepInput;
+import com.example.language_learning.ai.outputs.ChapterPrepOutput;
 import com.example.language_learning.utils.SyncWorkflow;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

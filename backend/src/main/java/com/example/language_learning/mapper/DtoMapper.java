@@ -1,90 +1,73 @@
 package com.example.language_learning.mapper;
 
-import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.dto.user.SettingsDTO;
 import com.example.language_learning.dto.user.UserDTO;
 import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
-import com.example.language_learning.entity.models.details.*;
 import com.example.language_learning.entity.user.Settings;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.entity.models.Word;
 import com.example.language_learning.entity.lessons.*;
 import com.example.language_learning.entity.models.*;
-import com.example.language_learning.enums.LessonType;
-import com.example.language_learning.enums.QuestionType;
+import com.example.language_learning.mapper.mapstruct.*;
+import com.example.language_learning.mapper.mapstruct.details.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DtoMapper {
+    private final UserStructMapper userStructMapper;
+    private final SettingsStructMapper settingsStructMapper;
+    private final LessonBookStructMapper lessonBookStructMapper;
+    private final ChapterStructMapper chapterStructMapper;
+    private final PageStructMapper pageStructMapper;
+    private final LessonStructMapper lessonStructMapper;
+    private final VocabularyLessonStructMapper vocabularyLessonStructMapper;
+    private final GrammarLessonStructMapper grammarLessonStructMapper;
+    private final ConjugationLessonStructMapper conjugationLessonStructMapper;
+    private final PracticeLessonStructMapper practiceLessonStructMapper;
+    private final ReadingComprehensionLessonStructMapper readingComprehensionLessonStructMapper;
+    private final WordStructMapper wordStructMapper;
+    private final WordDetailsStructMapper wordDetailsStructMapper;
+    private final SentenceStructMapper sentenceStructMapper;
+    private final QuestionStructMapper questionStructMapper;
+    private final ConjugationExampleStructMapper conjugationExampleStructMapper;
+    private final KoreanWordDetailsStructMapper koreanWordDetailsStructMapper;
+    private final ChineseWordDetailsStructMapper chineseWordDetailsStructMapper;
+    private final JapaneseWordDetailsStructMapper japaneseWordDetailsStructMapper;
+    private final ThaiWordDetailsStructMapper thaiWordDetailsStructMapper;
+    private final ItalianWordDetailsStructMapper italianWordDetailsStructMapper;
+    private final SpanishWordDetailsStructMapper spanishWordDetailsStructMapper;
+    private final FrenchWordDetailsStructMapper frenchWordDetailsStructMapper;
+    private final GermanWordDetailsStructMapper germanWordDetailsStructMapper;
 
     /* ***************** */
     /* ** Book Mapper ** */
     /* ***************** */
 
     public LessonBook toEntity(LessonBookDTO dto) {
-        if (dto == null) return null;
-        LessonBook book = LessonBook.builder()
-                .bookTitle(dto.bookTitle())
-                .difficulty(dto.difficulty())
-                .language(dto.language())
-                .build();
-
-        if (dto.chapters() != null) {
-            // Set the back-reference on each chapter
-            dto.chapters().stream()
-                    .map(this::toEntity)
-                    .forEach(book::addChapter);
-        }
-        return book;
+        return lessonBookStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonBookDTO toDto(LessonBook entity) {
-        if (entity == null) return null;
-        return LessonBookDTO.builder()
-                .id(entity.getId())
-                .bookTitle(entity.getBookTitle())
-                .difficulty(entity.getDifficulty())
-                .language(entity.getLanguage())
-                .chapters(entity.getChapters().stream().map(this::toDto).toList())
-                .build();
+        return lessonBookStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
-
 
     /* ******************** */
     /* ** Chapter Mapper ** */
     /* ******************** */
 
     public Chapter toEntity(ChapterDTO dto) {
-        if (dto == null) return null;
-        Chapter chapter = Chapter.builder()
-                .chapterNumber(dto.chapterNumber())
-                .title(dto.title())
-                .nativeTitle(dto.nativeTitle())
-                .build();
-
-        if (dto.pages() != null) {
-            dto.pages().stream()
-                    .map(this::toEntity)
-                    .forEach(chapter::addPage);
-        }
-        return chapter;
+        return chapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public ChapterDTO toDto(Chapter entity) {
-        if (entity == null) return null;
-        return ChapterDTO.builder()
-                .id(entity.getId())
-                .chapterNumber(entity.getChapterNumber())
-                .title(entity.getTitle())
-                .nativeTitle(entity.getNativeTitle())
-                .pages(entity.getPages().stream().map(this::toDto).toList())
-                .build();
+        return chapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ***************** */
@@ -92,190 +75,23 @@ public class DtoMapper {
     /* ***************** */
 
     public Page toEntity(PageDTO dto) {
-        if (dto == null) return null;
-        return Page.builder()
-                .pageNumber(dto.pageNumber())
-                .lesson(toEntity(dto.lesson()))
-                .build();
+        return pageStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public PageDTO toDto(Page entity) {
-        if (entity == null) return null;
-        return PageDTO.builder()
-                .id(entity.getId())
-                .pageNumber(entity.getPageNumber())
-                .lesson(toDto(entity.getLesson()))
-                .build();
+        return pageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ******************* */
     /* ** Lesson Mapper ** */
     /* ******************* */
 
-    // Main dispatcher methods
     public Lesson toEntity(LessonDTO dto) {
-        return switch (dto) {
-            case null -> null;
-            case VocabularyLessonDTO vocabDto -> toEntity(vocabDto);
-            case PracticeLessonDTO practiceDto -> toEntity(practiceDto);
-            case GrammarLessonDTO grammarDto -> toEntity(grammarDto);
-            case ConjugationLessonDTO conjugationDto -> toEntity(conjugationDto);
-            case ReadingComprehensionLessonDTO readingDto -> toEntity(readingDto);
-            default -> throw new IllegalArgumentException("Unknown lesson DTO type: " + dto.getClass().getSimpleName());
-        };
+        return lessonStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonDTO toDto(Lesson entity) {
-        return switch (entity) {
-            case null -> null;
-            case VocabularyLesson vocabEntity -> toDto(vocabEntity);
-            case PracticeLesson practiceEntity -> toDto(practiceEntity);
-            case GrammarLesson grammarEntity -> toDto(grammarEntity);
-            case ConjugationLesson conjugationEntity -> toDto(conjugationEntity);
-            case ReadingComprehensionLesson readingEntity -> toDto(readingEntity);
-            default ->
-                    throw new IllegalArgumentException("Unknown lesson entity type: " + entity.getClass().getSimpleName());
-        };
-    }
-
-    // Specific lesson type mappers
-    private VocabularyLesson toEntity(VocabularyLessonDTO dto) {
-        if (dto == null) return null;
-        return VocabularyLesson.builder()
-                .title(dto.title())
-                .type(LessonType.VOCABULARY)
-                .vocabularies(dto.vocabularies().stream()
-                        .map(this::toEntity)
-                        .filter(Objects::nonNull)
-                        .toList())
-                .build();
-    }
-
-    private VocabularyLessonDTO toDto(VocabularyLesson entity) {
-        if (entity == null) return null;
-        return VocabularyLessonDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .vocabularies(entity.getVocabularies().stream()
-                        .map(this::toDto)
-                        .toList())
-                .build();
-    }
-
-    private PracticeLesson toEntity(PracticeLessonDTO dto) {
-        if (dto == null) return null;
-        PracticeLesson lesson = PracticeLesson.builder()
-                .title(dto.title())
-                .type(LessonType.PRACTICE)
-                .instructions(dto.instructions())
-                .build();
-
-        if (dto.questions() != null) {
-            dto.questions().stream()
-                    .map(qDto -> toEntity(qDto, lesson))
-                    .forEach(lesson::addQuestion);
-        }
-        return lesson;
-    }
-
-    private PracticeLessonDTO toDto(PracticeLesson entity) {
-        if (entity == null) return null;
-        return PracticeLessonDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .instructions(entity.getInstructions())
-                .questions(entity.getQuestions().stream()
-                        .map(this::toDto)
-                        .toList())
-                .build();
-    }
-
-    private GrammarLesson toEntity(GrammarLessonDTO dto) {
-        if (dto == null) return null;
-        GrammarLesson lesson = GrammarLesson.builder()
-                .title(dto.title())
-                .type(LessonType.GRAMMAR)
-                .grammarConcept(dto.grammarConcept())
-                .explanation(dto.explanation())
-                .build();
-
-        if (dto.exampleSentences() != null) {
-            dto.exampleSentences().stream()
-                    .map(this::toEntity)
-                    .forEach(lesson::addExampleSentence);
-        }
-        return lesson;
-    }
-
-    private GrammarLessonDTO toDto(GrammarLesson entity) {
-        if (entity == null) return null;
-        return GrammarLessonDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .grammarConcept(entity.getGrammarConcept())
-                .explanation(entity.getExplanation())
-                .exampleSentences(entity.getExampleSentences().stream()
-                        .map(this::toDto)
-                        .toList())
-                .build();
-    }
-
-    private ConjugationLesson toEntity(ConjugationLessonDTO dto) {
-        if (dto == null) return null;
-        ConjugationLesson lesson = ConjugationLesson.builder()
-                .title(dto.title())
-                .type(LessonType.CONJUGATION)
-                .conjugationRuleName(dto.conjugationRuleName())
-                .explanation(dto.explanation())
-                .build();
-
-        if (dto.conjugatedWords() != null) {
-            dto.conjugatedWords().stream()
-                    .map(exampleDto -> toEntity(exampleDto, lesson))
-                    .forEach(lesson::addConjugationExample);
-        }
-        return lesson;
-    }
-
-    private ConjugationLessonDTO toDto(ConjugationLesson entity) {
-        if (entity == null) return null;
-        return ConjugationLessonDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .conjugationRuleName(entity.getConjugationRuleName())
-                .explanation(entity.getExplanation())
-                .conjugatedWords(entity.getConjugatedWords().stream()
-                        .map(this::toDto)
-                        .toList())
-                .build();
-    }
-
-    private ReadingComprehensionLesson toEntity(ReadingComprehensionLessonDTO dto) {
-        if (dto == null) return null;
-        ReadingComprehensionLesson lesson = ReadingComprehensionLesson.builder()
-                .title(dto.title())
-                .type(LessonType.READING_COMPREHENSION)
-                .story(dto.story())
-                .build();
-
-        if (dto.questions() != null) {
-            dto.questions().stream()
-                    .map(qDto -> toEntity(qDto, lesson))
-                    .forEach(lesson::addQuestion);
-        }
-        return lesson;
-    }
-
-    private ReadingComprehensionLessonDTO toDto(ReadingComprehensionLesson entity) {
-        if (entity == null) return null;
-        return ReadingComprehensionLessonDTO.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .story(entity.getStory())
-                .questions(entity.getQuestions().stream()
-                        .map(this::toDto)
-                        .toList())
-                .build();
+        return lessonStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ******************* */
@@ -283,126 +99,19 @@ public class DtoMapper {
     /* ******************* */
 
     public Word toEntity(WordDTO dto) {
-        if (dto == null) return null;
-        return Word.builder()
-                .englishTranslation(dto.englishTranslation())
-                .language(dto.language())
-                .details(toEntity(dto.details()))
-                .build();
+        return wordStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
-    private WordDetails toEntity(WordDetailsDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        return switch (dto) {
-            case JapaneseWordDetailsDTO japaneseDto -> JapaneseWordDetails.builder()
-                        .kanji(japaneseDto.kanji())
-                        .hiragana(japaneseDto.hiragana())
-                        .katakana(japaneseDto.katakana())
-                        .romaji(japaneseDto.romaji())
-                        .build();
-            case KoreanWordDetailsDTO koreanDto -> KoreanWordDetails.builder()
-                        .hangul(koreanDto.hangul())
-                        .hanja(koreanDto.hanja())
-                        .romaja(koreanDto.romaja())
-                        .build();
-            case ChineseWordDetailsDTO chineseDto -> ChineseWordDetails.builder()
-                        .simplified(chineseDto.simplified())
-                        .traditional(chineseDto.traditional())
-                        .pinyin(chineseDto.pinyin())
-                        .toneNumber(chineseDto.toneNumber())
-                        .build();
-            case ThaiWordDetailsDTO thaiDto -> ThaiWordDetails.builder()
-                        .thaiScript(thaiDto.thaiScript())
-                        .romanization(thaiDto.romanization())
-                        .tonePattern(thaiDto.tonePattern())
-                        .build();
-            case ItalianWordDetailsDTO italianDto -> ItalianWordDetails.builder()
-                        .lemma(italianDto.lemma())
-                        .gender(italianDto.gender())
-                        .pluralForm(italianDto.pluralForm())
-                        .build();
-            case SpanishWordDetailsDTO spanishDto -> SpanishWordDetails.builder()
-                        .lemma(spanishDto.lemma())
-                        .gender(spanishDto.gender())
-                        .pluralForm(spanishDto.pluralForm())
-                        .build();
-            case FrenchWordDetailsDTO frenchDto -> FrenchWordDetails.builder()
-                        .lemma(frenchDto.lemma())
-                        .gender(frenchDto.gender())
-                        .pluralForm(frenchDto.pluralForm())
-                        .build();
-            case GermanWordDetailsDTO germanDto -> GermanWordDetails.builder()
-                        .lemma(germanDto.lemma())
-                        .gender(germanDto.gender())
-                        .pluralForm(germanDto.pluralForm())
-                        .separablePrefix(germanDto.separablePrefix())
-                        .build();
-            default -> throw new IllegalArgumentException("Unknown WordDetailsDTO type: " + dto.getClass().getSimpleName());
-        };
+    public WordDetails toEntity(WordDetailsDTO dto) {
+        return wordDetailsStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public WordDTO toDto(Word entity) {
-        if (entity == null) return null;
-        return WordDTO.builder()
-                .id(entity.getId())
-                .englishTranslation(entity.getEnglishTranslation())
-                .language(entity.getLanguage())
-                .details(toDto(entity.getDetails()))
-                .build();
+        return wordStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     public WordDetailsDTO toDto(WordDetails entity) {
-        if (entity == null) return null;
-
-        return switch (entity) {
-            case JapaneseWordDetails japaneseWord -> JapaneseWordDetailsDTO.builder()
-                    .kanji(japaneseWord.kanji())
-                    .hiragana(japaneseWord.hiragana())
-                    .katakana(japaneseWord.katakana())
-                    .romaji(japaneseWord.romaji())
-                    .build();
-            case KoreanWordDetails koreanWord -> KoreanWordDetailsDTO.builder()
-                    .hangul(koreanWord.hangul())
-                    .hanja(koreanWord.hanja())
-                    .romaja(koreanWord.romaja())
-                    .build();
-            case ChineseWordDetails chineseWord -> ChineseWordDetailsDTO.builder()
-                    .simplified(chineseWord.simplified())
-                    .traditional(chineseWord.traditional())
-                    .pinyin(chineseWord.pinyin())
-                    .toneNumber(chineseWord.toneNumber())
-                    .build();
-            case ThaiWordDetails thaiWord -> ThaiWordDetailsDTO.builder()
-                    .thaiScript(thaiWord.thaiScript())
-                    .romanization(thaiWord.romanization())
-                    .tonePattern(thaiWord.tonePattern())
-                    .build();
-            case ItalianWordDetails italianWord -> ItalianWordDetailsDTO.builder()
-                    .lemma(italianWord.lemma())
-                    .gender(italianWord.gender())
-                    .pluralForm(italianWord.pluralForm())
-                    .build();
-            case SpanishWordDetails spanishWord -> SpanishWordDetailsDTO.builder()
-                    .lemma(spanishWord.lemma())
-                    .gender(spanishWord.gender())
-                    .pluralForm(spanishWord.pluralForm())
-                    .build();
-            case FrenchWordDetails frenchWord -> FrenchWordDetailsDTO.builder()
-                    .lemma(frenchWord.lemma())
-                    .gender(frenchWord.gender())
-                    .pluralForm(frenchWord.pluralForm())
-                    .build();
-            case GermanWordDetails germanWord -> GermanWordDetailsDTO.builder()
-                    .lemma(germanWord.lemma())
-                    .gender(germanWord.gender())
-                    .pluralForm(germanWord.pluralForm())
-                    .separablePrefix(germanWord.separablePrefix())
-                    .build();
-            default -> throw new IllegalArgumentException("Unknown WordDetails entity type: " + entity.getClass().getSimpleName());
-        };
+        return wordDetailsStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ********************* */
@@ -410,20 +119,11 @@ public class DtoMapper {
     /* ********************* */
 
     public Sentence toEntity(SentenceDTO dto) {
-        if (dto == null) return null;
-        return Sentence.builder()
-                .translation(dto.translation())
-                .text(dto.text())
-                .build();
+        return sentenceStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public SentenceDTO toDto(Sentence entity) {
-        if (entity == null) return null;
-        return SentenceDTO.builder()
-                .id(entity.getId())
-                .translation(entity.getTranslation())
-                .text(entity.getText())
-                .build();
+        return sentenceStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* *********************************** */
@@ -431,25 +131,15 @@ public class DtoMapper {
     /* *********************************** */
 
     public ConjugationExample toEntity(ConjugationExampleDTO dto, ConjugationLesson lesson) {
-        if (dto == null) return null;
-        return ConjugationExample.builder()
-                .conjugatedForm(dto.conjugatedForm())
-                .infinitive(dto.infinitive())
-                .exampleSentence(dto.exampleSentence())
-                .sentenceTranslation(dto.sentenceTranslation())
-                .lesson(lesson)
-                .build();
+        ConjugationExample example = conjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        if (example != null) {
+            example.setLesson(lesson);
+        }
+        return example;
     }
 
     public ConjugationExampleDTO toDto(ConjugationExample entity) {
-        if(entity == null) return null;
-        return ConjugationExampleDTO.builder()
-                .id(entity.getId())
-                .conjugatedForm(entity.getConjugatedForm())
-                .infinitive(entity.getInfinitive())
-                .exampleSentence(entity.getExampleSentence())
-                .sentenceTranslation(entity.getSentenceTranslation())
-                .build();
+        return conjugationExampleStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ************************ */
@@ -457,25 +147,15 @@ public class DtoMapper {
     /* ************************ */
 
     public Question toEntity(QuestionDTO dto, Lesson lesson) {
-        if (dto == null) return null;
-        return Question.builder()
-                .questionType(QuestionType.valueOf(dto.questionType()))
-                .questionText(dto.questionText())
-                .answer(dto.answer())
-                .answerChoices(dto.answerChoices())
-                .lesson(lesson)
-                .build();
+        Question question = questionStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        if (question != null) {
+            question.setLesson(lesson);
+        }
+        return question;
     }
 
     public QuestionDTO toDto(Question entity) {
-        if (entity == null) return null;
-        return QuestionDTO.builder()
-                .id(entity.getId())
-                .questionType(entity.getQuestionType().name())
-                .questionText(entity.getQuestionText())
-                .answer(entity.getAnswer())
-                .answerChoices(entity.getAnswerChoices())
-                .build();
+        return questionStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* **************************** */
@@ -483,26 +163,11 @@ public class DtoMapper {
     /* **************************** */
 
     public User toEntity(UserDTO dto) {
-        if (dto == null) return null;
-        User user = User.builder()
-                .username(dto.username())
-                .settings(toEntity(dto.settings()))
-                .build();
-
-        if(dto.lessonBookList() != null) {
-            dto.lessonBookList().stream().map(this::toEntity).forEach(user::addLessonBook);
-        }
-        return user;
+        return userStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public UserDTO toDto(User entity) {
-        if (entity == null) return null;
-        return UserDTO.builder()
-                .id(entity.getId())
-                .username(entity.getUsername())
-                .settings(toDto(entity.getSettings()))
-                .lessonBookList(entity.getLessonBookList().stream().map(this::toDto).toList())
-                .build();
+        return userStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* **************************** */
@@ -510,26 +175,11 @@ public class DtoMapper {
     /* **************************** */
 
     public Settings toEntity(SettingsDTO dto) {
-        if (dto == null) return null;
-        return Settings.builder()
-                .language(dto.language())
-                .difficulty(dto.difficulty())
-                .theme(dto.theme())
-                .mascot(dto.mascot())
-                .autoSpeakEnabled(dto.autoSpeakEnabled())
-                .build();
+        return settingsStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public SettingsDTO toDto(Settings entity) {
-        if(entity == null) return null;
-        return SettingsDTO.builder()
-                .id(entity.getId())
-                .language(entity.getLanguage())
-                .difficulty(entity.getDifficulty())
-                .theme(entity.getTheme())
-                .mascot(entity.getMascot())
-                .autoSpeakEnabled(entity.isAutoSpeakEnabled())
-                .build();
+        return settingsStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
 }

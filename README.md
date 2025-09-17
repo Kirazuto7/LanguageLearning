@@ -41,7 +41,7 @@ Used for synchronous, transactional setup tasks that must complete atomically. T
 Used for long-running, job-based processes like chapter generation. It orchestrates the sequential creation of lesson components (metadata, vocabulary, grammar, etc.) and sends progress updates to the frontend. It uses a clean `State -> Action` mapping in its configuration, making the workflow easy to read and maintain.
 
 ### `ReactiveStateMachine` (Non-Blocking, Asynchronous)
-Used internally by the `AIService` to handle the complex, branching logic of AI response generation. This state machine also uses a `State -> Action` model and manages the entire lifecycle of an AI call, including:
+Used internally by the `AIEngine` to handle the complex, branching logic of AI response generation. This state machine also uses a `State -> Action` model and manages the entire lifecycle of an AI call, including:
     1.  **Generation**: Calling the AI model.
     2.  **Validation**: Parsing the response and validating it against a JSON schema.
     3.  **Sanitization**: Attempting to automatically fix common validation errors.
@@ -49,8 +49,8 @@ Used internally by the `AIService` to handle the complex, branching logic of AI 
 
 ### Other Key Components
 
-*   **`AIService`**: A fully reactive service that acts as a generic, reusable engine for all AI interactions. It leverages the `ReactiveStateMachine` to provide a resilient and predictable interface for generating any type of content.
-*   **Reactive Endpoints**: For simpler, linear reactive workflows like proofreading, the application uses direct reactive chains (`Mono.fromCallable`, `flatMap`) avoiding the overhead of a full state machine for simple tasks.
+*   **`AIEngine`**: A lean, fully reactive service that acts as a generic, reusable engine for all AI interactions. It takes a self-contained `AIRequest` object and orchestrates the entire generation process using the internal `ReactiveStateMachine`.
+*   **`AIRequestFactory`**: A factory component that provides a fluent builder API for creating `AIRequest` objects. It encapsulates low-level dependencies (like `ObjectMapper`) and complex type construction, providing a clean and simple interface for the service layer.
 
 ## AI Service
 
@@ -113,6 +113,12 @@ docker-compose -f docker-compose.cpu.yml up --build
         *   `src/main/java/com/example/language_learning/`
             *   `config/` - Spring, State Machine, and Pipeline configurations
             *   `controllers/` - REST and GraphQL controllers
+            *   `ai/`
+                *   `actions/` - Logic for State Machine tasks (e.g., `ChapterGenerationActions`)
+                *   `components/` - Core AI building blocks (`AIRequest`, `AIRequestFactory`)
+                *   `contexts/` - Context objects for State Machines
+                *   `dtos/` - DTOs for raw AI responses
+                *   `states/` - State definitions for State Machines
             *   `dto/` - Data Transfer Objects
             *   `entity/` - JPA entities
             *   `exceptions/` - Custom application exceptions
@@ -120,12 +126,7 @@ docker-compose -f docker-compose.cpu.yml up --build
             *   `repositories/` - Spring Data JPA repositories
             *   `requests/` - API request models
             *   `security/` - Spring Security configuration, JWT service
-            *   `services/`
-                *   `actions/` - Logic for State Machine and SyncWorkflow tasks
-                *   `states/` - State definitions for State Machines
-                *   `contexts/` - Context objects for State Machines
-                *   `inputs/` - Input objects for synchronous workflows
-                *   `outputs/` - Output objects for synchronous workflows
+            *   `services/` - High-level business services (`TranslationService`, `ChapterService`, etc.)
             *   `utils/` - The custom StateMachine and SyncWorkflow frameworks
         *   `dockerfiles/` - Dockerfiles for the backend and AI services
     *   `docs/`
