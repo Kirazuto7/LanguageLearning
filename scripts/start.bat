@@ -1,14 +1,15 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set "DO_CLEANUP=false"
+:: Change directory to the project root (one level up from the script's location)
+pushd "%~dp0\.."
+
 set "DO_CPU=false"
 set "DO_GPU=false"
 set "PROFILE_ARG="
 
 :arg_loop
 if "%~1"=="" goto :main_logic
-if /i "%~1"=="-remove" set "DO_CLEANUP=true"
 if /i "%~1"=="-cpu" set "DO_CPU=true"
 if /i "%~1"=="-gpu" set "DO_GPU=true"
 if /i "%~1"=="--frontend" set "PROFILE_ARG=--profile frontend"
@@ -16,12 +17,6 @@ shift
 goto :arg_loop
 
 :main_logic
-if "%DO_CLEANUP%" == "true" (
-    call :DockerStartup
-    call :DockerHardCleanup
-    goto :eof
-)
-
 echo Before building the application, make sure you create a .env file in the root
 echo directory of the project and include your postgres db setup credentials
 echo To include the frontend dev server, use the --frontend flag.
@@ -32,6 +27,7 @@ call :DockerBuild
 
 echo Once the containers are built and running, you can view the application at http://localhost:3000/.
 
+popd
 goto :eof
 
 :: SubRoutines Defined Below
@@ -74,7 +70,7 @@ goto :eof
 :DockerCleanup
     echo.
     echo **********************************************
-    echo *        Removing Docker Container(s)        *
+    echo *   Ensuring a clean state before starting...  *
     echo **********************************************
     echo.
     if "%DO_GPU%" == "true" (
@@ -82,25 +78,6 @@ goto :eof
     ) else (
         docker compose -f docker-compose.cpu.yml %PROFILE_ARG% down
     )
-    echo Closing any existing DockerWindow...
-    taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
-    exit /b 0
-
-:DockerHardCleanup
-    echo.
-    echo **********************************************
-    echo *        Removing Docker Container(s)        *
-    echo **********************************************
-    echo.
-
-    if "%DO_GPU%" == "true" (
-            docker compose -f docker-compose.gpu.yml %PROFILE_ARG% down -v
-        ) else (
-            docker compose -f docker-compose.cpu.yml %PROFILE_ARG% down -v
-        )
-    docker builder prune -f
-    docker volume prune -f
-
     echo Closing any existing DockerWindow...
     taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
     exit /b 0
