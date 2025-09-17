@@ -1,4 +1,4 @@
-package com.example.language_learning.shared.services;
+package com.example.language_learning.shared.translation;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
