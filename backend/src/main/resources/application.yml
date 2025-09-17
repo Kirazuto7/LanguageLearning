@@ -72,7 +72,15 @@ application:
     public-paths:
       - "/api/users/register"
       - "/api/users/login"
+      - "/api/logs/client"
       - "/api/users/logout"
       - "/error"
       - "/graphql"
       - "/graphiql"
+      # Paths for serving the bundled React frontend
+      - "/"
+      - "/index.html"
+      - "/favicon.ico"
+      - "/manifest.json"
+      - "/static/**"
+      - "/logo*.png"
