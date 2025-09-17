@@ -2,7 +2,7 @@ package com.example.language_learning.services;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
-import com.example.language_learning.enums.PromptType;
+import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.repositories.QuestionRepository;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.responses.PracticeLessonCheckResponse;

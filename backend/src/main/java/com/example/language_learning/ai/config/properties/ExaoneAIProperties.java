@@ -1,4 +1,4 @@
-package com.example.language_learning.config.properties;
+package com.example.language_learning.ai.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

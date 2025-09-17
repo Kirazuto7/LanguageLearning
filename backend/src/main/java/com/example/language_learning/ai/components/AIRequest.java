@@ -1,13 +1,10 @@
 package com.example.language_learning.ai.components;
 
-import com.example.language_learning.enums.PromptType;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.language_learning.ai.enums.PromptType;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Represents a self-contained, immutable request for a single AI generation task.

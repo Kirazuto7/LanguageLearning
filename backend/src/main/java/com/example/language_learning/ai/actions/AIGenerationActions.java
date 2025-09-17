@@ -1,7 +1,8 @@
 package com.example.language_learning.ai.actions;
 
-import com.example.language_learning.config.AIConfig;
-import com.example.language_learning.enums.PromptType;
+import com.example.language_learning.ai.config.AIConfig;
+import com.example.language_learning.ai.config.model.AIPrompt;
+import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
 import com.example.language_learning.utils.AIResponseSanitizer;
@@ -144,7 +145,7 @@ public class AIGenerationActions {
         }
     }
 
-    private String buildUserMessage(AIConfig.AIPrompt aiPrompt, Map<String, Object> params) {
+    private String buildUserMessage(AIPrompt aiPrompt, Map<String, Object> params) {
         String instructionContent = renderPrompt(aiPrompt.instruction(), params);
 
         // Check if this is a retry attempt and add specific feedback

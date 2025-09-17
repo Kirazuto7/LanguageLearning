@@ -1,7 +1,7 @@
-package com.example.language_learning.config;
+package com.example.language_learning.ai.config;
 
-import com.example.language_learning.config.properties.ExaoneAIProperties;
-import com.example.language_learning.config.properties.Qwen3AIProperties;
+import com.example.language_learning.ai.config.properties.ExaoneAIProperties;
+import com.example.language_learning.ai.config.properties.Qwen3AIProperties;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
