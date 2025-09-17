@@ -1,8 +1,9 @@
 package com.example.language_learning.ai.states;
 
-import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.ChapterMetadataDTO;
-import com.example.language_learning.utils.StateMachine;
+import com.example.language_learning.lessonbook.chapter.dtos.ChapterMetadataDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.VocabularyLessonDTO;
+import com.example.language_learning.shared.utils.StateMachine;
 
 /**
  * A sealed interface representing the distinct states of the chapter generation process.

@@ -4,7 +4,7 @@ import com.example.language_learning.ai.config.model.AIAsset;
 import com.example.language_learning.ai.config.model.AIPrompt;
 import com.example.language_learning.ai.dtos.details.*;
 import com.example.language_learning.ai.enums.*;
-import com.example.language_learning.exceptions.LanguageException;
+import com.example.language_learning.shared.exceptions.LanguageException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

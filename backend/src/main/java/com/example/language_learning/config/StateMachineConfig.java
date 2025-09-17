@@ -3,8 +3,8 @@ package com.example.language_learning.config;
 import com.example.language_learning.ai.actions.ChapterGenerationActions;
 import com.example.language_learning.ai.contexts.ChapterGenerationContext;
 import com.example.language_learning.ai.states.ChapterGenerationState;
-import com.example.language_learning.utils.StateMachine;
-import com.example.language_learning.utils.StateMachineFactory;
+import com.example.language_learning.shared.utils.StateMachine;
+import com.example.language_learning.shared.utils.StateMachineFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -1,9 +1,9 @@
 package com.example.language_learning.config;
 
-import com.example.language_learning.dto.lessons.LessonDTO;
-import com.example.language_learning.dto.models.details.*;
-import com.example.language_learning.dto.models.PageDTO;
-import com.example.language_learning.enums.LessonType;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.dtos.PageDTO;
+import com.example.language_learning.shared.enums.LessonType;
+import com.example.language_learning.lessonbook.chapter.lesson.page.word.dtos.*;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.scalars.ExtendedScalars;

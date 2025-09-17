@@ -1,6 +1,6 @@
 package com.example.language_learning.ai.dtos;
 
-import com.example.language_learning.mapper.util.StringOrArrayToStringDeserializer;
+import com.example.language_learning.mappers.util.StringOrArrayToStringDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

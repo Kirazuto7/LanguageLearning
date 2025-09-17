@@ -1,14 +1,14 @@
 package com.example.language_learning.ai.mappers;
 
 import com.example.language_learning.ai.dtos.*;
-import com.example.language_learning.dto.models.ChapterMetadataDTO;
-import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.ConjugationExampleDTO;
-import com.example.language_learning.dto.models.QuestionDTO;
-import com.example.language_learning.dto.models.SentenceDTO;
-import com.example.language_learning.enums.QuestionType;
-import com.example.language_learning.services.FuriganaService;
-import com.example.language_learning.utils.AIResponseSanitizer;
+import com.example.language_learning.lessonbook.chapter.dtos.ChapterMetadataDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.dtos.ConjugationExampleDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.dtos.QuestionDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.dtos.SentenceDTO;
+import com.example.language_learning.shared.enums.QuestionType;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
+import com.example.language_learning.shared.services.FuriganaService;
+import com.example.language_learning.shared.utils.AIResponseSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

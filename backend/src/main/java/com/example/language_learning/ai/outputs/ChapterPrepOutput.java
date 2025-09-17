@@ -1,7 +1,7 @@
 package com.example.language_learning.ai.outputs;
 
-import com.example.language_learning.entity.models.Chapter;
-import com.example.language_learning.entity.models.LessonBook;
+import com.example.language_learning.lessonbook.chapter.data.Chapter;
+import com.example.language_learning.lessonbook.data.LessonBook;
 import lombok.Data;
 
 /**

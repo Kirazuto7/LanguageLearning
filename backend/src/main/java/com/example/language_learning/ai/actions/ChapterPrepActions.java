@@ -1,10 +1,10 @@
 package com.example.language_learning.ai.actions;
 
-import com.example.language_learning.entity.models.Chapter;
-import com.example.language_learning.entity.models.LessonBook;
-import com.example.language_learning.services.ChapterService;
-import com.example.language_learning.services.LessonBookService;
-import com.example.language_learning.services.PageService;
+import com.example.language_learning.lessonbook.chapter.data.Chapter;
+import com.example.language_learning.lessonbook.data.LessonBook;
+import com.example.language_learning.lessonbook.chapter.ChapterService;
+import com.example.language_learning.lessonbook.LessonBookService;
+import com.example.language_learning.lessonbook.chapter.lesson.page.PageService;
 import com.example.language_learning.ai.inputs.ChapterPrepInput;
 import com.example.language_learning.ai.outputs.ChapterPrepOutput;
 import lombok.RequiredArgsConstructor;
