@@ -1,15 +1,14 @@
 package com.example.language_learning.services;
 
-import com.example.language_learning.entity.models.Chapter;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.exceptions.PageGenerationException;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.requests.ChapterGenerationRequest;
 import com.example.language_learning.responses.GenerationResponse;
-import com.example.language_learning.services.contexts.ChapterGenerationContext;
-import com.example.language_learning.services.inputs.ChapterPrepInput;
-import com.example.language_learning.services.outputs.ChapterPrepOutput;
-import com.example.language_learning.services.states.ChapterGenerationState;
+import com.example.language_learning.ai.contexts.ChapterGenerationContext;
+import com.example.language_learning.ai.inputs.ChapterPrepInput;
+import com.example.language_learning.ai.outputs.ChapterPrepOutput;
+import com.example.language_learning.ai.states.ChapterGenerationState;
 import com.example.language_learning.utils.StateMachineFactory;
 import com.example.language_learning.utils.SyncWorkflow;
 import lombok.RequiredArgsConstructor;

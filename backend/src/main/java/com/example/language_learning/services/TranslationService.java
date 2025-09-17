@@ -1,5 +1,8 @@
 package com.example.language_learning.services;
 
+import com.example.language_learning.ai.AIEngine;
+import com.example.language_learning.ai.components.AIRequest;
+import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.requests.TranslationRequest;
 import com.example.language_learning.responses.TranslationResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +13,17 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class TranslationService {
-    private final AIService aiService;
+    private final AIEngine aiEngine;
 
     public Mono<TranslationResponse> translateText(TranslationRequest request) {
-        return aiService.translate(request.textToTranslate(), request.sourceLanguage());
+        AIRequest<TranslationResponse> aiRequest = AIRequest.builder()
+                .responseClass(TranslationResponse.class)
+                .promptType(PromptType.TRANSLATE)
+                .language(request.sourceLanguage())
+                .param("textToTranslate", request.textToTranslate())
+                .param("sourceLanguage", request.sourceLanguage())
+                .build();
+        
+        return aiEngine.generate(aiRequest);
     }
 }

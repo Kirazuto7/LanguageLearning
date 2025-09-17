@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.8'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.github.node-gradle.node' version '7.0.2'
 }
 
 group = 'com.example'
@@ -13,8 +14,8 @@ java {
 
 repositories {
 	mavenCentral()
-	//maven { url = 'https://repo.spring.io/milestone' } // For Spring AI milestone releases
 }
+
 dependencyManagement {
 	imports {
         // Manages the Spring AI BOM dependencies
@@ -44,9 +45,14 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // Mapping Dependencies
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
     // Lombok Dependencies
-    compileOnly 'org.projectlombok:lombok:1.18.32' // latest as of 2025
+    compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     // Other Dependencies
@@ -63,4 +69,42 @@ jar {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation"
+}
+
+// --- Frontend Build Configuration (for unified development builds) ---
+
+// This configuration will only be active if you run gradle with the '-PdevBuild=true' property.
+// Example for a unified dev build: ./gradlew bootRun -PdevBuild=true
+// Example for a production-only backend build: ./gradlew build
+
+node {
+    version = '20.11.1'
+    download = true
+}
+
+tasks.named('npm_install', NpmTask) {
+    workingDir = file("${project.projectDir}/../frontend")
+    onlyIf { project.hasProperty('devBuild') }
+}
+
+tasks.register('npmBuild', NpmTask) {
+    dependsOn('npm_install')
+    workingDir = file("${project.projectDir}/../frontend")
+    args = ['run', 'build']
+    onlyIf { project.hasProperty('devBuild') }
+}
+
+tasks.named('processResources', ProcessResources) {
+    dependsOn('npmBuild')
+
+    doLast {
+        // Only perform the copy action if the 'devBuild' property is present.
+        if (project.hasProperty('devBuild')) {
+            def staticDir = file("${destinationDir}/static")
+            copy {
+                from file("${project.projectDir}/../frontend/build")
+                into staticDir
+            }
+        }
+    }
 }

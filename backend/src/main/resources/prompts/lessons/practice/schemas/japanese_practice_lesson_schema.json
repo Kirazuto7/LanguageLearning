@@ -34,7 +34,7 @@
             "maxItems": 0
           }
         },
-        "required": ["questionText", "answer", "options"]
+        "required": ["questionText"]
       }
     }
   },
