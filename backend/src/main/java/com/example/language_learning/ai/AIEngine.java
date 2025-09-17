@@ -6,6 +6,7 @@ import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
 import com.example.language_learning.config.AIConfig;
 import com.example.language_learning.exceptions.LanguageException;
+import com.example.language_learning.exceptions.AIEngineException;
 import com.example.language_learning.utils.ReactiveStateMachineFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class AIEngine {
     public <T_INTERNAL> Mono<T_INTERNAL> generate(AIRequest<T_INTERNAL> request) {
         AIResponseMapping<?, T_INTERNAL> mapping = mapperRegistry.get(request.getPromptType());
         if (mapping == null) {
-            return Mono.error(new IllegalStateException("No mapper registered for prompt type: " + request.getPromptType()));
+            return Mono.error(new AIEngineException("No mapper registered for prompt type: " + request.getPromptType()));
         }
         return generateAndMap(request, mapping);
     }
@@ -81,7 +82,7 @@ public class AIEngine {
         Mono<T_AI> apiResponseMono = aiGenerationStateMachineFactory.createInstance()
                 .runToCompletion(context)
                 .onCompletion(AIGenerationState.COMPLETED.class, AIGenerationState.COMPLETED::result)
-                .onError(AIGenerationState.FAILED.class, failed -> new IllegalStateException(failed.reason()))
+                .onError(AIGenerationState.FAILED.class, failed -> new AIEngineException(failed.reason()))
                 .asMono()
                 .map(obj -> (T_AI) obj);
         return apiResponseMono.map(response -> mapping.mapper().apply(response, request.getParams()));
@@ -102,7 +103,7 @@ public class AIEngine {
 
         if (client == null) {
             log.error("Could not find a ChatClient bean named '{}'. Available beans are: {}", modelName, chatClients.keySet());
-            throw new IllegalStateException("AI model client not configured: " + modelName);
+            throw new AIEngineException("AI model client not configured: " + modelName);
         }
         return client;
     }

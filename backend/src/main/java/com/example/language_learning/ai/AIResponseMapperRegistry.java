@@ -4,8 +4,8 @@ import com.example.language_learning.ai.components.AIResponseMapping;
 import com.example.language_learning.ai.dtos.*;
 import com.example.language_learning.config.AIConfig;
 import com.example.language_learning.enums.PromptType;
-import com.example.language_learning.exceptions.LanguageException;
-import com.example.language_learning.mapper.AIDtoMapper;
+import com.example.language_learning.mapper.ai.AILessonMapper;
+import com.example.language_learning.mapper.ai.AIResponseMapper;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -27,9 +27,11 @@ import java.util.function.Function;
 @Component
 @RequiredArgsConstructor
 public class AIResponseMapperRegistry {
-    private final AIDtoMapper aiDtoMapper;
+    private final AILessonMapper aiLessonMapper;
+    private final AIResponseMapper aiResponseMapper;
     private final ObjectMapper objectMapper;
     private final AIConfig aiConfig;
+
     private final Map<PromptType, AIResponseMapping<?, ?>> mappings = new HashMap<>();
 
     /**
@@ -38,13 +40,13 @@ public class AIResponseMapperRegistry {
     @PostConstruct
     public void init() {
         registerForVocabulary();
-        register(PromptType.TRANSLATE, AITranslationResponse.class, (response, params) -> aiDtoMapper.toTranslationResponse(response));
-        register(PromptType.PROOFREAD, AIProofreadResponse.class, (response, params) -> aiDtoMapper.toPracticeLessonCheckResponse(response));
-        register(PromptType.METADATA, AIChapterMetadataResponse.class, (response, params) -> aiDtoMapper.toChapterMetadataDTO(response, (String) params.get("topic")));
-        register(PromptType.GRAMMAR, AIGrammarLessonResponse.class, (response, params) -> aiDtoMapper.toGrammarLessonDTO(response, (String) params.get("language")));
-        register(PromptType.CONJUGATION, AIConjugationLessonResponse.class, (response, params) -> aiDtoMapper.toConjugationLessonDTO(response, (String) params.get("language")));
-        register(PromptType.PRACTICE, AIPracticeLessonResponse.class, (response, params) -> aiDtoMapper.toPracticeLessonDTO(response, (String) params.get("language")));
-        register(PromptType.READING_COMPREHENSION, AIReadingComprehensionLessonResponse.class, (response, params) -> aiDtoMapper.toReadingComprehensionLessonDTO(response, (String) params.get("language")));
+        register(PromptType.TRANSLATE, AITranslationResponse.class, (response, params) -> aiResponseMapper.toTranslationResponse(response));
+        register(PromptType.PROOFREAD, AIProofreadResponse.class, (response, params) -> aiResponseMapper.toPracticeLessonCheckResponse(response));
+        register(PromptType.METADATA, AIChapterMetadataResponse.class, (response, params) -> aiLessonMapper.toChapterMetadataDTO(response, (String) params.get("topic")));
+        register(PromptType.GRAMMAR, AIGrammarLessonResponse.class, (response, params) -> aiLessonMapper.toGrammarLessonDTO(response, (String) params.get("language")));
+        register(PromptType.CONJUGATION, AIConjugationLessonResponse.class, (response, params) -> aiLessonMapper.toConjugationLessonDTO(response, (String) params.get("language")));
+        register(PromptType.PRACTICE, AIPracticeLessonResponse.class, (response, params) -> aiLessonMapper.toPracticeLessonDTO(response, (String) params.get("language")));
+        register(PromptType.READING_COMPREHENSION, AIReadingComprehensionLessonResponse.class, (response, params) -> aiLessonMapper.toReadingComprehensionLessonDTO(response, (String) params.get("language")));
     }
 
     /**
@@ -68,14 +70,11 @@ public class AIResponseMapperRegistry {
         Function<Map<String, Object>, JavaType> javaTypeProvider = params -> {
             String language = (String) params.get("language");
             Class<?> itemDtoClass = aiConfig.getVocabularyItemDtoClass(language);
-            if (itemDtoClass == null) {
-                throw new LanguageException("Unsupported language for vocabulary generation: " + language);
-            }
             return objectMapper.getTypeFactory().constructParametricType(AIVocabularyLessonResponse.class, itemDtoClass);
         };
 
         BiFunction<AIVocabularyLessonResponse<?>, Map<String, Object>, ?> mapper = (response, params) ->
-            aiDtoMapper.toVocabularyLessonDTO(response, (String) params.get("language"));
+            aiLessonMapper.toVocabularyLessonDTO(response, (String) params.get("language"));
 
         mappings.put(PromptType.VOCABULARY, new AIResponseMapping<>(javaTypeProvider, mapper));
     }

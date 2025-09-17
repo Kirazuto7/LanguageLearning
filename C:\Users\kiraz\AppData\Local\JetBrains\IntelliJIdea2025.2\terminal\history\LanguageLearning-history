@@ -1,0 +1,607 @@
+sudo apt update && sudo apt upgrade
+sudo apt update
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" down
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" down
+docker volume ls
+docker volume prune
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down --volumes
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down --volumes
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down --volumes
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" down --volumes
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down --volumes
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down --volumes
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git status
+git commit -m "updated jwt auth and ai docker setup"
+git rm -r --cached backend/.gradle
+git rm -r --cached backend/build
+git status
+git rm -r --cached backend/.gradle
+git status
+git add .
+git status
+cd LanguageLearning/
+ls
+rm -rf LanguageLearning
+sudo rm -rf LanguageLearning
+docker info
+mv /mnt/j/LanguageLearning ~/LanguageLearning
+cls
+clear
+cd ~
+# Navigate to your home directory in the Ubuntu terminal
+cd ~
+# Copy the entire project directory.
+# `sudo` is used to ensure all files can be read from the Windows side.
+# `-r` for recursive, `-p` to preserve permissions (best effort), `-v` for verbose output.
+sudo cp -rp /mnt/j/LanguageLearning ~/LanguageLearning
+ls
+cd LanguageLearning/
+ls
+git status
+cd ..
+ls -l ~/LanguageLearning
+pwd
+cd LanguageLearning/
+pwd
+update-alternatives --config java
+java --version
+sudo apt install openjdk-21-jre-headless
+java --version
+echo $(dirname $(dirname $(readlink -f $(which java))))
+sudo apt install openjdk-21
+echo $(dirname $(dirname $(readlink -f $(which java))))
+ls /usr/lib/jvm/
+echo \\wsl.localhost\Ubuntu$(echo $(dirname $(dirname $(readlink -f $(which java)))))
+explorer.exe .
+java --version
+sudo apt remove openjdk21
+java --version
+sudo apt remove openjdk-21-jre-headless
+sudo apt install openjdk-21-jdk
+java --version
+gradlew clean build
+cd backend
+gradlew clean build
+./gradlew clean build
+ps aux 
+ps aux | grep java
+kill -9 5366 32742
+./gradlew clean build
+jps -l
+ps aux | grep gradle
+kill -9 33321
+rm -rf build
+clear
+ps aux | grep java
+kill -9 33888
+kill -9 33794
+ps aux | grep java
+kill -9 33928
+ps aux | grep java
+sudo chown -R $USER:$USER build
+rm -rf build
+./gradlew clean build --no-daemon
+cd ..
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+sudo apt-get install git-lfs
+git lfs install
+git commit -m "apply .gitignore and untrack build artifacts"
+git push
+git push --set-upstream origin graphql
+git status
+git add .
+docker-compose -f "docker-compose.gpu.yml" down
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+git add .
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+git add .
+docker-compose -f "docker-compose.gpu.yml" down
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down
+kiraz@Jordan:~/LanguageLearning$     sudo usermod -aG docker $USER
+kiraz@Jordan:~/LanguageLearning$     ./start.sh -gpu
+./start.sh -gpu
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+docker-compose -f "docker-compose.gpu.yml" down --volume
+docker-compose -f "docker-compose.gpu.yml" up --build -d
+start.sh -gpu
+.\start.sh -gpu
+.\start -gpu
+./start.sh -gpu
+sudo ./start.sh -gpu
+ls
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+docker context ls
+clear
+docker context ls
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .,
+git add .
+log add .
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git commit -m "fixed graphql subscription query"
+git push
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+cd frontend
+npm install graphql-ws
+cd ..
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git status
+git add .
+git status
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git add ,.
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git add .
+./start.sh -gpu
+git add .
+git add .
+git commit -m "fixed data issues causing problems with page updates"
+git push
+git push --set-upstream origin subscription
+git add .
+git add .
+./start.sh -gpu
+git add .
+git commit -m "made progress update more generic"
+git push
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git status
+git commit -m "checkpoint for subscription update"
+git checkout -b subscription
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+./start.sh -gpu -remove
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+docker system prune
+docker volume prune
+git add .
+./start.sh -gpu
+git status
+git branch -D master
+git branch -m master
+git status
+git push -f -u origin master
+git branch
+git branch -d pre-redux
+git branch -d database
+git branch -D database
+git branch -d mac_updates
+git branch -d exaone
+git branch -d aya_branch
+git branch
+git branch -d graphql
+git branch -D graphql
+git branch -d js_refux
+git branch -d js_redux
+git branch -d frontend
+git branch
+git branch -d backend
+git branch -d js_frontend
+git branch
+clear
+git branch -d main
+git branch -D main
+git branch
+git status
+git checkout -b js_updates
+git branch -d js_updates
+git checkout -b js_updates
+git status
+git add .
+.\start.sh -gpu
+git add .
+git add ..
+git add .
+git commit -m "refactor the word to be more robust for different language alphabets"
+git add .
+git commit -m "sanitation updates"
+git push
+git push --set-upstream origin js_updates
+git branch
+git checkout master
+git pull
+git branch -d js_updates
+git checkout -b js_updates
+git status
+cls
+clear
+git status
+git add .
+git commit -m "restructed frontend directory"
+git add .
+git commit -m "resolved frontend compiler warnings"
+git push
+git push --set-upstream origin js_updates
+git checkout master
+git pull
+git branch -d js_updates
+git checkout -b js_tts
+git status
+git checkout master
+git branch -d js_tts
+git checkout -b js_backend
+git status
+git add .
+./start.sh -remove
+./start.sh -gpu
+git add .
+./start.sh
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git add .
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git commit -m "refactored prompting strategy"
+git push
+git add .
+./start.sh -gpugi
+./start.sh -remove
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git commit -m "improved output sanitation and logging"
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git commit -m "more robust and improved sanitizing strategy"
+git push
+git push --set-upstream origin js_backend
+git status
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+cd frontend
+npm install html-react-parser
+cd ..
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git status
+git commit -m "prompt and validation refactoring & frontend html parser library"
+git push
+git checkout  master
+git pull
+git branch -d js_backend
+git checkout -b js_backend
+git status
+git add .
+git status
+./start.sh -gpu
+git add .
+git status
+git add .
+git commit -m "refactored chapter generation process to use new sm model"
+git push
+git push --set-upstream origin js_backend
+git status
+git add .
+git commit -m "pushing chapter generation refactor"
+git push
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git status
+git add .
+./start.sh -gpu
+git add .
+git commit -m "reverted proofread to its original implementation & handle ai generation w/ reactive state machine"
+git push
+./start.sh -gpu
+git add .
+git commit -m "adjusted logging path"
+git push
+git checkout master
+git pull
+git branch
+git checkout -b js_backend
+git branch -d js_backend
+git checkout -b js_translate
+git checkout -b master
+git checkout master
+git status
+git checkout -b js_readme
+git add .
+git commit -m "updated readme & example env file"
+git push
+git push --set-upstream origin js_readme
+git status
+git add .
+git commit -m "more readme updates"
+git push
+git pull
+git push
+kirazuto7
+git checkout master
+git pull
+git checkout js_readme
+git merge master
+git push
+git checkout master
+git merge --no-ff js_readme
+git push
+git branch
+git branch -d js_readme
+git branch -d js_translate
+git pull
+git checkout -b js_translate
+ls
+cd ..
+git status
+git add .
+git commit -m "successful refactor to reactice & regular state machine flow"
+git push
+git branch
+git merge master
+git merge js_readme master
+git status
+git checkout master
+git status
+git pull
+git checkout js_readme
+git status
+git merge master
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+./start.sh -remove
+./start.sh -gpu
+git status
+git checkout master
+git branch -d js_translate
+git checkout -b js_fsm
+git add .
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git status
+git checkout -m "updated architecture and added a new workflow tool"
+git commit -m "updated architecture and added a new workflow tool"
+git status
+git add .
+git commit -m "updated readme"
+git push
+git push --set-upstream origin js_fsm
+git checkout master
+git pull
+git branch -d js_fsm
+git branch
+git checkout -b js_translation
+git status
+git add .
+git status
+git add .
+cd frontend
+npm install react-draggable
+npm install -D @types/react-draggable
+cd //
+cd..
+cd ~/LanguageLearning/frontend
+clear
+cd ..
+clear
+./start.sh
+./start.sh -gpu
+git add .
+./start.sh -gpu
+git add .
+git commit -m "added translation widget"
+git push
+git push --set-upstream origin js_translation
+git checkout master
+git pull
+git branch -d js_translate
+git branch -d js_translation
+git status
+git checkout -b js_updates
+./start.sh -gpu
+git status
+git add .
+git commit -m "refactored aiservice into aiengine and made it more clear for adding new ai generation methods"
+git add .
+git commit -m "updated readme"
+git push]
+git status
+git add .
+./start.sh -gpu
+git status
+git add .
+git commit -m "hide builder class"
+git add .
+git commit -m "update schema rules for practice lesson"
+git push
+git push --set-upstream origin js_updates
+git status
+git add .
+./scripts/start.sh
+git status
+./scripts/start.sh
+cd ..
+./scripts/start.sh

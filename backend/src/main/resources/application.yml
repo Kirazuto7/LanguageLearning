@@ -54,8 +54,10 @@ logging:
     org.springframework.security: INFO
     # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.
     org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
-    org.springframework.graphql: DEBUG
-    org.springframework.web.socket: DEBUG
+    org.springframework.graphql: INFO
+    org.springframework.web: INFO
+    org.springframework.beans.factory: INFO
+    org.springframework.web.socket: INFO
     #org.springframework.boot.actuate.health: WARN
 
 management:
