@@ -2,7 +2,6 @@ package com.example.language_learning.ai.actions;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
-import com.example.language_learning.ai.dtos.*;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.dto.models.WordDetailsDTO;
@@ -10,7 +9,7 @@ import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.entity.models.Chapter;
 import com.example.language_learning.entity.models.Page;
-import com.example.language_learning.enums.PromptType;
+import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.mapper.DtoMapper;
 import com.example.language_learning.ai.contexts.ChapterGenerationContext;
 import com.example.language_learning.ai.states.ChapterGenerationState;

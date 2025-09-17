@@ -2,10 +2,10 @@ package com.example.language_learning.ai;
 
 import com.example.language_learning.ai.components.AIResponseMapping;
 import com.example.language_learning.ai.dtos.*;
-import com.example.language_learning.config.AIConfig;
-import com.example.language_learning.enums.PromptType;
-import com.example.language_learning.mapper.ai.AILessonMapper;
-import com.example.language_learning.mapper.ai.AIResponseMapper;
+import com.example.language_learning.ai.config.AIConfig;
+import com.example.language_learning.ai.enums.PromptType;
+import com.example.language_learning.ai.mappers.AILessonMapper;
+import com.example.language_learning.ai.mappers.AIResponseMapper;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

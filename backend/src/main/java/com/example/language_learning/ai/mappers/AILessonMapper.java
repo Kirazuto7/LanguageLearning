@@ -1,4 +1,4 @@
-package com.example.language_learning.mapper.ai;
+package com.example.language_learning.ai.mappers;
 
 import com.example.language_learning.ai.dtos.*;
 import com.example.language_learning.dto.models.ChapterMetadataDTO;

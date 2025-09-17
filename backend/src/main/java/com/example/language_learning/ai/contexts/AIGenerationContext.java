@@ -1,6 +1,6 @@
 package com.example.language_learning.ai.contexts;
 
-import com.example.language_learning.config.AIConfig.AIPrompt;
+import com.example.language_learning.ai.config.model.AIPrompt;
 import com.fasterxml.jackson.databind.JavaType;
 import org.springframework.ai.chat.client.ChatClient;
 

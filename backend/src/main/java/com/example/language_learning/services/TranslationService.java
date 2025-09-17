@@ -2,7 +2,7 @@ package com.example.language_learning.services;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
-import com.example.language_learning.enums.PromptType;
+import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.requests.TranslationRequest;
 import com.example.language_learning.responses.TranslationResponse;
 import lombok.RequiredArgsConstructor;

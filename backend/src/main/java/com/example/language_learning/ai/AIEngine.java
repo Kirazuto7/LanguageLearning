@@ -2,9 +2,10 @@ package com.example.language_learning.ai;
 
 import com.example.language_learning.ai.components.AIRequest;
 import com.example.language_learning.ai.components.AIResponseMapping;
+import com.example.language_learning.ai.config.model.AIPrompt;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
-import com.example.language_learning.config.AIConfig;
+import com.example.language_learning.ai.config.AIConfig;
 import com.example.language_learning.exceptions.LanguageException;
 import com.example.language_learning.exceptions.AIEngineException;
 import com.example.language_learning.utils.ReactiveStateMachineFactory;
@@ -67,7 +68,7 @@ public class AIEngine {
         }
 
         ChatClient chatClient = selectClient(language);
-        AIConfig.AIPrompt aiPrompt = aiConfig.getPrompt(language, request.getPromptType());
+        AIPrompt aiPrompt = aiConfig.getPrompt(language, request.getPromptType());
         var aiResponseType = mapping.javaTypeProvider().apply(request.getParams());
 
         AIGenerationContext context = new AIGenerationContext(
