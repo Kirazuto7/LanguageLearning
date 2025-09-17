@@ -1,6 +1,5 @@
 package com.example.language_learning.ai.dtos;
 
-import com.example.language_learning.dto.models.SentenceDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -15,5 +14,5 @@ public record AIGrammarLessonResponse(
     @JsonProperty("title") String title,
     @JsonProperty("grammarConcept") String grammarConcept,
     @JsonProperty("explanation") String explanation,
-    @JsonProperty("exampleSentences") List<SentenceDTO> exampleSentences
+    @JsonProperty("exampleSentences") List<AISentenceDTO> exampleSentences
 ) { }

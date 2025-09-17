@@ -4,7 +4,8 @@ set -e
  # This script runs each time the 'ai' container starts.
  # It checks if the models have already been pulled by looking for a marker file.
 
-MARKER_FILE="/root/.ollama/models_pulled.marker"
+# Make the marker file specific to the profile to handle profile switching.
+MARKER_FILE="/root/.ollama/models_pulled_${AI_PROFILE:-cpu}.marker"
 
 if [ ! -f "$MARKER_FILE" ]; then
   echo "--- First time startup: Pulling models... ---"

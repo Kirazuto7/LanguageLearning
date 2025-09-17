@@ -1,15 +1,14 @@
-package com.example.language_learning.mapper;
+package com.example.language_learning.mapper.ai;
 
 import com.example.language_learning.ai.dtos.*;
-import com.example.language_learning.ai.dtos.details.*;
+import com.example.language_learning.dto.models.ChapterMetadataDTO;
 import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.*;
-import com.example.language_learning.dto.models.details.*;
+import com.example.language_learning.dto.models.ConjugationExampleDTO;
+import com.example.language_learning.dto.models.QuestionDTO;
+import com.example.language_learning.dto.models.SentenceDTO;
 import com.example.language_learning.enums.QuestionType;
-import com.example.language_learning.responses.TranslationResponse;
-import com.example.language_learning.utils.AIResponseSanitizer;
-import com.example.language_learning.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.services.FuriganaService;
+import com.example.language_learning.utils.AIResponseSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,14 +17,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * Maps from the API-Response DTOs (sanitized) to the
- * application's internal DTOs.
- */
 @Component
 @RequiredArgsConstructor
-public class AIDtoMapper {
+public class AILessonMapper {
 
+    private final AIWordMapper aiWordMapper;
     private final FuriganaService furiganaService;
     private final AIResponseSanitizer sanitizer;
 
@@ -42,7 +38,7 @@ public class AIDtoMapper {
                 .title(response.title())
                 .vocabularies(response.vocabularies().stream()
                         .filter(Objects::nonNull)
-                        .map(aiVocab -> toWordDTO(aiVocab, language)) // Polymorphic dispatch
+                        .map(aiVocab -> aiWordMapper.toWordDTO(aiVocab, language)) // Polymorphic dispatch
                         .filter(Objects::nonNull)
                         .toList())
                 .build();
@@ -149,137 +145,6 @@ public class AIDtoMapper {
                                     .answerChoices(answerChoices)
                                     .build();
                         }).collect(Collectors.toList()))
-                .build();
-    }
-
-    public PracticeLessonCheckResponse toPracticeLessonCheckResponse(AIProofreadResponse response) {
-        return PracticeLessonCheckResponse.builder()
-                .isCorrect(response.correctedSentence() == null)
-                .correctedSentence(response.correctedSentence())
-                .feedback(response.feedback())
-                .build();
-    }
-
-    public TranslationResponse toTranslationResponse(AITranslationResponse response) {
-        return TranslationResponse.builder()
-                .translatedText(response.translatedText())
-                .build();
-    }
-
-    private WordDTO toWordDTO(Object aiVocab, String language) {
-        return switch (aiVocab) {
-            case AIJapaneseVocabularyItemDTO j -> toWordDTO(j, language);
-            case AIKoreanVocabularyItemDTO k -> toWordDTO(k, language);
-            case AIChineseVocabularyItemDTO c -> toWordDTO(c, language);
-            case AIThaiVocabularyItemDTO t -> toWordDTO(t, language);
-            case AIItalianVocabularyItemDTO i -> toWordDTO(i, language);
-            case AISpanishVocabularyItemDTO s -> toWordDTO(s, language);
-            case AIFrenchVocabularyItemDTO f -> toWordDTO(f, language);
-            case AIGermanVocabularyItemDTO g -> toWordDTO(g, language);
-            default -> null; // Or throw an exception
-        };
-    }
-
-    private WordDTO toWordDTO(AIJapaneseVocabularyItemDTO aiVocab, String language) {
-        JapaneseWordDetailsDTO details = furiganaService.verifyAndMapJapaneseWord(aiVocab);
-
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AIKoreanVocabularyItemDTO aiVocab, String language) {
-        KoreanWordDetailsDTO details = KoreanWordDetailsDTO.builder()
-                .hangul(aiVocab.hangul())
-                .hanja(aiVocab.hanja())
-                .romaja(aiVocab.romaja())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AIChineseVocabularyItemDTO aiVocab, String language) {
-        ChineseWordDetailsDTO details = ChineseWordDetailsDTO.builder()
-                .simplified(aiVocab.simplified())
-                .traditional(aiVocab.traditional())
-                .pinyin(aiVocab.pinyin())
-                .toneNumber(aiVocab.toneNumber())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AIThaiVocabularyItemDTO aiVocab, String language) {
-        ThaiWordDetailsDTO details = ThaiWordDetailsDTO.builder()
-                .thaiScript(aiVocab.thaiScript())
-                .romanization(aiVocab.romanization())
-                .tonePattern(aiVocab.tonePattern())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AIItalianVocabularyItemDTO aiVocab, String language) {
-        ItalianWordDetailsDTO details = ItalianWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
-                .gender(aiVocab.gender())
-                .pluralForm(aiVocab.pluralForm())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AIGermanVocabularyItemDTO aiVocab, String language) {
-        GermanWordDetailsDTO details = GermanWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
-                .gender(aiVocab.gender())
-                .pluralForm(aiVocab.pluralForm())
-                .separablePrefix(aiVocab.separablePrefix())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AIFrenchVocabularyItemDTO aiVocab, String language) {
-        FrenchWordDetailsDTO details = FrenchWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
-                .gender(aiVocab.gender())
-                .pluralForm(aiVocab.pluralForm())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
-                .build();
-    }
-
-    private WordDTO toWordDTO(AISpanishVocabularyItemDTO aiVocab, String language) {
-        SpanishWordDetailsDTO details = SpanishWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
-                .gender(aiVocab.gender())
-                .pluralForm(aiVocab.pluralForm())
-                .build();
-        return WordDTO.builder()
-                .language(language)
-                .englishTranslation(sanitizer.sanitizeEnglishSentence(aiVocab.englishTranslation()))
-                .details(details)
                 .build();
     }
 }

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -17,11 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@RequiredArgsConstructor
 public class AIConfig {
-
-    // --- Injected Dependencies ---
     private final ObjectMapper objectMapper;
+
+    public AIConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Builder
     public record AIPrompt(Resource instruction, JsonNode schema) {}
@@ -120,7 +120,11 @@ public class AIConfig {
     }
 
     public Class<?> getVocabularyItemDtoClass(String language) {
-        return vocabularyItemDtoMap.get(language.toLowerCase());
+        Class<?> dtoClass = vocabularyItemDtoMap.get(language.toLowerCase());
+        if (dtoClass == null) {
+            throw new LanguageException("Unsupported language for vocabulary generation: " + language, null);
+        }
+        return dtoClass;
     }
 
     private AIAsset buildAsset(String language, LanguageAssetResources resources) {
