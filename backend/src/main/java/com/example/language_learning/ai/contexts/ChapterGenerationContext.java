@@ -1,7 +1,7 @@
 package com.example.language_learning.ai.contexts;
 
-import com.example.language_learning.entity.models.Chapter;
-import com.example.language_learning.requests.ChapterGenerationRequest;
+import com.example.language_learning.lessonbook.chapter.data.Chapter;
+import com.example.language_learning.shared.requests.ChapterGenerationRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

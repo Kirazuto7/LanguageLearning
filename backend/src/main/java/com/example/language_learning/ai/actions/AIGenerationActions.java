@@ -1,11 +1,10 @@
 package com.example.language_learning.ai.actions;
 
-import com.example.language_learning.ai.config.AIConfig;
 import com.example.language_learning.ai.config.model.AIPrompt;
 import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
-import com.example.language_learning.utils.AIResponseSanitizer;
+import com.example.language_learning.shared.utils.AIResponseSanitizer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

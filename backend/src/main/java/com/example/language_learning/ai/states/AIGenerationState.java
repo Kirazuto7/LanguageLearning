@@ -2,7 +2,7 @@ package com.example.language_learning.ai.states;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.networknt.schema.ValidationMessage;
-import com.example.language_learning.utils.ReactiveStateMachine.ReactiveTerminalState;
+import com.example.language_learning.shared.utils.ReactiveStateMachine.ReactiveTerminalState;
 
 import java.util.Set;
 
