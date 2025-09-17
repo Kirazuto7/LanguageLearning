@@ -1,12 +1,10 @@
 package com.example.language_learning.mapper;
 
-import com.example.language_learning.dto.models.details.*;
 import com.example.language_learning.dto.user.SettingsDTO;
 import com.example.language_learning.dto.user.UserDTO;
 import com.example.language_learning.dto.models.WordDTO;
 import com.example.language_learning.dto.lessons.*;
 import com.example.language_learning.dto.models.*;
-import com.example.language_learning.entity.models.details.*;
 import com.example.language_learning.entity.user.Settings;
 import com.example.language_learning.entity.user.User;
 import com.example.language_learning.entity.models.Word;
@@ -33,7 +31,7 @@ public class DtoMapper {
     private final GrammarLessonStructMapper grammarLessonStructMapper;
     private final ConjugationLessonStructMapper conjugationLessonStructMapper;
     private final PracticeLessonStructMapper practiceLessonStructMapper;
-    private final ReadingComprehensionStructMapper readingComprehensionStructMapper;
+    private final ReadingComprehensionLessonStructMapper readingComprehensionLessonStructMapper;
     private final WordStructMapper wordStructMapper;
     private final WordDetailsStructMapper wordDetailsStructMapper;
     private final SentenceStructMapper sentenceStructMapper;
@@ -53,11 +51,11 @@ public class DtoMapper {
     /* ***************** */
 
     public LessonBook toEntity(LessonBookDTO dto) {
-        return lessonBookStructMapper.toEntity(dto);
+        return lessonBookStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonBookDTO toDto(LessonBook entity) {
-        return lessonBookStructMapper.toDto(entity);
+        return lessonBookStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ******************** */
@@ -65,11 +63,11 @@ public class DtoMapper {
     /* ******************** */
 
     public Chapter toEntity(ChapterDTO dto) {
-        return chapterStructMapper.toEntity(dto);
+        return chapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public ChapterDTO toDto(Chapter entity) {
-        return chapterStructMapper.toDto(entity);
+        return chapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ***************** */
@@ -77,11 +75,11 @@ public class DtoMapper {
     /* ***************** */
 
     public Page toEntity(PageDTO dto) {
-        return pageStructMapper.toEntity(dto);
+        return pageStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public PageDTO toDto(Page entity) {
-        return pageStructMapper.toDto(entity);
+        return pageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ******************* */
@@ -89,11 +87,11 @@ public class DtoMapper {
     /* ******************* */
 
     public Lesson toEntity(LessonDTO dto) {
-        return lessonStructMapper.toEntity(dto);
+        return lessonStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonDTO toDto(Lesson entity) {
-        return lessonStructMapper.toDto(entity);
+        return lessonStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ******************* */
@@ -101,19 +99,19 @@ public class DtoMapper {
     /* ******************* */
 
     public Word toEntity(WordDTO dto) {
-        return wordStructMapper.toEntity(dto);
+        return wordStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public WordDetails toEntity(WordDetailsDTO dto) {
-        return wordDetailsStructMapper.toEntity(dto);
+        return wordDetailsStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public WordDTO toDto(Word entity) {
-        return wordStructMapper.toDto(entity);
+        return wordStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     public WordDetailsDTO toDto(WordDetails entity) {
-        return wordDetailsStructMapper.toDto(entity);
+        return wordDetailsStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ********************* */
@@ -121,11 +119,11 @@ public class DtoMapper {
     /* ********************* */
 
     public Sentence toEntity(SentenceDTO dto) {
-        return sentenceStructMapper.toEntity(dto);
+        return sentenceStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public SentenceDTO toDto(Sentence entity) {
-        return sentenceStructMapper.toDto(entity);
+        return sentenceStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* *********************************** */
@@ -133,11 +131,15 @@ public class DtoMapper {
     /* *********************************** */
 
     public ConjugationExample toEntity(ConjugationExampleDTO dto, ConjugationLesson lesson) {
-        return conjugationExampleStructMapper.toEntity(dto, lesson);
+        ConjugationExample example = conjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        if (example != null) {
+            example.setLesson(lesson);
+        }
+        return example;
     }
 
     public ConjugationExampleDTO toDto(ConjugationExample entity) {
-        return conjugationExampleStructMapper.toDto(entity);
+        return conjugationExampleStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ************************ */
@@ -145,11 +147,15 @@ public class DtoMapper {
     /* ************************ */
 
     public Question toEntity(QuestionDTO dto, Lesson lesson) {
-        return questionStructMapper.toEntity(dto, lesson);
+        Question question = questionStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        if (question != null) {
+            question.setLesson(lesson);
+        }
+        return question;
     }
 
     public QuestionDTO toDto(Question entity) {
-        return questionStructMapper.toDto(entity);
+        return questionStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* **************************** */
@@ -157,11 +163,11 @@ public class DtoMapper {
     /* **************************** */
 
     public User toEntity(UserDTO dto) {
-        return userStructMapper.toEntity(dto);
+        return userStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public UserDTO toDto(User entity) {
-        return userStructMapper.toDto(entity);
+        return userStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* **************************** */
@@ -169,11 +175,11 @@ public class DtoMapper {
     /* **************************** */
 
     public Settings toEntity(SettingsDTO dto) {
-        return settingsStructMapper.toEntity(dto);
+        return settingsStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public SettingsDTO toDto(Settings entity) {
-        return settingsStructMapper.toDto(entity);
+        return settingsStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
 }

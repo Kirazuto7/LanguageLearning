@@ -5,6 +5,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 DO_HARD_CLEANUP=false
 USE_GPU=false
 COMPOSE_FILE="docker-compose.cpu.yml"
+PROFILE_ARG=""
 
 # --- Argument Parsing ---
 # A simple loop to process all arguments provided
@@ -24,6 +25,10 @@ do
         USE_GPU=false
         COMPOSE_FILE="docker-compose.cpu.yml"
         shift # Remove --cpu from processing
+        ;;
+        --frontend)
+        PROFILE_ARG="--profile frontend"
+        shift # Remove --frontend from processing
         ;;
     esac
 done
@@ -53,7 +58,7 @@ docker_cleanup() {
     echo "*        Removing Docker Container(s)        *"
     echo "**********************************************"
     echo ""
-    docker-compose -f "$COMPOSE_FILE" down
+    docker compose $PROFILE_ARG -f "$COMPOSE_FILE" down
 }
 
 # Function for hard cleanup (including volumes)
@@ -63,7 +68,7 @@ docker_hard_cleanup() {
     echo "*    Removing Containers & Pruning Volumes   *"
     echo "**********************************************"
     echo ""
-    docker-compose -f "$COMPOSE_FILE" down -v
+    docker compose $PROFILE_ARG -f "$COMPOSE_FILE" down -v
     docker builder prune -f
     docker volume prune -f
 }
@@ -88,9 +93,10 @@ echo "**********************************************"
 echo "*        Building Docker Environment         *"
 echo "**********************************************"
 echo ""
-docker-compose -f "$COMPOSE_FILE" up --build -d
+docker compose $PROFILE_ARG -f "$COMPOSE_FILE" up --build -d
 
 echo ""
 echo "Docker environment is starting up in the background."
+echo "To include the frontend dev server, use the --frontend flag."
 echo "Once the containers are built and running, you can view the application at http://localhost:3000/."
-echo "To view logs, run: docker-compose -f $COMPOSE_FILE logs -f"
+echo "To view logs, run: docker compose $PROFILE_ARG -f $COMPOSE_FILE logs -f"

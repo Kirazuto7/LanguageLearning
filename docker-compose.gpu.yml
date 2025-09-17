@@ -11,11 +11,12 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    profiles: ["frontend"]
 
   backend:
     build:
-      context: ./backend
-      dockerfile: ./dockerfiles/Dockerfile
+      context: .
+      dockerfile: ./backend/dockerfiles/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -28,10 +29,11 @@ services:
     env_file:
       - .env
     volumes:
-      - ./backend:/app
+      - .:/app
       - /app/build
       - /app/.gradle
       - backend-gradle-cache:/root/.gradle
+    working_dir: /app/backend
     depends_on:
       postgres:
         condition: service_healthy

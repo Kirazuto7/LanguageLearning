@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.8'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.github.node-gradle.node' version '7.0.2'
 }
 
 group = 'com.example'
@@ -68,4 +69,42 @@ jar {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation"
+}
+
+// --- Frontend Build Configuration (for unified development builds) ---
+
+// This configuration will only be active if you run gradle with the '-PdevBuild=true' property.
+// Example for a unified dev build: ./gradlew bootRun -PdevBuild=true
+// Example for a production-only backend build: ./gradlew build
+
+node {
+    version = '20.11.1'
+    download = true
+}
+
+tasks.named('npm_install', NpmTask) {
+    workingDir = file("${project.projectDir}/../frontend")
+    onlyIf { project.hasProperty('devBuild') }
+}
+
+tasks.register('npmBuild', NpmTask) {
+    dependsOn('npm_install')
+    workingDir = file("${project.projectDir}/../frontend")
+    args = ['run', 'build']
+    onlyIf { project.hasProperty('devBuild') }
+}
+
+tasks.named('processResources', ProcessResources) {
+    dependsOn('npmBuild')
+
+    doLast {
+        // Only perform the copy action if the 'devBuild' property is present.
+        if (project.hasProperty('devBuild')) {
+            def staticDir = file("${destinationDir}/static")
+            copy {
+                from file("${project.projectDir}/../frontend/build")
+                into staticDir
+            }
+        }
+    }
 }
