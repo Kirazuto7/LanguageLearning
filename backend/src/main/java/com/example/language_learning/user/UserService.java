@@ -1,10 +1,6 @@
 package com.example.language_learning.user;
 
-import com.example.language_learning.user.dtos.SettingsDTO;
-import com.example.language_learning.user.data.Settings;
-import com.example.language_learning.user.data.User;
-import com.example.language_learning.mappers.DtoMapper;
-import com.example.language_learning.user.data.UserRepository;
+import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.shared.requests.CreateUserRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;

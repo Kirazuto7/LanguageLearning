@@ -13,7 +13,7 @@ export const lessonBookApiSlice = graphqlApiSlice.injectEndpoints({
                     query GetLessonBooks {
                         getLessonBooks {
                             id
-                            bookTitle
+                            title
                             difficulty
                             language
                         }

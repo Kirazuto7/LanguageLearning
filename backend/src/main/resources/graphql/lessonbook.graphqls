@@ -1,9 +1,9 @@
-type LessonBook {
+type LessonBook implements Book {
     id: ID!
-    bookTitle: String!
+    title: String!
     difficulty: String!
     language: String!
-    chapters: [Chapter]!
+    lessonChapters: [LessonChapter]!
 }
 
 input LessonBookRequestInput {

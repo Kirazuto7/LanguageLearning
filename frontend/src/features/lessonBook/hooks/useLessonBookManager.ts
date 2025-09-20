@@ -1,4 +1,4 @@
-import { ChapterDTO } from '../../../shared/types/dto';
+import { LessonChapterDTO } from '../../../shared/types/dto';
 import { useAppSelector } from "../../../app/hooks";
 import { useGetLessonBookQuery } from "../../../shared/api/lessonBookApiSlice";
 import { RootState } from '../../../app/store';
@@ -6,7 +6,7 @@ import { RootState } from '../../../app/store';
 
 interface LessonBookManagerResult {
     title: string;
-    chapters: ChapterDTO[];
+    chapters: LessonChapterDTO[];
     isLoading: boolean;
     error: string | null;
     language: string;
@@ -26,8 +26,8 @@ export function useLessonBookManager(): LessonBookManagerResult {
         { skip: !user || !settings || !language || !difficulty });
 
     return {
-        title: bookData?.bookTitle || 'Book Title',
-        chapters: bookData?.chapters || [],
+        title: bookData?.title || 'Book Title',
+        chapters: bookData?.lessonChapters || [],
         isLoading: isFetchingBook,
         error: fetchBookError ? 'Failed to fetch the book.' : null,
         language,

@@ -1,5 +1,0 @@
-type Page {
-    id: ID!
-    pageNumber: Int!
-    lesson: Lesson!
-}

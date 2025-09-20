@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.dtos;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.dtos.ConjugationExampleDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExampleDTO;
 import com.example.language_learning.shared.enums.LessonType;
 import lombok.Builder;
 
@@ -12,7 +12,7 @@ public record ConjugationLessonDTO(
         String title,
         String conjugationRuleName,
         String explanation,
-        List<ConjugationExampleDTO> conjugatedWords
+        List<LessonConjugationExampleDTO> conjugatedWords
 ) implements LessonDTO {
     @Override
     public LessonType type() {

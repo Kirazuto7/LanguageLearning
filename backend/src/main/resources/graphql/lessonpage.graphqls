@@ -1,0 +1,5 @@
+type LessonPage implements Page {
+    id: ID!
+    pageNumber: Int!
+    lesson: Lesson!
+}

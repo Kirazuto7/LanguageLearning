@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.data;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.data.Sentence;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentence;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.*;
@@ -31,9 +31,9 @@ public class GrammarLesson extends Lesson {
     )
     @OrderBy("id ASC")
     @Builder.Default
-    private List<Sentence> exampleSentences = new ArrayList<>();
+    private List<LessonSentence> exampleLessonSentences = new ArrayList<>();
 
-    public void addExampleSentence(Sentence sentence) {
-        this.exampleSentences.add(sentence);
+    public void addExampleSentence(LessonSentence lessonSentence) {
+        this.exampleLessonSentences.add(lessonSentence);
     }
 }

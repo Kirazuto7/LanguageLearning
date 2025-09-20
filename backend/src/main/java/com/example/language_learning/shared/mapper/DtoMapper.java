@@ -1,0 +1,262 @@
+package com.example.language_learning.shared.mapper;
+
+import com.example.language_learning.lessonbook.LessonBookStructMapper;
+import com.example.language_learning.lessonbook.chapter.ChapterStructMapper;
+import com.example.language_learning.lessonbook.chapter.LessonChapter;
+import com.example.language_learning.lessonbook.chapter.lesson.mappers.*;
+import com.example.language_learning.lessonbook.chapter.lesson.page.PageStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.QuestionStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.*;
+import com.example.language_learning.shared.word.mappers.WordDetailsStructMapper;
+import com.example.language_learning.shared.word.mappers.WordStructMapper;
+import com.example.language_learning.shared.word.mappers.*;
+import com.example.language_learning.storybook.StoryBook;
+import com.example.language_learning.storybook.StoryBookDTO;
+import com.example.language_learning.storybook.StoryBookStructMapper;
+import com.example.language_learning.storybook.chapter.StoryChapter;
+import com.example.language_learning.storybook.chapter.StoryChapterDTO;
+import com.example.language_learning.storybook.chapter.StoryChapterStructMapper;
+import com.example.language_learning.storybook.chapter.page.StoryPage;
+import com.example.language_learning.storybook.chapter.page.StoryPageDTO;
+import com.example.language_learning.storybook.chapter.page.StoryPageStructMapper;
+import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraph;
+import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraphDTO;
+import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraphStructMapper;
+import com.example.language_learning.user.*;
+import com.example.language_learning.shared.word.dtos.WordDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionDTO;
+import com.example.language_learning.shared.word.dtos.WordDetailsDTO;
+import com.example.language_learning.shared.word.data.Word;
+import com.example.language_learning.lessonbook.chapter.LessonChapterDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.data.ConjugationLesson;
+import com.example.language_learning.lessonbook.chapter.lesson.data.Lesson;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPage;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestion;
+import com.example.language_learning.shared.word.data.WordDetails;
+import com.example.language_learning.lessonbook.LessonBook;
+import com.example.language_learning.lessonbook.LessonBookDTO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+
+@Component
+@Slf4j
+@RequiredArgsConstructor
+public class DtoMapper {
+    private final UserStructMapper userStructMapper;
+    private final SettingsStructMapper settingsStructMapper;
+    private final LessonBookStructMapper lessonBookStructMapper;
+    private final ChapterStructMapper chapterStructMapper;
+    private final PageStructMapper pageStructMapper;
+    private final LessonStructMapper lessonStructMapper;
+    private final VocabularyLessonStructMapper vocabularyLessonStructMapper;
+    private final GrammarLessonStructMapper grammarLessonStructMapper;
+    private final ConjugationLessonStructMapper conjugationLessonStructMapper;
+    private final PracticeLessonStructMapper practiceLessonStructMapper;
+    private final ReadingComprehensionLessonStructMapper readingComprehensionLessonStructMapper;
+    private final WordStructMapper wordStructMapper;
+    private final WordDetailsStructMapper wordDetailsStructMapper;
+    private final SentenceStructMapper sentenceStructMapper;
+    private final QuestionStructMapper questionStructMapper;
+    private final ConjugationExampleStructMapper conjugationExampleStructMapper;
+    private final KoreanWordDetailsStructMapper koreanWordDetailsStructMapper;
+    private final ChineseWordDetailsStructMapper chineseWordDetailsStructMapper;
+    private final JapaneseWordDetailsStructMapper japaneseWordDetailsStructMapper;
+    private final ThaiWordDetailsStructMapper thaiWordDetailsStructMapper;
+    private final ItalianWordDetailsStructMapper italianWordDetailsStructMapper;
+    private final SpanishWordDetailsStructMapper spanishWordDetailsStructMapper;
+    private final FrenchWordDetailsStructMapper frenchWordDetailsStructMapper;
+    private final GermanWordDetailsStructMapper germanWordDetailsStructMapper;
+    private final StoryBookStructMapper storyBookStructMapper;
+    private final StoryChapterStructMapper storyChapterStructMapper;
+    private final StoryPageStructMapper storyPageStructMapper;
+    private final StoryParagraphStructMapper storyParagraphStructMapper;
+
+    /* ***************** */
+    /* ** Book Mapper ** */
+    /* ***************** */
+
+    public LessonBook toEntity(LessonBookDTO dto) {
+        return lessonBookStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public LessonBookDTO toDto(LessonBook entity) {
+        return lessonBookStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ********************** */
+    /* ** StoryBook Mapper ** */
+    /* ********************** */
+
+    public StoryBook toEntity(StoryBookDTO dto) {
+        return storyBookStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public StoryBookDTO toDto(StoryBook entity) {
+        return storyBookStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ******************** */
+    /* ** Chapter Mapper ** */
+    /* ******************** */
+
+    public LessonChapter toEntity(LessonChapterDTO dto) {
+        return chapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public LessonChapterDTO toDto(LessonChapter entity) {
+        return chapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ************************** */
+    /* ** Story Chapter Mapper ** */
+    /* ************************** */
+
+    public StoryChapter toEntity(StoryChapterDTO dto) {
+        return storyChapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public StoryChapterDTO toDto(StoryChapter entity) {
+        return storyChapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ***************** */
+    /* ** Page Mapper ** */
+    /* ***************** */
+
+    public LessonPage toEntity(LessonPageDTO dto) {
+        return pageStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public LessonPageDTO toDto(LessonPage entity) {
+        return pageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ************************ */
+    /* ** Story Page Mapper ** */
+    /* ************************ */
+
+    public StoryPage toEntity(StoryPageDTO dto) {
+        return storyPageStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public StoryPageDTO toDto(StoryPage entity) {
+        return storyPageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* **************************** */
+    /* ** Story Paragraph Mapper ** */
+    /* **************************** */
+
+    public StoryParagraph toEntity(StoryParagraphDTO dto) {
+        return storyParagraphStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public StoryParagraphDTO toDto(StoryParagraph entity) {
+        return storyParagraphStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ******************* */
+    /* ** Lesson Mapper ** */
+    /* ******************* */
+
+    public Lesson toEntity(LessonDTO dto) {
+        return lessonStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public LessonDTO toDto(Lesson entity) {
+        return lessonStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ******************* */
+    /* **  Word Mapper  ** */
+    /* ******************* */
+
+    public Word toEntity(WordDTO dto) {
+        return wordStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public WordDetails toEntity(WordDetailsDTO dto) {
+        return wordDetailsStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public WordDTO toDto(Word entity) {
+        return wordStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    public WordDetailsDTO toDto(WordDetails entity) {
+        return wordDetailsStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ********************* */
+    /* ** Sentence Mapper ** */
+    /* ********************* */
+
+    public LessonSentence toEntity(LessonSentenceDTO dto) {
+        return sentenceStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public LessonSentenceDTO toDto(LessonSentence entity) {
+        return sentenceStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* *********************************** */
+    /* **  Conjugation Example Mapper   ** */
+    /* *********************************** */
+
+    public LessonConjugationExample toEntity(LessonConjugationExampleDTO dto, ConjugationLesson lesson) {
+        LessonConjugationExample example = conjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        if (example != null) {
+            example.setLesson(lesson);
+        }
+        return example;
+    }
+
+    public LessonConjugationExampleDTO toDto(LessonConjugationExample entity) {
+        return conjugationExampleStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ************************ */
+    /* **  Question Mapper   ** */
+    /* ************************ */
+
+    public LessonQuestion toEntity(LessonQuestionDTO dto, Lesson lesson) {
+        LessonQuestion lessonQuestion = questionStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        if (lessonQuestion != null) {
+            lessonQuestion.setLesson(lesson);
+        }
+        return lessonQuestion;
+    }
+
+    public LessonQuestionDTO toDto(LessonQuestion entity) {
+        return questionStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* **************************** */
+    /* **      User Mapper       ** */
+    /* **************************** */
+
+    public User toEntity(UserDTO dto) {
+        return userStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public UserDTO toDto(User entity) {
+        return userStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* **************************** */
+    /* **    Settings Mapper     ** */
+    /* **************************** */
+
+    public Settings toEntity(SettingsDTO dto) {
+        return settingsStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public SettingsDTO toDto(Settings entity) {
+        return settingsStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+}

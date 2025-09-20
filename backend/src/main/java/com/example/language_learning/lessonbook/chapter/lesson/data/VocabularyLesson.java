@@ -3,7 +3,7 @@ package com.example.language_learning.lessonbook.chapter.lesson.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.word.data.Word;
+import com.example.language_learning.shared.word.data.Word;
 import lombok.*;
 import jakarta.persistence.*;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class VocabularyLesson extends Lesson {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "vocabulary_lesson_words",
             joinColumns = @JoinColumn(name = "lesson_id"),

@@ -3,7 +3,7 @@ package com.example.language_learning.shared.services;
 import com.atilika.kuromoji.ipadic.Token;
 import com.atilika.kuromoji.ipadic.Tokenizer;
 import com.example.language_learning.ai.dtos.details.AIJapaneseVocabularyItemDTO;
-import com.example.language_learning.lessonbook.chapter.lesson.page.word.dtos.JapaneseWordDetailsDTO;
+import com.example.language_learning.shared.word.dtos.JapaneseWordDetailsDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

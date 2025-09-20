@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
-import { pageFragment } from "../../lessonBook/gql/fragments";
+import { lessonPageFragment } from "../../lessonBook/gql/fragments";
 export const chapterGenerationProgressQuery = gql`
-    ${pageFragment}
+    ${lessonPageFragment}
     subscription ChapterGenerationProgress($taskId: ID!) {
         chapterGenerationProgress(taskId: $taskId) {
             taskId
@@ -10,8 +10,8 @@ export const chapterGenerationProgressQuery = gql`
             isComplete
             data {
                 __typename
-                ...on Page{
-                    ...PageFragment
+                ...on LessonPage {
+                    ...LessonPageFragment
                 }
             }
             error

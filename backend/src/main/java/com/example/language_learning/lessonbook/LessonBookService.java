@@ -1,10 +1,7 @@
 package com.example.language_learning.lessonbook;
 
-import com.example.language_learning.lessonbook.dtos.LessonBookDTO;
-import com.example.language_learning.user.data.User;
-import com.example.language_learning.lessonbook.data.LessonBook;
-import com.example.language_learning.mappers.DtoMapper;
-import com.example.language_learning.lessonbook.data.LessonBookRepository;
+import com.example.language_learning.user.User;
+import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.shared.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,7 +43,7 @@ public class LessonBookService {
     @Transactional
     public LessonBook createLessonBook(String language, String difficulty, User user) {
         LessonBook newBook = LessonBook.builder()
-                .bookTitle(String.format("%s for %s Learners", language, difficulty))
+                .title(String.format("%s for %s Learners", language, difficulty))
                 .language(language)
                 .difficulty(difficulty)
                 .user(user)

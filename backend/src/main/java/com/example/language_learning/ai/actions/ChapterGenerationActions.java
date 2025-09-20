@@ -2,17 +2,17 @@ package com.example.language_learning.ai.actions;
 
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
-import com.example.language_learning.lessonbook.chapter.dtos.ChapterMetadataDTO;
-import com.example.language_learning.lessonbook.chapter.lesson.page.word.dtos.*;
-import com.example.language_learning.lessonbook.chapter.data.Chapter;
-import com.example.language_learning.lessonbook.chapter.lesson.page.data.Page;
+import com.example.language_learning.lessonbook.chapter.LessonChapter;
+import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPage;
+import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
-import com.example.language_learning.mappers.DtoMapper;
+import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.ai.contexts.ChapterGenerationContext;
 import com.example.language_learning.ai.states.ChapterGenerationState;
-import com.example.language_learning.lessonbook.chapter.ChapterService;
-import com.example.language_learning.lessonbook.chapter.lesson.page.PageService;
+import com.example.language_learning.lessonbook.chapter.LessonChapterService;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageService;
 import com.example.language_learning.shared.services.ProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -32,8 +32,8 @@ public class ChapterGenerationActions {
 
     private final AIEngine aiEngine;
     private final ProgressService progressService;
-    private final ChapterService chapterService;
-    private final PageService pageService;
+    private final LessonChapterService lessonChapterService;
+    private final LessonPageService lessonPageService;
     private final DtoMapper dtoMapper;
     private final Duration shortDelay = Duration.ofSeconds(2);
     private final Duration longDelay = Duration.ofSeconds(4);
@@ -44,11 +44,11 @@ public class ChapterGenerationActions {
             Thread.sleep(shortDelay.toMillis());
 
             // 1. Fetch the Chapter using the ID from the context.
-            Chapter chapter = chapterService.getChapter(context.getChapterId())
+            LessonChapter lessonChapter = lessonChapterService.getChapter(context.getChapterId())
                     .orElseThrow(() -> new RuntimeException("Chapter not found for async generation: " + context.getChapterId()));
 
             // 2. Store the fetched Chapter back into the context for subsequent actions.
-            context.setChapter(chapter);
+            context.setLessonChapter(lessonChapter);
 
             // 3. Transition to the METADATA state to trigger the next action.
             return ChapterGenerationState.METADATA;
@@ -72,11 +72,11 @@ public class ChapterGenerationActions {
 
             ChapterMetadataDTO metadata = aiEngine.generate(aiRequest).block();
 
-            Chapter chapter = context.getChapter();
+            LessonChapter lessonChapter = context.getLessonChapter();
             assert metadata != null;
-            chapter.setTitle(metadata.title());
-            chapter.setNativeTitle(metadata.nativeTitle());
-            chapterService.saveChapter(chapter);
+            lessonChapter.setTitle(metadata.title());
+            lessonChapter.setNativeTitle(metadata.nativeTitle());
+            lessonChapterService.saveChapter(lessonChapter);
             return ChapterGenerationState.VOCABULARY_LESSON(metadata);
         }
         catch (Exception e) {
@@ -104,13 +104,13 @@ public class ChapterGenerationActions {
 
             VocabularyLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
-            Page page = pageService.createAndPersistPage(context.getChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 40, "Vocabulary created.", dtoMapper.toDto(page));
+            progressService.sendPageUpdate(context.getTaskId(), 40, "Vocabulary created.", dtoMapper.toDto(lessonPage));
             Thread.sleep(longDelay.toMillis());
 
             // 3. Decide the next state based on the branching logic and return it with the required data.
-            if (context.getChapter().getChapterNumber() % 2 != 0) {
+            if (context.getLessonChapter().getChapterNumber() % 2 != 0) {
                 return ChapterGenerationState.GRAMMAR_LESSON(lessonDto);
             }
             else {
@@ -141,9 +141,9 @@ public class ChapterGenerationActions {
 
             GrammarLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
-            Page page = pageService.createAndPersistPage(context.getChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 60, "Grammar rules explained.", dtoMapper.toDto(page));
+            progressService.sendPageUpdate(context.getTaskId(), 60, "Grammar rules explained.", dtoMapper.toDto(lessonPage));
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, PRACTICE_LESSON, with all the data it needs.
@@ -173,9 +173,9 @@ public class ChapterGenerationActions {
 
             ConjugationLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
-            Page page = pageService.createAndPersistPage(context.getChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 60, "Conjugation rules explained.", dtoMapper.toDto(page));
+            progressService.sendPageUpdate(context.getTaskId(), 60, "Conjugation rules explained.", dtoMapper.toDto(lessonPage));
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, PRACTICE_LESSON, with all the data it needs.
@@ -218,9 +218,9 @@ public class ChapterGenerationActions {
                     .build();
             PracticeLessonDTO lessonDTO = aiEngine.generate(aiRequest).block();
 
-            Page page = pageService.createAndPersistPage(context.getChapter(), dtoMapper.toEntity(lessonDTO), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDTO), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 85, "Practice exercises built.", dtoMapper.toDto(page));
+            progressService.sendPageUpdate(context.getTaskId(), 85, "Practice exercises built.", dtoMapper.toDto(lessonPage));
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, READING_LESSON, with the data it needs.
@@ -261,9 +261,9 @@ public class ChapterGenerationActions {
                     .build();
             ReadingComprehensionLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
-            Page page = pageService.createAndPersistPage(context.getChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 100, "Reading passage complete.", dtoMapper.toDto(page));
+            progressService.sendPageUpdate(context.getTaskId(), 100, "Reading passage complete.", dtoMapper.toDto(lessonPage));
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, COMPLETED, with the data it needs.

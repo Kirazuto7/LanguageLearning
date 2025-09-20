@@ -20,10 +20,10 @@ export const ChapterSelector: React.FC<ChapterSelectorProps> = ({ chapters, acti
 
     return (
         <div className="d-flex justify-content-center mb-4">
-            <Form.Select aria-label="Chapter select" value={activeChapterIndex} onChange={handleSelect} className={styles['chapter-select']}>
-                {chapters.map((chapter, index) => (
+            <Form.Select aria-label="Chapter select" value={activeChapterIndex} onChange={handleSelect} className={styles['lessonChapter-select']}>
+                {chapters.map((lessonChapter, index) => (
                     <option key={index} value={index}>
-                        Chapter {chapter.chapterNumber}: {chapter.title}
+                        Chapter {lessonChapter.chapterNumber}: {lessonChapter.title}
                     </option>
                 ))}
             </Form.Select>

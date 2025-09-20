@@ -1,0 +1,91 @@
+/*import React, { useRef } from 'react';
+import styles from './flipbook.module.css';
+import HTMLFlipBook from 'react-pageflip';
+import BehindCoverPage from './BehindCoverPage';
+import TableOfContentsPage, { TocChapter } from './TableOfContentsPage';
+import BookPage from '../../bookpages/BookPage';
+import { ChapterDTO } from '../../../types/dto';
+import { useReadingBookManager } from '../../../hooks/useReadingBookManager';
+
+interface PageFlipAPI {
+    flip: (pageIndex: number, corner?: string) => void;
+}
+
+interface FlipBookProps {
+    generatedChapterPage: number | null;
+    onFlipComplete: () => void;
+}
+
+
+const FlipBook: React.FC<FlipBookProps> = ({ generatedChapterPage, onFlipComplete }) => {
+    const { pages, chapters, title } = useReadingBookManager();
+    const flipBookRef = useRef<React.ElementRef<typeof HTMLFlipBook> | null>(null);
+
+    const onInit = () => {
+        if(flipBookRef.current && generatedChapterPage && generatedChapterPage > 0) {
+            (flipBookRef.current.pageFlip() as PageFlipAPI).flip(generatedChapterPage+2);
+            onFlipComplete();
+        }
+    }
+
+    const handleChapterSelect = (pageIndex: number) => {
+        if(flipBookRef.current) {
+            (flipBookRef.current.pageFlip() as PageFlipAPI).flip(pageIndex+1);
+        }
+    }
+
+    //const pageIndexOffset = 2;
+
+    const tocChapters: TocChapter[] = chapters.map( (lessonChapter: ChapterDTO) => {
+        const firstPageOfChapter = lessonChapter.pages?.[0];
+        const displayPageNumber = firstPageOfChapter?.pageNumber ?? 0;
+        return {
+            chapterNumber: lessonChapter.chapterNumber,
+            title: lessonChapter.title,
+            displayPageNumber: displayPageNumber,
+            navigationPageIndex: displayPageNumber > 0 ? displayPageNumber : 0
+        }
+    });
+
+    return (
+        <div className={styles.bookContainer}>
+            <div className={styles.bookBinding}></div>
+
+            <HTMLFlipBook
+                key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
+                ref={flipBookRef}
+                width={450} height={600}
+                showCover={true}
+                drawShadow={true}
+                onInit={onInit}
+                onUpdate={() => {}}
+                onFlip={() => {}}
+                onChangeState={() => {}}
+                onChangeOrientation={() => {}}
+            >
+
+
+                <div className={`${styles.cover}`}>
+                    <h2 className={`mt-5 text-center ${styles['book-title']}`}>{title}</h2>
+                </div>
+
+                <BehindCoverPage/>
+                <BookPage pageNumber={0} isRightPage={true}>
+                    <TableOfContentsPage chapters={tocChapters} onNavigate={handleChapterSelect} />
+                </BookPage>
+
+                {pages && pages.map((lessonPage: React.ReactElement) => lessonPage)}
+                
+
+                <div className={styles.backcover}>
+                    <h2 className={`mt-5 text-center ${styles['book-title']}`}>The End</h2>
+                </div>
+            </HTMLFlipBook>
+        </div>
+    );
+};
+
+export default FlipBook;
+*/
+
+export const FlipBook = () => { return (<></>)};
