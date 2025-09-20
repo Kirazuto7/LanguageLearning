@@ -1,15 +1,10 @@
 package com.example.language_learning.shared.word.data;
 
 import com.example.language_learning.shared.utils.JpaMapConverter;
-import com.example.language_learning.storybook.shortstory.page.StoryPage;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @Data
@@ -31,10 +26,4 @@ public class Word {
     @Convert(converter = JpaMapConverter.class)
     @JdbcTypeCode(SqlTypes.JSON)
     private WordDetails details;
-
-    @ManyToMany(mappedBy =  "vocabulary")
-    @JsonIgnore
-    @ToString.Exclude
-    @Builder.Default
-    private List<StoryPage> storyPages = new ArrayList<>();
 }

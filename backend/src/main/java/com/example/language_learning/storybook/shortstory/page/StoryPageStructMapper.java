@@ -1,13 +1,13 @@
 package com.example.language_learning.storybook.shortstory.page;
 
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
-import com.example.language_learning.shared.word.mappers.WordStructMapper;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphStructMapper;
+import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItemStructMapper;
 import org.mapstruct.*;
 
 @Mapper(
     componentModel = "spring",
-    uses = {StoryParagraphStructMapper.class, WordStructMapper.class},
+    uses = {StoryParagraphStructMapper.class, StoryVocabularyItemStructMapper.class},
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
 )
 public abstract class StoryPageStructMapper {

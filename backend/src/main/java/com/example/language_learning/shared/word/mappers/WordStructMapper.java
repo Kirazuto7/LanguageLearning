@@ -5,7 +5,6 @@ import com.example.language_learning.shared.word.data.Word;
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ObjectFactory;
 
 @Mapper(
@@ -13,7 +12,6 @@ import org.mapstruct.ObjectFactory;
         uses = {WordDetailsStructMapper.class}
 )
 public abstract class WordStructMapper {
-    @Mapping(target = "storyPages", ignore = true)
     public abstract Word toEntity(WordDTO dto, @Context CycleAvoidingMappingContext context);
     public abstract WordDTO toDto(Word entity, @Context CycleAvoidingMappingContext context);
 

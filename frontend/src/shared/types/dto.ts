@@ -73,7 +73,7 @@ export interface StoryVocabularyPageDTO extends PageDTO {
     __typename: 'StoryVocabularyPage';
     englishSummary?: string;
     imageUrl?: string;
-    vocabulary: WordDTO[];
+    vocabulary: StoryVocabularyItemDTO[];
 }
 
 export type StoryPageDTO = StoryContentPageDTO | StoryVocabularyPageDTO;
@@ -84,6 +84,12 @@ export interface StoryParagraphDTO {
     id: string;
     paragraphNumber: number;
     content: string;
+}
+
+export interface StoryVocabularyItemDTO {
+    id: string;
+    word: string;
+    translation: string;
 }
 
 // --- Lesson-Specific Interfaces ---
