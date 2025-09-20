@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ShortStoryRepository extends JpaRepository<ShortStory, Long> {
 
-    @Query("SELECT sc FROM ShortStory sc LEFT JOIN FETCH sc.storyPages WHERE sc.id = :id")
+    @Query("SELECT ss FROM ShortStory ss LEFT JOIN FETCH ss.storyPages WHERE ss.id = :id")
     Optional<ShortStory> findByIdWithPages(@Param("id") Long id);
 }
