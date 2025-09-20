@@ -10,7 +10,7 @@ This document outlines the design and business logic for the AI-powered storyboo
 
 -   **`ShortStory`:** A `ShortStory` is the core generated entity. Each `ShortStory` has its own `title`, `genre`/`topic`, and a list of `StoryPages`. It is contained within a parent `Storybook`.
 
--   **`StoryPage`:** A page within a `ShortStory`. It can be a content page with paragraphs or a vocabulary page.
+-   **`StoryPage`:** A page within a `ShortStory`. It can be a content page with paragraphs or a vocabulary page. It contains an `imageUrl` field to store the path to its illustration and an `englishSummary` to be used as a prompt for image generation.
 
 ---
 
@@ -31,20 +31,41 @@ A single **Paragraph** is defined as a block of text containing **3 to 5 sentenc
 
 The end-to-end generation of a new `ShortStory` follows a multi-step, multi-prompt process.
 
-1.  **Initiation:** The user, viewing a specific `Storybook` (e.g., "Beginner Korean"), provides either a **Topic** or selects a **Genre**.
-2.  **Title Generation (1 Prompt):** The backend sends a prompt to the LLM to generate a `title` and `nativeTitle` for the new `ShortStory`.
-3.  **Page & Vocabulary Generation (Multiple Prompts):** The backend loops, generating the `content` and `vocabulary` for a batch of pages at a time (e.g., 4 pages per prompt).
-4.  **Assembly:** The backend service receives the JSON response. It aggregates the vocabulary from all pages (removing duplicates) and assembles the title, content pages, and a final vocabulary page into a complete `ShortStory` entity. This new `ShortStory` is then associated with its parent `Storybook` and saved.
-
-**(Future) 5. Image Generation:** For each content page, a separate prompt will be sent to an Image Generation model to create an illustration.
+1.  **Initiation:** The user, viewing a specific `Storybook`, provides either a **Topic** or selects a **Genre**.
+2.  **Title Generation (1 Prompt):** The backend sends a prompt to the LLM to generate a `title` and `nativeTitle`.
+3.  **Page & Vocabulary Generation (Multiple Prompts):** The backend generates the `content`, `englishSummary`, and `vocabulary` for a batch of pages at a time.
+4.  **(Future) Image Generation:** For each content page generated, the backend will:
+    a.  Send the `englishSummary` to a dedicated Image Generation model.
+    b.  Receive the raw image data.
+    c.  Use the `ImageStorageService` to upload the image to the storage provider (MinIO in development).
+    d.  Receive the public URL of the uploaded image.
+5.  **Assembly:** The backend service assembles the `ShortStory`. It aggregates vocabulary (removing duplicates), saves the `imageUrl` to each `StoryPage`, and associates everything with the parent `Storybook` before saving to the database.
 
 ---
 
-## 4. Prompt Examples & Test Results
+## 4. Image Storage Strategy
 
-This section contains successful AI responses from the design and testing phase, demonstrating the two primary generation paths.
+To handle image storage in a scalable and professional manner, the application will not store image files directly in the database or project directory.
 
-### 4.1. User-Provided Topic Example (Combined Content & Vocabulary)
+### 4.1. Development Environment
+
+-   **Technology:** A **MinIO** Docker container will be used. MinIO is an S3-compatible object storage server that runs locally.
+-   **Workflow:** The backend's `ImageStorageService` will be configured to point to the local MinIO container.
+-   **Data Synchronization:** To ensure a clean state and prevent orphaned images, the MinIO storage volume will be destroyed along with the database volume when running `docker-compose down -v`. This provides a perfectly ephemeral development environment.
+
+### 4.2. Production Environment (Future)
+
+-   **Technology:** A cloud-based object storage service like **AWS S3** or **Cloudinary** will be used.
+-   **Workflow:** The `ImageStorageService` implementation will be switched to use the production provider's SDK and credentials. No application code changes will be required.
+-   **Lifecycle Management:** A cleanup mechanism (e.g., using JPA event listeners or a scheduled job) will be implemented to delete images from cloud storage when their corresponding `StoryPage` is deleted from the database.
+
+---
+
+## 5. Prompt Examples & Test Results
+
+This section contains successful AI responses from the design and testing phase.
+
+### 5.1. User-Provided Topic Example (Combined Content & Vocabulary)
 
 This test proves that the AI can generate both story content and relevant vocabulary in a single, structured JSON response.
 
@@ -148,7 +169,7 @@ Do not include any other text, notes, or explanations in your response. Provide 
 }
 ```
 
-### 4.2. Genre-Based Story Invention Example
+### 5.2. Genre-Based Story Invention Example
 
 This test proves that the AI can invent a new story concept based on a genre and generate structured content for it.
 

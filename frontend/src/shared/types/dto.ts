@@ -64,11 +64,15 @@ export interface LessonPageDTO extends PageDTO {
 
 export interface StoryContentPageDTO extends PageDTO {
     __typename: 'StoryContentPage';
+    englishSummary?: string;
+    imageUrl?: string;
     paragraphs: StoryParagraphDTO[];
 }
 
 export interface StoryVocabularyPageDTO extends PageDTO {
     __typename: 'StoryVocabularyPage';
+    englishSummary?: string;
+    imageUrl?: string;
     vocabulary: WordDTO[];
 }
 
