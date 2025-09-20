@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface StoryBookRepository extends JpaRepository<StoryBook, Long> {
 
     // Story page's will be loaded lazily to avoid MultipleBagFetchException
-    @Query("SELECT sb FROM StoryBook sb LEFT JOIN FETCH sb.storyChapters WHERE sb.user = :user AND sb.language = :language AND sb.difficulty = :difficulty")
+    @Query("SELECT sb FROM StoryBook sb LEFT JOIN FETCH sb.shortStories WHERE sb.user = :user AND sb.language = :language AND sb.difficulty = :difficulty")
     Optional<StoryBook> findByUserAndLanguageAndDifficulty(@Param("user") User user, @Param("language") String language, @Param("difficulty") String difficulty);
 }
