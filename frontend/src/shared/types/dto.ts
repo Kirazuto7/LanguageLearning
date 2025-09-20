@@ -254,7 +254,8 @@ export interface ChapterGenerationRequest {
 }
 
 export interface ShortStoryGenerationRequest {
-    storyBookId: string;
+    language: string;
+    difficulty: string;
     topic?: string;
     genre?: string;
 }

@@ -1,7 +1,7 @@
 package com.example.language_learning.lessonbook;
 
 import com.example.language_learning.user.User;
-import com.example.language_learning.shared.requests.LessonBookRequest;
+import com.example.language_learning.lessonbook.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;

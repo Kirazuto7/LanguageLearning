@@ -1,7 +1,7 @@
 package com.example.language_learning.user;
 
-import com.example.language_learning.shared.requests.CreateUserRequest;
-import com.example.language_learning.shared.requests.LoginRequest;
+import com.example.language_learning.user.requests.CreateUserRequest;
+import com.example.language_learning.user.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;
 import jakarta.servlet.http.HttpServletResponse;

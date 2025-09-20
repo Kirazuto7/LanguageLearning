@@ -3,8 +3,6 @@ package com.example.language_learning.shared.translation;
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
 import com.example.language_learning.ai.enums.PromptType;
-import com.example.language_learning.shared.requests.TranslationRequest;
-import com.example.language_learning.shared.responses.TranslationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

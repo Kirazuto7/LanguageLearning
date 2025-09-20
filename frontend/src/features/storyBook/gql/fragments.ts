@@ -111,3 +111,13 @@ export const storyBookFragment = gql`
         }
     }
 `;
+
+export const shortStoryShellFragment = gql`
+    fragment ShortStoryShellFragment on ShortStory {
+        id
+        chapterNumber
+        title
+        nativeTitle
+        genre
+    }
+`;

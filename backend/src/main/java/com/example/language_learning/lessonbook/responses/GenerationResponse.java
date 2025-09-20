@@ -1,4 +1,4 @@
-package com.example.language_learning.shared.responses;
+package com.example.language_learning.lessonbook.responses;
 
 import com.example.language_learning.lessonbook.chapter.LessonChapterDTO;
 import lombok.Builder;
