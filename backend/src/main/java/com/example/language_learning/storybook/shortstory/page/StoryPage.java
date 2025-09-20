@@ -1,9 +1,9 @@
-package com.example.language_learning.storybook.chapter.page;
+package com.example.language_learning.storybook.shortstory.page;
 
 import com.example.language_learning.shared.word.data.Word;
 import com.example.language_learning.shared.data.BasePage;
-import com.example.language_learning.storybook.chapter.StoryChapter;
-import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraph;
+import com.example.language_learning.storybook.shortstory.ShortStory;
+import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,9 +39,9 @@ public class StoryPage extends BasePage {
     private List<Word> vocabulary = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "story_chapter_id")
+    @JoinColumn(name = "short_story_id")
     @JsonBackReference
-    private StoryChapter storyChapter;
+    private ShortStory shortStory;
 
     public void addParagraph(StoryParagraph paragraph) {
         paragraphs.add(paragraph);

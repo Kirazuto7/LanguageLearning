@@ -1,4 +1,4 @@
-package com.example.language_learning.storybook.chapter.page.paragraph;
+package com.example.language_learning.storybook.shortstory.page.paragraph;
 
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
 import org.mapstruct.Context;

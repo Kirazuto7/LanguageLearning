@@ -1,8 +1,8 @@
-package com.example.language_learning.storybook.chapter.page;
+package com.example.language_learning.storybook.shortstory.page;
 
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
 import com.example.language_learning.shared.word.mappers.WordStructMapper;
-import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraphStructMapper;
+import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphStructMapper;
 import org.mapstruct.*;
 
 @Mapper(
@@ -12,7 +12,7 @@ import org.mapstruct.*;
 )
 public abstract class StoryPageStructMapper {
 
-    @Mapping(target = "storyChapter", ignore = true)
+    @Mapping(target = "shortStory", ignore = true)
     public abstract StoryPage toEntity(StoryPageDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract StoryPageDTO toDto(StoryPage entity, @Context CycleAvoidingMappingContext context);

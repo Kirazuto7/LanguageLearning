@@ -85,13 +85,14 @@ export const storyPageFragment = gql`
     }
 `;
 
-export const storyChapterFragment = gql`
+export const shortStoryFragment = gql`
     ${storyPageFragment}
-    fragment StoryChapterFragment on StoryChapter {
+    fragment ShortStoryFragment on ShortStory {
         id
         chapterNumber
         title
         nativeTitle
+        genre
         storyPages {
             ...StoryPageFragment
         }
@@ -99,15 +100,14 @@ export const storyChapterFragment = gql`
 `;
 
 export const storyBookFragment = gql`
-    ${storyChapterFragment}
+    ${shortStoryFragment}
     fragment StoryBookFragment on StoryBook {
         id
         title
         difficulty
         language
-        genre
-        storyChapters {
-            ...StoryChapterFragment
+        shortStories {
+            ...ShortStoryFragment
         }
     }
 `;

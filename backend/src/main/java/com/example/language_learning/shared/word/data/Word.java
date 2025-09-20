@@ -1,7 +1,7 @@
 package com.example.language_learning.shared.word.data;
 
 import com.example.language_learning.shared.utils.JpaMapConverter;
-import com.example.language_learning.storybook.chapter.page.StoryPage;
+import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

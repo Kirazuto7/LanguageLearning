@@ -1,12 +1,12 @@
 package com.example.language_learning.storybook;
 
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
-import com.example.language_learning.storybook.chapter.StoryChapterStructMapper;
+import com.example.language_learning.storybook.shortstory.ShortStoryStructMapper;
 import org.mapstruct.*;
 
 @Mapper(
         componentModel = "spring",
-        uses = {StoryChapterStructMapper.class},
+        uses = {ShortStoryStructMapper.class},
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
 )
 public abstract class StoryBookStructMapper {

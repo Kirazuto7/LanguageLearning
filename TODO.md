@@ -7,14 +7,21 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 ### Tier 1: Core Content & Interaction (Highest Priority)
 
 - [ ] **Complete the `storybook` Feature**
-    - [ ] Implement backend `StoryBookGraphQlController`.
-    - [ ] Implement backend `StoryBookService`.
+    - [ ] Design UI to allow story generation via two methods: user-provided topic OR random generation from a selected genre.
+    - [ ] Implement backend `StoryBookGraphQlController` to handle both generation methods.
+    - [ ] Implement backend `StoryBookService` with flexible logic to handle both generation methods.
     - [ ] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
     - [ ] Implement the multi-step AI text generation logic for stories.
     - [ ] Integrate an image generation model (e.g., Stable Diffusion) into the Docker setup.
     - [ ] Update the AI generation workflow to create image prompts from story text.
     - [ ] Add an `imageUrl` field to the `StoryPage` entity, DTO, and GraphQL type.
     - [ ] Update the frontend to display the generated image on content pages.
+
+- [ ] **Secure AI Interaction**
+    - [ ] Add frontend validation (e.g., `maxLength`) to all user input fields that are sent to the AI.
+    - [ ] Add backend validation for length and content of all user input.
+    - [ ] Engineer all AI prompts to be "jailbreak resistant" by clearly separating system instructions from user input and adding explicit negative constraints.
+    - [ ] Implement a self-validation step in prompts where the AI first checks if the user input is valid before proceeding.
 
 - [ ] **User Authentication & Onboarding**
     - [ ] Build frontend Login page.
