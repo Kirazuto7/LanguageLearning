@@ -4,7 +4,7 @@ import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDTO;
 import com.example.language_learning.shared.enums.LessonType;
 import com.example.language_learning.shared.word.dtos.*;
-import com.example.language_learning.storybook.chapter.page.StoryPageDTO;
+import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.scalars.ExtendedScalars;

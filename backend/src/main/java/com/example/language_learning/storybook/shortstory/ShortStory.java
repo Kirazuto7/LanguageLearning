@@ -1,7 +1,7 @@
-package com.example.language_learning.storybook.chapter;
+package com.example.language_learning.storybook.shortstory;
 
 import com.example.language_learning.shared.data.BaseChapter;
-import com.example.language_learning.storybook.chapter.page.StoryPage;
+import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.example.language_learning.storybook.StoryBook;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,14 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "story_chapters")
+@Table(name = "short_stories")
 @SuperBuilder
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoryChapter extends BaseChapter {
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "storyChapter")
+public class ShortStory extends BaseChapter {
+
+    private String genre;
+    private String topic;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shortStory")
     @OrderBy("pageNumber ASC")
     @Builder.Default
     private List<StoryPage> storyPages = new ArrayList<>();
@@ -29,6 +33,6 @@ public class StoryChapter extends BaseChapter {
 
     public void addStoryPage(StoryPage storyPage) {
         storyPages.add(storyPage);
-        storyPage.setStoryChapter(this);
+        storyPage.setShortStory(this);
     }
 }

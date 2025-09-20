@@ -30,11 +30,10 @@ export interface LessonBookDTO extends BookDTO {
 }
 
 export interface StoryBookDTO extends BookDTO {
-    genre?: string;
-    storyChapters: StoryChapterDTO[];
+    shortStories: ShortStoryDTO[];
 }
 
-// --- Chapter Interfaces ---
+// --- Chapter & Story Interfaces ---
 
 export interface ChapterDTO {
     id: string;
@@ -47,7 +46,8 @@ export interface LessonChapterDTO extends ChapterDTO {
     lessonPages: LessonPageDTO[];
 }
 
-export interface StoryChapterDTO extends ChapterDTO {
+export interface ShortStoryDTO extends ChapterDTO {
+    genre?: string;
     storyPages: StoryPageDTO[];
 }
 
@@ -251,6 +251,12 @@ export interface ChapterGenerationRequest {
     language: string;
     difficulty: string;
     topic: string;
+}
+
+export interface ShortStoryGenerationRequest {
+    storyBookId: string;
+    topic?: string;
+    genre?: string;
 }
 
 export interface AuthenticationResponse {

@@ -13,15 +13,15 @@ import com.example.language_learning.shared.word.mappers.*;
 import com.example.language_learning.storybook.StoryBook;
 import com.example.language_learning.storybook.StoryBookDTO;
 import com.example.language_learning.storybook.StoryBookStructMapper;
-import com.example.language_learning.storybook.chapter.StoryChapter;
-import com.example.language_learning.storybook.chapter.StoryChapterDTO;
-import com.example.language_learning.storybook.chapter.StoryChapterStructMapper;
-import com.example.language_learning.storybook.chapter.page.StoryPage;
-import com.example.language_learning.storybook.chapter.page.StoryPageDTO;
-import com.example.language_learning.storybook.chapter.page.StoryPageStructMapper;
-import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraph;
-import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraphDTO;
-import com.example.language_learning.storybook.chapter.page.paragraph.StoryParagraphStructMapper;
+import com.example.language_learning.storybook.shortstory.ShortStory;
+import com.example.language_learning.storybook.shortstory.ShortStoryDTO;
+import com.example.language_learning.storybook.shortstory.ShortStoryStructMapper;
+import com.example.language_learning.storybook.shortstory.page.StoryPage;
+import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
+import com.example.language_learning.storybook.shortstory.page.StoryPageStructMapper;
+import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
+import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphDTO;
+import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphStructMapper;
 import com.example.language_learning.user.*;
 import com.example.language_learning.shared.word.dtos.WordDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionDTO;
@@ -71,7 +71,7 @@ public class DtoMapper {
     private final FrenchWordDetailsStructMapper frenchWordDetailsStructMapper;
     private final GermanWordDetailsStructMapper germanWordDetailsStructMapper;
     private final StoryBookStructMapper storyBookStructMapper;
-    private final StoryChapterStructMapper storyChapterStructMapper;
+    private final ShortStoryStructMapper shortStoryStructMapper;
     private final StoryPageStructMapper storyPageStructMapper;
     private final StoryParagraphStructMapper storyParagraphStructMapper;
 
@@ -111,16 +111,16 @@ public class DtoMapper {
         return chapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
-    /* ************************** */
-    /* ** Story Chapter Mapper ** */
-    /* ************************** */
+    /* ************************ */
+    /* ** Short Story Mapper ** */
+    /* ************************ */
 
-    public StoryChapter toEntity(StoryChapterDTO dto) {
-        return storyChapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    public ShortStory toEntity(ShortStoryDTO dto) {
+        return shortStoryStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
-    public StoryChapterDTO toDto(StoryChapter entity) {
-        return storyChapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    public ShortStoryDTO toDto(ShortStory entity) {
+        return shortStoryStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ***************** */

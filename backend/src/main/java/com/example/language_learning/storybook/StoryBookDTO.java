@@ -1,6 +1,6 @@
 package com.example.language_learning.storybook;
 
-import com.example.language_learning.storybook.chapter.StoryChapterDTO;
+import com.example.language_learning.storybook.shortstory.ShortStoryDTO;
 import lombok.Builder;
 
 import java.util.List;
@@ -11,6 +11,5 @@ public record StoryBookDTO(
     String title,
     String difficulty,
     String language,
-    String genre,
-    List<StoryChapterDTO> storyChapters
+    List<ShortStoryDTO> shortStories
 ) {}
