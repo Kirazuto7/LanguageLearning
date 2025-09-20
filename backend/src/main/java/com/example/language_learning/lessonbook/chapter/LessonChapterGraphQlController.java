@@ -2,8 +2,8 @@ package com.example.language_learning.lessonbook.chapter;
 
 import com.example.language_learning.shared.dtos.progress.ProgressUpdateDTO;
 import com.example.language_learning.user.User;
-import com.example.language_learning.shared.requests.ChapterGenerationRequest;
-import com.example.language_learning.shared.responses.GenerationResponse;
+import com.example.language_learning.lessonbook.requests.ChapterGenerationRequest;
+import com.example.language_learning.lessonbook.responses.GenerationResponse;
 import com.example.language_learning.shared.services.ProgressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
 package com.example.language_learning.lessonbook.chapter.lesson;
 
 import com.example.language_learning.user.User;
-import com.example.language_learning.shared.requests.PracticeLessonCheckRequest;
-import com.example.language_learning.shared.responses.PracticeLessonCheckResponse;
+import com.example.language_learning.lessonbook.chapter.lesson.requests.PracticeLessonCheckRequest;
+import com.example.language_learning.lessonbook.chapter.lesson.responses.PracticeLessonCheckResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;

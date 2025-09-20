@@ -1,7 +1,7 @@
 package com.example.language_learning.user;
 
 import com.example.language_learning.shared.mapper.DtoMapper;
-import com.example.language_learning.shared.requests.CreateUserRequest;
+import com.example.language_learning.user.requests.CreateUserRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;
 import lombok.RequiredArgsConstructor;

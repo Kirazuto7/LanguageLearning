@@ -2,7 +2,7 @@ package com.example.language_learning.lessonbook;
 
 import com.example.language_learning.user.User;
 import com.example.language_learning.shared.mapper.DtoMapper;
-import com.example.language_learning.shared.requests.LessonBookRequest;
+import com.example.language_learning.lessonbook.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

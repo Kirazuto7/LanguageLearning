@@ -1,4 +1,4 @@
-package com.example.language_learning.shared.requests;
+package com.example.language_learning.lessonbook.chapter.lesson.requests;
 
 public record PracticeLessonCheckRequest(
     long questionId,

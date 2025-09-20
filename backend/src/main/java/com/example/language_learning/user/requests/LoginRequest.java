@@ -1,4 +1,4 @@
-package com.example.language_learning.shared.requests;
+package com.example.language_learning.user.requests;
 
 import jakarta.validation.constraints.NotNull;
 

@@ -38,7 +38,8 @@ type StoryParagraph {
 # --- Inputs & Responses for Mutations ---
 
 input ShortStoryGenerationRequestInput {
-    storyBookId: ID!
+    language: String!
+    difficulty: String!
     topic: String
     genre: String
 }

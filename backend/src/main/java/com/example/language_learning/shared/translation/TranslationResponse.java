@@ -1,4 +1,4 @@
-package com.example.language_learning.shared.responses;
+package com.example.language_learning.shared.translation;
 
 import lombok.Builder;
 

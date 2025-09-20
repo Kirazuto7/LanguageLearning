@@ -1,8 +1,6 @@
 package com.example.language_learning.shared.translation;
 
 import com.example.language_learning.user.User;
-import com.example.language_learning.shared.requests.TranslationRequest;
-import com.example.language_learning.shared.responses.TranslationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
