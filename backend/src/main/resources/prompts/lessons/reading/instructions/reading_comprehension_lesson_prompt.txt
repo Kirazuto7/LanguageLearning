@@ -17,7 +17,7 @@ The content MUST be about the `{topic}`.
 4.  Create 3-4 multiple-choice questions that test comprehension of the story.
 5.  The `title` MUST be in English.
 6.  The `questionText`, `answer`, and all `answerChoices` MUST be in the native `{language}`.
-7.  For each question, the `answer` must be directly supported by the text in the story.
-8.  The `answerChoices` for each question must include the correct answer and 2-3 plausible but incorrect distractors.
+7.  For each lessonQuestion, the `answer` must be directly supported by the text in the story.
+8.  The `answerChoices` for each lessonQuestion must include the correct answer and 2-3 plausible but incorrect distractors.
 9.  CRITICAL: The string value in the `answer` field MUST be an exact, word-for-word, case-sensitive copy of one of the strings from its corresponding `answerChoices` array. Do not summarize or rephrase the answer.
 10. All content must be appropriate for a `{difficulty}` learner.

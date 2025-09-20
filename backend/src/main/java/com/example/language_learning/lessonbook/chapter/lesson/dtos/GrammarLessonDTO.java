@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.dtos;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.dtos.SentenceDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentenceDTO;
 import com.example.language_learning.shared.enums.LessonType;
 import lombok.Builder;
 
@@ -12,7 +12,7 @@ public record GrammarLessonDTO(
         String title,
         String grammarConcept,
         String explanation,
-        List<SentenceDTO> exampleSentences
+        List<LessonSentenceDTO> exampleSentences
 ) implements LessonDTO {
     @Override
     public LessonType type() {

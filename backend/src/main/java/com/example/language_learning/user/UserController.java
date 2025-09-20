@@ -1,8 +1,5 @@
 package com.example.language_learning.user;
 
-import com.example.language_learning.user.dtos.SettingsDTO;
-import com.example.language_learning.user.dtos.UserDTO;
-import com.example.language_learning.user.data.User;
 import com.example.language_learning.shared.requests.CreateUserRequest;
 import com.example.language_learning.shared.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;

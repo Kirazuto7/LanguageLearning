@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson;
 
-import com.example.language_learning.user.data.User;
+import com.example.language_learning.user.User;
 import com.example.language_learning.shared.requests.PracticeLessonCheckRequest;
 import com.example.language_learning.shared.responses.PracticeLessonCheckResponse;
 import lombok.RequiredArgsConstructor;

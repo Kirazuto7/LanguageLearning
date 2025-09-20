@@ -1,0 +1,40 @@
+type StoryBook implements Book {
+    id: ID!
+    title: String!
+    difficulty: String!
+    language: String!
+    genre: String
+    storyChapters: [StoryChapter!]!
+}
+
+type StoryChapter implements Chapter {
+    id: ID!
+    chapterNumber: Int!
+    title: String!
+    nativeTitle: String!
+    storyPages: [StoryPage!]!
+}
+
+type StoryContentPage implements Page {
+    id: ID!
+    pageNumber: Int!
+    paragraphs: [StoryParagraph!]!
+}
+
+type StoryVocabularyPage implements Page {
+    id: ID!
+    pageNumber: Int!
+    vocabulary: [Word!]!
+}
+
+union StoryPage = StoryContentPage | StoryVocabularyPage
+
+type StoryParagraph {
+    id: ID!
+    paragraphNumber: Int!
+    content: String!
+}
+
+extend type Query {
+    getStoryBook(id: ID!): StoryBook
+}

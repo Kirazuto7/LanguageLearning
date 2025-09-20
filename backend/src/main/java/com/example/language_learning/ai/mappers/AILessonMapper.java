@@ -1,10 +1,10 @@
 package com.example.language_learning.ai.mappers;
 
-import com.example.language_learning.ai.dtos.*;
-import com.example.language_learning.lessonbook.chapter.dtos.ChapterMetadataDTO;
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.dtos.ConjugationExampleDTO;
-import com.example.language_learning.lessonbook.chapter.lesson.page.question.dtos.QuestionDTO;
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.dtos.SentenceDTO;
+import com.example.language_learning.ai.dtos.lessonbook.*;
+import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExampleDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentenceDTO;
 import com.example.language_learning.shared.enums.QuestionType;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
 import com.example.language_learning.shared.services.FuriganaService;
@@ -55,7 +55,7 @@ public class AILessonMapper {
                             String text = "japanese".equalsIgnoreCase(language)
                                     ? furiganaService.addFurigana(aiSentence.text())
                                     : aiSentence.text();
-                            return SentenceDTO.builder()
+                            return LessonSentenceDTO.builder()
                                     .text(text)
                                     .translation(sanitizer.sanitizeEnglishSentence(aiSentence.translation()))
                                     .build();
@@ -75,14 +75,14 @@ public class AILessonMapper {
                                 String infinitive = furiganaService.addFurigana(aiConjugationExample.infinitive());
                                 String conjugatedForm = furiganaService.addFurigana(aiConjugationExample.conjugatedForm());
                                 String exampleSentence = furiganaService.addFurigana(aiConjugationExample.exampleSentence());
-                                return ConjugationExampleDTO.builder()
+                                return LessonConjugationExampleDTO.builder()
                                         .conjugatedForm(conjugatedForm)
                                         .infinitive(infinitive)
                                         .exampleSentence(exampleSentence)
                                         .sentenceTranslation(sanitizer.sanitizeEnglishSentence(aiConjugationExample.sentenceTranslation()))
                                         .build();
                             }
-                            return ConjugationExampleDTO.builder()
+                            return LessonConjugationExampleDTO.builder()
                                     .conjugatedForm(aiConjugationExample.conjugatedForm())
                                     .infinitive(aiConjugationExample.infinitive())
                                     .exampleSentence(aiConjugationExample.exampleSentence())
@@ -102,7 +102,7 @@ public class AILessonMapper {
                             String questionText = "japanese".equalsIgnoreCase(language)
                                     ? furiganaService.addFurigana(aiQuestion.questionText())
                                     : aiQuestion.questionText();
-                            return QuestionDTO.builder()
+                            return LessonQuestionDTO.builder()
                                     .questionText(questionText)
                                     .questionType(QuestionType.FREE_FORM.name())
                                     .answer(null)
@@ -138,7 +138,7 @@ public class AILessonMapper {
                                 answerChoices = aiQuestion.answerChoices() != null ? aiQuestion.answerChoices() : Collections.emptyList();
                             }
 
-                            return QuestionDTO.builder()
+                            return LessonQuestionDTO.builder()
                                     .questionText(questionText)
                                     .questionType(QuestionType.MULTIPLE_CHOICE.name())
                                     .answer(answer)

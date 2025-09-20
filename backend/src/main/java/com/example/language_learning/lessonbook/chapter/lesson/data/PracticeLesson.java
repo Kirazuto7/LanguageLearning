@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.data;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.question.data.Question;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestion;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,10 +23,10 @@ public class PracticeLesson extends Lesson {
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("id ASC")
     @Builder.Default
-    private List<Question> questions = new ArrayList<>();
+    private List<LessonQuestion> lessonQuestions = new ArrayList<>();
 
-    public void addQuestion(Question question) {
-        this.questions.add(question);
-        question.setLesson(this);
+    public void addQuestion(LessonQuestion lessonQuestion) {
+        this.lessonQuestions.add(lessonQuestion);
+        lessonQuestion.setLesson(this);
     }
 }

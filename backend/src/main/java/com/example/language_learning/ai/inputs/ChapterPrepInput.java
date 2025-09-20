@@ -1,6 +1,6 @@
 package com.example.language_learning.ai.inputs;
 
-import com.example.language_learning.user.data.User;
+import com.example.language_learning.user.User;
 import com.example.language_learning.shared.requests.ChapterGenerationRequest;
 
 /**

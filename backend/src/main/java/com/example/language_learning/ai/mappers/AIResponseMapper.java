@@ -1,7 +1,7 @@
 package com.example.language_learning.ai.mappers;
 
-import com.example.language_learning.ai.dtos.AIProofreadResponse;
-import com.example.language_learning.ai.dtos.AITranslationResponse;
+import com.example.language_learning.ai.dtos.proofread.AIProofreadResponse;
+import com.example.language_learning.ai.dtos.translation.AITranslationResponse;
 import com.example.language_learning.shared.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.shared.responses.TranslationResponse;
 import org.springframework.stereotype.Component;

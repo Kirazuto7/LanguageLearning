@@ -13,7 +13,7 @@ const LoginPage = () => {
     const [showRegister, setShowRegister] = useState<boolean>(false);
 
     // After a successful login/registration, the user object in the context will be populated.
-    // This effect will then trigger, redirecting the user to the home page.
+    // This effect will then trigger, redirecting the user to the home lessonPage.
     useEffect(() => {
         if (user) navigate('/home');
     }, [user, navigate]);
@@ -22,7 +22,7 @@ const LoginPage = () => {
     const showLoginForm = () => setShowRegister(false);
 
     return(
-        <Container fluid id={styles['login-page-container']}>
+        <Container fluid id={styles['login-lessonPage-container']}>
             {showRegister ? <Register onShowLogin={showLoginForm} /> : <Login onShowRegister={showRegisterForm} />}
         </Container>
     )

@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.dtos;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.word.dtos.WordDTO;
+import com.example.language_learning.shared.word.dtos.WordDTO;
 import com.example.language_learning.shared.enums.LessonType;
 import lombok.Builder;
 

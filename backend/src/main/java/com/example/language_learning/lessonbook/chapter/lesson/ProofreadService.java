@@ -3,8 +3,8 @@ package com.example.language_learning.lessonbook.chapter.lesson;
 import com.example.language_learning.ai.AIEngine;
 import com.example.language_learning.ai.components.AIRequest;
 import com.example.language_learning.ai.enums.PromptType;
-import com.example.language_learning.lessonbook.chapter.lesson.page.question.data.QuestionRepository;
-import com.example.language_learning.user.data.User;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionRepository;
+import com.example.language_learning.user.User;
 import com.example.language_learning.shared.responses.PracticeLessonCheckResponse;
 import com.example.language_learning.shared.requests.PracticeLessonCheckRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +16,13 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 public class ProofreadService {
 
-    private final QuestionRepository questionRepository;
+    private final LessonQuestionRepository lessonQuestionRepository;
     private final AIEngine aiEngine;
 
     public Mono<PracticeLessonCheckResponse> checkSentence(PracticeLessonCheckRequest request, User user) {
 
         return Mono.fromCallable(() ->
-            questionRepository.findByIdAndUser(request.questionId(), user)
+            lessonQuestionRepository.findByIdAndUser(request.questionId(), user)
                 .orElseThrow(() -> new SecurityException("Question not found or does not belong to the user."))
                 .getQuestionText()
             )

@@ -1,6 +1,6 @@
 package com.example.language_learning.shared.dtos.progress;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.dtos.PageDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +11,7 @@ public record ProgressUpdateDTO(String taskId, int progress, String message, Pro
         return new ProgressUpdateDTO(taskId, progress, message, null, null, false);
     }
 
-    public static ProgressUpdateDTO forData(String taskId, int progress, String message, PageDTO data) {
+    public static ProgressUpdateDTO forData(String taskId, int progress, String message, LessonPageDTO data) {
         return new ProgressUpdateDTO(taskId, progress, message, data, null, false);
     }
 

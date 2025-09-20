@@ -1,7 +1,7 @@
 package com.example.language_learning.ai.mappers;
 
 import com.example.language_learning.ai.dtos.details.*;
-import com.example.language_learning.lessonbook.chapter.lesson.page.word.dtos.*;
+import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.shared.services.FuriganaService;
 import com.example.language_learning.shared.utils.AIResponseSanitizer;
 import lombok.RequiredArgsConstructor;

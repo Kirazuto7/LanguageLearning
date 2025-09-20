@@ -1,5 +1,3 @@
-scalar JSON
-
 type KoreanWordDetails {
     hangul: String!
     hanja: String
@@ -58,4 +56,8 @@ type Word {
     englishTranslation: String!
     language: String!
     details: WordDetails!
+}
+
+extend type Query {
+    getWord(id: ID!): Word
 }

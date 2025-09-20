@@ -16,33 +16,119 @@ export interface SettingsDTO {
     autoSpeakEnabled: boolean;
 }
 
-export interface LessonBookDTO {
+// --- Book Interfaces ---
+
+export interface BookDTO {
     id: string;
-    bookTitle: string;
+    title: string;
     difficulty: string;
     language: string;
-    chapters: ChapterDTO[];
 }
+
+export interface LessonBookDTO extends BookDTO {
+    lessonChapters: LessonChapterDTO[];
+}
+
+export interface StoryBookDTO extends BookDTO {
+    genre?: string;
+    storyChapters: StoryChapterDTO[];
+}
+
+// --- Chapter Interfaces ---
 
 export interface ChapterDTO {
     id: string;
+    chapterNumber: number;
     title: string;
     nativeTitle: string;
-    chapterNumber: number;
-    pages: PageDTO[];
 }
+
+export interface LessonChapterDTO extends ChapterDTO {
+    lessonPages: LessonPageDTO[];
+}
+
+export interface StoryChapterDTO extends ChapterDTO {
+    storyPages: StoryPageDTO[];
+}
+
+// --- Page Interfaces ---
 
 export interface PageDTO {
     id: string;
     pageNumber: number;
+}
+
+export interface LessonPageDTO extends PageDTO {
     lesson: AnyLessonDTO;
 }
+
+export interface StoryContentPageDTO extends PageDTO {
+    __typename: 'StoryContentPage';
+    paragraphs: StoryParagraphDTO[];
+}
+
+export interface StoryVocabularyPageDTO extends PageDTO {
+    __typename: 'StoryVocabularyPage';
+    vocabulary: WordDTO[];
+}
+
+export type StoryPageDTO = StoryContentPageDTO | StoryVocabularyPageDTO;
+
+// --- Story-Specific Interfaces ---
+
+export interface StoryParagraphDTO {
+    id: string;
+    paragraphNumber: number;
+    content: string;
+}
+
+// --- Lesson-Specific Interfaces ---
 
 export interface LessonDTO {
     id: string;
     title: string;
     type: 'VOCABULARY' | 'GRAMMAR' | 'CONJUGATION' | 'PRACTICE' | 'READING_COMPREHENSION';
 }
+
+export interface VocabularyLessonDTO extends LessonDTO {
+    __typename: 'VocabularyLesson';
+    type: 'VOCABULARY';
+    vocabularies: WordDTO[];
+}
+
+export interface GrammarLessonDTO extends LessonDTO {
+    __typename: 'GrammarLesson';
+    type: 'GRAMMAR';
+    grammarConcept: string;
+    explanation: string;
+    exampleSentences: SentenceDTO[];
+}
+
+export interface ConjugationLessonDTO extends LessonDTO {
+    __typename: 'ConjugationLesson';
+    type: 'CONJUGATION';
+    conjugationRuleName: string;
+    explanation: string;
+    conjugatedWords: ConjugationExampleDTO[];
+}
+
+export interface PracticeLessonDTO extends LessonDTO {
+    __typename: 'PracticeLesson';
+    type: 'PRACTICE';
+    instructions: string;
+    questions: QuestionDTO[];
+}
+
+export interface ReadingComprehensionLessonDTO extends LessonDTO {
+    __typename: 'ReadingComprehensionLesson';
+    type: 'READING_COMPREHENSION';
+    story: string;
+    questions: QuestionDTO[];
+}
+
+export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | ConjugationLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
+
+// --- Shared Component Interfaces ---
 
 export interface JapaneseWordDetailsDTO {
     __typename: 'JapaneseWordDetails';
@@ -126,31 +212,12 @@ export interface SentenceDTO {
     translation: string;
 }
 
-export interface VocabularyLessonDTO extends LessonDTO {
-    type: 'VOCABULARY';
-    vocabularies: WordDTO[];
-}
-
-export interface GrammarLessonDTO extends LessonDTO {
-    type: 'GRAMMAR';
-    grammarConcept: string;
-    explanation: string;
-    exampleSentences: SentenceDTO[];
-}
-
 export interface QuestionDTO {
     id: string;
     questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;
     answerChoices?: string[];
     answer: string;
-}
-
-export interface ConjugationLessonDTO extends LessonDTO {
-    type: 'CONJUGATION';
-    conjugationRuleName: string;
-    explanation: string;
-    conjugatedWords: ConjugationExampleDTO[];
 }
 
 export interface ConjugationExampleDTO {
@@ -161,19 +228,7 @@ export interface ConjugationExampleDTO {
     sentenceTranslation: string;
 }
 
-export interface PracticeLessonDTO extends LessonDTO {
-    type: 'PRACTICE';
-    instructions: string;
-    questions: QuestionDTO[];
-}
-
-export interface ReadingComprehensionLessonDTO extends LessonDTO {
-    type: 'READING_COMPREHENSION';
-    story: string;
-    questions: QuestionDTO[];
-}
-
-export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | ConjugationLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
+// --- API Request/Response Interfaces ---
 
 export interface CreateUserRequest {
     username: string;
@@ -216,10 +271,16 @@ export interface PracticeLessonCheckResponse {
     feedback: string;
 }
 
-export type ProgressDataDTO = PageDTO;
+// --- Progress & Websocket Interfaces ---
 
-export function isPageDTO(data: any): boolean {
-    return data && typeof data.pageNumber === 'number' && data.lesson !== undefined;
+export type ProgressDataDTO = LessonPageDTO | StoryPageDTO;
+
+export function isLessonPageDTO(data: any): data is LessonPageDTO {
+    return data && (data as LessonPageDTO).lesson !== undefined;
+}
+
+export function isStoryPageDTO(data: any): data is StoryPageDTO {
+    return data && ((data as StoryContentPageDTO).paragraphs !== undefined || (data as StoryVocabularyPageDTO).vocabulary !== undefined);
 }
 
 export interface ProgressUpdateDTO {

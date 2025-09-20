@@ -1,6 +1,6 @@
 package com.example.language_learning.ai.states;
 
-import com.example.language_learning.lessonbook.chapter.dtos.ChapterMetadataDTO;
+import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.VocabularyLessonDTO;
 import com.example.language_learning.shared.utils.StateMachine;

@@ -110,9 +110,9 @@ export const lessonFragment = gql`
 `;
 
 
-export const pageFragment = gql`
+export const lessonPageFragment = gql`
     ${lessonFragment}
-    fragment PageFragment on Page {
+    fragment LessonPageFragment on LessonPage {
         id
         pageNumber
         lesson {
@@ -121,28 +121,28 @@ export const pageFragment = gql`
     }
 `;
 
-export const chapterFragment = gql`
-    ${pageFragment}
-    fragment ChapterFragment on Chapter {
+export const lessonChapterFragment = gql`
+    ${lessonPageFragment}
+    fragment LessonChapterFragment on LessonChapter {
         id
         chapterNumber
         title
         nativeTitle
-        pages {
-            ...PageFragment
+        lessonPages {
+            ...LessonPageFragment
         }
     }
 `;
 
 export const lessonBookFragment = gql`
-    ${chapterFragment}
+    ${lessonChapterFragment}
     fragment LessonBookFragment on LessonBook {
         id
-        bookTitle
+        title
         difficulty
         language
-        chapters {
-            ...ChapterFragment
+        lessonChapters {
+            ...LessonChapterFragment
         }
     }
 `;

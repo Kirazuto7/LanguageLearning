@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.data;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.data.ConjugationExample;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExample;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -24,9 +24,9 @@ public class ConjugationLesson extends Lesson {
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("id ASC")
     @Builder.Default
-    private List<ConjugationExample> conjugatedWords = new ArrayList<>();
+    private List<LessonConjugationExample> conjugatedWords = new ArrayList<>();
 
-    public void addConjugationExample(ConjugationExample example) {
+    public void addConjugationExample(LessonConjugationExample example) {
         this.conjugatedWords.add(example);
         example.setLesson(this);
     }

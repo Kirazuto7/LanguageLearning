@@ -1,8 +1,10 @@
 package com.example.language_learning.ai;
 
 import com.example.language_learning.ai.components.AIResponseMapping;
-import com.example.language_learning.ai.dtos.*;
 import com.example.language_learning.ai.config.AIConfig;
+import com.example.language_learning.ai.dtos.lessonbook.*;
+import com.example.language_learning.ai.dtos.proofread.AIProofreadResponse;
+import com.example.language_learning.ai.dtos.translation.AITranslationResponse;
 import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.ai.mappers.AILessonMapper;
 import com.example.language_learning.ai.mappers.AIResponseMapper;

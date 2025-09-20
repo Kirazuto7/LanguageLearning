@@ -1,6 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.data;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.data.Page;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPage;
 import com.example.language_learning.shared.enums.LessonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,5 +23,5 @@ public abstract class Lesson {
     private String title;
 
     @OneToOne(mappedBy = "lesson")
-    private Page page;
+    private LessonPage lessonPage;
 }

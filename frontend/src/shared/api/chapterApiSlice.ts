@@ -1,9 +1,9 @@
 import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
-import {ChapterDTO, ChapterGenerationRequest, isPageDTO, ProgressUpdateDTO} from "../types/dto";
+import {LessonChapterDTO, ChapterGenerationRequest, isLessonPageDTO, ProgressUpdateDTO} from "../types/dto";
 import { lessonBookApiSlice } from "./lessonBookApiSlice";
 import {logToServer, toString} from "../utils/loggingService";
-import { chapterFragment } from "../../features/lessonBook/gql/fragments";
+import { lessonChapterFragment } from "../../features/lessonBook/gql/fragments";
 import { startSubscription } from "../../app/services/subscriptionManager";
 import { chapterGenerationProgressQuery } from "../../features/chapterGeneration/gql/queries";
 import { clearProgress, updateProgress } from "../../widgets/progressBar/progressSlice";
@@ -12,55 +12,55 @@ import { store } from "../../app/store";
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({
         // Query to fetch a Chapter by id
-        getChapter: builder.query<ChapterDTO, string>({
+        getChapter: builder.query<LessonChapterDTO, string>({
             query:(id) => ({
                 body: gql`
-                    ${chapterFragment}
+                    ${lessonChapterFragment}
                     query GetChapter($id: ID!) {
                         getChapterById(id: $id) {
-                            ...ChapterFragment
+                            ...LessonChapterFragment
                         }
                     }
                 `,
                 variables: { id },
             }),
-            transformResponse: (response: { getChapterById: ChapterDTO }) => response.getChapterById,
+            transformResponse: (response: { getChapterById: LessonChapterDTO }) => response.getChapterById,
             providesTags: (result) => (result ? [{ type: 'Chapter', id: result.id }] : []),
         }),
 
         // Mutation to generate a new Chapter
-        generateChapter: builder.mutation<{ taskId: string; chapter: ChapterDTO }, ChapterGenerationRequest>({
+        generateChapter: builder.mutation<{ taskId: string; lessonChapter: LessonChapterDTO }, ChapterGenerationRequest>({
             query: ({ language, difficulty, topic }) => ({
                 body: gql`
                     mutation GenerateChapter($request: ChapterGenerationRequestInput!) {
                         generateChapter(request: $request) {
                             taskId
-                            chapter {
+                            lessonChapter {
                                 id
                                 chapterNumber
                                 title
                                 nativeTitle
-                                pages { id } # Initially empty
+                                lessonPages { id } # Initially empty
                             }
                         }
                     }
                `,
                 variables: { request: { language, difficulty, topic } },
             }),
-            transformResponse: (response: { generateChapter: { taskId: string; chapter: ChapterDTO } }) => response.generateChapter,
+            transformResponse: (response: { generateChapter: { taskId: string; lessonChapter: LessonChapterDTO } }) => response.generateChapter,
             async onQueryStarted({ language, difficulty }, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
-                    const { taskId, chapter: newChapter } = data;
+                    const { taskId, lessonChapter: newLessonChapter } = data;
 
-                    // 1. Adds the chapter shell to the lesson book
+                    // 1. Adds the lessonChapter shell to the lesson book
                     dispatch(
                         lessonBookApiSlice.util.updateQueryData('getLessonBook', { language, difficulty }, (draft) => {
-                            draft.chapters.push(newChapter);
+                            draft.lessonChapters.push(newLessonChapter);
                         })
                     );
 
-                    // 2. Start the subscription to get progress & page updates for the chapter
+                    // 2. Start the subscription to get progress & lessonPage updates for the lessonChapter
                     startSubscription<{ chapterGenerationProgress: ProgressUpdateDTO; }>(taskId, {
                         query: chapterGenerationProgressQuery,
                         variables: { taskId },
@@ -73,18 +73,18 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                             // Dispatch the raw progress update to the progress slice
                             store.dispatch(updateProgress(update));
 
-                            // If the update contains a new page, patch the main lesson book cache
-                            if (update.data && isPageDTO(update.data)) {
+                            // If the update contains a new lessonPage, patch the main lesson book cache
+                            if (update.data && isLessonPageDTO(update.data)) {
                                 const newPage = update.data;
                                 store.dispatch(
                                     lessonBookApiSlice.util.updateQueryData(
                                         "getLessonBook",
                                         { language, difficulty },
                                         (draft) => {
-                                            const chapter = draft.chapters.find((c) => c.id === newChapter.id);
-                                            if (chapter && !chapter.pages.some((p) => p.id === newPage.id)) {
-                                                chapter.pages.push(newPage);
-                                                chapter.pages.sort((a, b) => a.pageNumber - b.pageNumber);
+                                            const lessonChapter = draft.lessonChapters.find((c) => c.id === newLessonChapter.id);
+                                            if (lessonChapter && !lessonChapter.lessonPages.some((p) => p.id === newPage.id)) {
+                                                lessonChapter.lessonPages.push(newPage);
+                                                lessonChapter.lessonPages.sort((a, b) => a.pageNumber - b.pageNumber);
                                             }
                                         }
                                     )
@@ -102,7 +102,7 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                     });
                 }
                 catch (err) {
-                    logToServer('error', "Failed to start chapter generation:", { error: err });
+                    logToServer('error', "Failed to start lessonChapter generation:", { error: err });
                 }
             }
         }),

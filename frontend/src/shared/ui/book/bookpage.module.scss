@@ -1,6 +1,6 @@
 @use '../../assets/theme' as theme;
 
-.active-page {
+.active-lessonPage {
     width: 100%;
     height: 100%;
     background: #ffffff;
@@ -14,7 +14,7 @@
     }
 }
 
-.left-active-page {
+.left-active-lessonPage {
     border-radius: 0 4px 4px 0;
     border-right: none;
     
@@ -24,7 +24,7 @@
     box-shadow: 0 0 20px #ff69b4;
 }
 
-.right-active-page {
+.right-active-lessonPage {
     border-radius: 4px 0 0 4px;
     border-left: none;
     
@@ -34,7 +34,7 @@
     box-shadow: 0 0 20px #ff69b4;
 }
 
-.page-content {
+.lessonPage-content {
     padding: 40px;
     height: 100%;
     overflow-y: auto;
@@ -44,7 +44,7 @@
     color: #333;
 }
 
-.active-page::before {
+.active-lessonPage::before {
     content: '';
     position: absolute;
     top: 0;
@@ -62,7 +62,7 @@
     pointer-events: none;
 }
 
-.left-active-page::after {
+.left-active-lessonPage::after {
     content: '';
     position: absolute;
     top: 0;
@@ -73,42 +73,42 @@
     opacity: 0.6;
 }
 
-.page-content h1 {
+.lessonPage-content h1 {
     margin-bottom: 20px;
     color: #2c1810;
     text-align: center;
 }
 
-.page-content h2 {
+.lessonPage-content h2 {
     margin: 15px 0 10px 0;
     color: #4a2c1a;
 }
 
-.page-content p {
+.lessonPage-content p {
     margin-bottom: 15px;
     text-align: justify;
 }
 
-.page-content ul, .page-content ol {
+.lessonPage-content ul, .lessonPage-content ol {
     margin: 15px 0;
     padding-left: 25px;
 }
 
-.page-content li {
+.lessonPage-content li {
     margin-bottom: 5px;
 }
 
-.page-number {
+.lessonPage-number {
     position: absolute;
     bottom: 20px;
     color: #666;
 }
 
-.left-active-page .page-number {
+.left-active-lessonPage .lessonPage-number {
     left: 40px;
 }
 
-.right-active-page .page-number {
+.right-active-lessonPage .lessonPage-number {
     right: 40px;
 }
 
@@ -118,7 +118,7 @@
     margin: 0 0.5rem;
 }
 
-.toc-page-number {
+.toc-lessonPage-number {
     margin-left: auto;
     padding-left: 0.5rem;
     background-color: white;
