@@ -1,7 +1,7 @@
 package com.example.language_learning.storybook.shortstory.page;
 
-import com.example.language_learning.shared.word.dtos.WordDTO;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphDTO;
+import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItemDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 
@@ -15,5 +15,5 @@ public record StoryPageDTO(
     String imageUrl,
     int pageNumber,
     List<StoryParagraphDTO> paragraphs,
-    List<WordDTO> vocabulary
+    List<StoryVocabularyItemDTO> vocabulary
 ) {}

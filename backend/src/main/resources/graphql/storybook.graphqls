@@ -28,7 +28,7 @@ type StoryVocabularyPage implements Page {
     pageNumber: Int!
     englishSummary: String
     imageUrl: String
-    vocabulary: [Word!]!
+    vocabulary: [StoryVocabularyItem!]!
 }
 
 union StoryPage = StoryContentPage | StoryVocabularyPage
@@ -37,6 +37,12 @@ type StoryParagraph {
     id: ID!
     paragraphNumber: Int!
     content: String!
+}
+
+type StoryVocabularyItem {
+    id: ID!
+    word: String!
+    translation: String!
 }
 
 # --- Inputs & Responses for Mutations ---
