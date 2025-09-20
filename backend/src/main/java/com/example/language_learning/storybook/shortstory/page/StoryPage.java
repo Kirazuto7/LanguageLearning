@@ -22,6 +22,12 @@ import java.util.List;
 @AllArgsConstructor
 public class StoryPage extends BasePage {
 
+    @Column(columnDefinition = "TEXT")
+    private String englishSummary;
+
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "storyPage")
     @OrderBy("paragraphNumber ASC")
     @Builder.Default

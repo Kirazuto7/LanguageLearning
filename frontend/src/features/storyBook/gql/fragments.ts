@@ -71,6 +71,8 @@ export const storyPageFragment = gql`
         ... on StoryContentPage {
             id
             pageNumber
+            englishSummary
+            imageUrl
             paragraphs {
                 ...StoryParagraphFragment
             }
@@ -78,6 +80,8 @@ export const storyPageFragment = gql`
         ... on StoryVocabularyPage {
             id
             pageNumber
+            englishSummary
+            imageUrl
             vocabulary {
                 ...WordFragment
             }

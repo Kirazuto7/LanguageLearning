@@ -18,12 +18,16 @@ type ShortStory implements Chapter {
 type StoryContentPage implements Page {
     id: ID!
     pageNumber: Int!
+    englishSummary: String
+    imageUrl: String
     paragraphs: [StoryParagraph!]!
 }
 
 type StoryVocabularyPage implements Page {
     id: ID!
     pageNumber: Int!
+    englishSummary: String
+    imageUrl: String
     vocabulary: [Word!]!
 }
 

@@ -11,6 +11,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record StoryPageDTO(
     Long id,
+    String englishSummary,
+    String imageUrl,
     int pageNumber,
     List<StoryParagraphDTO> paragraphs,
     List<WordDTO> vocabulary
