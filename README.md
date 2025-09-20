@@ -115,27 +115,25 @@ docker-compose -f docker-compose.cpu.yml up --build
             *   `ai/` - AI response DTOs and generation logic.
             *   `config/` - Spring, GraphQL, State Machine, and Pipeline configurations.
             *   `lessonbook/` - Feature module for structured lessons.
-                *   `chapter/`
-                    *   `lesson/`
-            *   `mappers/` - Shared MapStruct mappers.
             *   `security/` - Spring Security configuration, JWT service.
             *   `shared/` - Code shared across multiple features (base entities, shared DTOs, etc.).
             *   `storybook/` - Feature module for narrative stories.
-                *   `chapter/`
             *   `user/` - User and settings management.
-            *   `utils/` - The custom StateMachine and SyncWorkflow frameworks.
         *   `dockerfiles/` - Dockerfiles for the backend and AI services.
     *   `docs/`
         *   `images/` - Contains diagrams and other visual assets.
     *   `frontend/`
         *   `src/`
-            *   `app/` - Redux store setup.
+            *   `app/` - Redux store setup and core components.
             *   `features/` - Feature-specific components and logic (`lessonBook`, `storybook`, etc.).
+            *   `hooks/` - Global, reusable React hooks.
             *   `pages/` - Top-level page components.
-            *   `shared/`
+            *   `shared/` - Shared code used across the frontend application.
                 *   `api/` - RTK Query API slices.
+                *   `components/` - Globally shared, simple UI components.
                 *   `types/` - Core TypeScript type definitions (`dto.ts`).
-                *   `ui/` - Shared UI elements (buttons, inputs, etc.).
+                *   `ui/` - More complex, shared UI components.
+            *   `widgets/` - Composite components made of smaller features/components.
     *   `docker-compose.gpu.yml` - Docker Compose configuration for GPU.
     *   `docker-compose.cpu.yml` - Docker Compose configuration for CPU.
-    *   `.env.example` - Template for environment variables.
+    *   `.env.example` - Template for environment variables
