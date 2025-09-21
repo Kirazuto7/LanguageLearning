@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface LessonChapterRepository extends JpaRepository<LessonChapter, Long> {
     Optional<LessonChapter> findByIdAndLessonBook_User(Long id, User user);
 
-    @Query("SELECT c FROM Chapter c JOIN FETCH c.pages WHERE c.id = :id AND c.lessonBook.user = :user")
+    @Query("SELECT c FROM LessonChapter c JOIN FETCH c.lessonPages WHERE c.id = :id AND c.lessonBook.user = :user")
     Optional<LessonChapter> findByIdAndUserWithPages(@Param("id") Long id, @Param("user") User user);
 
-    @Query("SELECT c FROM Chapter c LEFT JOIN FETCH c.pages WHERE c.id = :id")
+    @Query("SELECT c FROM LessonChapter c LEFT JOIN FETCH c.lessonPages WHERE c.id = :id")
     Optional<LessonChapter> findByIdWithPages(@Param("id") Long id);
 }
 

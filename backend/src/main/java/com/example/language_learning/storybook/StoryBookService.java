@@ -9,12 +9,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class StoryBookService {
+
     private final StoryBookRepository storyBookRepository;
     private final DtoMapper dtoMapper;
+
+    private static final List<String> TITLE_FORMATS = List.of(
+            "A Collection of %s Stories",
+            "A Treasury of %s Tales",
+            "The %s Storybook Anthology",
+            "The Library of %s Adventures",
+            "A Journey Through %s Stories",
+            "The %s Explorer's Storybook",
+            "Voyages in %s",
+            "Realms of %s: A Story Collection",
+            "Whispers of %s: Tales and Fables",
+            "A Whole New World of %s Stories"
+    );
+    private final Random random = new Random();
 
     @Transactional
     public StoryBookDTO findOrCreateBookDTO(StoryBookRequest request, User user) {
@@ -42,8 +58,11 @@ public class StoryBookService {
 
     @Transactional
     public StoryBook createStoryBook(String language, String difficulty, User user) {
+        String randomFormat = TITLE_FORMATS.get(random.nextInt(TITLE_FORMATS.size()));
+        String newTitle = String.format(randomFormat, language);
+
         StoryBook newBook = StoryBook.builder()
-                .title(String.format("%s Storybook for %s Learners", language, difficulty))
+                .title(newTitle)
                 .language(language)
                 .difficulty(difficulty)
                 .user(user)

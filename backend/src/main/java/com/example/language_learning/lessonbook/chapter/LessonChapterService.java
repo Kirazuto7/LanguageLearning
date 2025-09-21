@@ -37,7 +37,7 @@ public class LessonChapterService {
                 .title(title)
                 .nativeTitle(nativeTitle)
                 .build();
-        lessonBook.addChapter(lessonChapter);
+        lessonBook.addLessonChapter(lessonChapter);
         return lessonChapterRepository.save(lessonChapter);
     }
 

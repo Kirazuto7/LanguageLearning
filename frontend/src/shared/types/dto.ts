@@ -257,6 +257,11 @@ export interface LessonBookRequest {
     difficulty: string;
 }
 
+export interface StoryBookRequest {
+    language: string;
+    difficulty: string;
+}
+
 export interface ChapterGenerationRequest {
     language: string;
     difficulty: string;
