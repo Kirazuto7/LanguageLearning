@@ -62,7 +62,7 @@ type StoryGenerationResponse {
 # --- Queries, Mutations, & Subscriptions ---
 
 extend type Query {
-    getStoryBook(id: ID!): StoryBook
+    getStoryBook(language: String!, difficulty: String!): StoryBook
 }
 
 extend type Mutation {

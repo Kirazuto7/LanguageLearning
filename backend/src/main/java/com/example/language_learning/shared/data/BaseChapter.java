@@ -1,25 +1,26 @@
 package com.example.language_learning.shared.data;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @MappedSuperclass
-@Data
 @SuperBuilder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class BaseChapter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
-    private int chapterNumber;
-    private String title;
-    private String nativeTitle;
+    protected int chapterNumber;
+
+    @Column(nullable = false)
+    protected String title;
+
+    @Column(nullable = false)
+    protected String nativeTitle;
 }
