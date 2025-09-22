@@ -33,7 +33,10 @@ public class StoryPrepActions {
                 .mapToInt(ShortStory::getChapterNumber)
                 .max()
                 .orElse(0) + 1;
-        ShortStory shortStory = shortStoryService.createShortStory(output.getStoryBook(), nextStoryNumber, "Generating...", "Generating...", input.request().topic(), input.request().genre());
+
+        String topic = input.request().topic() != null ? input.request().topic() : "Surprise Me";
+
+        ShortStory shortStory = shortStoryService.createShortStory(output.getStoryBook(), nextStoryNumber, "Generating...", "Generating...", topic, input.request().genre());
         output.setShortStory(shortStory);
     }
 

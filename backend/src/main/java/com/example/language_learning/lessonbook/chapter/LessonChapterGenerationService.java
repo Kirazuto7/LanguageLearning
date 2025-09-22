@@ -62,7 +62,7 @@ public class LessonChapterGenerationService {
         // Asynchronously start the page(s) generation for the chapter generation subscription
         Runnable chapterGenerationJob = () -> {
             try {
-                ChapterGenerationContext context = new ChapterGenerationContext(request, taskId, chapterId,new AtomicInteger(startingPageNumber));
+                ChapterGenerationContext context = new ChapterGenerationContext(request, taskId, chapterId, new AtomicInteger(startingPageNumber));
 
                 var sm = stateMachineFactory.createInstance();
 

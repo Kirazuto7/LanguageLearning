@@ -31,14 +31,14 @@ A single **Paragraph** is defined as a block of text containing **3 to 5 sentenc
 
 The end-to-end generation of a new `ShortStory` follows a multi-step, multi-prompt process.
 
-1.  **Initiation:** The user, viewing a specific `Storybook`, provides either a **Topic** or selects a **Genre**.
+1.  **Initiation:** The user, viewing a specific `Storybook`, provides a **Genre** and an optional **Topic**.
 2.  **Title Generation (1 Prompt):** The backend sends a prompt to the LLM to generate a `title` and `nativeTitle`.
 3.  **Page & Vocabulary Generation (Multiple Prompts):** The backend generates the `content`, `englishSummary`, and `vocabulary` for a batch of pages at a time.
-4.  **(Future) Image Generation:** For each content page generated, the backend will:
-    a.  Send the `englishSummary` to a dedicated Image Generation model.
-    b.  Receive the raw image data.
-    c.  Use the `ImageStorageService` to upload the image to the storage provider (MinIO in development).
-    d.  Receive the public URL of the uploaded image.
+4.  **Image Generation (Cost-Effective Strategy):** To balance visual appeal with API costs, images will be generated for **every other page, starting from page 2**.
+    a.  The generation process will happen in a batch after all story pages have been created.
+    b.  For each even-numbered page (2, 4, 6, etc.), a prompt will be constructed by combining the `englishSummary` of the **previous page** and the **current page**. This provides richer narrative context for the image AI.
+    c.  This combined summary is sent to the Image Generation model.
+    d.  The resulting image's URL is saved to the `imageUrl` field of the **current (even-numbered) page**. Odd-numbered pages will have a `null` `imageUrl`.
 5.  **Assembly:** The backend service assembles the `ShortStory`. It aggregates vocabulary (removing duplicates), saves the `imageUrl` to each `StoryPage`, and associates everything with the parent `Storybook` before saving to the database.
 
 ---

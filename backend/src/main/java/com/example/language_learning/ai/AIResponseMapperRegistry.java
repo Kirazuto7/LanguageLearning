@@ -44,11 +44,11 @@ public class AIResponseMapperRegistry {
         registerForVocabulary();
         register(PromptType.TRANSLATE, AITranslationResponse.class, (response, params) -> aiResponseMapper.toTranslationResponse(response));
         register(PromptType.PROOFREAD, AIProofreadResponse.class, (response, params) -> aiResponseMapper.toPracticeLessonCheckResponse(response));
-        register(PromptType.METADATA, AIChapterMetadataResponse.class, (response, params) -> aiLessonMapper.toChapterMetadataDTO(response, (String) params.get("topic")));
-        register(PromptType.GRAMMAR, AIGrammarLessonResponse.class, (response, params) -> aiLessonMapper.toGrammarLessonDTO(response, (String) params.get("language")));
-        register(PromptType.CONJUGATION, AIConjugationLessonResponse.class, (response, params) -> aiLessonMapper.toConjugationLessonDTO(response, (String) params.get("language")));
-        register(PromptType.PRACTICE, AIPracticeLessonResponse.class, (response, params) -> aiLessonMapper.toPracticeLessonDTO(response, (String) params.get("language")));
-        register(PromptType.READING_COMPREHENSION, AIReadingComprehensionLessonResponse.class, (response, params) -> aiLessonMapper.toReadingComprehensionLessonDTO(response, (String) params.get("language")));
+        register(PromptType.LESSON_METADATA, AIChapterMetadataResponse.class, (response, params) -> aiLessonMapper.toChapterMetadataDTO(response, (String) params.get("topic")));
+        register(PromptType.GRAMMAR_LESSON, AIGrammarLessonResponse.class, (response, params) -> aiLessonMapper.toGrammarLessonDTO(response, (String) params.get("language")));
+        register(PromptType.CONJUGATION_LESSON, AIConjugationLessonResponse.class, (response, params) -> aiLessonMapper.toConjugationLessonDTO(response, (String) params.get("language")));
+        register(PromptType.PRACTICE_LESSON, AIPracticeLessonResponse.class, (response, params) -> aiLessonMapper.toPracticeLessonDTO(response, (String) params.get("language")));
+        register(PromptType.READING_COMPREHENSION_LESSON, AIReadingComprehensionLessonResponse.class, (response, params) -> aiLessonMapper.toReadingComprehensionLessonDTO(response, (String) params.get("language")));
     }
 
     /**
@@ -78,7 +78,7 @@ public class AIResponseMapperRegistry {
         BiFunction<AIVocabularyLessonResponse<?>, Map<String, Object>, ?> mapper = (response, params) ->
             aiLessonMapper.toVocabularyLessonDTO(response, (String) params.get("language"));
 
-        mappings.put(PromptType.VOCABULARY, new AIResponseMapping<>(javaTypeProvider, mapper));
+        mappings.put(PromptType.VOCABULARY_LESSON, new AIResponseMapping<>(javaTypeProvider, mapper));
     }
 
     /**

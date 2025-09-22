@@ -56,7 +56,7 @@ public class AIConfig {
     private Resource getInstructionResource(Language lang, PromptType type) {
         String path;
         switch (type) {
-            case VOCABULARY:
+            case VOCABULARY_LESSON:
                 // Vocabulary instructions are unique per language
                 path = String.format("classpath:prompts/%s/instructions/%s_%s_prompt.txt",
                         type.getCategory(), lang.getInstructionGroup().getPathValue(), type.getFileName());
@@ -77,7 +77,7 @@ public class AIConfig {
                 // These types use a single, global schema with no prefix.
                 schemaGroupPath = "";
                 break;
-            case VOCABULARY:
+            case VOCABULARY_LESSON:
                 // Vocabulary schemas are unique to each language.
                 schemaGroupPath = lang.getVocabularySchema().getPathValue() + "_";
                 break;
