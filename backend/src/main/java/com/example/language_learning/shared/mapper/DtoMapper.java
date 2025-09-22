@@ -22,6 +22,9 @@ import com.example.language_learning.storybook.shortstory.page.StoryPageStructMa
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphDTO;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphStructMapper;
+import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
+import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItemDTO;
+import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItemStructMapper;
 import com.example.language_learning.user.*;
 import com.example.language_learning.shared.word.dtos.WordDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionDTO;
@@ -74,6 +77,7 @@ public class DtoMapper {
     private final ShortStoryStructMapper shortStoryStructMapper;
     private final StoryPageStructMapper storyPageStructMapper;
     private final StoryParagraphStructMapper storyParagraphStructMapper;
+    private final StoryVocabularyItemStructMapper storyVocabularyItemStructMapper;
 
     /* ***************** */
     /* ** Book Mapper ** */
@@ -157,6 +161,18 @@ public class DtoMapper {
 
     public StoryParagraphDTO toDto(StoryParagraph entity) {
         return storyParagraphStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+    }
+
+    /* ********************************* */
+    /* ** Story Vocabulary Item Mapper ** */
+    /* ********************************* */
+
+    public StoryVocabularyItem toEntity(StoryVocabularyItemDTO dto) {
+        return storyVocabularyItemStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+    }
+
+    public StoryVocabularyItemDTO toDto(StoryVocabularyItem entity) {
+        return storyVocabularyItemStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ******************* */

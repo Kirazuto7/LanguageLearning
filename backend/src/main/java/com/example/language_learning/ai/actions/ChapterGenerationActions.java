@@ -64,7 +64,7 @@ public class ChapterGenerationActions {
 
             AIRequest<ChapterMetadataDTO> aiRequest = AIRequest.builder()
                     .responseClass(ChapterMetadataDTO.class)
-                    .promptType(PromptType.METADATA)
+                    .promptType(PromptType.LESSON_METADATA)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())
@@ -94,7 +94,7 @@ public class ChapterGenerationActions {
 
             AIRequest<VocabularyLessonDTO> aiRequest = AIRequest.builder()
                     .responseClass(VocabularyLessonDTO.class)
-                    .promptType(PromptType.VOCABULARY)
+                    .promptType(PromptType.VOCABULARY_LESSON)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())
@@ -132,7 +132,7 @@ public class ChapterGenerationActions {
 
             AIRequest<GrammarLessonDTO> aiRequest = AIRequest.builder()
                     .responseClass(GrammarLessonDTO.class)
-                    .promptType(PromptType.GRAMMAR)
+                    .promptType(PromptType.GRAMMAR_LESSON)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())
@@ -164,7 +164,7 @@ public class ChapterGenerationActions {
 
             AIRequest<ConjugationLessonDTO> aiRequest = AIRequest.builder()
                     .responseClass(ConjugationLessonDTO.class)
-                    .promptType(PromptType.CONJUGATION)
+                    .promptType(PromptType.CONJUGATION_LESSON)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())
@@ -209,7 +209,7 @@ public class ChapterGenerationActions {
 
             AIRequest<PracticeLessonDTO> aiRequest = AIRequest.builder()
                     .responseClass(PracticeLessonDTO.class)
-                    .promptType(PromptType.PRACTICE)
+                    .promptType(PromptType.PRACTICE_LESSON)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())
@@ -252,7 +252,7 @@ public class ChapterGenerationActions {
 
             AIRequest<ReadingComprehensionLessonDTO> aiRequest = AIRequest.builder()
                     .responseClass(ReadingComprehensionLessonDTO.class)
-                    .promptType(PromptType.READING_COMPREHENSION)
+                    .promptType(PromptType.READING_COMPREHENSION_LESSON)
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())

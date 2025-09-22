@@ -2,6 +2,7 @@ package com.example.language_learning.shared.services;
 
 import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDTO;
 import com.example.language_learning.shared.dtos.progress.ProgressUpdateDTO;
+import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -34,6 +35,12 @@ public class  ProgressService {
     public void sendPageUpdate(String taskId, int progress, String message, LessonPageDTO page) {
         log.info("Progress Update for Task {}: {}% - {} (Data: {})", taskId, progress, message, page.lesson().type());
         ProgressUpdateDTO update = ProgressUpdateDTO.forData(taskId, progress, message, page);
+        send(taskId, update);
+    }
+
+    public void sendPageUpdate(String taskId, int progress, String message, StoryPageDTO storyPage) {
+        log.info("Progress Update for Task {}: {}% - {} (Data: {})", taskId, progress, message, storyPage);
+        ProgressUpdateDTO update = ProgressUpdateDTO.forData(taskId, progress, message, storyPage);
         send(taskId, update);
     }
 
