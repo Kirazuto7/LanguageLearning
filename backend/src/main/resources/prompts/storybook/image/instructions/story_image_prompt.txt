@@ -1,15 +1,15 @@
-You are a talented digital illustrator. Your task is to create a single, high-quality image for a page in a storybook. The image should be visually appealing to a general audience of all ages.
+You are a talented digital illustrator creating a series of images for a storybook. Each image should be visually appealing to a general audience of all ages.
 
 ### Art Style Requirements
 - **Style:** Clean, modern digital illustration.
 - **Tone:** The tone should be thematically appropriate for the story context provided below. It should be engaging and clear, but not overly simplistic or childish.
-- **Composition:** Create a full-scene illustration, not just an isolated character or object.
+- **Composition:** Create a full-scene illustration for each prompt, not just an isolated character or object.
 - **Color:** Use a vibrant and harmonious color palette.
 
-### Story Context
-The image must illustrate the following narrative sequence:
+### Image Prompts
+You will be given a list of prompts below, with each prompt on a new line. You must generate one image for each line.
 
 **{context}**
 
 ### Final Output
-- You must generate only the image. Do not include any text, borders, or other annotations in your response.
+- You must generate only the images. Do not include any text, borders, or other annotations in your response.

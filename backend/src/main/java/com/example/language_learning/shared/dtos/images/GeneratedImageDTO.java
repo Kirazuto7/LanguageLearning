@@ -1,7 +1,8 @@
 package com.example.language_learning.shared.dtos.images;
 
+import java.util.List;
+
 public record GeneratedImageDTO(
-    String url,
-    String originalPrompt,
-    String revisedPrompt
+    List<String> urls,
+    String originalPrompt
 ) {}

@@ -46,10 +46,13 @@ public class AIStoryMapper {
     }
 
     public GeneratedImageDTO toStoryImageDTO(AIImageResponse response, String originalPrompt) {
-        String temporaryUrl = response.data().getFirst().url();
-        String revisedPrompt = response.data().getFirst().revisedPrompt();
-        String uploadedUrl = imageService.saveImageFromUrl(temporaryUrl);
-        return new GeneratedImageDTO(uploadedUrl, originalPrompt, revisedPrompt);
+        if (response == null || response.images() == null || response.images().isEmpty()) {
+            throw new IllegalStateException("AI response for image generation is empty or invalid.");
+        }
+        List<String> permanentUrls = response.images().stream()
+                .map(imageService::saveImageFromBase64)
+                .toList();
+        return new GeneratedImageDTO(permanentUrls, originalPrompt);
     }
 
     private List<StoryPageDTO> toStoryPageDTOs(List<AIGeneratedPage> aiGeneratedPages) {

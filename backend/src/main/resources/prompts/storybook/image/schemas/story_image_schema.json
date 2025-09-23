@@ -1,34 +1,27 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "AIImageGenerationResponse",
-  "description": "A schema for the response from an AI image generation service.",
+  "title": "StableDiffusionImageResponse",
+  "description": "A schema for the response from the AUTOMATIC1111 Stable Diffusion API.",
   "type": "object",
   "properties": {
-    "created": {
-      "type": "integer",
-      "description": "The timestamp of when the image was created."
-    },
-    "data": {
+    "images": {
       "type": "array",
-      "description": "A list containing the generated image data.",
+      "description": "A list of Base64-encoded image strings.",
       "minItems": 1,
-      "maxItems": 1,
       "items": {
-        "type": "object",
-        "properties": {
-          "url": {
-            "type": "string",
-            "description": "A temporary URL where the generated image is hosted.",
-            "format": "uri"
-          },
-          "revised_prompt": {
-            "type": "string",
-            "description": "The revised prompt that the AI used to generate the image."
-          }
-        },
-        "required": ["url"]
+        "type": "string",
+        "contentEncoding": "base64",
+        "description": "A single image encoded as a Base64 string."
       }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "The parameters used for the generation."
+    },
+    "info": {
+      "type": "string",
+      "description": "Information about the generation process."
     }
   },
-  "required": ["created", "data"]
+  "required": ["images"]
 }

@@ -22,6 +22,7 @@ As a user, I want to generate a complete, illustrated short story based on a gen
 -   [x] **Image Service:** Create a dedicated `ImageService` to handle downloading images from a URL and saving them to storage.
 -   [x] **Data Mapping:** Implement a context-aware `AIStoryMapper` to transform raw AI DTOs into application DTOs, including paragraph splitting and image URL processing.
 -   [x] **Mapper Registration:** Register all new `storybook` mappers in the `AIResponseMapperRegistry`.
+-   [ ] **Image Client:** Add and configure a Spring AI `ImageClient` bean for image generation.
 -   [ ] **AIEngine Refactor:** Refactor the `AIEngine` to support both `ChatClient` (for text) and `ImageClient` (for images).
 -   [ ] **Image Alt Text:** Add a new `imageAltText` field to the `StoryPage` entity and DTOs to store the `revised_prompt` for SEO and accessibility.
 
