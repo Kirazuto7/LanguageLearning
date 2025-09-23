@@ -4,10 +4,14 @@ import com.example.language_learning.ai.components.AIResponseMapping;
 import com.example.language_learning.ai.config.AIConfig;
 import com.example.language_learning.ai.dtos.lessonbook.*;
 import com.example.language_learning.ai.dtos.proofread.AIProofreadResponse;
+import com.example.language_learning.ai.dtos.storybook.AIGeneratedStoryResponse;
+import com.example.language_learning.ai.dtos.storybook.AIImageResponse;
+import com.example.language_learning.ai.dtos.storybook.AIStoryMetadataResponse;
 import com.example.language_learning.ai.dtos.translation.AITranslationResponse;
 import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.ai.mappers.AILessonMapper;
 import com.example.language_learning.ai.mappers.AIResponseMapper;
+import com.example.language_learning.ai.mappers.AIStoryMapper;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -31,6 +35,7 @@ import java.util.function.Function;
 public class AIResponseMapperRegistry {
     private final AILessonMapper aiLessonMapper;
     private final AIResponseMapper aiResponseMapper;
+    private final AIStoryMapper aiStoryMapper;
     private final ObjectMapper objectMapper;
     private final AIConfig aiConfig;
 
@@ -49,6 +54,9 @@ public class AIResponseMapperRegistry {
         register(PromptType.CONJUGATION_LESSON, AIConjugationLessonResponse.class, (response, params) -> aiLessonMapper.toConjugationLessonDTO(response, (String) params.get("language")));
         register(PromptType.PRACTICE_LESSON, AIPracticeLessonResponse.class, (response, params) -> aiLessonMapper.toPracticeLessonDTO(response, (String) params.get("language")));
         register(PromptType.READING_COMPREHENSION_LESSON, AIReadingComprehensionLessonResponse.class, (response, params) -> aiLessonMapper.toReadingComprehensionLessonDTO(response, (String) params.get("language")));
+        register(PromptType.STORY_METADATA, AIStoryMetadataResponse.class, (response, params) -> aiStoryMapper.toShortStoryMetadataDTO(response, (String) params.get("genre")));
+        register(PromptType.STORY_PAGES, AIGeneratedStoryResponse.class, aiStoryMapper::toShortStoryDTO);
+        register(PromptType.STORY_IMAGE, AIImageResponse.class, (response, params) -> aiStoryMapper.toStoryImageDTO(response, (String) params.get("context")));
     }
 
     /**

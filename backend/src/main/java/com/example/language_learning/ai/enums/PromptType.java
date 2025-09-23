@@ -15,9 +15,9 @@ public enum PromptType {
     READING_COMPREHENSION_LESSON("lessons/reading", "reading_comprehension_lesson"),
 
     // Storybook prompts
-    STORY_METADATA("stories", "story_metadata"),
-    STORY_PAGES("stories", "story_pages"),
-    STORY_IMAGE("stories", "story_image"),
+    STORY_METADATA("storybook/metadata", "story_metadata"),
+    STORY_PAGES("storybook/pages", "story_pages"),
+    STORY_IMAGE("storybook/image", "story_image"),
 
     // Shared prompts
     TRANSLATE("translation", "translation"),

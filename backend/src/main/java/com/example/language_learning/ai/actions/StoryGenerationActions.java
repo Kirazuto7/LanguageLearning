@@ -87,7 +87,7 @@ public class StoryGenerationActions {
             Thread.sleep(shortDelay.toMillis());
 
             ShortStoryMetadataDTO metadata = ((StoryGenerationState.STORY_GENERATION) fromState).metadataDto();
-
+            int chapterNumber = context.getShortStory().getChapterNumber();
             AIRequest<ShortStoryDTO> aiRequest = AIRequest.builder()
                     .responseClass(ShortStoryDTO.class)
                     .promptType(PromptType.STORY_PAGES)
@@ -97,6 +97,7 @@ public class StoryGenerationActions {
                     .param("difficulty", context.getRequest().difficulty())
                     .param("storyTitle", metadata.title())
                     .param("nativeStoryTitle", metadata.nativeTitle())
+                    .param("chapterNumber", chapterNumber)
                     .build();
 
             ShortStoryDTO storyDto = aiEngine.generate(aiRequest).block();

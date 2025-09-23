@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AIImageGenerationResponse",
+  "description": "A schema for the response from an AI image generation service.",
+  "type": "object",
+  "properties": {
+    "created": {
+      "type": "integer",
+      "description": "The timestamp of when the image was created."
+    },
+    "data": {
+      "type": "array",
+      "description": "A list containing the generated image data.",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "A temporary URL where the generated image is hosted.",
+            "format": "uri"
+          },
+          "revised_prompt": {
+            "type": "string",
+            "description": "The revised prompt that the AI used to generate the image."
+          }
+        },
+        "required": ["url"]
+      }
+    }
+  },
+  "required": ["created", "data"]
+}
