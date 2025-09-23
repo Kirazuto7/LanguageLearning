@@ -73,7 +73,7 @@ public class AIConfig {
     private Resource getSchemaResource(Language lang, PromptType type) {
         final String schemaGroupPath;
         switch (type) {
-            case TRANSLATE:
+            case TRANSLATE, STORY_IMAGE:
                 // These types use a single, global schema with no prefix.
                 schemaGroupPath = "";
                 break;
