@@ -21,7 +21,7 @@ hs_err_pid*
 
 # ===================================================================
 # IDE & OS Files
-# ===================================================================
+# =================================com==================================
 # IntelliJ
 .idea/
 *.iml
@@ -67,3 +67,33 @@ coverage/
 *.jar
 *.war
 *.ear
+
+# ===================================================================
+# Python
+# ===================================================================
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+dist/
+*.egg-info/
+*.egg
+
+# IPython Notebook
+.ipynb_checkpoints
+
+# Pytest
+.pytest_cache/
+.tox/
+
+# Pip
+pip-log.txt
+pip-cache/

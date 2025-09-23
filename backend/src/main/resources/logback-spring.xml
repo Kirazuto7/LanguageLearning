@@ -101,21 +101,21 @@
         </logger>
 
         <!-- Sanitizer Logger -->
-        <logger name="com.example.language_learning.mapper.util" level="INFO" additivity="false">
+        <logger name="com.example.language_learning.mappers.util" level="INFO" additivity="false">
             <appender-ref ref="FILE_AI"/>
             <appender-ref ref="STDOUT_ERROR_LEVEL"/>
             <appender-ref ref="STDOUT_INFO_LEVEL"/>
         </logger>
 
         <!-- Job Queue Service Logger -->
-        <logger name="com.example.language_learning.services.JobQueueService" level="INFO" additivity="false">
+        <logger name="com.example.language_learning.shared.services.JobQueueService" level="INFO" additivity="false">
             <appender-ref ref="FILE_JOBS"/>
             <appender-ref ref="STDOUT_ERROR_LEVEL"/>
             <appender-ref ref="STDOUT_INFO_LEVEL"/>
         </logger>
 
         <!-- State Machine Logger -->
-        <logger name="com.example.language_learning.utils.StateMachine" level="INFO" additivity="false">
+        <logger name="com.example.language_learning.shared.utils.StateMachine" level="INFO" additivity="false">
             <appender-ref ref="FILE_JOBS"/>
             <appender-ref ref="STDOUT_ERROR_LEVEL"/>
             <appender-ref ref="STDOUT_INFO_LEVEL"/>

@@ -12,7 +12,7 @@ interface TableOfContentsPageProps {
     onNavigate: (pageIndex: number) => void
 }
 /**
- * Renders the table of contents navigation page.
+ * Renders the table of contents navigation lessonPage.
  */
 const TableOfContentsPage: React.FC<TableOfContentsPageProps> = (({ chapters = [], onNavigate }) => {
     return (
@@ -38,7 +38,7 @@ const TableOfContentsPage: React.FC<TableOfContentsPageProps> = (({ chapters = [
                                     <div className="d-flex justify-content-between w-100 ">
                                         <span className={styles['toc-title']}>{title}</span>
                                         <span className={styles['toc-dots']}></span>
-                                        <span className={styles['toc-page-number']}>{displayPageNumber}</span>
+                                        <span className={styles['toc-lessonPage-number']}>{displayPageNumber}</span>
                                     </div>
                                 </div>
                             </button>

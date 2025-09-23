@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, clearProgress } from "../../../widgets/progressBar/progressSlice";
 
 /**
- * A custom hook to manage the entire chapter generation workflow.
+ * A custom hook to manage the entire lessonChapter generation workflow.
  * It orchestrates the mutation to start the generation and reads real-time
  * progress from the global state, which is managed by the subscriptionManager.
  *
@@ -59,7 +59,7 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
             setTaskId(newTaskId);
         }
         catch (err) {
-            console.error('Failed to start chapter generation:', err);
+            console.error('Failed to start lessonChapter generation:', err);
             setTaskId(null);
         }
     }, [generateChapter, language, difficulty, taskId, isMutationLoading, dispatch]);

@@ -1,9 +1,12 @@
 package com.example.language_learning.config;
 
 import com.example.language_learning.ai.actions.ChapterPrepActions;
+import com.example.language_learning.ai.actions.StoryPrepActions;
 import com.example.language_learning.ai.inputs.ChapterPrepInput;
+import com.example.language_learning.ai.inputs.StoryPrepInput;
 import com.example.language_learning.ai.outputs.ChapterPrepOutput;
-import com.example.language_learning.utils.SyncWorkflow;
+import com.example.language_learning.ai.outputs.StoryPrepOutput;
+import com.example.language_learning.shared.utils.SyncWorkflow;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +19,16 @@ public class PipelineConfig {
                 .addTask(actions::generateTaskId)
                 .addTask(actions::findOrCreateBook)
                 .addTask(actions::createInitialChapter)
+                .addTask(actions::calculateStartingPage)
+                .build();
+    }
+
+    @Bean
+    public SyncWorkflow<StoryPrepInput, StoryPrepOutput> storyPrepWorkflow(StoryPrepActions actions) {
+        return new SyncWorkflow.Builder<StoryPrepInput, StoryPrepOutput>()
+                .addTask(actions::generateTaskId)
+                .addTask(actions::findOrCreateBook)
+                .addTask(actions::createInitialShortStory)
                 .addTask(actions::calculateStartingPage)
                 .build();
     }

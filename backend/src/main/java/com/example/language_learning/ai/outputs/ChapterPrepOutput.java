@@ -1,7 +1,7 @@
 package com.example.language_learning.ai.outputs;
 
-import com.example.language_learning.entity.models.Chapter;
-import com.example.language_learning.entity.models.LessonBook;
+import com.example.language_learning.lessonbook.chapter.LessonChapter;
+import com.example.language_learning.lessonbook.LessonBook;
 import lombok.Data;
 
 /**
@@ -11,6 +11,6 @@ import lombok.Data;
 public class ChapterPrepOutput {
     private String taskId;
     private LessonBook book;
-    private Chapter chapter;
+    private LessonChapter lessonChapter;
     private int startingPageNumber;
 }

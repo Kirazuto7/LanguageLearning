@@ -55,7 +55,7 @@
   }
 }
 
-.chapter-select {
+.lessonChapter-select {
     max-width: 450px;
     min-width: 400px;
     background-color: #fff;
@@ -75,7 +75,7 @@
 }
 
 
-.page-control-container {
+.lessonPage-control-container {
   display: flex;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-color);
@@ -96,8 +96,8 @@
     transition: all 0.2s ease-in-out;
 }
 
-.page-item {
-  :global(.page-link) {
+.lessonPage-item {
+  :global(.lessonPage-link) {
     @extend %pagination-button-base;
     width: 2.3rem;
     height: 2.3rem;
@@ -109,8 +109,8 @@
   }
 }
 
-.page-control-item {
-  :global(.page-link) {
+.lessonPage-control-item {
+  :global(.lessonPage-link) {
     @extend %pagination-button-base;
     width: 2rem;
     height: 2rem;
@@ -122,8 +122,8 @@
   }
 }
 
-.active-page-item {
-  :global(.page-link) {
+.active-lessonPage-item {
+  :global(.lessonPage-link) {
     transform: translateY(-2px);
     box-shadow: var(--button-shadow-hover);
     background: var(--primary-gradient);

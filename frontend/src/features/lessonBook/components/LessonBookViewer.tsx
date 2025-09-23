@@ -2,14 +2,14 @@ import React, { useState, useEffect, useMemo, memo } from "react";
 import styles from './lessonBookViewer.module.scss';
 import { Carousel } from "react-bootstrap";
 import { buildPagesForChapter } from "../../../shared/utils/buildPagesFromData";
-import { ChapterDTO } from "../../../shared/types/dto";
+import { LessonChapterDTO } from "../../../shared/types/dto";
 import {useSwipeable} from "react-swipeable";
 import { ChapterSelector } from "./ChapterSelector";
 import { LessonPaginator } from "./LessonPaginator";
 
 interface LessonBookViewerProps {
     title: string;
-    chapters: ChapterDTO[];
+    chapters: LessonChapterDTO[];
     activeChapterIndex: number;
     setActiveChapterIndex: (index: number) => void;
     onAllCorrect?: () => void;
@@ -86,9 +86,9 @@ const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, ac
                         activeIndex={activePageIndex}
                         onSelect={handlePageSelect}
                         className={styles['studybook-carousel']}>
-                        {chapterPages.map((page, index) =>
+                        {chapterPages.map((lessonPage, index) =>
                             <Carousel.Item key={index} className="h-100" style={{ overflowY: 'auto' }}>
-                                {page}
+                                {lessonPage}
                             </Carousel.Item>
                         )}
                     </Carousel>

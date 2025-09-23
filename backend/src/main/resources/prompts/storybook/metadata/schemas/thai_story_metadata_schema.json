@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ThaiStoryMetadata",
+  "description": "A schema for a Thai story's metadata, including title, native title, and topic.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The creative and engaging story title in English.",
+      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+    },
+    "nativeTitle": {
+      "type": "string",
+      "description": "ชื่อเรื่องที่แปลเป็นภาษาไทยอย่างถูกต้อง",
+      "pattern": "^[\\u0E00-\\u0E7F0-9 ,.?!'\"-;:\\[\\]…―]+$"
+    },
+    "topic": {
+      "type": "string",
+      "description": "The final topic of the story in English.",
+      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+    }
+  },
+  "required": ["title", "nativeTitle", "topic"]
+}

@@ -25,7 +25,11 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - SPRING_AI_OLLAMA_BASE_URL=${SPRING_AI_OLLAMA_BASE_URL}
+      - SPRING_AI_IMAGE_BASE_URL=${SPRING_AI_IMAGE_BASE_URL}
       - SPRING_PROFILES_ACTIVE=dev,gpu
+      - MINIO_URL=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
     env_file:
       - .env
     volumes:
@@ -39,6 +43,10 @@ services:
         condition: service_healthy
       ai:
         condition: service_healthy
+      minio:
+        condition: service_healthy
+      image-api:
+        condition: service_started
     healthcheck:
       # This check requires curl to be installed in the backend container.
       # It polls the Spring Boot Actuator health endpoint.
@@ -85,7 +93,41 @@ services:
       retries: 5
       start_period: 30s
 
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env
+    volumes:
+      - minio-storage:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-sF", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  image-api:
+    image: anapnoe/stable-diffusion-webui-docker:latest
+    ports:
+      - "7860:7860"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - CLI_ARGS=--api --listen --nowebui --xformers
+      - CHECKPOINT_URL=https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
+    deploy:
+      resources:
+        reservations:
+          devices: [{ capabilities: [gpu] }]
+    volumes:
+      - stable-diffusion-models:/data/models/Stable-diffusion
+
 volumes:
   backend-gradle-cache:
   postgres-data:
   ollama-data:
+  minio-storage:
+  stable-diffusion-models:

@@ -12,7 +12,7 @@ The content MUST be about the `{topic}`.
 
 ## CONTENT RULES
 1.  Generate 3-5 open-ended, free-form questions that encourage the user to practice the provided `{vocabulary}` and `{grammarConcept}`.
-2.  The questions should be thought-provoking and require a full sentence answer in `{language}`.
+2.  The questions should be thought-provoking and require a full lessonSentence answer in `{language}`.
 3.  Do NOT ask simple "What is...?" questions. Ask questions that require creative use of the language.
 4.  The `title` and `instructions` fields MUST be in English.
 5.  The `questionText` field MUST be in `{language}` ONLY. Do NOT include an English translation or any other language in this field.
@@ -23,13 +23,13 @@ The questions you generate MUST be tailored to the user's `{difficulty}` level. 
 
 - **For a 'Beginner':**
   - Questions must be simple, direct, and prompt for concrete answers (e.g., asking about a favorite thing or a simple 'yes/no' preference).
-  - Each question must be a single, simple query. **Do not** ask 'why' or include multiple questions in one string.
-  - Use basic vocabulary and sentence structures from the provided lists.
+  - Each lessonQuestion must be a single, simple query. **Do not** ask 'why' or include multiple questions in one string.
+  - Use basic vocabulary and lessonSentence structures from the provided lists.
 
 - **For an 'Intermediate' user:**
   - Questions can ask for reasons ('why'), comparisons, or simple opinions.
   - Encourage the use of slightly more complex sentences.
-  - Each question should still focus on a single main idea, but can be more open-ended than beginner questions.
+  - Each lessonQuestion should still focus on a single main idea, but can be more open-ended than beginner questions.
 
 - **For an 'Advanced' user:**
   - Questions can be abstract, hypothetical, or require detailed descriptions.

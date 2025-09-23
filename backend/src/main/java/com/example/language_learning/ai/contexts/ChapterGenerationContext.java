@@ -1,7 +1,7 @@
 package com.example.language_learning.ai.contexts;
 
-import com.example.language_learning.entity.models.Chapter;
-import com.example.language_learning.requests.ChapterGenerationRequest;
+import com.example.language_learning.lessonbook.chapter.LessonChapter;
+import com.example.language_learning.lessonbook.requests.ChapterGenerationRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,5 +19,5 @@ public class ChapterGenerationContext {
     private final String taskId;
     private final Long chapterId;
     private final AtomicInteger pageCounter;
-    private Chapter chapter;
+    private LessonChapter lessonChapter;
 }

@@ -1,9 +1,10 @@
 package com.example.language_learning.config;
 
-import com.example.language_learning.dto.lessons.LessonDTO;
-import com.example.language_learning.dto.models.details.*;
-import com.example.language_learning.dto.models.PageDTO;
-import com.example.language_learning.enums.LessonType;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDTO;
+import com.example.language_learning.shared.enums.LessonType;
+import com.example.language_learning.shared.word.dtos.*;
+import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.scalars.ExtendedScalars;
@@ -39,8 +40,25 @@ public class GraphqlConfig {
 
         TypeResolver progressDataTypeResolver = env -> {
             Object javaObject = env.getObject();
-            if (javaObject instanceof PageDTO) {
+            if (javaObject instanceof LessonPageDTO) {
                 return env.getSchema().getObjectType("Page");
+            }
+            return null;
+        };
+
+        TypeResolver storyPageTypeResolver = env -> {
+            Object javaObject = env.getObject();
+            if (javaObject instanceof StoryPageDTO storyPage) {
+                return switch (storyPage) {
+                    case StoryPageDTO p when
+                        p.paragraphs() != null && !p.paragraphs().isEmpty() ->
+                            env.getSchema().getObjectType("StoryContentPage");
+                    case StoryPageDTO p when
+                        p.vocabulary() != null && !p.vocabulary().isEmpty() ->
+                            env.getSchema().getObjectType("StoryVocabularyPage");
+                    default ->
+                        null;
+                };
             }
             return null;
         };
@@ -64,6 +82,7 @@ public class GraphqlConfig {
             .scalar(ExtendedScalars.Json)
             .type("Lesson", typeWiring -> typeWiring.typeResolver(lessonTypeResolver))
             .type("ProgressData", typeWiring -> typeWiring.typeResolver(progressDataTypeResolver))
+            .type("StoryPage", typeWiring -> typeWiring.typeResolver(storyPageTypeResolver))
             .type("WordDetails", typeWiring -> typeWiring.typeResolver(wordDetailsTypeResolver));
     }
 

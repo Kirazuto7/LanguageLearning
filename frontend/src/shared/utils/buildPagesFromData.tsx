@@ -2,63 +2,63 @@ import VocabularyLesson from "../../features/lessons/components/VocabularyLesson
 import GrammarLesson from "../../features/lessons/components/GrammarLesson";
 import BookPage from "../ui/book/BookPage";
 import ChapterPage from "../ui/book/ChapterPage";
-import { PageDTO, LessonBookDTO, ChapterDTO } from "../types/dto";
+import { LessonPageDTO, LessonBookDTO, LessonChapterDTO } from "../types/dto";
 import PracticeLesson from "../../features/lessons/components/PracticeLesson";
 import ReadingComprehensionLesson from "../../features/lessons/components/ReadingComprehensionLesson";
 import ConjugationLesson from "../../features/lessons/components/ConjugationLesson";
 
-const getPageFromLessonType = (page: PageDTO, onAllCorrect?: () => void): React.ReactElement => {
-    if (!page || !page.lesson) {
-        return <p>Invalid page data.</p>;
+const getPageFromLessonType = (lessonPage: LessonPageDTO, onAllCorrect?: () => void): React.ReactElement => {
+    if (!lessonPage || !lessonPage.lesson) {
+        return <p>Invalid lessonPage data.</p>;
     }
 
-    switch (page.lesson.type) {
+    switch (lessonPage.lesson.type) {
         case 'VOCABULARY':
-            return <VocabularyLesson lesson={page.lesson}/>;
+            return <VocabularyLesson lesson={lessonPage.lesson}/>;
         case 'GRAMMAR':
-            return <GrammarLesson lesson={page.lesson}/>;
+            return <GrammarLesson lesson={lessonPage.lesson}/>;
         case 'CONJUGATION':
-            return <ConjugationLesson lesson={page.lesson}/>;
+            return <ConjugationLesson lesson={lessonPage.lesson}/>;
         case 'PRACTICE':
-            return <PracticeLesson lesson={page.lesson}/>;
+            return <PracticeLesson lesson={lessonPage.lesson}/>;
         case 'READING_COMPREHENSION':
-            return <ReadingComprehensionLesson lesson={page.lesson} onAllCorrect={onAllCorrect} />;
+            return <ReadingComprehensionLesson lesson={lessonPage.lesson} onAllCorrect={onAllCorrect} />;
         default:
-            const unknownLesson = page.lesson as { type?: string };
+            const unknownLesson = lessonPage.lesson as { type?: string };
             return <div style={{height: '100%'}}><p>Unsupported lesson type: {unknownLesson.type || 'Unknown'}</p></div>;
     }
 }
 
-export const buildPagesForChapter = (chapter: ChapterDTO, onAllCorrect?: () => void): React.ReactElement[] => {
-    if(!chapter.pages || chapter.pages.length === 0) {
+export const buildPagesForChapter = (lessonChapter: LessonChapterDTO, onAllCorrect?: () => void): React.ReactElement[] => {
+    if(!lessonChapter.lessonPages || lessonChapter.lessonPages.length === 0) {
         return [];
     }
 
     const pages: React.ReactElement[] = [];
 
-    const firstPage = chapter.pages[0];
+    const firstPage = lessonChapter.lessonPages[0];
     pages.push(
         <ChapterPage
-            key={`chapter-title-${chapter.id}`} 
+            key={`lessonChapter-title-${lessonChapter.id}`}
             pageNumber={ firstPage.pageNumber } 
             isRightPage={ firstPage.pageNumber % 2 === 0 } 
-            chapterNumber={chapter.chapterNumber} 
-            chapterNativeTitle={chapter.nativeTitle}
-            chapterTitle={chapter.title}
+            chapterNumber={lessonChapter.chapterNumber}
+            chapterNativeTitle={lessonChapter.nativeTitle}
+            chapterTitle={lessonChapter.title}
         >
             {getPageFromLessonType(firstPage, onAllCorrect)}
         </ChapterPage>
     )
 
-    // Loop through the page(s) data for the chapter starting from the 2nd page
-    chapter.pages.slice(1).forEach(page => {
+    // Loop through the lessonPage(s) data for the lessonChapter starting from the 2nd lessonPage
+    lessonChapter.lessonPages.slice(1).forEach(lessonPage => {
         pages.push(
             <BookPage
-                key={`page-${page.id}`}
-                pageNumber={page.pageNumber}
-                isRightPage={page.pageNumber % 2 === 0}
+                key={`lessonPage-${lessonPage.id}`}
+                pageNumber={lessonPage.pageNumber}
+                isRightPage={lessonPage.pageNumber % 2 === 0}
             >
-                {getPageFromLessonType(page, onAllCorrect)}
+                {getPageFromLessonType(lessonPage, onAllCorrect)}
             </BookPage>
         )
     });
@@ -67,7 +67,7 @@ export const buildPagesForChapter = (chapter: ChapterDTO, onAllCorrect?: () => v
 
 // Helper function to process the Book Data into Component Pages
 export function buildPagesFromBookData(bookData: LessonBookDTO | null): React.ReactElement[] {
-    if(!bookData || !bookData.chapters) return [];
-    // Loop through the book chapters and build each page
-    return bookData.chapters.flatMap(chapter => buildPagesForChapter(chapter));
+    if(!bookData || !bookData.lessonChapters) return [];
+    // Loop through the book chapters and build each lessonPage
+    return bookData.lessonChapters.flatMap(lessonChapter => buildPagesForChapter(lessonChapter));
 };

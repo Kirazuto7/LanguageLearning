@@ -1,8 +1,9 @@
 package com.example.language_learning.ai.states;
 
-import com.example.language_learning.dto.lessons.*;
-import com.example.language_learning.dto.models.ChapterMetadataDTO;
-import com.example.language_learning.utils.StateMachine;
+import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.LessonDTO;
+import com.example.language_learning.lessonbook.chapter.lesson.dtos.VocabularyLessonDTO;
+import com.example.language_learning.shared.utils.StateMachine.TerminalState;
 
 /**
  * A sealed interface representing the distinct states of the chapter generation process.
@@ -16,8 +17,8 @@ public sealed interface ChapterGenerationState {
     record CONJUGATION_LESSON(VocabularyLessonDTO vocabularyDto) implements ChapterGenerationState {}
     record PRACTICE_LESSON(VocabularyLessonDTO vocabularyDto, LessonDTO specificLesson) implements ChapterGenerationState {}
     record READING_LESSON(VocabularyLessonDTO vocabularyDto, LessonDTO specificLesson) implements ChapterGenerationState {}
-    record COMPLETED() implements ChapterGenerationState, StateMachine.TerminalState {}
-    record FAILED(String reason) implements ChapterGenerationState, StateMachine.TerminalState {}
+    record COMPLETED() implements ChapterGenerationState, TerminalState {}
+    record FAILED(String reason) implements ChapterGenerationState, TerminalState {}
 
     static ChapterGenerationState INITIAL = new INITIAL();
     static ChapterGenerationState METADATA = new METADATA();
