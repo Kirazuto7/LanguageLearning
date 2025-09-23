@@ -20,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -102,7 +104,7 @@ public class StoryGenerationActions {
 
             ShortStoryDTO storyDto = aiEngine.generate(aiRequest).block();
             assert storyDto != null;
-            return StoryGenerationState.IMAGE_GENERATION(storyDto.storyPages(), 0, 40);
+            return StoryGenerationState.IMAGE_GENERATION(storyDto.storyPages());
         }
         catch (Exception e) {
             return StoryGenerationState.FAILED(e.getMessage());
@@ -112,6 +114,43 @@ public class StoryGenerationActions {
     public StoryGenerationState handleImageGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
         StoryGenerationState.IMAGE_GENERATION currentState = (StoryGenerationState.IMAGE_GENERATION) fromState;
         List<StoryPageDTO> storyPageDtos = currentState.storyPagesDto();
+
+        try {
+            progressService.sendUpdate(context.getTaskId(), 40, "Creating illustrations for the story...");
+            Thread.sleep(shortDelay.toMillis());
+            String imageContext = storyPageDtos.stream()
+                    .map(StoryPageDTO::englishSummary)
+                    .collect(Collectors.joining("\n"));
+
+            AIRequest<GeneratedImageDTO> imageRequest = AIRequest.builder()
+                    .responseClass(GeneratedImageDTO.class)
+                    .promptType(PromptType.STORY_IMAGE)
+                    .language(context.getRequest().language())
+                    .param("context", imageContext)
+                    .build();
+
+            GeneratedImageDTO imageDTO = aiEngine.generateImages(imageRequest).block();
+            assert imageDTO != null;
+            List<String> permanentUrls = imageDTO.urls();
+
+            List<StoryPageDTO> updatedDtos = new ArrayList<>();
+            for (int i = 0; i < storyPageDtos.size(); i++) {
+                StoryPageDTO originalDto = storyPageDtos.get(i);
+                String imageUrl = (i < permanentUrls.size()) ? permanentUrls.get(i) : null;
+                updatedDtos.add(originalDto.withImageUrl(imageUrl));
+            }
+
+            return StoryGenerationState.PERSIST_PAGES(updatedDtos);
+        }
+        catch (Exception e) {
+            return StoryGenerationState.FAILED(e.getMessage());
+        }
+
+    }
+
+    public StoryGenerationState handlePersistPages(StoryGenerationState fromState, StoryGenerationContext context) {
+        StoryGenerationState.PERSIST_PAGES currentState = (StoryGenerationState.PERSIST_PAGES) fromState;
+        List<StoryPageDTO> storyPageDtos = currentState.storyPagesDto();
         int currentIndex = currentState.currentIndex();
 
         if (currentIndex >= storyPageDtos.size()) {
@@ -120,41 +159,24 @@ public class StoryGenerationActions {
 
         try {
             int totalPages = storyPageDtos.size();
-            int remainingProgress = 100 - currentState.currentProgress();
+            int startProgress = currentState.currentProgress();
+            int remainingProgress = 100 - startProgress;
             int progressChunk = (totalPages > currentIndex) ? remainingProgress / (totalPages - currentIndex) : remainingProgress;
-            int beforeChunk = (int) (progressChunk * 0.20);
 
-            progressService.sendUpdate(context.getTaskId(), currentState.currentProgress() + beforeChunk, "Creating story page #" + (storyPageDtos.get(currentIndex).pageNumber()) + "...");
-            Thread.sleep(shortDelay.toMillis());
             StoryPageDTO currentPageDto = storyPageDtos.get(currentIndex);
 
-            // Generate image
-            if (currentIndex % 2 != 0) {
-                 StoryPageDTO previousPageDto = storyPageDtos.get(currentIndex - 1);
-                 String imageContext = "First, " + previousPageDto.englishSummary() + ". Then, " + currentPageDto.englishSummary();
-
-                 AIRequest<GeneratedImageDTO> imageRequest = AIRequest.builder()
-                         .responseClass(GeneratedImageDTO.class)
-                         .promptType(PromptType.STORY_IMAGE)
-                         .language(context.getRequest().language())
-                         .param("context", imageContext)
-                         .build();
-
-                 GeneratedImageDTO imageDto = aiEngine.generate(imageRequest).block();
-                assert imageDto != null;
-                String imageUrl = imageDto.url();
-                currentPageDto = currentPageDto.withImageUrl(imageUrl);
-            }
+            progressService.sendUpdate(context.getTaskId(), startProgress, "Saving page " + (currentIndex + 1) + " of " + totalPages + "...");
+            Thread.sleep(shortDelay.toMillis());
 
             StoryPage storyPage = storyPageService.createAndPersistPage(context.getShortStory(), currentPageDto, context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), currentState.currentProgress() + progressChunk, "Created page #" + storyPage.getPageNumber(), dtoMapper.toDto(storyPage));
+            progressService.sendPageUpdate(context.getTaskId(), startProgress + progressChunk, "Saved page #" + storyPage.getPageNumber(), dtoMapper.toDto(storyPage));
             Thread.sleep(longDelay.toMillis());
 
-            return StoryGenerationState.IMAGE_GENERATION(storyPageDtos, currentIndex + 1, currentState.currentProgress() + progressChunk);
+            return StoryGenerationState.PERSIST_PAGES(storyPageDtos, currentIndex + 1, startProgress + progressChunk);
         }
         catch (Exception e) {
-            log.error("Page generation failed at index {}: {}", currentIndex, e.getMessage());
+            log.error("Failed to persist story page at index {}: {}", currentIndex, e.getMessage(), e);
             return StoryGenerationState.FAILED("Page generation failed.");
         }
     }

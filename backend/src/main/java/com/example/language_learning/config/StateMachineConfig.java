@@ -37,6 +37,7 @@ public class StateMachineConfig {
                         .addState(StoryGenerationState.METADATA.class, actions::handleMetadataGeneration)
                         .addState(StoryGenerationState.STORY_GENERATION.class, actions::handleStoryGeneration)
                         .addState(StoryGenerationState.IMAGE_GENERATION.class, actions::handleImageGeneration)
+                        .addState(StoryGenerationState.PERSIST_PAGES.class, actions::handlePersistPages)
                         .build();
         return new StateMachineFactory<>(actionMap, StoryGenerationState.INITIAL);
     }

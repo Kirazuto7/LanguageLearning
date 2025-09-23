@@ -1,16 +1,22 @@
 package com.example.language_learning.shared.services;
 
 import com.example.language_learning.shared.exceptions.ImageDownloadException;
+import com.example.language_learning.shared.exceptions.ImageProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -19,19 +25,65 @@ import java.util.UUID;
 public class ImageService {
     private final StorageProvider storageProvider;
 
+    // --- Configuration for Image Resizing ---
+    private static final int TARGET_WIDTH = 1024;
+    private static final int TARGET_HEIGHT = 1024;
+
+
+    public String saveImageFromBase64(String base64ImageData) {
+        byte[] imageData = Base64.getDecoder().decode(base64ImageData);
+        byte[] resizedImageData = resizeImageData(imageData);
+        // The Stable Diffusion API defaults to PNG.
+        String fileName = generateUniqueFileName(".png");
+        return storageProvider.save(resizedImageData, fileName);
+    }
+
     public String saveImageFromUrl(String imageUrl) {
         byte[] imageData = downloadImage(imageUrl);
-        String fileName = generateUniqueFileName(imageUrl);
-        return storageProvider.save(imageData, fileName);
+        byte[] resizedImageData = resizeImageData(imageData);
+        String extension = extractExtensionFromUrl(imageUrl);
+        String fileName = generateUniqueFileName(extension);
+        return storageProvider.save(resizedImageData, fileName);
+    }
+
+    private byte[] resizeImageData(byte[] originalImageData) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(originalImageData);
+            BufferedImage originalImage = ImageIO.read(bis);
+
+            if (originalImage == null) {
+                log.warn("Could not decode image data; skipping resize.");
+                return originalImageData;
+            }
+
+            BufferedImage resizedImage = new BufferedImage(TARGET_WIDTH, TARGET_HEIGHT, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = resizedImage.createGraphics();
+
+            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            graphics.drawImage(originalImage, 0, 0, TARGET_WIDTH, TARGET_HEIGHT, null);
+            graphics.dispose();
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "png", bos);
+            return bos.toByteArray();
+        }
+        catch (IOException e) {
+            log.error("Failed to resize image", e);
+            throw new ImageProcessingException("Failed to resize image", e);
+        }
     }
 
     private byte[] downloadImage(String imageUrl) {
-        URL url = null;
+        URL url;
         try {
             url = URI.create(imageUrl).toURL();
         }
         catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            // Wrapping in a less specific exception for simplicity, but a custom one could be used.
+            throw new RuntimeException("Invalid image URL: " + imageUrl, e);
         }
         try (
                 InputStream in = url.openStream();
@@ -49,12 +101,16 @@ public class ImageService {
         }
     }
 
-    private String generateUniqueFileName(String imageUrl) {
-        String extension = ".png";
+    private String extractExtensionFromUrl(String imageUrl) {
         int lastDot = imageUrl.lastIndexOf('.');
         if (lastDot > 0 && imageUrl.lastIndexOf('/') < lastDot) {
-            extension = imageUrl.substring(lastDot);
+            return imageUrl.substring(lastDot);
         }
+        // Default to .png if no extension is found
+        return ".png";
+    }
+
+    private String generateUniqueFileName(String extension) {
         return UUID.randomUUID().toString() + extension;
     }
 

@@ -25,6 +25,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - SPRING_AI_OLLAMA_BASE_URL=${SPRING_AI_OLLAMA_BASE_URL}
+      - SPRING_AI_IMAGE_BASE_URL=${SPRING_AI_IMAGE_BASE_URL}
       - SPRING_PROFILES_ACTIVE=dev,cpu
       - MINIO_URL=http://minio:9000
       - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
@@ -43,6 +44,8 @@ services:
       ai:
         condition: service_healthy
       minio:
+        condition: service_healthy
+      image-api:
         condition: service_healthy
     healthcheck:
       # This check requires curl to be installed in the backend container.
@@ -99,6 +102,17 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  image-api:
+    build:
+      context: ./backend/dockerfiles
+      dockerfile: DockerfilePlaceholderImage
+    ports:
+      - "7860:7860"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/sdapi/v1/txt2img"]
+      interval: 10s
+      timeout: 5s
 
 volumes:
   backend-gradle-cache:
