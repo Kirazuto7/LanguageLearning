@@ -46,7 +46,7 @@ services:
       minio:
         condition: service_healthy
       image-api:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       # This check requires curl to be installed in the backend container.
       # It polls the Spring Boot Actuator health endpoint.
@@ -104,19 +104,19 @@ services:
       - minio-storage:/data
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-sF", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   image-api:
-    image: anapnoe/stable-diffusion-webui-docker:latest
+    image: runpod/stable-diffusion:web-automatic-8.0.3
     ports:
       - "7860:7860"
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
-      - CLI_ARGS=--api --listen --nowebui --xformers
+      - CLI_ARGS=--api --listen --nowebui --xformers --enable-insecure-extension-access
       - CHECKPOINT_URL=https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
     deploy:
       resources:
@@ -124,6 +124,12 @@ services:
           devices: [{ capabilities: [gpu] }]
     volumes:
       - stable-diffusion-models:/data/models/Stable-diffusion
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 5m
 
 volumes:
   backend-gradle-cache:

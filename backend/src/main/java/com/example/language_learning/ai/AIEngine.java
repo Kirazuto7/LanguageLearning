@@ -35,6 +35,15 @@ public class AIEngine {
     private final AIResponseMapperRegistry mapperRegistry;
     private final ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory;
 
+    // TODO: FIX METHOD FOR UTILIZING IMAGE CLIENT
+    public<T_INTERNAL> Mono<T_INTERNAL> generateImages(AIRequest <T_INTERNAL> request) {
+        AIResponseMapping<?, T_INTERNAL> mapping = mapperRegistry.get(request.getPromptType());
+        if (mapping == null) {
+            return Mono.error(new AIEngineException("No mapper registered for prompt type: " + request.getPromptType()));
+        }
+        return generateAndMap(request, mapping);
+    }
+
     /**
      * The main public entry point for the AIEngine.
      * It takes a simple request and returns a strongly-typed Mono of the final internal DTO.

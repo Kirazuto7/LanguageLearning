@@ -19,6 +19,13 @@ except IOError:
     # Fallback to default font if not found.
     font = ImageFont.load_default()
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """
+    A simple health check endpoint.
+    """
+    return jsonify({"status": "healthy"}), 200
+
 @app.route('/sdapi/v1/txt2img', methods=['POST'])
 def generate_placeholder_image():
     """
