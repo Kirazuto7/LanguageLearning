@@ -1,5 +1,5 @@
 import { gql } from "graphql-request";
-import { storyPageFragment } from "./fragments";
+import {shortStoryFragment, storyBookFragment, storyPageFragment} from "./fragments";
 
 export const shortStoryGenerationProgressQuery = gql`
     ${storyPageFragment}
@@ -16,6 +16,26 @@ export const shortStoryGenerationProgressQuery = gql`
                 }
             }
             error
+        }
+    }
+`;
+
+export const getStoryBooks = gql`
+    query GetStoryBooks {
+        getStoryBooks {
+            id
+            title
+            difficulty
+            language
+        }
+    }
+`;
+
+export const getStoryBook = gql`
+    ${storyBookFragment}
+    query GetStoryBook($language: String!, $difficulty: String!) {
+        getStoryBook(language: $language, difficulty: $difficulty) {
+            ...StoryBookFragment
         }
     }
 `;

@@ -65,6 +65,10 @@ extend type Query {
     getStoryBook(language: String!, difficulty: String!): StoryBook
 }
 
+extend type Query {
+    getStoryBooks: [StoryBook]!
+}
+
 extend type Mutation {
     generateShortStory(request: ShortStoryGenerationRequestInput!): StoryGenerationResponse
 }
