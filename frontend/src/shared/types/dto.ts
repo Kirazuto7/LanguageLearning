@@ -303,7 +303,7 @@ export function isLessonPageDTO(data: any): data is LessonPageDTO {
 }
 
 export function isStoryPageDTO(data: any): data is StoryPageDTO {
-    return data && ((data as StoryContentPageDTO).paragraphs !== undefined || (data as StoryVocabularyPageDTO).vocabulary !== undefined);
+    return data && ((data as StoryContentPageDTO).__typename === 'StoryContentPage' || (data as StoryVocabularyPageDTO).__typename === 'StoryVocabularyPage');
 }
 
 export interface ProgressUpdateDTO {
