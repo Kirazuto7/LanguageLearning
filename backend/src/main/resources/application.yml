@@ -39,7 +39,15 @@ spring:
           num-ctx: 8192
           num-predict: 8192
           temperature: 0.5
-
+    stablediffusion:
+      base-url: ${SPRING_AI_IMAGE_BASE_URL}
+      image:
+        options:
+          model: v1-5-pruned-emaonly.safetensors
+          width: 512
+          height: 512
+          steps: 20
+          batchSize: 1
 app:
   job-queue:
     workers: 5

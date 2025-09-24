@@ -5,7 +5,6 @@ import com.example.language_learning.ai.config.AIConfig;
 import com.example.language_learning.ai.dtos.lessonbook.*;
 import com.example.language_learning.ai.dtos.proofread.AIProofreadResponse;
 import com.example.language_learning.ai.dtos.storybook.AIGeneratedStoryResponse;
-import com.example.language_learning.ai.dtos.storybook.AIImageResponse;
 import com.example.language_learning.ai.dtos.storybook.AIStoryMetadataResponse;
 import com.example.language_learning.ai.dtos.translation.AITranslationResponse;
 import com.example.language_learning.ai.enums.PromptType;
@@ -56,7 +55,6 @@ public class AIResponseMapperRegistry {
         register(PromptType.READING_COMPREHENSION_LESSON, AIReadingComprehensionLessonResponse.class, (response, params) -> aiLessonMapper.toReadingComprehensionLessonDTO(response, (String) params.get("language")));
         register(PromptType.STORY_METADATA, AIStoryMetadataResponse.class, (response, params) -> aiStoryMapper.toShortStoryMetadataDTO(response, (String) params.get("genre")));
         register(PromptType.STORY_PAGES, AIGeneratedStoryResponse.class, aiStoryMapper::toShortStoryDTO);
-        register(PromptType.STORY_IMAGE, AIImageResponse.class, (response, params) -> aiStoryMapper.toStoryImageDTO(response, (String) params.get("context")));
     }
 
     /**

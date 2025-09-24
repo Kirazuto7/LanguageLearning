@@ -1,22 +1,30 @@
 package com.example.language_learning.ai;
 
+import com.example.language_learning.ai.components.AIImageRequest;
 import com.example.language_learning.ai.components.AIRequest;
 import com.example.language_learning.ai.components.AIResponseMapping;
 import com.example.language_learning.ai.config.model.AIPrompt;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
 import com.example.language_learning.ai.config.AIConfig;
+import com.example.language_learning.shared.dtos.images.GeneratedImageDTO;
 import com.example.language_learning.shared.exceptions.LanguageException;
 import com.example.language_learning.shared.exceptions.AIEngineException;
+import com.example.language_learning.shared.services.ImageService;
 import com.example.language_learning.shared.utils.ReactiveStateMachineFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.image.ImageModel;
+import org.springframework.ai.image.ImagePrompt;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * The central "smart" engine for all AI interactions.
@@ -31,17 +39,44 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AIEngine {
 
     private final Map<String, ChatClient> chatClients;
+    private final ImageModel imageModel;
     private final AIConfig aiConfig;
     private final AIResponseMapperRegistry mapperRegistry;
     private final ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory;
+    private final ImageService imageService;
 
-    // TODO: FIX METHOD FOR UTILIZING IMAGE CLIENT
-    public<T_INTERNAL> Mono<T_INTERNAL> generateImages(AIRequest <T_INTERNAL> request) {
-        AIResponseMapping<?, T_INTERNAL> mapping = mapperRegistry.get(request.getPromptType());
-        if (mapping == null) {
-            return Mono.error(new AIEngineException("No mapper registered for prompt type: " + request.getPromptType()));
-        }
-        return generateAndMap(request, mapping);
+    /**
+     * Generates images based on a list of text prompts provided in the request.
+     * This method bypasses the text-generation state machine and uses the ImageModel directly.
+     *
+     * @param request The AI request. The parameters map must contain a key "prompts" with a List<String> value.
+     * @param <T_INTERNAL> The expected return type, which must be compatible with List<String>.
+     * @return A Mono emitting a list of Base64 encoded image strings.
+     */
+    public<T_INTERNAL> Mono<T_INTERNAL> generateImages(AIImageRequest<T_INTERNAL> request) {
+        return Mono.fromCallable(() -> {
+            Object contextObject = request.getParams().get("context");
+            if (!(contextObject instanceof String imageContext) || imageContext.isBlank()) {
+                throw new AIEngineException("The 'context' parameter must be a non-blank String.");
+            }
+
+            List<String> textPrompts = Arrays.stream(imageContext.split("\n"))
+                    .filter(s -> !s.isBlank())
+                    .toList();
+
+            if (textPrompts.isEmpty()) {
+                return (T_INTERNAL) new GeneratedImageDTO(Map.of(),imageContext);
+            }
+            Map<String, String> urlsByPrompt = textPrompts.parallelStream()
+                    .collect(Collectors.toConcurrentMap(
+                        prompt -> prompt,
+                        prompt -> {
+                            ImagePrompt imagePrompt = new ImagePrompt(prompt);
+                            String base64Image = imageModel.call(imagePrompt).getResult().getOutput().getB64Json();
+                            return imageService.saveImageFromBase64(base64Image);
+                    }));
+            return (T_INTERNAL) new GeneratedImageDTO(urlsByPrompt, imageContext);
+        });
     }
 
     /**

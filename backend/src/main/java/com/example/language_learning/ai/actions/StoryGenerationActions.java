@@ -1,6 +1,7 @@
 package com.example.language_learning.ai.actions;
 
 import com.example.language_learning.ai.AIEngine;
+import com.example.language_learning.ai.components.AIImageRequest;
 import com.example.language_learning.ai.components.AIRequest;
 import com.example.language_learning.ai.contexts.StoryGenerationContext;
 import com.example.language_learning.ai.enums.PromptType;
@@ -133,10 +134,8 @@ public class StoryGenerationActions {
                     .collect(Collectors.joining("\n"));
             log.info("Image generation context: {}", imageContext);
 
-            AIRequest<GeneratedImageDTO> imageRequest = AIRequest.builder()
+            AIImageRequest<GeneratedImageDTO> imageRequest = AIImageRequest.builder()
                     .responseClass(GeneratedImageDTO.class)
-                    .promptType(PromptType.STORY_IMAGE)
-                    .language(context.getRequest().language())
                     .param("context", imageContext)
                     .build();
 

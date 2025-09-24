@@ -17,7 +17,6 @@ public enum PromptType {
     // Storybook prompts
     STORY_METADATA("storybook/metadata", "story_metadata"),
     STORY_PAGES("storybook/pages", "story_pages"),
-    STORY_IMAGE("storybook/image", "story_image"),
 
     // Shared prompts
     TRANSLATE("translation", "translation"),

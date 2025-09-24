@@ -1,8 +1,6 @@
 package com.example.language_learning.ai.mappers;
 
 import com.example.language_learning.ai.dtos.storybook.*;
-import com.example.language_learning.shared.dtos.images.GeneratedImageDTO;
-import com.example.language_learning.shared.services.ImageService;
 import com.example.language_learning.storybook.shortstory.ShortStoryDTO;
 import com.example.language_learning.storybook.shortstory.ShortStoryMetadataDTO;
 import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
@@ -18,8 +16,6 @@ import java.util.stream.IntStream;
 @Component
 @RequiredArgsConstructor
 public class AIStoryMapper {
-
-    private final ImageService imageService;
 
     public ShortStoryMetadataDTO toShortStoryMetadataDTO(AIStoryMetadataResponse response, String genre) {
         return new ShortStoryMetadataDTO(response.title(), response.nativeTitle(), response.topic(), genre);
@@ -43,16 +39,6 @@ public class AIStoryMapper {
                 .chapterNumber(chapterNumber)
                 .storyPages(storyPages)
                 .build();
-    }
-
-    public GeneratedImageDTO toStoryImageDTO(AIImageResponse response, String originalPrompt) {
-        if (response == null || response.images() == null || response.images().isEmpty()) {
-            throw new IllegalStateException("AI response for image generation is empty or invalid.");
-        }
-        List<String> permanentUrls = response.images().stream()
-                .map(imageService::saveImageFromBase64)
-                .toList();
-        return new GeneratedImageDTO(permanentUrls, originalPrompt);
     }
 
     private List<StoryPageDTO> toStoryPageDTOs(List<AIGeneratedPage> aiGeneratedPages) {
