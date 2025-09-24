@@ -32,7 +32,7 @@ public class AIStoryMapper {
         String genre = (String) params.get("genre");
         int chapterNumber = (int) params.get("chapterNumber");
 
-        // Convert pages response into respective list of storypage dtos
+        // Convert lessonPages response into respective list of storypage dtos
         List<StoryPageDTO> storyPages = toStoryPageDTOs(response.pages());
 
         return ShortStoryDTO.builder()

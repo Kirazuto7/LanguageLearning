@@ -42,7 +42,7 @@ public class LessonChapterGenerationService {
         // 2. Execute the synchronous workflow to prepare all necessary data.
         chapterPrepWorkflow.execute(input, output);
 
-        // 3. Kick off the chapter generation pipeline to create the associated lesson pages asynchronously
+        // 3. Kick off the chapter generation pipeline to create the associated lesson lessonPages asynchronously
         //    after the current transaction successfully commits
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override

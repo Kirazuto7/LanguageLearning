@@ -107,7 +107,7 @@ public abstract class LessonStructMapper {
     @SubclassMapping(source = PracticeLessonDTO.class, target = PracticeLesson.class)
     @SubclassMapping(source = ReadingComprehensionLessonDTO.class, target = ReadingComprehensionLesson.class)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "page", ignore = true) // Back-reference
+    @Mapping(target = "lessonPage", ignore = true) // Back-reference
     @Mapping(target = "title", ignore = true) // Set in factory
     @Mapping(target = "type", ignore = true) // Set in factory
     public abstract Lesson toEntity(LessonDTO dto, @Context CycleAvoidingMappingContext context);

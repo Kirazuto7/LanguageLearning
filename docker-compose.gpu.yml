@@ -125,11 +125,11 @@ services:
     volumes:
       - stable-diffusion-models:/data/models/Stable-diffusion
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7860/docs"]
+      test: ["CMD", "curl", "-f", "http://localhost:7860"]
       interval: 30s
       timeout: 10s
       retries: 10
-      start_period: 5m
+      start_period: 2m
 
 volumes:
   backend-gradle-cache:

@@ -11,7 +11,7 @@ public record ReadingComprehensionLessonDTO(
         Long id,
         String title,
         String story,
-        List<LessonQuestionDTO> questions
+        List<LessonQuestionDTO> lessonQuestions
 ) implements LessonDTO {
     @Override
     public LessonType type() {

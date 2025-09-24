@@ -41,7 +41,15 @@ public class GraphqlConfig {
         TypeResolver progressDataTypeResolver = env -> {
             Object javaObject = env.getObject();
             if (javaObject instanceof LessonPageDTO) {
-                return env.getSchema().getObjectType("Page");
+                return env.getSchema().getObjectType("LessonPage");
+            }
+            else if  (javaObject instanceof StoryPageDTO storyPage) {
+                if (storyPage.paragraphs() != null && !storyPage.paragraphs().isEmpty()) {
+                    return env.getSchema().getObjectType("StoryContentPage");
+                }
+                else if (storyPage.vocabulary() != null && !storyPage.vocabulary().isEmpty()) {
+                    return env.getSchema().getObjectType("StoryVocabularyPage");
+                }
             }
             return null;
         };

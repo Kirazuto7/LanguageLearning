@@ -59,6 +59,7 @@ export interface PageDTO {
 }
 
 export interface LessonPageDTO extends PageDTO {
+    __typename: 'LessonPage';
     lesson: AnyLessonDTO;
 }
 

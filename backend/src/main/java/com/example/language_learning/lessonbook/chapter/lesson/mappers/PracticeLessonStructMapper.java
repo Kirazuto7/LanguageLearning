@@ -13,7 +13,7 @@ import org.mapstruct.*;
 )
 public abstract class PracticeLessonStructMapper {
     @Mapping(target = "type", constant = "PRACTICE")
-    @Mapping(target ="page", ignore = true)
+    @Mapping(target ="lessonPage", ignore = true)
     public abstract PracticeLesson toEntity(PracticeLessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract PracticeLessonDTO toDto(PracticeLesson entity, @Context CycleAvoidingMappingContext context);

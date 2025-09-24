@@ -58,6 +58,7 @@ export const wordFragment = gql`
 export const lessonFragment = gql`
     ${wordFragment}
     fragment LessonFragment on Lesson {
+        __typename
         id
         type
         title
@@ -113,9 +114,11 @@ export const lessonFragment = gql`
 export const lessonPageFragment = gql`
     ${lessonFragment}
     fragment LessonPageFragment on LessonPage {
+        __typename
         id
         pageNumber
         lesson {
+            __typename
             ...LessonFragment
         }
     }

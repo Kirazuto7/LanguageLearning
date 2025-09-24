@@ -49,7 +49,7 @@ public class AILessonMapper {
                 .title(response.title())
                 .grammarConcept(response.grammarConcept())
                 .explanation(response.explanation())
-                .exampleSentences(response.exampleSentences().stream()
+                .exampleLessonSentences(response.exampleSentences().stream()
                         .filter(aiSentence -> aiSentence.text() != null && !aiSentence.text().isBlank())
                         .map(aiSentence -> {
                             String text = "japanese".equalsIgnoreCase(language)
@@ -96,7 +96,7 @@ public class AILessonMapper {
         return PracticeLessonDTO.builder()
                 .title(response.title())
                 .instructions(response.instructions())
-                .questions(response.questions().stream()
+                .lessonQuestions(response.questions().stream()
                         .filter(aiQuestion -> aiQuestion.questionText() != null && !aiQuestion.questionText().isBlank())
                         .map(aiQuestion -> {
                             String questionText = "japanese".equalsIgnoreCase(language)
@@ -119,7 +119,7 @@ public class AILessonMapper {
         return ReadingComprehensionLessonDTO.builder()
                 .title(response.title())
                 .story(story)
-                .questions(response.questions().stream()
+                .lessonQuestions(response.questions().stream()
                         .filter(aiQuestion -> aiQuestion.questionText() != null && !aiQuestion.questionText().isBlank())
                         .map(aiQuestion -> {
                             String questionText;

@@ -13,7 +13,7 @@ import org.mapstruct.*;
 )
 public abstract class ConjugationLessonStructMapper {
     @Mapping(target = "type", constant = "CONJUGATION")
-    @Mapping(target = "page", ignore = true)
+    @Mapping(target = "lessonPage", ignore = true)
     public abstract ConjugationLesson toEntity(ConjugationLessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract ConjugationLessonDTO toDto(ConjugationLesson entity, @Context CycleAvoidingMappingContext context);

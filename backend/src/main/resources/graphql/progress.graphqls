@@ -1,4 +1,4 @@
-union ProgressData = Page
+union ProgressData = LessonPage | StoryContentPage | StoryVocabularyPage
 
 type ProgressUpdate {
     taskId: ID!

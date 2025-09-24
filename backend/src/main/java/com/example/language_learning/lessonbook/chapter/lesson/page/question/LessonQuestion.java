@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "questions")
+@Table(name = "lessonQuestions")
 @Builder
 @Data
 @AllArgsConstructor
@@ -39,7 +39,7 @@ public class LessonQuestion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id", nullable = false)
-    @JsonBackReference("lesson-questions")
+    @JsonBackReference("lesson-lessonQuestions")
     private Lesson lesson;
 
     public LessonQuestion(QuestionType questionType, String questionText) {

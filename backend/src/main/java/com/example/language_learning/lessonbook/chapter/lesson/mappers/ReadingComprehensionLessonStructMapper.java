@@ -20,7 +20,7 @@ import org.mapstruct.ObjectFactory;
 )
 public abstract class ReadingComprehensionLessonStructMapper {
     @Mapping(target = "type", constant = "READING_COMPREHENSION")
-    @Mapping(target = "page", ignore = true)
+    @Mapping(target = "lessonPage", ignore = true)
     public abstract ReadingComprehensionLesson toEntity(ReadingComprehensionLessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract ReadingComprehensionLessonDTO toDto(ReadingComprehensionLesson entity, @Context CycleAvoidingMappingContext context);

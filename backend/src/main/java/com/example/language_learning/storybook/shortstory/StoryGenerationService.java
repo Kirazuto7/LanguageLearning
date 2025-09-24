@@ -63,7 +63,7 @@ public class StoryGenerationService {
                             log.info("Story generation process completed successfully for task {}.", context.getTaskId());
                         })
                         .onError(StoryGenerationState.FAILED.class, failedState -> {
-                            Exception error = new StoryGenerationException(failedState.reason());
+                            Exception error = new StoryGenerationException(failedState.errorMessage());
                             log.error("Story generation failed for task {}: {}", context.getTaskId(), error.getMessage(), error);
                             progressService.sendError(context.getTaskId(), error);
                         })

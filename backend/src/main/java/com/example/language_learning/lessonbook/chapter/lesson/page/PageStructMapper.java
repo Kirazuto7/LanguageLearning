@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
     uses = {LessonStructMapper.class}
 )
 public abstract class PageStructMapper {
-    @Mapping(target = "chapter", ignore = true)
+    @Mapping(target = "lessonChapter", ignore = true)
     public abstract LessonPage toEntity(LessonPageDTO dto, @Context CycleAvoidingMappingContext context);
     public abstract LessonPageDTO toDto(LessonPage entity, @Context CycleAvoidingMappingContext context);
 

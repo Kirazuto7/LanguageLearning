@@ -1,7 +1,7 @@
 package com.example.language_learning.shared.mapper;
 
 import com.example.language_learning.lessonbook.LessonBookStructMapper;
-import com.example.language_learning.lessonbook.chapter.ChapterStructMapper;
+import com.example.language_learning.lessonbook.chapter.LessonChapterStructMapper;
 import com.example.language_learning.lessonbook.chapter.LessonChapter;
 import com.example.language_learning.lessonbook.chapter.lesson.mappers.*;
 import com.example.language_learning.lessonbook.chapter.lesson.page.PageStructMapper;
@@ -52,7 +52,7 @@ public class DtoMapper {
     private final UserStructMapper userStructMapper;
     private final SettingsStructMapper settingsStructMapper;
     private final LessonBookStructMapper lessonBookStructMapper;
-    private final ChapterStructMapper chapterStructMapper;
+    private final LessonChapterStructMapper lessonChapterStructMapper;
     private final PageStructMapper pageStructMapper;
     private final LessonStructMapper lessonStructMapper;
     private final VocabularyLessonStructMapper vocabularyLessonStructMapper;
@@ -108,11 +108,11 @@ public class DtoMapper {
     /* ******************** */
 
     public LessonChapter toEntity(LessonChapterDTO dto) {
-        return chapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        return lessonChapterStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonChapterDTO toDto(LessonChapter entity) {
-        return chapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        return lessonChapterStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ************************ */

@@ -28,10 +28,10 @@ public sealed interface StoryGenerationState {
     // State for generating the story content, holding metadata
     record STORY_GENERATION(ShortStoryMetadataDTO metadataDto) implements StoryGenerationState {}
 
-    // State for generating all images in a batch, holding the list of pages
+    // State for generating all images in a batch, holding the list of lessonPages
     record IMAGE_GENERATION(List<StoryPageDTO> storyPagesDto) implements StoryGenerationState {}
 
-    // New recursive state for persisting pages one by one
+    // New recursive state for persisting lessonPages one by one
     record PERSIST_PAGES(List<StoryPageDTO> storyPagesDto, int currentIndex, int currentProgress) implements StoryGenerationState {}
 
     // Terminal state for successful completion

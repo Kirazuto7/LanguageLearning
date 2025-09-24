@@ -14,5 +14,5 @@ public record LessonChapterDTO(
      int chapterNumber,
      String title,
      String nativeTitle,
-     List<LessonPageDTO> pages
+     List<LessonPageDTO> lessonPages
 ) {}

@@ -1,7 +1,7 @@
 package com.example.language_learning.lessonbook;
 
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
-import com.example.language_learning.lessonbook.chapter.ChapterStructMapper;
+import com.example.language_learning.lessonbook.chapter.LessonChapterStructMapper;
 import com.example.language_learning.user.UserStructMapper;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.ObjectFactory;
@@ -13,17 +13,18 @@ import org.springframework.context.annotation.Lazy;
 
 @Mapper(
     componentModel = "spring",
-    uses = {ChapterStructMapper.class},
+    uses = {LessonChapterStructMapper.class},
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
 )
 public abstract class LessonBookStructMapper {
 
     protected UserStructMapper userStructMapper;
 
-    @Mapping(target = "user", expression = "java(userStructMapper.toEntity(dto.user(), context))")
+    //@Mapping(target = "user", expression = "java(userStructMapper.toEntity(dto.user(), context))")
+    @Mapping(target = "user", ignore = true)
     public abstract LessonBook toEntity(LessonBookDTO dto, @Context CycleAvoidingMappingContext context);
 
-    @Mapping(target = "user", ignore = true) // Manually mapped in the factory to handle cycles
+    //@Mapping(target = "user", ignore = true) // Manually mapped in the factory to handle cycles
     public abstract LessonBookDTO toDto(LessonBook entity, @Context CycleAvoidingMappingContext context);
 
     @ObjectFactory

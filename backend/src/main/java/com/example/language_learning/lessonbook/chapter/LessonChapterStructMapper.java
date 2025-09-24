@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
     uses = {PageStructMapper.class},
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
 )
-public abstract class ChapterStructMapper {
+public abstract class LessonChapterStructMapper {
     @Mapping(target = "lessonBook", ignore = true)
     public abstract LessonChapter toEntity(LessonChapterDTO dto, @Context CycleAvoidingMappingContext context);
     public abstract LessonChapterDTO toDto(LessonChapter entity, @Context CycleAvoidingMappingContext context);

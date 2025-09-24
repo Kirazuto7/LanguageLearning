@@ -15,7 +15,7 @@ import org.mapstruct.ObjectFactory;
 )
 public abstract class VocabularyLessonStructMapper {
     @Mapping(target = "type", constant = "VOCABULARY")
-    @Mapping(target = "page", ignore = true)
+    @Mapping(target = "lessonPage", ignore = true)
     public abstract VocabularyLesson toEntity(VocabularyLessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract VocabularyLessonDTO toDto(VocabularyLesson entity, @Context CycleAvoidingMappingContext context);

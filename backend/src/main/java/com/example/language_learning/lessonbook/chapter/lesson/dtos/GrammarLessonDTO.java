@@ -12,7 +12,7 @@ public record GrammarLessonDTO(
         String title,
         String grammarConcept,
         String explanation,
-        List<LessonSentenceDTO> exampleSentences
+        List<LessonSentenceDTO> exampleLessonSentences
 ) implements LessonDTO {
     @Override
     public LessonType type() {

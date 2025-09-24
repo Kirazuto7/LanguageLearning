@@ -16,7 +16,7 @@ import org.mapstruct.ObjectFactory;
 )
 public abstract class GrammarLessonStructMapper {
     @Mapping(target = "type", constant = "GRAMMAR")
-    @Mapping(target = "page", ignore = true)
+    @Mapping(target = "lessonPage", ignore = true)
     public abstract GrammarLesson toEntity(GrammarLessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract GrammarLessonDTO toDto(GrammarLesson entity, @Context CycleAvoidingMappingContext context);

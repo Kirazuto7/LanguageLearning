@@ -12,7 +12,7 @@ public record PracticeLessonDTO(
         Long id,
         String title,
         String instructions,
-        List<LessonQuestionDTO> questions
+        List<LessonQuestionDTO> lessonQuestions
 ) implements LessonDTO {
     @Override
     public LessonType type() {

@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface LessonQuestionRepository extends JpaRepository<LessonQuestion, Long> {
 
-    @Query("SELECT q FROM Question q WHERE q.id = :questionId AND q.lesson.page.chapter.lessonBook.user = :user")
+    @Query("SELECT q FROM LessonQuestion q WHERE q.id = :questionId AND q.lesson.lessonPage.lessonChapter.lessonBook.user = :user")
     Optional<LessonQuestion> findByIdAndUser(@Param("questionId") Long questionId, @Param("user") User user);
 }
