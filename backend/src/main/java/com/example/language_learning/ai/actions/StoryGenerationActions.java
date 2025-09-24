@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -141,13 +142,13 @@ public class StoryGenerationActions {
 
             GeneratedImageDTO imageDTO = aiEngine.generateImages(imageRequest).block();
             assert imageDTO != null;
-            log.info("Generated {} images. Transitioning to PERSIST_PAGES state for task ID: {}", imageDTO.urls().size(), context.getTaskId());
-            List<String> permanentUrls = imageDTO.urls();
+            log.info("Generated {} images. Transitioning to PERSIST_PAGES state for task ID: {}", imageDTO.imageUrlsByPrompt().size(), context.getTaskId());
+            Map<String, String> permanentUrls = imageDTO.imageUrlsByPrompt();
 
             List<StoryPageDTO> updatedDtos = new ArrayList<>();
             for (int i = 0; i < storyPageDtos.size(); i++) {
                 StoryPageDTO originalDto = storyPageDtos.get(i);
-                String imageUrl = (i < permanentUrls.size()) ? permanentUrls.get(i) : null;
+                String imageUrl = permanentUrls.get(originalDto.englishSummary());
                 updatedDtos.add(originalDto.withImageUrl(imageUrl));
             }
 

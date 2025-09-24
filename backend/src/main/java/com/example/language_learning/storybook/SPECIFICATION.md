@@ -13,17 +13,17 @@ As a user, I want to generate a complete, illustrated short story based on a gen
 -   [x] **Core Workflow:** Define the asynchronous, multi-state generation process (`INITIAL`, `METADATA`, `STORY_GENERATION`, `IMAGE_GENERATION`, `COMPLETED`).
 -   [x] **Synchronous Setup:** Implement the `StoryPrepWorkflow` to create the initial `ShortStory` shell entity before the async job.
 -   [x] **State Machine Actions:** Implement the `StoryGenerationActions` to handle the logic for each state.
--   [x] **Recursive Generation:** Implement the `IMAGE_GENERATION` state to be recursive, processing one page at a time.
--   [x] **Prompt Engineering:** Create robust instruction prompts for `STORY_METADATA`, `STORY_PAGES`, and `STORY_IMAGE`.
+-   [x] **Recursive Persistence:** Implement the `PERSIST_PAGES` state to be recursive, processing one page at a time.
+-   [x] **Prompt Engineering:** Create robust instruction prompts for `STORY_METADATA` and `STORY_PAGES`. Image prompts are now dynamically generated.
 -   [x] **Schema Definition:** Create language-specific JSON schemas to validate the AI's output for all prompt types.
 -   [x] **Configuration:** Update `PromptType` enum and `AIConfig` to correctly load all new `storybook` prompts and schemas.
 -   [x] **Storage Abstraction:** Define a generic `StorageProvider` interface and `StorageProperties` interface.
 -   [x] **Development Storage:** Implement a `MinioStorageProvider` and configure Docker and `application.yml` for local MinIO.
--   [x] **Image Service:** Create a dedicated `ImageService` to handle downloading images from a URL and saving them to storage.
--   [x] **Data Mapping:** Implement a context-aware `AIStoryMapper` to transform raw AI DTOs into application DTOs, including paragraph splitting and image URL processing.
+-   [x] **Image Service:** Create a dedicated `ImageService` to handle saving Base64-encoded images to storage.
+-   [x] **Data Mapping:** Implement a context-aware `AIStoryMapper` to transform raw AI DTOs into application DTOs.
 -   [x] **Mapper Registration:** Register all new `storybook` mappers in the `AIResponseMapperRegistry`.
--   [ ] **Image Client:** Add and configure a Spring AI `ImageClient` bean for image generation.
--   [ ] **AIEngine Refactor:** Refactor the `AIEngine` to support both `ChatClient` (for text) and `ImageClient` (for images).
+-   [x] **Image Client:** Implement a custom `StableDiffusionClient` and wrap it in a Spring AI `ImageModel` for flexible integration.
+-   [x] **AIEngine Refactor:** Refactor the `AIEngine` to support both `ChatClient` (for text) and `ImageModel` (for images) via `generate()` and `generateImages()` methods.
 -   [ ] **Image Alt Text:** Add a new `imageAltText` field to the `StoryPage` entity and DTOs to store the `revised_prompt` for SEO and accessibility.
 
 ---
@@ -69,15 +69,19 @@ The end-to-end generation of a new `ShortStory` is an asynchronous, multi-state 
     b.  The AI returns a complete JSON object containing a list of all pages for the story, including the `englishSummary`, `content` (with paragraphs separated by `\n`), and `vocabulary` for each page.
     c.  This list of page DTOs is held in memory and passed to the next state. **Nothing is persisted to the database in this step.**
 
-4.  **State 3: Recursive Page & Image Generation (`IMAGE_GENERATION`)**
-    a.  This state is **recursive**. It processes one page from the list at a time.
-    b.  For the current page, it converts the AI DTO to a `StoryPageDTO` and splits the `content` string into paragraphs.
-    c.  **Image Generation Strategy:** If the page's index is odd (i.e., it's the 2nd, 4th, 6th page), it constructs a prompt by combining the `englishSummary` of the **previous page** and the **current page**.
-    d.  This combined summary is sent to the **Image Generation model**. The resulting permanent image URL is added to the `StoryPageDTO`.
-    e.  The final `StoryPageDTO` is converted to a `StoryPage` entity, linked to the parent `ShortStory`, and **persisted to the database**.
-    f.  The state machine then transitions back to itself, incrementing the index to process the next page in the list.
+4.  **State 3: Image Generation (`IMAGE_GENERATION`)**
+    a.  This state is **not recursive**. It processes all pages at once.
+    b.  It extracts the `englishSummary` from every page DTO and sends them as a batch of prompts to the `AIEngine.generateImages()` method.
+    c.  The engine generates all images concurrently and returns a `Map` linking each original prompt to its permanent image URL.
+    d.  The action then updates the list of page DTOs in memory, assigning the correct URL to each page by looking it up in the map.
+    e.  The updated list of DTOs is passed to the next state. **Nothing is persisted to the database in this step.**
 
-5.  **State 4: Completion (`COMPLETED`)**
+5.  **State 4: Recursive Page Persistence (`PERSIST_PAGES`)**
+    a.  This state is **recursive**. It processes one page DTO from the list at a time.
+    b.  For the current page, it converts the DTO to a `StoryPage` entity, links it to the parent `ShortStory`, and **persists it to the database**.
+    c.  The state machine then transitions back to itself, incrementing an index to process the next page in the list.
+
+6.  **State 5: Completion (`COMPLETED`)**
     a.  Once all pages have been processed, the state machine transitions to the terminal `COMPLETED` state, and the process ends.
 
 ---
@@ -250,12 +254,11 @@ Do not include any other text, notes, or explanations in your response. Provide 
 
 ## 6. Remaining Backend Tasks
 
-The backend generation workflow is functionally complete. The final remaining task is to refactor the `AIEngine` for better separation of concerns and to support the different AI models required.
+The backend generation workflow is functionally complete. The final remaining task is to add alt text for images.
 
--   **Refactor `AIEngine`:**
-    -   The current `AIEngine.generate()` method is designed to handle only text-based chat models.
-    -   This method will be split into two distinct, more explicit methods:
-        1.  `generateText(AIRequest<T> request)`: This method will use the configured Spring AI `ChatClient` to handle all text-based generation prompts (e.g., `STORY_METADATA`, `STORY_PAGES`).
-        2.  `generateImage(AIRequest<T> request)`: This method will use the configured Spring AI `ImageClient` to handle all image generation prompts (`STORY_IMAGE`).
--   **Update `PromptType` Enum:**
-    -   Add a `ModelType` property to the enum to clearly associate each prompt with either a `CHAT` or `IMAGE` model. The `AIEngine` will use this property to decide which generation method to call.
+-   **AIEngine Refactor (Completed):**
+    -   The `AIEngine` has been successfully refactored into two distinct, explicit methods:
+        1.  `generate(AIRequest<T> request)`: This method uses the configured Spring AI `ChatClient` to handle all text-based generation prompts (e.g., `STORY_METADATA`, `STORY_PAGES`).
+        2.  `generateImages(AIImageRequest<T> request)`: This method uses the configured Spring AI `ImageModel` to handle image generation.
+-   **PromptType Enum (Updated):**
+    -   The `PromptType` enum is now exclusively for text-based prompts. Image generation is handled via a separate `AIImageRequest` and does not require a `PromptType`.
