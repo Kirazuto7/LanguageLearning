@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useGenerateChapterMutation } from "../../../shared/api/chapterApiSlice";
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, clearProgress } from "../../../widgets/progressBar/progressSlice";
+import { useGenerateChapterMutation } from "../../../../shared/api/chapterApiSlice";
+import { useAppSelector, useAppDispatch } from "../../../../app/hooks";
+import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, clearProgress } from "../../../../widgets/progressBar/progressSlice";
 
 /**
  * A custom hook to manage the entire lessonChapter generation workflow.

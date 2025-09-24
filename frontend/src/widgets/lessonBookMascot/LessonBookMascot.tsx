@@ -2,7 +2,7 @@ import React, {Suspense, useState, useEffect} from 'react';
 import styles from "../../shared/components/mascot/mascot.module.scss";
 import { useSettingsManager } from '../../features/userSettings/hooks/useSettingsManager';
 import Blackboard from "../../shared/components/blackboard/Blackboard";
-import ChapterGenerationInputField from "../../features/chapterGeneration/components/ChapterGenerationInputField";
+import ChapterGenerationInputField from "../../features/lessonBook/chapterGeneration/components/ChapterGenerationInputField";
 import ProgressBarComponent from "../progressBar/ProgressBarComponent";
 import Mascot from "../../shared/components/mascot/Mascot";
 import {mascotGenders} from "../../shared/types/types";

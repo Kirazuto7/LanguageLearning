@@ -32,7 +32,7 @@ export const shortStoryApiSlice = graphqlApiSlice.injectEndpoints ({
                             draft.shortStories.push(newShortStory);
                         })
                     );
-                    logToServer('info', "onQueryStated: Optimistic update complete. Starting subscription...");
+                    logToServer('info', "onQueryStarted: Optimistic update complete. Starting subscription...");
 
                     // 2. Start the subscription to get progress & storyPage updates for the shortStory
                     startSubscription<{ shortStoryGenerationProgress: ProgressUpdateDTO; }>(taskId, {
@@ -68,7 +68,7 @@ export const shortStoryApiSlice = graphqlApiSlice.injectEndpoints ({
                     });
                 }
                 catch (err) {
-                    logToServer('error', "onQueryStated: queryFulfilled REJECTED with error:", { error: err });
+                    logToServer('error', "onQueryStarted: queryFulfilled REJECTED with error:", { error: err });
                 }
             }
         })

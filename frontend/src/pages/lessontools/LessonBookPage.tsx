@@ -2,7 +2,7 @@ import LessonBookViewer from "../../features/lessonBook/components/LessonBookVie
 import React, {useCallback, useEffect, useState} from 'react';
 import { useLessonBookManager } from "../../features/lessonBook/hooks/useLessonBookManager";
 import { Container, Spinner, Alert } from "react-bootstrap";
-import { useChapterGeneration } from "../../features/chapterGeneration/hooks/useChapterGeneration";
+import { useChapterGeneration } from "../../features/lessonBook/chapterGeneration/hooks/useChapterGeneration";
 import LessonBookMascot from "../../widgets/lessonBookMascot/LessonBookMascot";
 
 interface StudyBookPageProps{}

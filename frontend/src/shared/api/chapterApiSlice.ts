@@ -5,8 +5,8 @@ import { lessonBookApiSlice } from "./lessonBookApiSlice";
 import {logToServer, safeToString} from "../utils/loggingService";
 import { lessonChapterFragment } from "../../features/lessonBook/gql/fragments";
 import { startSubscription } from "../../app/services/subscriptionManager";
-import { chapterGenerationProgressQuery } from "../../features/chapterGeneration/gql/queries";
-import { clearProgress, updateProgress } from "../../widgets/progressBar/progressSlice";
+import { chapterGenerationProgressQuery } from "../../features/lessonBook/gql/queries";
+import { updateProgress } from "../../widgets/progressBar/progressSlice";
 import { store } from "../../app/store";
 
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({

@@ -1,5 +1,5 @@
 import { gql } from "graphql-request";
-import { lessonPageFragment } from "../../lessonBook/gql/fragments";
+import { lessonPageFragment } from "./fragments";
 export const chapterGenerationProgressQuery = gql`
     ${lessonPageFragment}
     subscription ChapterGenerationProgress($taskId: ID!) {

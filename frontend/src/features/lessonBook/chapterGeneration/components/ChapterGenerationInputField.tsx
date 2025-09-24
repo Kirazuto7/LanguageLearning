@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../../../shared/components/mascot/mascot.module.scss";
+import styles from "../../../../shared/components/mascot/mascot.module.scss";
 
 interface ChapterGenerationInputFieldProps {
     onSend: (value:string) => void;
