@@ -29,7 +29,7 @@ public class LogDirectoryManager {
 
     public LogDirectoryManager(
             @Value("${app.logging.path}") String logsPath,
-            @Value("${app.logging.max-run-history:5}") int maxDirectoriesToKeep
+            @Value("2") int maxDirectoriesToKeep
     ) {
         this.logsPath = logsPath;
         this.maxDirectoriesToKeep = maxDirectoriesToKeep;

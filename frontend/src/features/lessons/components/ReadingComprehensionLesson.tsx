@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { ReadingComprehensionLessonDTO, QuestionDTO } from '../../../shared/types/dto';
+import { ReadingComprehensionLessonDTO, LessonQuestionDTO } from '../../../shared/types/dto';
 import parse from 'html-react-parser';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
 import {Button, Form, Card} from "react-bootstrap";
@@ -27,7 +27,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     const [results, setResults] = useState<{[key: string]: boolean } | null>(null);
 
     useEffect(() => {
-        const initialAnswers = lesson.questions.reduce((curr, question) => {
+        const initialAnswers = lesson.lessonQuestions.reduce((curr, question) => {
             curr[question.id] = '';
             return curr;
         }, {} as { [key: string]: string});
@@ -54,7 +54,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
     };
 
     const handleCheckAnswers = () => {
-        const newResults = lesson.questions.reduce((curr, question) => {
+        const newResults = lesson.lessonQuestions.reduce((curr, question) => {
             const userAnswer = selectedAnswers[question.id] || '';
             const correctAnswer = question.answer || '';
             curr[question.id] = userAnswer.trim() === correctAnswer.trim();
@@ -64,19 +64,19 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
 
         const allCorrect = Object.values(newResults).every(result => result === true);
 
-        if (allCorrect && lesson.questions.length > 0 && onAllCorrect) {
+        if (allCorrect && lesson.lessonQuestions.length > 0 && onAllCorrect) {
             console.log("TEST!");
             onAllCorrect();
         }
     };
 
     const allQuestionsAnswered = useMemo(() => {
-        if (lesson.questions.length === 0) {
+        if (lesson.lessonQuestions.length === 0) {
             return false;
         }
         // Checks if all questions have been answered before enabling the submit button
         return Object.values(selectedAnswers).every(answer => answer !== '');
-    }, [selectedAnswers, lesson.questions])
+    }, [selectedAnswers, lesson.lessonQuestions])
 
     return (
         <div>
@@ -93,7 +93,7 @@ const ReadingComprehensionLesson: React.FC<ReadingComprehensionLessonProps> = ({
             </div>
 
             <h6>Questions:</h6>
-            {lesson.questions.map((question: QuestionDTO, index) => {
+            {lesson.lessonQuestions.map((question: LessonQuestionDTO, index) => {
                 const answerChoices = question.answerChoices;
 
                 return(

@@ -1,4 +1,4 @@
-type Sentence {
+type LessonSentence {
     id: ID!
     text: String!
     translation: String!

@@ -5,18 +5,12 @@ import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDT
 import com.example.language_learning.shared.enums.LessonType;
 import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
-import graphql.ErrorType;
-import graphql.GraphQLError;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.TypeResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.graphql.execution.DataFetcherExceptionResolver;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
 
 @Configuration
 public class GraphqlConfig {
@@ -92,21 +86,5 @@ public class GraphqlConfig {
             .type("ProgressData", typeWiring -> typeWiring.typeResolver(progressDataTypeResolver))
             .type("StoryPage", typeWiring -> typeWiring.typeResolver(storyPageTypeResolver))
             .type("WordDetails", typeWiring -> typeWiring.typeResolver(wordDetailsTypeResolver));
-    }
-
-    @Bean
-    public DataFetcherExceptionResolver exceptionResolver() {
-        return (exception, environment) -> {
-            if (exception instanceof SecurityException) {
-                GraphQLError error = GraphQLError.newError()
-                        .errorType(ErrorType.DataFetchingException)
-                        .message(exception.getMessage())
-                        .extensions(Map.of("classification", "UNAUTHORIZED"))
-                        .path(environment.getExecutionStepInfo().getPath())
-                        .build();
-                return Mono.just(List.of(error));
-            }
-            return Mono.empty();
-        };
     }
 }

@@ -17,7 +17,7 @@ public class LessonPageService {
     private final LessonChapterRepository lessonChapterRepository;
 
     /**
-     * Creates a new Page entity, links it to a chapter and a lesson,
+     * Creates a new Page entity, links it to a lessonChapter and a lesson,
      * and persists it to the database in a new transaction.
      */
     @Transactional

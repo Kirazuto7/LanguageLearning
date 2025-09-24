@@ -8,10 +8,12 @@ import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.ShortStoryService;
 import com.example.language_learning.storybook.shortstory.page.StoryPageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StoryPrepActions {
@@ -20,29 +22,38 @@ public class StoryPrepActions {
     private final StoryPageService storyPageService;
 
     public void generateTaskId(StoryPrepInput input, StoryPrepOutput output) {
-        output.setTaskId(UUID.randomUUID().toString());
+        String taskId = UUID.randomUUID().toString();
+        log.info("Generated new story task ID: {}", taskId);
+        output.setTaskId(taskId);
     }
 
     public void findOrCreateBook(StoryPrepInput input, StoryPrepOutput output) {
+        log.info("Finding or creating story book for language: {}, difficulty: {}", input.request().language(), input.request().difficulty());
         StoryBook storyBook = storyBookService.findOrCreateBook(input.request().language(), input.request().difficulty(), input.user());
+        log.info("Story book found/created with ID: {}", storyBook.getId());
         output.setStoryBook(storyBook);
     }
 
     public void createInitialShortStory(StoryPrepInput input, StoryPrepOutput output) {
+        log.info("Creating initial short story for book ID: {}", output.getStoryBook().getId());
         int nextStoryNumber = output.getStoryBook().getShortStories().stream()
                 .mapToInt(ShortStory::getChapterNumber)
                 .max()
                 .orElse(0) + 1;
+        log.info("Calculated next story number: {}", nextStoryNumber);
 
         String topic = input.request().topic() != null ? input.request().topic() : "Surprise Me";
 
         ShortStory shortStory = shortStoryService.createShortStory(output.getStoryBook(), nextStoryNumber, "Generating...", "Generating...", topic, input.request().genre());
+        log.info("Created new ShortStory shell. Is it null? {}. ID: {}", shortStory == null, shortStory != null ? shortStory.getId() : "N/A");
         output.setShortStory(shortStory);
     }
 
     public void calculateStartingPage(StoryPrepInput input, StoryPrepOutput output) {
+        log.info("Calculating starting page for story book ID: {}", output.getStoryBook().getId());
         int lastPageNumber = storyPageService.getLastPageForBook(output.getStoryBook().getId());
         int nextPageNumber = lastPageNumber + 1;
+        log.info("Calculated next page number for story: {}", nextPageNumber);
         output.setStartingPageNumber(nextPageNumber);
     }
 

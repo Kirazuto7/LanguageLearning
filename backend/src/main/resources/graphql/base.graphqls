@@ -6,7 +6,7 @@ interface Book {
     language: String!
 }
 
-# Base interface for all chapter types
+# Base interface for all lessonChapter types
 interface Chapter {
     id: ID!
     chapterNumber: Int!

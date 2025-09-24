@@ -6,7 +6,7 @@ import com.example.language_learning.lessonbook.chapter.lesson.dtos.VocabularyLe
 import com.example.language_learning.shared.utils.StateMachine.TerminalState;
 
 /**
- * A sealed interface representing the distinct states of the chapter generation process.
+ * A sealed interface representing the distinct states of the lessonChapter generation process.
  * Each state can carry the specific, type-safe data needed for the next step in the workflow.
  */
 public sealed interface ChapterGenerationState {

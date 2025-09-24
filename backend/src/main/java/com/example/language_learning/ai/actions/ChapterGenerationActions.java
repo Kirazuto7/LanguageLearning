@@ -5,6 +5,7 @@ import com.example.language_learning.ai.components.AIRequest;
 import com.example.language_learning.lessonbook.chapter.LessonChapter;
 import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPage;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDTO;
 import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.ai.enums.PromptType;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
@@ -14,6 +15,7 @@ import com.example.language_learning.ai.states.ChapterGenerationState;
 import com.example.language_learning.lessonbook.chapter.LessonChapterService;
 import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageService;
 import com.example.language_learning.shared.services.ProgressService;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
  * This component is injected into the StateMachineConfig to build the transition graph,
  * breaking the circular dependency between the service and its configuration.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ChapterGenerationActions {
@@ -39,26 +42,31 @@ public class ChapterGenerationActions {
     private final Duration longDelay = Duration.ofSeconds(4);
 
     public ChapterGenerationState handleInitialGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handleInitialGeneration for task ID: {}", context.getTaskId());
         try {
-            progressService.sendUpdate(context.getTaskId(), 10, "Generating chapter outline...");
+            progressService.sendUpdate(context.getTaskId(), 10, "Generating lessonChapter outline...");
             Thread.sleep(shortDelay.toMillis());
 
             // 1. Fetch the Chapter using the ID from the context.
             LessonChapter lessonChapter = lessonChapterService.getChapter(context.getChapterId())
                     .orElseThrow(() -> new RuntimeException("Chapter not found for async generation: " + context.getChapterId()));
+            log.debug("Successfully fetched chapter. ID: {}", lessonChapter.getId());
 
             // 2. Store the fetched Chapter back into the context for subsequent actions.
             context.setLessonChapter(lessonChapter);
 
             // 3. Transition to the METADATA state to trigger the next action.
+            log.debug("Transitioning to METADATA state for task ID: {}", context.getTaskId());
             return ChapterGenerationState.METADATA;
         }
         catch (Exception e) {
+            log.error("Error in handleInitialGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }
 
     public ChapterGenerationState handleMetadataGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handleMetadataGeneration for task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 15, "Preparing lesson data...");
 
@@ -72,19 +80,23 @@ public class ChapterGenerationActions {
 
             ChapterMetadataDTO metadata = aiEngine.generate(aiRequest).block();
 
+            log.debug("Generated metadata: {}", metadata);
             LessonChapter lessonChapter = context.getLessonChapter();
             assert metadata != null;
             lessonChapter.setTitle(metadata.title());
             lessonChapter.setNativeTitle(metadata.nativeTitle());
             lessonChapterService.saveChapter(lessonChapter);
+            log.debug("Updated chapter metadata and saved. Transitioning to VOCABULARY_LESSON state for task ID: {}", context.getTaskId());
             return ChapterGenerationState.VOCABULARY_LESSON(metadata);
         }
         catch (Exception e) {
+            log.error("Error in handleMetadataGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }
 
     public ChapterGenerationState handleVocabularyGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handleVocabularyGeneration for task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 25, "Creating vocabulary lesson...");
             Thread.sleep(shortDelay.toMillis());
@@ -104,9 +116,12 @@ public class ChapterGenerationActions {
 
             VocabularyLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
+            log.debug("Generated vocabulary lesson DTO: {}", lessonDto);
             LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 40, "Vocabulary created.", dtoMapper.toDto(lessonPage));
+            LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
+            log.debug("Sending vocabulary page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
+            progressService.sendPageUpdate(context.getTaskId(), 40, "Vocabulary created.", pageDto);
             Thread.sleep(longDelay.toMillis());
 
             // 3. Decide the next state based on the branching logic and return it with the required data.
@@ -118,11 +133,13 @@ public class ChapterGenerationActions {
             }
         }
         catch (Exception e) {
+            log.error("Error in handleVocabularyGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }
 
     public ChapterGenerationState handleGrammarGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handleGrammarGeneration for task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 50, "Explaining grammar rules...");
             Thread.sleep(shortDelay.toMillis());
@@ -141,20 +158,25 @@ public class ChapterGenerationActions {
 
             GrammarLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
+            log.debug("Generated grammar lesson DTO: {}", lessonDto);
             LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 60, "Grammar rules explained.", dtoMapper.toDto(lessonPage));
+            LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
+            log.debug("Sending grammar page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
+            progressService.sendPageUpdate(context.getTaskId(), 60, "Grammar rules explained.", pageDto);
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, PRACTICE_LESSON, with all the data it needs.
             return ChapterGenerationState.PRACTICE_LESSON(vocabularyLessonDTO, lessonDto);
         }
         catch (Exception e) {
+            log.error("Error in handleGrammarGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }
 
     public ChapterGenerationState handleConjugationGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handleConjugationGeneration for task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 50, "Explaining conjugation rules...");
             Thread.sleep(shortDelay.toMillis());
@@ -173,20 +195,25 @@ public class ChapterGenerationActions {
 
             ConjugationLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
+            log.debug("Generated conjugation lesson DTO: {}", lessonDto);
             LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 60, "Conjugation rules explained.", dtoMapper.toDto(lessonPage));
+            LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
+            log.debug("Sending conjugation page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
+            progressService.sendPageUpdate(context.getTaskId(), 60, "Conjugation rules explained.", pageDto);
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, PRACTICE_LESSON, with all the data it needs.
             return ChapterGenerationState.PRACTICE_LESSON(vocabularyLessonDTO, lessonDto);
         }
         catch (Exception e) {
+            log.error("Error in handleConjugationGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }
 
     public ChapterGenerationState handlePracticeGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handlePracticeGeneration for task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 75, "Building practice exercises...");
             Thread.sleep(shortDelay.toMillis());
@@ -217,21 +244,25 @@ public class ChapterGenerationActions {
                     .param("grammarConcept", concept)
                     .build();
             PracticeLessonDTO lessonDTO = aiEngine.generate(aiRequest).block();
-
+            log.debug("Generated practice lesson DTO: {}", lessonDTO);
             LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDTO), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 85, "Practice exercises built.", dtoMapper.toDto(lessonPage));
+            LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
+            log.debug("Sending practice page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
+            progressService.sendPageUpdate(context.getTaskId(), 85, "Practice exercises built.", pageDto);
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, READING_LESSON, with the data it needs.
             return ChapterGenerationState.READING_LESSON(vocabularyDto, specificLesson);
         }
         catch (Exception e) {
+            log.error("Error in handlePracticeGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }
 
     public ChapterGenerationState handleReadingGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
+        log.debug("Entering handleReadingGeneration for task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 90, "Writing reading passage...");
             Thread.sleep(shortDelay.toMillis());
@@ -260,16 +291,19 @@ public class ChapterGenerationActions {
                     .param("grammarConcept", concept)
                     .build();
             ReadingComprehensionLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
-
+            log.debug("Generated reading comprehension lesson DTO: {}", lessonDto);
             LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), 100, "Reading passage complete.", dtoMapper.toDto(lessonPage));
+            LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
+            log.debug("Sending reading comprehension page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
+            progressService.sendPageUpdate(context.getTaskId(), 100, "Reading passage complete.", pageDto);
             Thread.sleep(longDelay.toMillis());
 
             // 2. Return the next state, COMPLETED, with the data it needs.
             return ChapterGenerationState.COMPLETED;
         }
         catch (Exception e) {
+            log.error("Error in handleReadingGeneration for task ID: {}", context.getTaskId(), e);
             return ChapterGenerationState.FAILED(e.getMessage());
         }
     }

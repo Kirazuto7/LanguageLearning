@@ -15,12 +15,13 @@ public class ClientLoggingController {
 
     @PostMapping("/client")
     public ResponseEntity<Void> logClientMessage(@RequestBody ClientLogDTO clientLog) {
-        String logMessage = String.format("[CLIENT] %s", clientLog.message());
+        String logMessage = String.format("[CLIENT] %s %s", clientLog.message(), clientLog.context() != null ? "{}" : "");
         switch (clientLog.level().toUpperCase()) {
             case "INFO" -> log.info(logMessage, clientLog.context());
+            case "DEBUG" -> log.debug(logMessage, clientLog.context());
             case "WARN" -> log.warn(logMessage, clientLog.context());
             case "ERROR" -> log.error(logMessage, clientLog.context());
-            default -> log.debug(logMessage, clientLog.context());
+            default -> log.trace(logMessage, clientLog.context());
         }
         return ResponseEntity.ok().build();
     }

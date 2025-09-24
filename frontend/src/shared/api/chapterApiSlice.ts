@@ -2,7 +2,7 @@ import { graphqlApiSlice } from "./graphqlApiSlice";
 import { gql } from "graphql-request";
 import {LessonChapterDTO, ChapterGenerationRequest, isLessonPageDTO, ProgressUpdateDTO} from "../types/dto";
 import { lessonBookApiSlice } from "./lessonBookApiSlice";
-import {logToServer, toString} from "../utils/loggingService";
+import {logToServer, safeToString} from "../utils/loggingService";
 import { lessonChapterFragment } from "../../features/lessonBook/gql/fragments";
 import { startSubscription } from "../../app/services/subscriptionManager";
 import { chapterGenerationProgressQuery } from "../../features/chapterGeneration/gql/queries";
@@ -49,16 +49,20 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
             }),
             transformResponse: (response: { generateChapter: { taskId: string; lessonChapter: LessonChapterDTO } }) => response.generateChapter,
             async onQueryStarted({ language, difficulty }, { dispatch, queryFulfilled }) {
+                logToServer('info', "onQueryStarted: Fired");
                 try {
                     const { data } = await queryFulfilled;
+                    logToServer('info', "onQueryStarted: queryFulfilled successful", { data });
                     const { taskId, lessonChapter: newLessonChapter } = data;
 
                     // 1. Adds the lessonChapter shell to the lesson book
+                    logToServer('info', "onQueryStarted: Dispatching optimistic update with new chapter:", newLessonChapter);
                     dispatch(
                         lessonBookApiSlice.util.updateQueryData('getLessonBook', { language, difficulty }, (draft) => {
                             draft.lessonChapters.push(newLessonChapter);
                         })
                     );
+                    logToServer('info', "onQueryStarted: Optimistic update complete. Starting subscription...");
 
                     // 2. Start the subscription to get progress & lessonPage updates for the lessonChapter
                     startSubscription<{ chapterGenerationProgress: ProgressUpdateDTO; }>(taskId, {
@@ -68,7 +72,7 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                             const update = progressData.chapterGenerationProgress;
                             if (!update) return;
 
-                            logToServer("info", "Subscription Update:", toString(update));
+                            logToServer("debug", "Subscription Update:", safeToString(update));
 
                             // Dispatch the raw progress update to the progress slice
                             store.dispatch(updateProgress(update));
@@ -102,7 +106,7 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                     });
                 }
                 catch (err) {
-                    logToServer('error', "Failed to start lessonChapter generation:", { error: err });
+                    logToServer('error', "onQueryStarted: queryFulfilled REJECTED with error:", { error: err });
                 }
             }
         }),

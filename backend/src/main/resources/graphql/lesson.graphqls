@@ -25,7 +25,7 @@ type GrammarLesson implements Lesson {
     title: String!
     grammarConcept: String!
     explanation: String!
-    exampleSentences: [Sentence!]!
+    exampleLessonSentences: [LessonSentence!]!
 }
 
 type ConjugationLesson implements Lesson {
@@ -42,7 +42,7 @@ type PracticeLesson implements Lesson {
     type: LessonType!
     title: String!
     instructions: String!
-    questions: [Question!]!
+    lessonQuestions: [LessonQuestion!]!
 }
 
 type ReadingComprehensionLesson implements Lesson {
@@ -50,7 +50,7 @@ type ReadingComprehensionLesson implements Lesson {
     type: LessonType!
     title: String!
     story: String!
-    questions: [Question!]!
+    lessonQuestions: [LessonQuestion!]!
 }
 
 # Practice Lesson Proofread Mutation

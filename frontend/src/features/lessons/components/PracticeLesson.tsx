@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { PracticeLessonDTO, QuestionDTO, PracticeLessonCheckResponse } from '../../../shared/types/dto';
+import { PracticeLessonDTO, LessonQuestionDTO, PracticeLessonCheckResponse } from '../../../shared/types/dto';
 import parse from 'html-react-parser';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
 import {filterInputByLanguage} from "../../../shared/utils/languageValidation";
@@ -32,19 +32,19 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
     const placeholderText = `Type your answer in ${settings?.language || 'the target language'}...`;
 
     useEffect(() => {
-        const initialAnswers = lesson.questions.reduce((curr, question) => {
+        const initialAnswers = lesson.lessonQuestions.reduce((curr, question) => {
             curr[question.id] = '';
             return curr;
         }, {} as { [key: string]: string});
 
-        const initialFeedback = lesson.questions.reduce((curr, question) => {
+        const initialFeedback = lesson.lessonQuestions.reduce((curr, question) => {
             curr[question.id] = null;
             return curr;
         }, {} as { [key: string]: PracticeLessonCheckResponse | null});
 
         setAnswers(initialAnswers);
         setFeedback(initialFeedback);
-    }, [lesson.questions]);
+    }, [lesson.lessonQuestions]);
 
     const handleAnswerChange = (questionId: string, value: string) => {
         const filteredValue = filterInputByLanguage(value, settings?.language);
@@ -94,7 +94,7 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
             <h2 className="text-center mb-4">{lesson.title}</h2>
 
             <h6>{lesson.instructions}</h6>
-            {lesson.questions.map((question: QuestionDTO, index) => {
+            {lesson.lessonQuestions.map((question: LessonQuestionDTO, index) => {
                 const answer = answers[question.id] || '';
                 const isButtonDisabled = answer.trim() === '';
                 const isLoadingProofread = isProofreading && checkingQuestionId === question.id;

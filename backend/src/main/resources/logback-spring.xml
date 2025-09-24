@@ -64,6 +64,18 @@
         </rollingPolicy>
     </appender>
 
+    <!-- Appender for Client-Side specific logs -->
+    <appender name="FILE_CLIENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/client.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/client.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <appender name="STDOUT_ERROR_LEVEL" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%n\t%msg%n</pattern>
@@ -128,9 +140,22 @@
             <appender-ref ref="STDOUT_INFO_LEVEL"/>
         </logger>
 
+        <!-- GraphQL Exception Logger -->
+        <logger name="com.example.language_learning.config.GraphQlExceptionConfig" level="ERROR" additivity="false">
+            <appender-ref ref="FILE_GRAPHQL"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+        </logger>
+
         <!-- Security Logger -->
         <logger name="org.springframework.security" level="INFO" additivity="false">
             <appender-ref ref="FILE_SECURITY"/>
+            <appender-ref ref="STDOUT_ERROR_LEVEL"/>
+            <appender-ref ref="STDOUT_INFO_LEVEL"/>
+        </logger>
+
+        <!-- Client-Side Logger -->
+        <logger name="com.example.language_learning.shared.controllers.ClientLoggingController" level="INFO" additivity="false">
+            <appender-ref ref="FILE_CLIENT"/>
             <appender-ref ref="STDOUT_ERROR_LEVEL"/>
             <appender-ref ref="STDOUT_INFO_LEVEL"/>
         </logger>

@@ -112,7 +112,7 @@ export interface GrammarLessonDTO extends LessonDTO {
     type: 'GRAMMAR';
     grammarConcept: string;
     explanation: string;
-    exampleSentences: SentenceDTO[];
+    exampleLessonSentences: LessonSentenceDTO[];
 }
 
 export interface ConjugationLessonDTO extends LessonDTO {
@@ -127,14 +127,14 @@ export interface PracticeLessonDTO extends LessonDTO {
     __typename: 'PracticeLesson';
     type: 'PRACTICE';
     instructions: string;
-    questions: QuestionDTO[];
+    lessonQuestions: LessonQuestionDTO[];
 }
 
 export interface ReadingComprehensionLessonDTO extends LessonDTO {
     __typename: 'ReadingComprehensionLesson';
     type: 'READING_COMPREHENSION';
     story: string;
-    questions: QuestionDTO[];
+    lessonQuestions: LessonQuestionDTO[];
 }
 
 export type AnyLessonDTO = VocabularyLessonDTO | GrammarLessonDTO | ConjugationLessonDTO | PracticeLessonDTO | ReadingComprehensionLessonDTO;
@@ -217,13 +217,13 @@ export interface WordDTO {
     details: WordDetailsDTO;
 }
 
-export interface SentenceDTO {
+export interface LessonSentenceDTO {
     id: string;
     text: string;
     translation: string;
 }
 
-export interface QuestionDTO {
+export interface LessonQuestionDTO {
     id: string;
     questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;

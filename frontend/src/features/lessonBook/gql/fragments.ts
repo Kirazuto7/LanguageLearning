@@ -70,7 +70,7 @@ export const lessonFragment = gql`
         ... on GrammarLesson {
             grammarConcept
             explanation
-            exampleSentences {
+            exampleLessonSentences {
                 id
                 text
                 translation
@@ -89,7 +89,7 @@ export const lessonFragment = gql`
         }
         ... on PracticeLesson {
             instructions
-            questions {
+            lessonQuestions {
                 id
                 questionType
                 questionText
@@ -99,7 +99,7 @@ export const lessonFragment = gql`
         }
         ... on ReadingComprehensionLesson {
             story
-            questions {
+            lessonQuestions {
                 id
                 questionText
                 questionType

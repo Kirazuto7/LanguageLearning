@@ -5,7 +5,7 @@
  * @param message The primary log message.
  * @param context Optional additional data to log.
  */
- export const logToServer = (level: 'info' | 'warn' | 'error', message: string, context?: any): void => {
+ export const logToServer = (level: 'info' | 'debug' |'warn' | 'error', message: string, context?: any): void => {
     fetch('/api/logs/client', {
         method: 'POST',
         headers: {
@@ -20,3 +20,27 @@
  export const toString = (object: any) => {
     return JSON.stringify(object, null, 2);
  }
+
+/**
+ * Safely converts an object to a JSON string, handling circular references.
+ * @param object The object to convert.
+ * @returns A JSON string representation of the object.
+ */
+export const safeToString = (object: any): string => {
+    const cache = new Set();
+    return JSON.stringify(
+        object,
+        (key, value) => {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.has(value)) {
+                    // Circular reference found, discard key
+                    return '[Circular]';
+                }
+                // Store value in our collection
+                cache.add(value);
+            }
+            return value;
+        },
+        2
+    );
+};

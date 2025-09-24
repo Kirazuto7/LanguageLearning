@@ -42,7 +42,7 @@ public class LessonChapterGenerationService {
         // 2. Execute the synchronous workflow to prepare all necessary data.
         chapterPrepWorkflow.execute(input, output);
 
-        // 3. Kick off the chapter generation pipeline to create the associated lesson lessonPages asynchronously
+        // 3. Kick off the lessonChapter generation pipeline to create the associated lesson lessonPages asynchronously
         //    after the current transaction successfully commits
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -54,12 +54,12 @@ public class LessonChapterGenerationService {
         // 4. Immediately return the response to the user.
         return GenerationResponse.builder()
                 .taskId(output.getTaskId())
-                .chapter(dtoMapper.toDto(output.getLessonChapter()))
+                .lessonChapter(dtoMapper.toDto(output.getLessonChapter()))
                 .build();
     }
 
     private void generateChapterAsync(ChapterGenerationRequest request, String taskId, Long chapterId, int startingPageNumber) {
-        // Asynchronously start the page(s) generation for the chapter generation subscription
+        // Asynchronously start the page(s) generation for the lessonChapter generation subscription
         Runnable chapterGenerationJob = () -> {
             try {
                 ChapterGenerationContext context = new ChapterGenerationContext(request, taskId, chapterId, new AtomicInteger(startingPageNumber));

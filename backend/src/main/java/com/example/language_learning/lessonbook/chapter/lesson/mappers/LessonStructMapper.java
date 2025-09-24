@@ -85,6 +85,9 @@ public abstract class LessonStructMapper {
 
     @ObjectFactory
     protected LessonDTO createLessonDTO(Lesson entity, @Context CycleAvoidingMappingContext context) {
+        if (entity == null) {
+            return null;
+        }
         LessonDTO existingDto = context.getMappedInstance(entity, LessonDTO.class);
         if (existingDto != null) {
             return existingDto;

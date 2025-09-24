@@ -6,5 +6,5 @@ import lombok.Builder;
 @Builder
 public record GenerationResponse(
         String taskId,
-        LessonChapterDTO chapter
+        LessonChapterDTO lessonChapter
 ) {}

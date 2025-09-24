@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The context object that holds all the data that persists across all states of the chapter generation process.
+ * The context object that holds all the data that persists across all states of the lessonChapter generation process.
  */
 @Getter
 @Setter

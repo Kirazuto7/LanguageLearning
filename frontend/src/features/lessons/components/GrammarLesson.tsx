@@ -1,5 +1,5 @@
 import React from 'react';
-import { GrammarLessonDTO, SentenceDTO } from '../../../shared/types/dto';
+import { GrammarLessonDTO, LessonSentenceDTO } from '../../../shared/types/dto';
 import parse from 'html-react-parser';
 import { useSettingsManager } from '../../userSettings/hooks/useSettingsManager';
 import useTextToSpeech from "../../../hooks/useTextToSpeech";
@@ -42,7 +42,7 @@ const GrammarLesson: React.FC<GrammarLessonProps> = ({ lesson }) => {
             <hr />
             <h6 className="mt-3">Examples:</h6>
             {
-                lesson.exampleSentences.map((sentence: SentenceDTO, index) => (
+                lesson.exampleLessonSentences.map((sentence: LessonSentenceDTO, index) => (
                     <div key={sentence.id ?? index} className={styles.exampleSentence}>
                         <div className={styles.sentenceNumber}>
                             <div className={styles.circularNumber}>{index + 1}</div>

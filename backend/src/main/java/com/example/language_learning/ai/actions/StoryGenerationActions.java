@@ -37,12 +37,14 @@ public class StoryGenerationActions {
     private final Duration longDelay = Duration.ofSeconds(4);
 
     public StoryGenerationState handleInitialGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
+        log.info("Entering handleInitialGeneration for story task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 10 , "Initializing story generation...");
             Thread.sleep(shortDelay.toMillis());
 
             ShortStory shortStory = shortStoryService.getShortStory(context.getStoryId())
                     .orElseThrow(() -> new RuntimeException("ShortStory not found for async generation: " + context.getStoryId()));
+            log.info("Successfully fetched story. ID: {}", shortStory.getId());
 
             context.setShortStory(shortStory);
 
@@ -55,6 +57,7 @@ public class StoryGenerationActions {
     }
 
     public StoryGenerationState handleMetadataGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
+        log.info("Entering handleMetadataGeneration for story task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 15, "Preparing story data...");
 
@@ -68,6 +71,7 @@ public class StoryGenerationActions {
                     .build();
 
             ShortStoryMetadataDTO metadata = aiEngine.generate(aiRequest).block();
+            log.info("Generated story metadata: {}", metadata);
 
             ShortStory shortStory = context.getShortStory();
             assert metadata != null;
@@ -76,14 +80,17 @@ public class StoryGenerationActions {
             shortStory.setTopic(metadata.topic());
             shortStory.setGenre(metadata.genre());
             shortStoryService.saveShortStory(shortStory);
+            log.info("Updated story metadata and saved. Transitioning to STORY_GENERATION state for task ID: {}", context.getTaskId());
             return StoryGenerationState.STORY_GENERATION(metadata);
         }
         catch (Exception e) {
+            log.error("Error in handleMetadataGeneration for story task ID: {}", context.getTaskId(), e);
             return StoryGenerationState.FAILED(e.getMessage());
         }
     }
 
     public StoryGenerationState handleStoryGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
+        log.info("Entering handleStoryGeneration for story task ID: {}", context.getTaskId());
         try {
             progressService.sendUpdate(context.getTaskId(), 30, "Writing the story...");
             Thread.sleep(shortDelay.toMillis());
@@ -104,14 +111,17 @@ public class StoryGenerationActions {
 
             ShortStoryDTO storyDto = aiEngine.generate(aiRequest).block();
             assert storyDto != null;
+            log.info("Generated story with {} pages. Transitioning to IMAGE_GENERATION state for task ID: {}", storyDto.storyPages().size(), context.getTaskId());
             return StoryGenerationState.IMAGE_GENERATION(storyDto.storyPages());
         }
         catch (Exception e) {
+            log.error("Error in handleStoryGeneration for story task ID: {}", context.getTaskId(), e);
             return StoryGenerationState.FAILED(e.getMessage());
         }
     }
 
     public StoryGenerationState handleImageGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
+        log.info("Entering handleImageGeneration for story task ID: {}", context.getTaskId());
         StoryGenerationState.IMAGE_GENERATION currentState = (StoryGenerationState.IMAGE_GENERATION) fromState;
         List<StoryPageDTO> storyPageDtos = currentState.storyPagesDto();
 
@@ -121,6 +131,7 @@ public class StoryGenerationActions {
             String imageContext = storyPageDtos.stream()
                     .map(StoryPageDTO::englishSummary)
                     .collect(Collectors.joining("\n"));
+            log.info("Image generation context: {}", imageContext);
 
             AIRequest<GeneratedImageDTO> imageRequest = AIRequest.builder()
                     .responseClass(GeneratedImageDTO.class)
@@ -131,6 +142,7 @@ public class StoryGenerationActions {
 
             GeneratedImageDTO imageDTO = aiEngine.generateImages(imageRequest).block();
             assert imageDTO != null;
+            log.info("Generated {} images. Transitioning to PERSIST_PAGES state for task ID: {}", imageDTO.urls().size(), context.getTaskId());
             List<String> permanentUrls = imageDTO.urls();
 
             List<StoryPageDTO> updatedDtos = new ArrayList<>();
@@ -143,12 +155,14 @@ public class StoryGenerationActions {
             return StoryGenerationState.PERSIST_PAGES(updatedDtos);
         }
         catch (Exception e) {
+            log.error("Error in handleImageGeneration for story task ID: {}", context.getTaskId(), e);
             return StoryGenerationState.FAILED(e.getMessage());
         }
 
     }
 
     public StoryGenerationState handlePersistPages(StoryGenerationState fromState, StoryGenerationContext context) {
+        log.info("Entering handlePersistPages for story task ID: {}", context.getTaskId());
         StoryGenerationState.PERSIST_PAGES currentState = (StoryGenerationState.PERSIST_PAGES) fromState;
         List<StoryPageDTO> storyPageDtos = currentState.storyPagesDto();
         int currentIndex = currentState.currentIndex();
@@ -170,7 +184,9 @@ public class StoryGenerationActions {
 
             StoryPage storyPage = storyPageService.createAndPersistPage(context.getShortStory(), currentPageDto, context.getPageCounter().getAndIncrement());
 
-            progressService.sendPageUpdate(context.getTaskId(), startProgress + progressChunk, "Saved page #" + storyPage.getPageNumber(), dtoMapper.toDto(storyPage));
+            StoryPageDTO pageDto = dtoMapper.toDto(storyPage);
+            log.info("Sending story page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
+            progressService.sendPageUpdate(context.getTaskId(), startProgress + progressChunk, "Saved page #" + storyPage.getPageNumber(), pageDto);
             Thread.sleep(longDelay.toMillis());
 
             return StoryGenerationState.PERSIST_PAGES(storyPageDtos, currentIndex + 1, startProgress + progressChunk);
