@@ -24,6 +24,8 @@ public class StoryVocabularyItem {
 
     private String translation;
 
+    private int pageNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "story_page_id")
     @JsonBackReference

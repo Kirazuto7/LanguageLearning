@@ -14,6 +14,7 @@ import java.util.List;
 @With
 public record StoryPageDTO(
     Long id,
+    StoryPageType type,
     String englishSummary,
     String imageUrl,
     int pageNumber,

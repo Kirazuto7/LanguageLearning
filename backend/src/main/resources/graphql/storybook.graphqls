@@ -15,9 +15,16 @@ type ShortStory implements Chapter {
     storyPages: [StoryPage!]!
 }
 
+
+enum StoryPageType {
+    CONTENT
+    VOCABULARY
+}
+
 type StoryContentPage implements Page {
     id: ID!
     pageNumber: Int!
+    type: StoryPageType!
     englishSummary: String
     imageUrl: String
     paragraphs: [StoryParagraph!]!
@@ -26,8 +33,8 @@ type StoryContentPage implements Page {
 type StoryVocabularyPage implements Page {
     id: ID!
     pageNumber: Int!
+    type: StoryPageType!
     englishSummary: String
-    imageUrl: String
     vocabulary: [StoryVocabularyItem!]!
 }
 
@@ -43,6 +50,7 @@ type StoryVocabularyItem {
     id: ID!
     word: String!
     translation: String!
+    pageNumber: Int!
 }
 
 # --- Inputs & Responses for Mutations ---

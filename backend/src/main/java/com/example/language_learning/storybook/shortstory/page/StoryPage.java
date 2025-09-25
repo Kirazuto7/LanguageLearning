@@ -28,6 +28,9 @@ public class StoryPage extends BasePage {
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
+    private StoryPageType type;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "storyPage")
     @OrderBy("paragraphNumber ASC")
     @Builder.Default

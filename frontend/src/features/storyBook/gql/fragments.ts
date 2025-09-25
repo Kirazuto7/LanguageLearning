@@ -5,6 +5,7 @@ export const storyVocabularyItemFragment = gql`
         id
         word
         translation
+        pageNumber
     }
 `;
 
@@ -26,6 +27,7 @@ export const storyPageFragment = gql`
             pageNumber
             englishSummary
             imageUrl
+            type
             paragraphs {
                 ...StoryParagraphFragment
             }
@@ -34,7 +36,7 @@ export const storyPageFragment = gql`
             id
             pageNumber
             englishSummary
-            imageUrl
+            type
             vocabulary {
                 ...StoryVocabularyItemFragment
             }

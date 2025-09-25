@@ -53,6 +53,11 @@ export interface ShortStoryDTO extends ChapterDTO {
 
 // --- Page Interfaces ---
 
+export enum StoryPageType {
+    CONTENT = 'CONTENT',
+    VOCABULARY = 'VOCABULARY'
+}
+
 export interface PageDTO {
     id: string;
     pageNumber: number;
@@ -65,6 +70,7 @@ export interface LessonPageDTO extends PageDTO {
 
 export interface StoryContentPageDTO extends PageDTO {
     __typename: 'StoryContentPage';
+    type: StoryPageType.CONTENT;
     englishSummary?: string;
     imageUrl?: string;
     paragraphs: StoryParagraphDTO[];
@@ -72,8 +78,8 @@ export interface StoryContentPageDTO extends PageDTO {
 
 export interface StoryVocabularyPageDTO extends PageDTO {
     __typename: 'StoryVocabularyPage';
+    type: StoryPageType.VOCABULARY;
     englishSummary?: string;
-    imageUrl?: string;
     vocabulary: StoryVocabularyItemDTO[];
 }
 
@@ -91,6 +97,7 @@ export interface StoryVocabularyItemDTO {
     id: string;
     word: string;
     translation: string;
+    pageNumber: number;
 }
 
 // --- Lesson-Specific Interfaces ---
@@ -303,7 +310,9 @@ export function isLessonPageDTO(data: any): data is LessonPageDTO {
 }
 
 export function isStoryPageDTO(data: any): data is StoryPageDTO {
-    return data && ((data as StoryContentPageDTO).__typename === 'StoryContentPage' || (data as StoryVocabularyPageDTO).__typename === 'StoryVocabularyPage');
+    return data &&
+        ((data.type === StoryPageType.CONTENT && data.__typename === 'StoryContentPage') ||
+        (data.type === StoryPageType.VOCABULARY && data.__typename === 'StoryVocabularyPage'));
 }
 
 export interface ProgressUpdateDTO {
