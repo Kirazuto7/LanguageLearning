@@ -1,11 +1,11 @@
-import VocabularyLesson from "../../features/lessons/components/VocabularyLesson";
-import GrammarLesson from "../../features/lessons/components/GrammarLesson";
-import BookPage from "../ui/book/BookPage";
-import ChapterPage from "../ui/book/ChapterPage";
-import { LessonPageDTO, LessonBookDTO, LessonChapterDTO } from "../types/dto";
-import PracticeLesson from "../../features/lessons/components/PracticeLesson";
-import ReadingComprehensionLesson from "../../features/lessons/components/ReadingComprehensionLesson";
-import ConjugationLesson from "../../features/lessons/components/ConjugationLesson";
+import VocabularyLesson from "../../lessons/components/VocabularyLesson";
+import GrammarLesson from "../../lessons/components/GrammarLesson";
+import BookPage from "../../../shared/ui/book/BookPage";
+import ChapterPage from "../../../shared/ui/book/ChapterPage";
+import { LessonPageDTO, LessonBookDTO, LessonChapterDTO } from "../../../shared/types/dto";
+import PracticeLesson from "../../lessons/components/PracticeLesson";
+import ReadingComprehensionLesson from "../../lessons/components/ReadingComprehensionLesson";
+import ConjugationLesson from "../../lessons/components/ConjugationLesson";
 
 const getPageFromLessonType = (lessonPage: LessonPageDTO, onAllCorrect?: () => void): React.ReactElement => {
     if (!lessonPage || !lessonPage.lesson) {

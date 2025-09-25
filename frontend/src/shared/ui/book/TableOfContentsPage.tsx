@@ -1,53 +1,35 @@
-import styles from '../../bookpages/bookpage.module.css';
+import React from 'react';
+import styles from './bookpage.module.scss';
 
-export interface TocChapter {
-    chapterNumber: number;
+export interface TocEntry {
+    entryNumber: number;
     title: string;
-    displayPageNumber: number;
     navigationPageIndex: number;
 }
 
 interface TableOfContentsPageProps {
-    chapters: TocChapter[],
-    onNavigate: (pageIndex: number) => void
+    entries: TocEntry[];
+    onNavigate: (pageIndex: number) => void;
+    entryPrefix?: string;
 }
-/**
- * Renders the table of contents navigation lessonPage.
- */
-const TableOfContentsPage: React.FC<TableOfContentsPageProps> = (({ chapters = [], onNavigate }) => {
+
+const TableOfContentsPage: React.FC<TableOfContentsPageProps> = ({ entries, onNavigate, entryPrefix = 'Entry' }) => {
     return (
-        <div>
+        <div className={styles['page-content']}>
             <h1>Table of Contents</h1>
-            <ul>
-                {
-                    chapters.map(({chapterNumber, title, displayPageNumber, navigationPageIndex}) => (
-                        <li key={chapterNumber} style={{margin: '10px 0', listStyle: 'none'}}>
-                            <button
-                                onClick={() => onNavigate(navigationPageIndex)}
-                                style={{
-                                cursor: 'pointer',
-                                background: 'none',
-                                border: 'none',
-                                color: 'blue',
-                                fontSize: '1rem',
-                                width: '100%'
-                                }}
-                            >
-                                <div className="d-flex flex-column align-items-start">
-                                    <div className="fw-bold">Chapter {chapterNumber}</div>
-                                    <div className="d-flex justify-content-between w-100 ">
-                                        <span className={styles['toc-title']}>{title}</span>
-                                        <span className={styles['toc-dots']}></span>
-                                        <span className={styles['toc-lessonPage-number']}>{displayPageNumber}</span>
-                                    </div>
-                                </div>
-                            </button>
-                        </li>
-                    ))
-                }
+            <ul className="list-unstyled mt-4">
+                {entries.map((entry) => (
+                    <li key={entry.entryNumber} className="mb-3">
+                        <a href="#" className={styles['toc-entry']} onClick={(e) => { e.preventDefault(); onNavigate(entry.navigationPageIndex); }}>
+                            <span>{entryPrefix} {entry.entryNumber}: {entry.title}</span>
+                            <span className={styles['toc-dots']}></span>
+                            <span>{entry.navigationPageIndex}</span>
+                        </a>
+                    </li>
+                ))}
             </ul>
         </div>
     );
-});
+};
 
 export default TableOfContentsPage;

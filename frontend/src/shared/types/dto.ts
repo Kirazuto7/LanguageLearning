@@ -74,6 +74,7 @@ export interface StoryContentPageDTO extends PageDTO {
     englishSummary?: string;
     imageUrl?: string;
     paragraphs: StoryParagraphDTO[];
+    vocabulary: StoryVocabularyItemDTO[];
 }
 
 export interface StoryVocabularyPageDTO extends PageDTO {

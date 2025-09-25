@@ -31,6 +31,9 @@ export const storyPageFragment = gql`
             paragraphs {
                 ...StoryParagraphFragment
             }
+            vocabulary {
+                ...StoryVocabularyItemFragment
+            }
         }
         ... on StoryVocabularyPage {
             id

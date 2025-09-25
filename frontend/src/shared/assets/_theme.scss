@@ -33,7 +33,12 @@ $themes: (
     glass-text-color: #1f2937, // Dark text for light glass
     glass-text-shadow: none,
     button-shadow-hover: 0 8px 25px rgba(107, 114, 128, 0.3),
-    pagination-shadow: 0 8px 20px rgba(107, 114, 128, 0.3)
+    pagination-shadow: 0 8px 20px rgba(107, 114, 128, 0.3),
+
+    storybook-cover-bg: #374151,
+    storybook-accent-color: #6b7280,
+    storybook-cover-text-color: #ffffff,
+    storybook-title-color: #ffffff
   ),
 
   light: (
@@ -61,7 +66,12 @@ $themes: (
       glass-text-color: #1f2937, // Dark text for light glass
       glass-text-shadow: none,
       button-shadow-hover: 0 8px 25px rgba(59, 130, 246, 0.3),
-      pagination-shadow: 0 8px 20px rgba(59, 130, 246, 0.3)
+      pagination-shadow: 0 8px 20px rgba(59, 130, 246, 0.3),
+
+      storybook-cover-bg: #1d4ed8,
+      storybook-accent-color: #3b82f6,
+      storybook-cover-text-color: #ffffff,
+      storybook-title-color: #ffffff
   ),
 
   sunset: (
@@ -90,7 +100,12 @@ $themes: (
     glass-text-color: #ffffff, // Light text for dark glass
     glass-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
     button-shadow-hover: 0 8px 25px rgba(249, 115, 22, 0.4),
-    pagination-shadow: 0 8px 20px rgba(249, 115, 22, 0.3)
+    pagination-shadow: 0 8px 20px rgba(249, 115, 22, 0.3),
+
+    storybook-cover-bg: #4a044e,
+    storybook-accent-color: #f97316,
+    storybook-cover-text-color: #ffffff,
+    storybook-title-color: #ffffff
   ),
   nebula: (
     // Palette
@@ -117,7 +132,12 @@ $themes: (
     glass-text-color: #ffffff, // Light text for dark glass
     glass-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
     button-shadow-hover: 0 8px 25px rgba(168, 85, 247, 0.3),
-    pagination-shadow: 0 8px 20px rgba(168, 85, 247, 0.3)
+    pagination-shadow: 0 8px 20px rgba(168, 85, 247, 0.3),
+
+    storybook-cover-bg: #1e1b4b,
+    storybook-accent-color: #a855f7,
+    storybook-cover-text-color: #d8b4fe,
+    storybook-title-color: #ffffff
   ),
   cafe: (
     // Palette
@@ -144,7 +164,12 @@ $themes: (
     glass-text-color: #1c1917, // Dark text for light glass
     glass-text-shadow: none,
     button-shadow-hover: 0 8px 25px rgba(101, 163, 13, 0.3),
-    pagination-shadow: 0 8px 20px rgba(101, 163, 13, 0.3)
+    pagination-shadow: 0 8px 20px rgba(101, 163, 13, 0.3),
+
+    storybook-cover-bg: #365314,
+    storybook-accent-color: #4d7c0f,
+    storybook-cover-text-color: #fefce8,
+    storybook-title-color: #ffffff
   ),
   hanok: (
     // Palette
@@ -171,7 +196,12 @@ $themes: (
     glass-text-color: #3E2723,
     glass-text-shadow: none,
     button-shadow-hover: 0 8px 25px rgba(139, 69, 19, 0.3),
-    pagination-shadow: 0 8px 20px rgba(139, 69, 19, 0.3)
+    pagination-shadow: 0 8px 20px rgba(139, 69, 19, 0.3),
+
+    storybook-cover-bg: #3E2723,
+    storybook-accent-color: #8B4513,
+    storybook-cover-text-color: #fdf6e3,
+    storybook-title-color: #ffffff
   ),
   fuji: (
     // Palette
@@ -198,7 +228,12 @@ $themes: (
     glass-text-color: #00008B,
     glass-text-shadow: none,
     button-shadow-hover: 0 8px 25px rgba(70, 130, 180, 0.3),
-    pagination-shadow: 0 8px 20px rgba(70, 130, 180, 0.3)
+    pagination-shadow: 0 8px 20px rgba(70, 130, 180, 0.3),
+
+    storybook-cover-bg: #00008B,
+    storybook-accent-color: #4682B4,
+    storybook-cover-text-color: #eef1f5,
+    storybook-title-color: #ffffff
   ),
   school: (
     // Palette
@@ -209,7 +244,7 @@ $themes: (
     navbar-text-color: #ffffff,
     navbar-text-hover-color: #FFD700,
     title-color: #ffffff,
-    text-color-dark: #ffffff,
+    text-color-dark: #1f2937,
 
     // Gradients
     primary-gradient: linear-gradient(135deg, #FFD700 0%, #FFC700 100%),
@@ -225,7 +260,12 @@ $themes: (
     glass-text-color: #ffffff,
     glass-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
     button-shadow-hover: 0 8px 25px rgba(255, 215, 0, 0.3),
-    pagination-shadow: 0 8px 20px rgba(255, 215, 0, 0.3)
+    pagination-shadow: 0 8px 20px rgba(255, 215, 0, 0.3),
+
+    storybook-cover-bg: #2F4F4F,
+    storybook-accent-color: #FFD700,
+    storybook-cover-text-color: #ffffff,
+    storybook-title-color: #ffffff
   )
 );
 
@@ -256,7 +296,22 @@ $themes: (
   --glass-text-color: #{map.get($theme-map, glass-text-color)};
   --glass-text-shadow: #{map.get($theme-map, glass-text-shadow)};
   --button-shadow-hover: #{map.get($theme-map, button-shadow-hover)};
-  --pagination-shadow: #{map.get($theme-map, pagination-shadow)}
+  --pagination-shadow: #{map.get($theme-map, pagination-shadow)};
+
+  // Book/Paper specific styles
+  --paper-bg: #{'#ffffff'};
+  --paper-border-color: #{'#d0d0c0'};
+  --paper-line-color: #{'#e6e6fa'};
+  --paper-margin-line-color: #{'#ffb3b3'};
+  --subtitle-color: #{'#4a2c1a'};
+  --text-color-muted: #{'#666666'};
+  --primary-glow: 0 0 20px #{map-get($theme-map, primary-color)};
+
+  // Storybook specific styles
+  --storybook-cover-bg: #{map-get($theme-map, storybook-cover-bg)};
+  --storybook-accent-color: #{map-get($theme-map, storybook-accent-color)};
+  --storybook-cover-text-color: #{map-get($theme-map, storybook-cover-text-color)};
+  --storybook-title-color: #{map-get($theme-map, storybook-title-color)};
 }
 
 // =============================================================================

@@ -20,6 +20,7 @@ const StoryVocabularyPage: React.FC<StoryVocabularyPageProps> = ({ page }) => {
                         <tr key={vocabItem.id ?? index}>
                             <td><strong>{vocabItem.word}</strong></td>
                             <td>{vocabItem.translation}</td>
+                            <td className="text-end text-muted">p. {vocabItem.pageNumber}</td>
                         </tr>
                     ))}
                 </tbody>

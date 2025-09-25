@@ -75,7 +75,7 @@
 }
 
 
-.lessonPage-control-container {
+.page-control-container {
   display: flex;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-color);
@@ -96,8 +96,8 @@
     transition: all 0.2s ease-in-out;
 }
 
-.lessonPage-item {
-  :global(.lessonPage-link) {
+.page-item {
+  :global(.page-link) {
     @extend %pagination-button-base;
     width: 2.3rem;
     height: 2.3rem;
@@ -109,8 +109,8 @@
   }
 }
 
-.lessonPage-control-item {
-  :global(.lessonPage-link) {
+.page-control-item {
+  :global(.page-link) {
     @extend %pagination-button-base;
     width: 2rem;
     height: 2rem;
@@ -122,8 +122,8 @@
   }
 }
 
-.active-lessonPage-item {
-  :global(.lessonPage-link) {
+.active-page-item {
+  :global(.page-link) {
     transform: translateY(-2px);
     box-shadow: var(--button-shadow-hover);
     background: var(--primary-gradient);

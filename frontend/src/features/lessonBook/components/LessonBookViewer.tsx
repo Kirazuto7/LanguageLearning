@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, memo } from "react";
 import styles from './lessonBookViewer.module.scss';
 import { Carousel } from "react-bootstrap";
-import { buildPagesForChapter } from "../../../shared/utils/buildPagesFromData";
+import { buildPagesForChapter } from "../utils/buildPagesFromLessonData";
 import { LessonChapterDTO } from "../../../shared/types/dto";
 import {useSwipeable} from "react-swipeable";
 import { ChapterSelector } from "./ChapterSelector";

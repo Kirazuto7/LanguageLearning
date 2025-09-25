@@ -15,16 +15,16 @@ const LearningToolsNavigation: React.FC = () => {
                 <Nav.Link as={Link} to={"/study"}>
                     <div className={styles.navLinkContent}>
                         <i className="bi bi-journal-bookmark-fill"/>
-                        <span>Study Book</span>
+                        <span>Lesson Book</span>
                     </div>
                 </Nav.Link>
             </Nav.Item>
 
-            <Nav.Item> {/* Coming Soon */}
-                <Nav.Link as={Link} to={"/read"} disabled>
+            <Nav.Item>
+                <Nav.Link as={Link} to={"/read"}>
                     <div className={styles.navLinkContent}>
                         <i className="bi bi-book-half"/>
-                        <span>Reading Book</span>
+                        <span>Story Book</span>
                     </div>
                 </Nav.Link>
             </Nav.Item>

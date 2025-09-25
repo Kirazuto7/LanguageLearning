@@ -5,6 +5,7 @@ import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageDT
 import com.example.language_learning.shared.enums.LessonType;
 import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
+import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.TypeResolver;
 import org.springframework.context.annotation.Bean;
@@ -38,12 +39,11 @@ public class GraphqlConfig {
                 return env.getSchema().getObjectType("LessonPage");
             }
             else if  (javaObject instanceof StoryPageDTO storyPage) {
-                if (storyPage.paragraphs() != null && !storyPage.paragraphs().isEmpty()) {
-                    return env.getSchema().getObjectType("StoryContentPage");
-                }
-                else if (storyPage.vocabulary() != null && !storyPage.vocabulary().isEmpty()) {
-                    return env.getSchema().getObjectType("StoryVocabularyPage");
-                }
+               return switch (storyPage.type()) {
+                   case StoryPageType.CONTENT -> env.getSchema().getObjectType("StoryPageContent");
+                   case StoryPageType.VOCABULARY ->  env.getSchema().getObjectType("StoryVocabularyPage");
+                   default -> null;
+               };
             }
             return null;
         };
@@ -51,15 +51,10 @@ public class GraphqlConfig {
         TypeResolver storyPageTypeResolver = env -> {
             Object javaObject = env.getObject();
             if (javaObject instanceof StoryPageDTO storyPage) {
-                return switch (storyPage) {
-                    case StoryPageDTO p when
-                        p.paragraphs() != null && !p.paragraphs().isEmpty() ->
-                            env.getSchema().getObjectType("StoryContentPage");
-                    case StoryPageDTO p when
-                        p.vocabulary() != null && !p.vocabulary().isEmpty() ->
-                            env.getSchema().getObjectType("StoryVocabularyPage");
-                    default ->
-                        null;
+                return switch (storyPage.type()) {
+                    case StoryPageType.CONTENT -> env.getSchema().getObjectType("StoryPageContent");
+                    case StoryPageType.VOCABULARY ->  env.getSchema().getObjectType("StoryVocabularyPage");
+                    default -> null;
                 };
             }
             return null;

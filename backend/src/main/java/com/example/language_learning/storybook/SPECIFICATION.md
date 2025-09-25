@@ -35,6 +35,9 @@ As a user, I want to generate a complete, illustrated short story based on a gen
 -   **`ShortStory`:** A `ShortStory` is the core generated entity. Each `ShortStory` has its own `title`, `genre`/`topic`, and a list of `StoryPages`. It is contained within a parent `Storybook`.
 
 -   **`StoryPage`:** A page within a `ShortStory`. It can be a content page with paragraphs or a vocabulary page. It contains an `imageUrl` field to store the path to its illustration and an `englishSummary` to be used as a prompt for image generation.
+    -   The type of page is explicitly defined by a `StoryPageType` enum (`CONTENT` or `VOCABULARY`).
+
+-   **`StoryVocabularyItem`:** A single vocabulary word. It includes a `pageNumber` field that references the book-relative page number where the word first appeared, providing context for review.
 
 ---
 
@@ -67,7 +70,11 @@ The end-to-end generation of a new `ShortStory` is an asynchronous, multi-state 
 3.  **State 2: Page Content Generation (`STORY_GENERATION`)**
     a.  The next action calls the AI with a single, large prompt containing the story's metadata.
     b.  The AI returns a complete JSON object containing a list of all pages for the story, including the `englishSummary`, `content` (with paragraphs separated by `\n`), and `vocabulary` for each page.
-    c.  This list of page DTOs is held in memory and passed to the next state. **Nothing is persisted to the database in this step.**
+    c.  The `AIStoryMapper` processes this response:
+        -   It de-duplicates vocabulary across all pages to ensure each word is introduced only once.
+        -   It creates a `StoryContentPageDTO` for each page from the AI, which includes a small, unique list of vocabulary for that page.
+        -   It aggregates all unique vocabulary into a master list and creates a final `StoryVocabularyPageDTO` which is appended to the list of pages.
+    d.  This complete list of page DTOs (content pages + final vocab page) is held in memory and passed to the next state. **Nothing is persisted to the database in this step.**
 
 4.  **State 3: Image Generation (`IMAGE_GENERATION`)**
     a.  This state is **not recursive**. It processes all pages at once.
@@ -78,8 +85,12 @@ The end-to-end generation of a new `ShortStory` is an asynchronous, multi-state 
 
 5.  **State 4: Recursive Page Persistence (`PERSIST_PAGES`)**
     a.  This state is **recursive**. It processes one page DTO from the list at a time.
-    b.  For the current page, it converts the DTO to a `StoryPage` entity, links it to the parent `ShortStory`, and **persists it to the database**.
-    c.  The state machine then transitions back to itself, incrementing an index to process the next page in the list.
+    b.  For the current `CONTENT` page DTO being processed:
+        -   It gets the final, atomic `pageNumber` for the book.
+        -   It updates the `pageNumber` for the vocabulary items on *that specific page*.
+        -   It also updates the corresponding items in the master vocabulary list on the final page DTO held in memory.
+    c.  It then converts the DTO to a `StoryPage` entity, links it to the parent `ShortStory`, and **persists it to the database**.
+    d.  The state machine then transitions back to itself, incrementing an index to process the next page in the list.
 
 6.  **State 5: Completion (`COMPLETED`)**
     a.  Once all pages have been processed, the state machine transitions to the terminal `COMPLETED` state, and the process ends.

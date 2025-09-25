@@ -32,6 +32,10 @@
   background: var(--body-bg);
 }
 
+:global(body.themed-body.default) {
+  @include generate-theme(map-get($themes, default));
+}
+
 :global(body.themed-body.light) {
   @include generate-theme(map-get($themes, light));
 }

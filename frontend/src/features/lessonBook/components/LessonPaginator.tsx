@@ -12,9 +12,9 @@ export const LessonPaginator: React.FC<LessonPaginatorProps> = ({ pageCount, act
     const paginationItems = Array.from({ length: pageCount }).map((_, i) => {
         const isPageActive = activePageIndex === i;
         const itemClasses = [
-            styles['lessonPage-item'],
+            styles['page-item'],
             i !== pageCount - 1 ? 'mb-2' : null,
-            isPageActive ? styles['active-lessonPage-item'] : null,
+            isPageActive ? styles['active-page-item'] : null,
         ].filter(Boolean).join(' ');
 
         return (
@@ -25,10 +25,10 @@ export const LessonPaginator: React.FC<LessonPaginatorProps> = ({ pageCount, act
     });
 
     return (
-        <Pagination className={`${styles['lessonPage-control-container']} flex-column align-items-center align-self-center`}>
-            <Pagination.Prev className={`${styles['lessonPage-control-item']} mb-4`} onClick={() => onPageSelect(activePageIndex - 1)} disabled={activePageIndex === 0} />
+        <Pagination className={`${styles['page-control-container']} flex-column align-items-center align-self-center`}>
+            <Pagination.Prev className={`${styles['page-control-item']} mb-4`} onClick={() => onPageSelect(activePageIndex - 1)} disabled={activePageIndex === 0} />
             {paginationItems}
-            <Pagination.Next className={`${styles['lessonPage-control-item']} mt-4`} onClick={() => onPageSelect(activePageIndex + 1)} disabled={activePageIndex === pageCount - 1} />
+            <Pagination.Next className={`${styles['page-control-item']} mt-4`} onClick={() => onPageSelect(activePageIndex + 1)} disabled={activePageIndex === pageCount - 1} />
         </Pagination>
     );
 };

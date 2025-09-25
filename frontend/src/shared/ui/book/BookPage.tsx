@@ -7,17 +7,17 @@ interface BookPageProps {
   isRightPage: boolean
 }
 const BookPage = React.forwardRef<HTMLDivElement, BookPageProps>(({ pageNumber, children, isRightPage = true }, ref) => {
-const pageSideClass = isRightPage ? styles['right-active-lessonPage'] : styles['left-active-lessonPage'];
+const pageSideClass = isRightPage ? styles['right-active-page'] : styles['left-active-page'];
 
   // The outer div is for the library. It gets the ref.
   // The inner div is for our styles.
   return (
     <div className='h-100' ref={ref}>
-      <div className={`${styles['active-lessonPage']} ${pageSideClass}`}>
-        <div className={styles['lessonPage-content']}>
+      <div className={`${styles['active-page']} ${pageSideClass}`}>
+        <div className={styles['page-content']}>
           {children}
         </div>
-        {pageNumber > 0 && <div className={`${styles['lessonPage-number']} small`}>{pageNumber}</div>}
+        {pageNumber > 0 && <div className={`${styles['page-number']} small`}>{pageNumber}</div>}
       </div>
     </div>
   );

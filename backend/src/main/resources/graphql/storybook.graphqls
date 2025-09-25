@@ -28,6 +28,7 @@ type StoryContentPage implements Page {
     englishSummary: String
     imageUrl: String
     paragraphs: [StoryParagraph!]!
+    vocabulary: [StoryVocabularyItem!]!
 }
 
 type StoryVocabularyPage implements Page {

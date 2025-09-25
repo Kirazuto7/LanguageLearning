@@ -20,7 +20,8 @@ import { TranslationToolButton } from "../widgets/translationTool/components";
 
 const LandingPage = lazy(() => import('../pages/home/LandingPage'));
 const HomePage = lazy(() => import('../pages/home/HomePage'));
-const StudyBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
+const LessonBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
+const StoryBookPage = lazy(() => import('../pages/lessontools/StoryBookPage'));
 
 const themedPaths = ['/home', '/study', '/read'];
 
@@ -48,7 +49,8 @@ const App: React.FC = () => {
                 <Route element={<ProtectedRoute/>}>
                     <Route element={<BackgroundLayout/>}>
                         <Route path="/home" element={<HomePage />} />
-                        <Route path="/study" element={<StudyBookPage />} />
+                        <Route path="/study" element={<LessonBookPage />} />
+                        <Route path="/read" element={<StoryBookPage />} />
                     </Route>
                 </Route>
             </Routes>

@@ -3,10 +3,10 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    background-color: #4B014B;
-    border-left: 10px solid #ff69b4; /* binding */
-    color: #ffe0f0;
-    box-shadow: 0 0 20px #ff69b4;
+    background-color: var(--storybook-cover-bg);
+    border-left: 10px solid var(--storybook-accent-color); /* binding */
+    color: var(--storybook-cover-text-color);
+    box-shadow: 0 0 20px var(--storybook-accent-color);
 }
 
 .backcover {
@@ -14,10 +14,10 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    background-color: #4B014B;
-    border-right: 10px solid #ff69b4; /* binding */
-    color: #ffe0f0;
-    box-shadow: 0 0 20px #ff69b4;
+    background-color: var(--storybook-cover-bg);
+    border-right: 10px solid var(--storybook-accent-color); /* binding */
+    color: var(--storybook-cover-text-color);
+    box-shadow: 0 0 20px var(--storybook-accent-color);
 }
 
 .bookContainer {
@@ -56,7 +56,7 @@
 .book-title {
     font-size: 3em;
     font-weight: bold;
-    color: #ffffff;
+    color: var(--storybook-title-color);
     margin-bottom: 24px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     font-family: 'Georgia', serif;
