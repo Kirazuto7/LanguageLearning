@@ -15,6 +15,7 @@ public abstract class StoryPageStructMapper {
     @Mapping(target = "shortStory", ignore = true)
     public abstract StoryPage toEntity(StoryPageDTO dto, @Context CycleAvoidingMappingContext context);
 
+    @Mapping(source = "type", target = "type")
     public abstract StoryPageDTO toDto(StoryPage entity, @Context CycleAvoidingMappingContext context);
 
     @ObjectFactory

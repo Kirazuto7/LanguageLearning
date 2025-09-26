@@ -44,22 +44,24 @@ public class ReactiveStateMachine<S, C> {
         this.currentState = initialState;
     }
 
-    public Mono<Void> handle(C context) {
+    public Mono<Boolean> handle(C context) {
         S fromState = currentState;
         return graph.findAction(fromState)
                 .map(action -> {
                     log.debug("Executing reactive action from state {}", fromState.getClass().getSimpleName());
                     return action.execute(fromState, context)
-                            .doOnNext(nextState -> {
+                            .map(nextState -> {
                                 synchronized (this) {
                                     log.debug("State transition: {} -> {}", fromState.getClass().getSimpleName(), nextState.getClass().getSimpleName());
                                     this.currentState = nextState;
                                 }
-                            }).then();
+                                return true; // State transitioned
+                            })
+                            .defaultIfEmpty(false); // No transition if Mono is empty
                 })
                 .orElseGet(() -> {
                     log.error("No action found for state {} with context {}", fromState.getClass().getSimpleName(), context);
-                    return Mono.error(new IllegalStateException("No action found for state " + fromState.getClass().getSimpleName()));
+                    return Mono.just(false); // No action, so no transition
                 });
     }
 
@@ -74,7 +76,10 @@ public class ReactiveStateMachine<S, C> {
                 if (state instanceof ReactiveTerminalState) {
                     return Mono.empty(); // Stop expanding if we've reached a terminal state
                 }
-                return this.handle(context).then(Mono.fromSupplier(this::getCurrentState));
+                return this.handle(context).flatMap(transitioned -> {
+                    // If a transition happened, continue with the new state. Otherwise, stop.
+                    return transitioned ? Mono.fromSupplier(this::getCurrentState) : Mono.<S>empty();
+                });
             })
             .last();
         return new ReactiveTerminalOperation<>(terminalStateMono);

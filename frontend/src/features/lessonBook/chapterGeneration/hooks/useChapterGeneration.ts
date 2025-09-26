@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGenerateChapterMutation } from "../../../../shared/api/chapterApiSlice";
 import { useAppSelector, useAppDispatch } from "../../../../app/hooks";
-import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, clearProgress } from "../../../../widgets/progressBar/progressSlice";
+import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, markProgressAsStale } from "../../../../widgets/progressBar/progressSlice";
 
 /**
  * A custom hook to manage the entire lessonChapter generation workflow.
@@ -39,7 +39,7 @@ export const useChapterGeneration = (language: string, difficulty: string) => {
         if (progress?.isComplete || progress?.error || wasClearedPrematurely) {
             const timer = setTimeout(() => {
                 if (taskId) {
-                    dispatch(clearProgress(taskId));
+                    dispatch(markProgressAsStale(taskId));
                 }
                 setTaskId(null);
             }, 5000);

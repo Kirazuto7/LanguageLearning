@@ -2,7 +2,7 @@ import {useAppDispatch, useAppSelector} from "../../../../app/hooks";
 import {useCallback, useEffect, useState} from "react";
 import {useGenerateShortStoryMutation} from "../../../../shared/api/shortStoryApiSlice";
 import {
-    clearProgress,
+    markProgressAsStale,
     selectActiveTaskIdForContext,
     selectProgressByTaskId, startGenerationTracking
 } from "../../../../widgets/progressBar/progressSlice";
@@ -47,7 +47,7 @@ export const useShortStoryGeneration = (language: string, difficulty: string) =>
         if (progress?.isComplete || progress?.error || wasClearedPrematurely) {
             const timer = setTimeout(() => {
                 if (taskId) {
-                    dispatch(clearProgress(taskId));
+                    dispatch(markProgressAsStale(taskId));
                 }
                 setTaskId(null);
             }, 5000);

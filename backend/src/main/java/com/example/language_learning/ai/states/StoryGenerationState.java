@@ -1,5 +1,6 @@
 package com.example.language_learning.ai.states;
 
+import com.example.language_learning.shared.utils.StateMachine.TerminalState;
 import com.example.language_learning.storybook.shortstory.ShortStoryMetadataDTO;
 import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -35,10 +36,10 @@ public sealed interface StoryGenerationState {
     record PERSIST_PAGES(List<StoryPageDTO> storyPagesDto, int currentIndex, int currentProgress) implements StoryGenerationState {}
 
     // Terminal state for successful completion
-    record COMPLETED() implements StoryGenerationState {}
+    record COMPLETED() implements StoryGenerationState, TerminalState {}
 
     // Terminal state for failure, holding an error message
-    record FAILED(String errorMessage) implements StoryGenerationState {}
+    record FAILED(String errorMessage) implements StoryGenerationState, TerminalState {}
 
     // --- Static Factory Methods for easy state creation ---
 

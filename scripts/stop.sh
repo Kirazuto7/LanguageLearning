@@ -10,32 +10,24 @@ cd "$SCRIPT_DIR/.."
 # --- Default values ---
 USE_GPU=false
 COMPOSE_FILE="docker-compose.cpu.yml"
-PROFILE_ARG=""
 DO_HARD_CLEANUP=false
 
 # --- Argument Parsing ---
-for arg in "$@"
-do
-    case $arg in
+while [[ $# -gt 0 ]]; do
+    case "$1" in
         -gpu|--gpu)
-        USE_GPU=true
-        COMPOSE_FILE="docker-compose.gpu.yml"
-        shift
-        ;;
+            USE_GPU=true
+            COMPOSE_FILE="docker-compose.gpu.yml"
+            ;;
         -cpu|--cpu)
-        USE_GPU=false
-        COMPOSE_FILE="docker-compose.cpu.yml"
-        shift
-        ;;
-        --frontend)
-        PROFILE_ARG="--profile frontend"
-        shift
-        ;;
+            USE_GPU=false
+            COMPOSE_FILE="docker-compose.cpu.yml"
+            ;;
         -v|--volumes)
-        DO_HARD_CLEANUP=true
-        shift
-        ;;
+            DO_HARD_CLEANUP=true
+            ;;
     esac
+    shift
 done
 
 # --- Main Logic ---
@@ -48,12 +40,12 @@ echo ""
 
 if [ "$DO_HARD_CLEANUP" = true ]; then
     echo "Performing hard cleanup (removing volumes and pruning builder cache)..."
-    docker compose $PROFILE_ARG -f "$COMPOSE_FILE" down -v
-    docker builder prune -f
+    docker compose -f "$COMPOSE_FILE" down -v
+    docker builder prune -af
     docker volume prune -f
     echo "Hard cleanup complete."
 else
     echo "Stopping containers..."
-    docker compose $PROFILE_ARG -f "$COMPOSE_FILE" down
+    docker compose -f "$COMPOSE_FILE" down
     echo "Containers stopped."
 fi

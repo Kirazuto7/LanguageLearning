@@ -11,7 +11,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    profiles: ["frontend"]
 
   backend:
     build:
@@ -41,8 +40,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ai:
-        condition: service_healthy
       minio:
         condition: service_healthy
       image-api:
@@ -66,12 +63,6 @@ services:
       - "11434:11434"
     volumes:
       - ollama-data:/root/.ollama
-    healthcheck:
-      test: [ "CMD-SHELL", "test -f /root/.ollama/models_pulled.marker && ollama list > /dev/null" ]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 15m
 
   postgres:
     image: postgres:16-alpine

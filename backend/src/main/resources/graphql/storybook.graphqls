@@ -68,10 +68,15 @@ type StoryGenerationResponse {
     shortStory: ShortStory! # Returns the initial shell
 }
 
+input StoryBookRequestInput {
+    language: String!
+    difficulty: String!
+}
+
 # --- Queries, Mutations, & Subscriptions ---
 
 extend type Query {
-    getStoryBook(language: String!, difficulty: String!): StoryBook
+    getStoryBook(request: StoryBookRequestInput!): StoryBook
 }
 
 extend type Query {

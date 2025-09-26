@@ -1,6 +1,8 @@
 import { graphqlApiSlice } from "./graphqlApiSlice";
 import {StoryBookDTO, StoryBookRequest} from "../types/dto";
-import {getStoryBook, getStoryBooks} from "../../features/storyBook/gql/queries";
+import {getStoryBooks} from "../../features/storyBook/gql/queries";
+import {gql} from "graphql-request";
+import {storyBookFragment} from "../../features/storyBook/gql/fragments";
 
 export const storyBookApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({
@@ -19,9 +21,16 @@ export const storyBookApiSlice = graphqlApiSlice.injectEndpoints({
 
         // Query to Fetch a Specific Storybook based on language and difficulty
         getStoryBook: builder.query<StoryBookDTO, StoryBookRequest>({
-            query: ({ language, difficulty }) => ({
-                body: getStoryBook,
-                variables: { language, difficulty },
+            query: (request) => ({
+                body: gql`
+                    ${storyBookFragment}
+                    query GetStoryBook($request: StoryBookRequestInput!) {
+                        getStoryBook(request: $request) {
+                            ...StoryBookFragment
+                        }
+                    }
+                `,
+                variables: { request },
             }),
             transformResponse: (response: { getStoryBook: StoryBookDTO }) => response.getStoryBook,
             providesTags: (result) => (result ? [{ type: 'Book', id: String(result.id) }] : []),

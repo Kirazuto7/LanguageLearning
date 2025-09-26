@@ -5,6 +5,7 @@ import com.example.language_learning.lessonbook.requests.ChapterGenerationReques
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Getter
 @Setter
+@ToString
 @RequiredArgsConstructor
 public class ChapterGenerationContext {
     private final ChapterGenerationRequest request;

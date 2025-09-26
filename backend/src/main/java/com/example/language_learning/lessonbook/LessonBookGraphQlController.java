@@ -25,6 +25,9 @@ public class LessonBookGraphQlController {
     @QueryMapping
     @PreAuthorize("isAuthenticated()")
     public LessonBookDTO getLessonBook(@Argument LessonBookRequest request, @AuthenticationPrincipal User user) {
+        if (request == null) {
+            throw new IllegalArgumentException("LessonBookRequest input is required.");
+        }
         return lessonBookService.findOrCreateBookDTO(request, user);
     }
 }

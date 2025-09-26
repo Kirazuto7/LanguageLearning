@@ -18,7 +18,9 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,29 +56,32 @@ public class AIEngine {
      * @return A Mono emitting a list of Base64 encoded image strings.
      */
     public<T_INTERNAL> Mono<T_INTERNAL> generateImages(AIImageRequest<T_INTERNAL> request) {
-        return Mono.fromCallable(() -> {
-            Object contextObject = request.getParams().get("context");
-            if (!(contextObject instanceof String imageContext) || imageContext.isBlank()) {
-                throw new AIEngineException("The 'context' parameter must be a non-blank String.");
-            }
+        Object contextObject = request.getParams().get("context");
+        if (!(contextObject instanceof String imageContext) || imageContext.isBlank()) {
+            return Mono.error(new AIEngineException("The 'context' parameter must be a non-blank String."));
+        }
 
-            List<String> textPrompts = Arrays.stream(imageContext.split("\n"))
-                    .filter(s -> !s.isBlank())
-                    .toList();
+        List<String> textPrompts = Arrays.stream(imageContext.split("\n"))
+                .filter(s -> !s.isBlank())
+                .toList();
 
-            if (textPrompts.isEmpty()) {
-                return (T_INTERNAL) new GeneratedImageDTO(Map.of(),imageContext);
-            }
-            Map<String, String> urlsByPrompt = textPrompts.parallelStream()
-                    .collect(Collectors.toConcurrentMap(
-                        prompt -> prompt,
-                        prompt -> {
-                            ImagePrompt imagePrompt = new ImagePrompt(prompt);
-                            String base64Image = imageModel.call(imagePrompt).getResult().getOutput().getB64Json();
-                            return imageService.saveImageFromBase64(base64Image);
-                    }));
-            return (T_INTERNAL) new GeneratedImageDTO(urlsByPrompt, imageContext);
-        });
+        if (textPrompts.isEmpty()) {
+            return Mono.just((T_INTERNAL) new GeneratedImageDTO(Map.of(),imageContext));
+        }
+
+        log.info("Generating {} images in parallel...", textPrompts.size());
+
+        return Flux.fromIterable(textPrompts)
+                .flatMap(prompt -> Mono.fromCallable(() -> {
+                    ImagePrompt imagePrompt = new ImagePrompt(prompt);
+                    String base64Image = imageModel.call(imagePrompt).getResult().getOutput().getB64Json();
+                    String url = imageService.saveImageFromBase64(base64Image);
+                    return Map.entry(prompt, url);
+                }))
+                .subscribeOn(Schedulers.boundedElastic())
+                .collect(Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue))
+                .doOnSuccess(urlsByPrompt -> log.info("Successfully retrieved and saved {} images.", urlsByPrompt.size()))
+                .map(urlsByPrompt -> (T_INTERNAL) new GeneratedImageDTO(urlsByPrompt, imageContext));
     }
 
     /**

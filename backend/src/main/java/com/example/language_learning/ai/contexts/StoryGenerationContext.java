@@ -5,11 +5,13 @@ import com.example.language_learning.storybook.shortstory.ShortStory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
+@ToString
 @RequiredArgsConstructor
 public class StoryGenerationContext {
     private final ShortStoryGenerationRequest request;

@@ -4,9 +4,13 @@ import com.example.language_learning.ai.config.model.StableDiffusionImageRespons
 import com.example.language_learning.ai.config.properties.StableDiffusionProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,28 +27,37 @@ public class StableDiffusionClient {
     }
 
     public StableDiffusionImageResponse promptTextToImage(String prompt) {
-        log.info("Generating image for prompt: \"{}\"...", prompt.substring(0, Math.min(prompt.length(), 100)));
 
-        Map<String, Object> request = Map.of(
-            "prompt", prompt,
-            "steps", properties.image().options().steps(),
-            "width", properties.image().options().width(),
-            "height", properties.image().options().height(),
-            "batch_size", properties.image().options().batchSize()
+        Map<String, Object> requestBody = Map.of(
+                "prompt", prompt,
+                "styles", properties.image().options().styles(),
+                "steps", properties.image().options().steps(),
+                "width", properties.image().options().width(),
+                "height", properties.image().options().height(),
+                "batch_size", properties.image().options().batchSize(),
+                "negative_prompt", properties.image().options().negativePrompt(),
+                "cfg_scale", properties.image().options().cfgScale(),
+                "sampler_name", properties.image().options().samplerName()
         );
+
         try {
-            StableDiffusionImageResponse response = webClient.post()
+            return webClient.post()
                     .uri("/sdapi/v1/txt2img")
-                    .bodyValue(request)
-                    .retrieve()
-                    .bodyToMono(StableDiffusionImageResponse.class)
-                    .block();
-
-            if (response == null || response.getImages() == null || response.getImages().isEmpty()) {
-                throw new IllegalStateException("API response did not contain any images.");
-            }
-
-            return response;
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(requestBody)
+                    .exchangeToMono(response -> {
+                        if (response.statusCode().is2xxSuccessful()) {
+                            log.info("Received successful response from image API.");
+                            return response.bodyToMono(StableDiffusionImageResponse.class);
+                        }
+                        else {
+                            log.error("Received error response from image API: {}", response.statusCode());
+                            return response.bodyToMono(String.class)
+                                    .doOnNext(body -> log.error("Error body: {}", body))
+                                    .then(Mono.error(new RuntimeException("Image API returned status: " + response.statusCode())));
+                        }
+                    })
+                    .block(Duration.ofMinutes(5)); // Add a generous 5-minute timeout for image generation
         }
         catch (Exception e) {
             log.error("Failed to generate image for prompt: \"{}\"", prompt, e);

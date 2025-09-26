@@ -11,8 +11,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class AIImageClientConfig {
     @Bean("imageApiWebClient")
     public WebClient imageApiWebClient(StableDiffusionProperties properties) {
+        final int size = 16 * 1024 * 1024; // 16MB
         return WebClient.builder()
                 .baseUrl(properties.baseUrl())
+                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
                 .build();
     }
 }

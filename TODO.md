@@ -11,6 +11,8 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] Integrate an image generation model (e.g., Stable Diffusion) into the Docker setup.
     - [x] Update the AI generation workflow to create image prompts from story text.
     - [x] Add an `imageUrl` field to the `StoryPage` entity, DTO, and GraphQL type.
+    - [ ] **Fix Image Generation API Integration**
+        - [ ] Create a custom Dockerfile for the `image-api` service to host a standard Automatic1111 instance, ensuring a stable API contract.
     - [ ] Design frontend UI to allow story generation via two methods: user-provided topic OR random generation from a selected genre.
     - [ ] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
     - [ ] Update the frontend to display the generated image on content pages.

@@ -148,7 +148,9 @@ public class DtoMapper {
     }
 
     public StoryPageDTO toDto(StoryPage entity) {
-        return storyPageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        StoryPageDTO dto = storyPageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        // Manually ensure the 'type' field is set, as it's critical for GraphQL's TypeResolver.
+        return dto.withType(entity.getType());
     }
 
     /* **************************** */

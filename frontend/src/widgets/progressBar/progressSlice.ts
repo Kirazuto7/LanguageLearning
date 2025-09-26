@@ -6,6 +6,7 @@ interface  ProgressEntry {
     progressData: ProgressUpdateDTO;
     language: string;
     difficulty: string;
+    isStale?: boolean;
 }
 
 interface ProgressState {
@@ -41,21 +42,24 @@ const progressSlice = createSlice({
             }
         },
 
-        clearProgress(state, action: PayloadAction<string>) {
-            state[action.payload] = undefined;
+        markProgressAsStale(state, action: PayloadAction<string>) {
+            const taskId = action.payload;
+            if (state[taskId]) {
+                state[taskId]!.isStale = true;
+            }
         }
     }
 });
 
-export const { startGenerationTracking, updateProgress, clearProgress } = progressSlice.actions;
+export const { startGenerationTracking, updateProgress, markProgressAsStale } = progressSlice.actions;
 export const selectProgressByTaskId = (state: RootState, taskId: string): ProgressUpdateDTO | undefined => state.progress[taskId]?.progressData;
 export const selectIsAnyGenerationLoading = (state: RootState): boolean => {
-    return Object.values(state.progress).some(task => task && !task.progressData.isComplete && !task.progressData.error);
+    return Object.values(state.progress).some(task => task && !task.progressData.isComplete && !task.progressData.error && !task.isStale);
 };
 
 export const selectActiveTaskIdForContext = (state: RootState, { language, difficulty }: { language: string, difficulty: string }): string | undefined => {
     return Object.values(state.progress)
-        .find(task => task && task.language === language && task.difficulty === difficulty && !task.progressData.isComplete && !task.progressData.error)
+        .find(task => task && task.language === language && task.difficulty === difficulty && !task.progressData.isComplete && !task.progressData.error && !task.isStale)
         ?.progressData.taskId;
 };
 

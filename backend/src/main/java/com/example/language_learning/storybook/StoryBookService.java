@@ -3,7 +3,9 @@ package com.example.language_learning.storybook;
 import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.storybook.requests.StoryBookRequest;
 import com.example.language_learning.user.User;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StoryBookService {
 
@@ -35,7 +38,9 @@ public class StoryBookService {
     @Transactional
     public StoryBookDTO findOrCreateBookDTO(StoryBookRequest request, User user) {
         StoryBook storyBook = findOrCreateBook(request.language(), request.difficulty(), user);
-        return dtoMapper.toDto(storyBook);
+        StoryBookDTO dto = dtoMapper.toDto(storyBook);
+        log.info("Returning StoryBookDTO: {}", dto);
+        return dto;
     }
 
     @Transactional
@@ -53,7 +58,11 @@ public class StoryBookService {
 
     @Transactional(readOnly = true)
     public Optional<StoryBook> getStoryBook(String language, String difficulty, User user) {
-        return storyBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty);
+        Optional<StoryBook> storyBookOptional = storyBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty);
+        storyBookOptional.ifPresent(book -> {
+            book.getShortStories().forEach(shortStory -> Hibernate.initialize(shortStory.getStoryPages()));
+        });
+        return storyBookOptional;
     }
 
     @Transactional

@@ -97,3 +97,19 @@ dist/
 # Pip
 pip-log.txt
 pip-cache/
+
+# ===================================================================
+# Docker
+# ===================================================================
+# Ignore custom Dockerfiles that are not part of the core project
+/backend/dockerfiles/DockerfileAider
+/backend/dockerfiles/old
+docker-compose.aider.yml
+
+# ===================================================================
+# Aider
+# ===================================================================
+# Ignore Aider's cache and history files
+.aider.chat.history.md
+.aider.input.history
+.aider.tags.cache.v4

@@ -10,28 +10,21 @@ cd "$SCRIPT_DIR/.."
 # --- Default values ---
 USE_GPU=false
 COMPOSE_FILE="docker-compose.cpu.yml"
-PROFILE_ARG=""
 
 # --- Argument Parsing ---
-# A simple loop to process all arguments provided
-for arg in "$@"
-do
-    case $arg in
+# Use a while loop to process all arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
         -gpu|--gpu)
-        USE_GPU=true
-        COMPOSE_FILE="docker-compose.gpu.yml"
-        shift # Remove --gpu from processing
-        ;;
+            USE_GPU="true"
+            COMPOSE_FILE="docker-compose.gpu.yml"
+            ;;
         -cpu|--cpu)
-        USE_GPU=false
-        COMPOSE_FILE="docker-compose.cpu.yml"
-        shift # Remove --cpu from processing
-        ;;
-        --frontend)
-        PROFILE_ARG="--profile frontend"
-        shift # Remove --frontend from processing
-        ;;
+            USE_GPU="false"
+            COMPOSE_FILE="docker-compose.cpu.yml"
+            ;;
     esac
+    shift # Move to the next argument
 done
 
 # --- Subroutines (as functions) ---
@@ -59,7 +52,7 @@ docker_cleanup() {
     echo "* Ensuring a clean state before starting...  *"
     echo "************************************************"
     echo ""
-    docker compose $PROFILE_ARG -f "$COMPOSE_FILE" down
+    docker compose -f "$COMPOSE_FILE" down
 }
 
 # --- Main Logic ---
@@ -76,10 +69,9 @@ echo "**********************************************"
 echo "*        Building Docker Environment         *"
 echo "**********************************************"
 echo ""
-docker compose $PROFILE_ARG -f "$COMPOSE_FILE" up --build -d
+docker compose -f "$COMPOSE_FILE" up --build -d
 
 echo ""
 echo "Docker environment is starting up in the background."
-echo "To include the frontend dev server, use the --frontend flag."
 echo "Once the containers are built and running, you can view the application at http://localhost:3000/."
-echo "To view logs, run: docker compose $PROFILE_ARG -f $COMPOSE_FILE logs -f"
+echo "To view logs, run: docker compose -f $COMPOSE_FILE logs -f"

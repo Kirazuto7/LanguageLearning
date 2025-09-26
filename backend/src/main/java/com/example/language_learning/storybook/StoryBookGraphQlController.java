@@ -32,6 +32,9 @@ public class StoryBookGraphQlController {
     @QueryMapping
     @PreAuthorize("isAuthenticated()")
     public StoryBookDTO getStoryBook(@Argument StoryBookRequest request,  @AuthenticationPrincipal User user) {
+        if (request == null) {
+            throw new IllegalArgumentException("StoryBookRequest input is required.");
+        }
         return storyBookService.findOrCreateBookDTO(request, user);
     }
 

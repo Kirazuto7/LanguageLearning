@@ -31,11 +31,20 @@ public class ImageService {
 
 
     public String saveImageFromBase64(String base64ImageData) {
-        byte[] imageData = Base64.getDecoder().decode(base64ImageData);
+        // The base64 string might include a data URI prefix (e.g., "data:image/png;base64,").
+        // We need to strip this prefix before decoding.
+        String pureBase64 = base64ImageData;
+        int commaIndex = base64ImageData.indexOf(',');
+        if (commaIndex != -1) {
+            pureBase64 = base64ImageData.substring(commaIndex + 1);
+        }
+        byte[] imageData = Base64.getDecoder().decode(pureBase64);
         byte[] resizedImageData = resizeImageData(imageData);
         // The Stable Diffusion API defaults to PNG.
         String fileName = generateUniqueFileName(".png");
-        return storageProvider.save(resizedImageData, fileName);
+        String fileUrl = storageProvider.save(resizedImageData, fileName);
+        log.info("Successfully uploaded image {} to storage.", fileName);
+        return fileUrl;
     }
 
     public String saveImageFromUrl(String imageUrl) {
@@ -43,7 +52,9 @@ public class ImageService {
         byte[] resizedImageData = resizeImageData(imageData);
         String extension = extractExtensionFromUrl(imageUrl);
         String fileName = generateUniqueFileName(extension);
-        return storageProvider.save(resizedImageData, fileName);
+        String fileUrl = storageProvider.save(resizedImageData, fileName);
+        log.info("Successfully uploaded image {} from URL {} to storage.", fileName, imageUrl);
+        return fileUrl;
     }
 
     private byte[] resizeImageData(byte[] originalImageData) {

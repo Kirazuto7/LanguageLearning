@@ -2,6 +2,7 @@ package com.example.language_learning.storybook.shortstory;
 
 import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.storybook.StoryBook;
+import com.example.language_learning.storybook.shortstory.page.StoryPageRepository;
 import com.example.language_learning.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShortStoryService {
     private final ShortStoryRepository shortStoryRepository;
+    private final StoryPageRepository storyPageRepository;
     private final DtoMapper dtoMapper;
 
     @Transactional(readOnly = true)
@@ -24,7 +26,7 @@ public class ShortStoryService {
 
     @Transactional(readOnly = true)
     public ShortStoryDTO getShortStoryDtoByIdAndUser(Long shortStoryId, User user) {
-        return shortStoryRepository.findByIdAndUserWithPages(shortStoryId, user)
+        return findByIdAndUserAndInitializeCollections(shortStoryId, user)
                 .map(dtoMapper::toDto)
                 .orElse(null);
     }
@@ -46,5 +48,14 @@ public class ShortStoryService {
     @Transactional
     public ShortStory saveShortStory(ShortStory shortStory) {
         return shortStoryRepository.save(shortStory);
+    }
+
+    private Optional<ShortStory> findByIdAndUserAndInitializeCollections(Long storyId, User user) {
+        Optional<ShortStory> shortStoryOptional = shortStoryRepository.findByIdAndUserWithPagesOnly(storyId, user);
+        shortStoryOptional.ifPresent(shortStory -> {
+            storyPageRepository.loadPagesWithVocabulary(storyId);
+            storyPageRepository.loadPagesWithParagraphs(storyId);
+        });
+        return shortStoryOptional;
     }
 }

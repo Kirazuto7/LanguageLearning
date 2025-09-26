@@ -22,19 +22,46 @@ public class StoryPageService {
 
     @Transactional
     public StoryPage createAndPersistPage(ShortStory shortStory, StoryPageDTO storyPageDTO, int pageNumber) {
-        ShortStory managedShortStory = shortStoryRepository.findByIdWithPages(shortStory.getId())
-                .orElseThrow(() -> new RuntimeException("ShortStory not found during page creation: " + shortStory.getId()));
-        StoryPage storyPage = StoryPage.builder()
-                .shortStory(managedShortStory)
-                .pageNumber(pageNumber)
-                .englishSummary(storyPageDTO.englishSummary())
-                .paragraphs(storyPageDTO.paragraphs().stream()
-                        .map(dtoMapper::toEntity)
-                        .toList())
-                .vocabulary(storyPageDTO.vocabulary().stream()
-                        .map(dtoMapper::toEntity)
-                        .toList())
-                .build();
-        return storyPageRepository.save(storyPage);
+        ShortStory managedShortStory = findByIdAndInitializeCollections(shortStory.getId());
+
+        return switch (storyPageDTO.type()) {
+            case StoryPageType.CONTENT -> {
+                StoryPage storyPage = StoryPage.builder()
+                        .shortStory(managedShortStory)
+                        .type(StoryPageType.CONTENT)
+                        .pageNumber(pageNumber)
+                        .englishSummary(storyPageDTO.englishSummary())
+                        .imageUrl(storyPageDTO.imageUrl())
+                        .paragraphs(storyPageDTO.paragraphs().stream()
+                                .map(dtoMapper::toEntity)
+                                .toList())
+                        .vocabulary(storyPageDTO.vocabulary().stream()
+                                .map(dtoMapper::toEntity)
+                                .toList())
+                        .build();
+                yield storyPageRepository.save(storyPage);
+            }
+            case StoryPageType.VOCABULARY -> {
+                StoryPage storyPage = StoryPage.builder()
+                        .shortStory(managedShortStory)
+                        .type(StoryPageType.VOCABULARY)
+                        .pageNumber(pageNumber)
+                        .englishSummary(storyPageDTO.englishSummary())
+                        .imageUrl(storyPageDTO.imageUrl())
+                        .vocabulary(storyPageDTO.vocabulary().stream()
+                                .map(dtoMapper::toEntity)
+                                .toList())
+                        .build();
+                yield storyPageRepository.save(storyPage);
+            }
+        };
+    }
+
+    private ShortStory findByIdAndInitializeCollections(Long storyId) {
+        ShortStory shortStory = shortStoryRepository.findByIdWithPagesOnly(storyId)
+                .orElseThrow(() -> new RuntimeException("ShortStory not found during page creation: " + storyId));
+        storyPageRepository.loadPagesWithParagraphs(storyId);
+        storyPageRepository.loadPagesWithVocabulary(storyId);
+        return shortStory;
     }
 }

@@ -6,20 +6,17 @@ pushd "%~dp0\.."
 
 set "DO_CPU=false"
 set "DO_GPU=false"
-set "PROFILE_ARG="
 
 :arg_loop
 if "%~1"=="" goto :main_logic
 if /i "%~1"=="-cpu" set "DO_CPU=true"
 if /i "%~1"=="-gpu" set "DO_GPU=true"
-if /i "%~1"=="--frontend" set "PROFILE_ARG=--profile frontend"
 shift
 goto :arg_loop
 
 :main_logic
 echo Before building the application, make sure you create a .env file in the root
 echo directory of the project and include your postgres db setup credentials
-echo To include the frontend dev server, use the --frontend flag.
 
 call :DockerStartup
 call :DockerCleanup
@@ -74,9 +71,9 @@ goto :eof
     echo **********************************************
     echo.
     if "%DO_GPU%" == "true" (
-        docker compose -f docker-compose.gpu.yml %PROFILE_ARG% down
+        docker compose -f docker-compose.gpu.yml down
     ) else (
-        docker compose -f docker-compose.cpu.yml %PROFILE_ARG% down
+        docker compose -f docker-compose.cpu.yml down
     )
     echo Closing any existing DockerWindow...
     taskkill /F /FI "WINDOWTITLE eq DockerWindow*" /T 2>nul
@@ -90,9 +87,9 @@ echo.
     echo.
 
     if "%DO_GPU%" == "true" (
-        start "DockerWindow" cmd /k "docker compose -f docker-compose.gpu.yml %PROFILE_ARG% up --build -d"
+        start "DockerWindow" cmd /k "docker compose -f docker-compose.gpu.yml up --build -d"
     ) else (
-        start "DockerWindow" cmd /k "docker compose -f docker-compose.cpu.yml %PROFILE_ARG% up --build -d"
+        start "DockerWindow" cmd /k "docker compose -f docker-compose.cpu.yml up --build -d"
     )
     exit /b 0
 

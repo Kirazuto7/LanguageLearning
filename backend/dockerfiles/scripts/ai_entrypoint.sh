@@ -38,6 +38,12 @@ else
   echo "--- Models already present, skipping pull. ---"
 fi
 
-# Serve the models
 echo "--- Starting Ollama server... ---"
-exec ollama serve
+ollama serve &
+PID=$!
+
+# Always create the marker file to signal that the setup is complete and the server is running.
+touch "$MARKER_FILE"
+
+echo "--- AI service is ready. Keeping container alive. ---"
+wait $PID

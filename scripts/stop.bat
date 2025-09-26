@@ -7,7 +7,6 @@ pushd "%~dp0\.."
 set "DO_HARD_CLEANUP=false"
 set "USE_GPU=false"
 set "COMPOSE_FILE=docker-compose.cpu.yml"
-set "PROFILE_ARG="
 
 :arg_loop
 if "%~1"=="" goto :main_logic
@@ -19,7 +18,6 @@ if /i "%~1"=="-cpu" (
     set "USE_GPU=false"
     set "COMPOSE_FILE=docker-compose.cpu.yml"
 )
-if /i "%~1"=="--frontend" set "PROFILE_ARG=--profile frontend"
 if /i "%~1"=="-v" set "DO_HARD_CLEANUP=true"
 shift
 goto :arg_loop
@@ -33,13 +31,13 @@ echo.
 
 if "%DO_HARD_CLEANUP%" == "true" (
     echo Performing hard cleanup (removing volumes and pruning builder cache)...
-    docker compose %PROFILE_ARG% -f "%COMPOSE_FILE%" down -v
+    docker compose -f "%COMPOSE_FILE%" down -v
     docker builder prune -f
     docker volume prune -f
     echo Hard cleanup complete.
 ) else (
     echo Stopping containers...
-    docker compose %PROFILE_ARG% -f "%COMPOSE_FILE%" down
+    docker compose -f "%COMPOSE_FILE%" down
     echo Containers stopped.
 )
 

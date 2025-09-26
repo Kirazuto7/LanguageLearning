@@ -13,15 +13,9 @@ public interface ShortStoryRepository extends JpaRepository<ShortStory, Long> {
 
     @Query("SELECT ss FROM ShortStory ss " +
            "LEFT JOIN FETCH ss.storyPages sp " +
-           "LEFT JOIN FETCH sp.paragraphs " +
-           "LEFT JOIN FETCH sp.vocabulary " +
            "WHERE ss.id = :shortStoryId AND ss.storyBook.user = :user")
-    Optional<ShortStory> findByIdAndUserWithPages(@Param("shortStoryId") Long shortStoryId, @Param("user") User user);
+    Optional<ShortStory> findByIdAndUserWithPagesOnly(@Param("shortStoryId") Long shortStoryId, @Param("user") User user);
 
-    @Query("SELECT ss FROM ShortStory ss " +
-           "LEFT JOIN FETCH ss.storyPages sp " +
-           "LEFT JOIN FETCH sp.paragraphs " +
-           "LEFT JOIN FETCH sp.vocabulary " +
-           "WHERE ss.id = :shortStoryId")
-    Optional<ShortStory> findByIdWithPages(@Param("shortStoryId") Long shortStoryId);
+    @Query("SELECT ss FROM ShortStory ss LEFT JOIN FETCH ss.storyPages WHERE ss.id = :id")
+    Optional<ShortStory> findByIdWithPagesOnly(@Param("id") Long id);
 }

@@ -6,7 +6,6 @@ import org.springframework.ai.chat.client.ChatClient;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 public record AIGenerationContext (
     ChatClient chatClient,
     Map<String, Object> params,

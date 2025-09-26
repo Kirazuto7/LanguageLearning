@@ -46,25 +46,29 @@ public class StateMachine<S, C>  {
         this.currentState = initialState;
     }
 
-    public synchronized void handle(C context) {
+    public synchronized boolean handle(C context) {
         S fromState = currentState;
-        graph.findAction(fromState)
-            .ifPresentOrElse(
+        return graph.findAction(fromState)
+            .map(
                 action -> {
                     log.debug("Executing action from state {}", fromState.getClass().getSimpleName());
                     S nextState = action.execute(fromState, context);
                     if (nextState != null) {
                         log.debug("State transition: {} -> {}", fromState.getClass().getSimpleName(), nextState.getClass().getSimpleName());
                         currentState = nextState;
+                        return true; // State transitioned
                     }
-                },
-                () -> log.error("No action found for state {} with context {}", fromState.getClass().getSimpleName(), context)
-            );
+                    return false; // No transition occurred
+                }
+            ).orElseGet(() -> {
+                log.error("No action found for state {} with context {}", fromState.getClass().getSimpleName(), context);
+                return false; // No action, so no transition
+            });
     }
 
     public TerminalOperation<S> runToCompletion(C context) {
-        while (!(currentState instanceof TerminalState)) {
-            handle(context);
+        while (!(currentState instanceof TerminalState) && handle(context)) {
+            // The loop continues as long as we are not in a terminal state AND a state transition occurred.
         }
         return new TerminalOperation<>(currentState);
     }

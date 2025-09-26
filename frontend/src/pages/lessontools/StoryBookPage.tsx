@@ -33,7 +33,7 @@ const StoryBookPage: React.FC = () => {
                 setNavigateToPage(firstPageOfLatestStory.pageNumber);
             }
         }
-    }, [stories.length]);
+    }, [stories]);
 
     return(
         <div>
