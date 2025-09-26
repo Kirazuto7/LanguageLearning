@@ -60,7 +60,11 @@ public class StoryBookService {
     public Optional<StoryBook> getStoryBook(String language, String difficulty, User user) {
         Optional<StoryBook> storyBookOptional = storyBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty);
         storyBookOptional.ifPresent(book -> {
-            book.getShortStories().forEach(shortStory -> Hibernate.initialize(shortStory.getStoryPages()));
+            book.getShortStories().forEach(shortStory -> {
+                Hibernate.initialize(shortStory.getStoryPages());
+                shortStory.getStoryPages().forEach(page -> Hibernate.initialize(page.getParagraphs()));
+                shortStory.getStoryPages().forEach(page -> Hibernate.initialize(page.getVocabulary()));
+            });
         });
         return storyBookOptional;
     }
