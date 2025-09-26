@@ -40,7 +40,7 @@ public class GraphqlConfig {
             }
             else if  (javaObject instanceof StoryPageDTO storyPage) {
                return switch (storyPage.type()) {
-                   case StoryPageType.CONTENT -> env.getSchema().getObjectType("StoryPageContent");
+                   case StoryPageType.CONTENT -> env.getSchema().getObjectType("StoryContentPage");
                    case StoryPageType.VOCABULARY ->  env.getSchema().getObjectType("StoryVocabularyPage");
                    default -> null;
                };
@@ -52,7 +52,7 @@ public class GraphqlConfig {
             Object javaObject = env.getObject();
             if (javaObject instanceof StoryPageDTO storyPage) {
                 return switch (storyPage.type()) {
-                    case StoryPageType.CONTENT -> env.getSchema().getObjectType("StoryPageContent");
+                    case StoryPageType.CONTENT -> env.getSchema().getObjectType("StoryContentPage");
                     case StoryPageType.VOCABULARY ->  env.getSchema().getObjectType("StoryVocabularyPage");
                     default -> null;
                 };

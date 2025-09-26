@@ -25,4 +25,10 @@ public interface StoryPageRepository extends JpaRepository<StoryPage, Long> {
 
     @Query("SELECT DISTINCT sp FROM StoryPage sp LEFT JOIN FETCH sp.vocabulary WHERE sp.shortStory.id = :storyId")
     List<StoryPage> loadPagesWithVocabulary(@Param("storyId") Long storyId);
+
+    @Query("SELECT DISTINCT sp FROM StoryPage sp LEFT JOIN FETCH sp.paragraphs WHERE sp.shortStory.id IN :storyIds")
+    List<StoryPage> loadPagesWithParagraphsIn(@Param("storyIds") List<Long> storyIds);
+
+    @Query("SELECT DISTINCT sp FROM StoryPage sp LEFT JOIN FETCH sp.vocabulary WHERE sp.shortStory.id IN :storyIds")
+    List<StoryPage> loadPagesWithVocabularyIn(@Param("storyIds") List<Long> storyIds);
 }
