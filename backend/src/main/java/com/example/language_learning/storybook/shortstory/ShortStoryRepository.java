@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,7 @@ public interface ShortStoryRepository extends JpaRepository<ShortStory, Long> {
 
     @Query("SELECT ss FROM ShortStory ss LEFT JOIN FETCH ss.storyPages WHERE ss.id = :id")
     Optional<ShortStory> findByIdWithPagesOnly(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT ss FROM ShortStory ss LEFT JOIN FETCH ss.storyPages WHERE ss.storyBook.id = :bookId")
+    List<ShortStory> findAllByStoryBookIdWithPages(@Param("bookId") Long bookId);
 }

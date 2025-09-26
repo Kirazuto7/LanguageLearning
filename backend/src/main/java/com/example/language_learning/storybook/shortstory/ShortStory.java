@@ -6,6 +6,7 @@ import com.example.language_learning.storybook.StoryBook;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class ShortStory extends BaseChapter {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shortStory")
     @OrderBy("pageNumber ASC")
     @Builder.Default
+    @BatchSize(size = 10)
     private List<StoryPage> storyPages = new ArrayList<>();
 
     @ManyToOne

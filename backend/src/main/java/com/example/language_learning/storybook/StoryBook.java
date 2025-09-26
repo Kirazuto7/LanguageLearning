@@ -9,6 +9,13 @@ import lombok.experimental.SuperBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+@NamedEntityGraph(
+    name = "StoryBook.withShortStories",
+    attributeNodes = {
+        @NamedAttributeNode(value = "shortStories")
+    }
+)
+
 @Entity
 @Table(name = "story_books")
 @SuperBuilder

@@ -13,5 +13,6 @@ public record MinioProperties(
    String url,
    String accessKey,
    String secretKey,
-   String bucket
+   String bucket,
+   String publicUrl
 ) implements StorageProperties {}

@@ -4,6 +4,7 @@ import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.storybook.requests.StoryBookRequest;
 import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.ShortStoryRepository;
+import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.example.language_learning.storybook.shortstory.page.StoryPageRepository;
 import com.example.language_learning.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -22,7 +24,6 @@ import java.util.stream.Collectors;
 public class StoryBookService {
 
     private final StoryBookRepository storyBookRepository;
-    private final ShortStoryRepository shortStoryRepository;
     private final StoryPageRepository storyPageRepository;
     private final DtoMapper dtoMapper;
 
@@ -65,11 +66,22 @@ public class StoryBookService {
     public Optional<StoryBook> getStoryBook(String language, String difficulty, User user) {
         Optional<StoryBook> storyBookOptional = storyBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty);
         storyBookOptional.ifPresent(book -> {
-            book.getShortStories().forEach(ss -> shortStoryRepository.findByIdWithPagesOnly(ss.getId()));
             List<Long> storyIds = book.getShortStories().stream().map(ShortStory::getId).collect(Collectors.toList());
+
             if (!storyIds.isEmpty()) {
-                storyPageRepository.loadPagesWithParagraphsIn(storyIds);
-                storyPageRepository.loadPagesWithVocabularyIn(storyIds);
+                // Fetch pages with paragraphs and group them by their parent story's ID
+                Map<Long, List<StoryPage>> pagesWithParagraphsByStoryId = storyPageRepository.loadPagesWithParagraphsIn(storyIds)
+                        .stream()
+                        .collect(Collectors.groupingBy(page -> page.getShortStory().getId()));
+
+                // Fetch pages with vocabulary and group them by their parent story's ID
+                Map<Long, List<StoryPage>> pagesWithVocabularyByStoryId = storyPageRepository.loadPagesWithVocabularyIn(storyIds)
+                        .stream()
+                        .collect(Collectors.groupingBy(page -> page.getShortStory().getId()));
+
+                // Set the fully loaded pages back onto the story objects
+                book.getShortStories().forEach(story -> story.setStoryPages(pagesWithParagraphsByStoryId.get(story.getId())));
+                book.getShortStories().forEach(story -> story.setStoryPages(pagesWithVocabularyByStoryId.get(story.getId())));
             }
         });
         return storyBookOptional;

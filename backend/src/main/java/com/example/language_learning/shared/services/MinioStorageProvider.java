@@ -1,5 +1,6 @@
 package com.example.language_learning.shared.services;
 
+import com.example.language_learning.config.properties.MinioProperties;
 import com.example.language_learning.config.properties.StorageProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -21,25 +22,26 @@ import java.net.URL;
 public class MinioStorageProvider implements StorageProvider {
 
     private final S3Client s3Client;
-    private final StorageProperties storageProperties;
+    //private final StorageProperties storageProperties;
+    private final MinioProperties minioProperties;
 
     @PostConstruct
     public void init() {
         try {
-            s3Client.headBucket(HeadBucketRequest.builder().bucket(storageProperties.bucket()).build());
-            log.info("MinIO bucket '{}' already exists.", storageProperties.bucket());
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(minioProperties.bucket()).build());
+            log.info("MinIO bucket '{}' already exists.", minioProperties.bucket());
         }
         catch (NoSuchBucketException e) {
-            log.info("MinIO bucket '{}' not found. Creating it...", storageProperties.bucket());
-            s3Client.createBucket(CreateBucketRequest.builder().bucket(storageProperties.bucket()).build());
-            log.info("MinIO bucket '{}' created successfully.", storageProperties.bucket());
+            log.info("MinIO bucket '{}' not found. Creating it...", minioProperties.bucket());
+            s3Client.createBucket(CreateBucketRequest.builder().bucket(minioProperties.bucket()).build());
+            log.info("MinIO bucket '{}' created successfully.", minioProperties.bucket());
         }
     }
 
     @Override
     public String save(byte[] fileData, String fileName) {
         // 1. Create a PutObjectRequest with the bucket name, key (fileName), and metadata.
-        String bucketName = storageProperties.bucket();
+        String bucketName = minioProperties.bucket();
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                                                 .bucket(bucketName)
                                                 .key(fileName)
@@ -61,7 +63,9 @@ public class MinioStorageProvider implements StorageProvider {
                 .bucket(bucketName)
                 .key(fileName)
                 .build();
-        URL url = s3Client.utilities().getUrl(getUrlRequest);
-        return url.toString();
+        String internalUrl = s3Client.utilities().getUrl(getUrlRequest).toString();
+
+        // Replace the internal Docker network URL with the public-facing URL.
+        return internalUrl.replace(minioProperties.url(), minioProperties.publicUrl());
     }
 }
