@@ -1,10 +1,10 @@
 package com.example.language_learning.shared.services;
 
 import com.example.language_learning.config.properties.MinioProperties;
-import com.example.language_learning.config.properties.StorageProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -19,10 +19,10 @@ import java.net.URL;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Profile("!test") // Exclude this bean from the 'test' profile
 public class MinioStorageProvider implements StorageProvider {
 
     private final S3Client s3Client;
-    //private final StorageProperties storageProperties;
     private final MinioProperties minioProperties;
 
     @PostConstruct

@@ -6,7 +6,8 @@ spring:
       ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
       #ddl-auto: update
   datasource:
-    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    # This is now configured for local development, connecting to the mapped port.
+    url: jdbc:postgresql://localhost:5433/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver

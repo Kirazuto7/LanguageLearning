@@ -1,11 +1,18 @@
 package com.example.language_learning.storybook;
 
+import com.example.language_learning.ai.AIEngine;
+import com.example.language_learning.shared.services.ImageService;
 import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.page.StoryPage;
-import lombok.RequiredArgsConstructor;
+import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -27,8 +34,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 @ActiveProfiles("test")
 @Transactional
-@RequiredArgsConstructor
 public class StoryBookRepositoryIntegrationTest {
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        @Primary
+        public ImageService imageService() {
+            return Mockito.mock(ImageService.class);
+        }
+
+        @Bean
+        @Primary
+        public AIEngine aiEngine() {
+            return Mockito.mock(AIEngine.class);
+        }
+    }
 
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:13.2")
@@ -45,8 +66,10 @@ public class StoryBookRepositoryIntegrationTest {
         registry.add("spring.jooq.sql-dialect", () -> "POSTGRES");
     }
 
-    private final StoryBookRepository storyBookRepository;
-    private final DSLContext dsl;
+    @Autowired
+    private StoryBookRepository storyBookRepository;
+    @Autowired
+    private DSLContext dsl;
 
     @Test
     void findStoryBookDetailsByID_shouldReturnCorrectStoryBook() {
@@ -63,6 +86,9 @@ public class StoryBookRepositoryIntegrationTest {
                 .set(SHORT_STORIES.STORY_BOOK_ID, storyBookId)
                 .set(SHORT_STORIES.CHAPTER_NUMBER, 1)
                 .set(SHORT_STORIES.TITLE, "The Adventure Begins")
+                .set(SHORT_STORIES.NATIVE_TITLE, "冒険の始まり")
+                .set(SHORT_STORIES.GENRE, "Fantasy")
+                .set(SHORT_STORIES.TOPIC, "A magical journey")
                 .returning(SHORT_STORIES.ID)
                 .fetchOne()
                 .getId();
@@ -71,7 +97,9 @@ public class StoryBookRepositoryIntegrationTest {
         Long storyPageId = dsl.insertInto(STORY_PAGES)
                 .set(STORY_PAGES.SHORT_STORY_ID, shortStoryId)
                 .set(STORY_PAGES.PAGE_NUMBER, 1)
-                .set(STORY_PAGES.TYPE, "story")
+                .set(STORY_PAGES.TYPE, StoryPageType.CONTENT.name())
+                .set(STORY_PAGES.IMAGE_URL, "http://example.com/image.png")
+                .set(STORY_PAGES.ENGLISH_SUMMARY, "A summary of the page.")
                 .returning(STORY_PAGES.ID)
                 .fetchOne()
                 .getId();
@@ -102,10 +130,14 @@ public class StoryBookRepositoryIntegrationTest {
 
         ShortStory foundShortStory = foundBook.getShortStories().get(0);
         assertThat(foundShortStory.getTitle()).isEqualTo("The Adventure Begins");
+        assertThat(foundShortStory.getGenre()).isEqualTo("Fantasy");
+        assertThat(foundShortStory.getTopic()).isEqualTo("A magical journey");
         assertThat(foundShortStory.getStoryPages()).hasSize(1);
 
         StoryPage foundPage = foundShortStory.getStoryPages().get(0);
         assertThat(foundPage.getPageNumber()).isEqualTo(1);
+        assertThat(foundPage.getImageUrl()).isEqualTo("http://example.com/image.png");
+        assertThat(foundPage.getEnglishSummary()).isEqualTo("A summary of the page.");
         assertThat(foundPage.getParagraphs()).hasSize(1);
         assertThat(foundPage.getVocabulary()).hasSize(1);
         assertThat(foundPage.getParagraphs().get(0).getContent()).isEqualTo("Once upon a time...");

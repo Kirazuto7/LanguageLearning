@@ -7,6 +7,18 @@ plugins {
 	id "nu.studer.jooq" version "9.0"
 }
 
+// Load environment variables from .env file for local development
+def envFile = new File("$projectDir/../.env")
+def envVars = [:]
+if (envFile.exists()) {
+    envFile.eachLine { line ->
+        def parts = line.split('=', 2)
+        if (parts.length == 2) {
+            envVars[parts[0]] = parts[1]
+        }
+    }
+}
+
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
@@ -94,6 +106,10 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation"
 }
 
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
 jooq {
     version = dependencyManagement.importedProperties['jooq.version']
     edition = JooqEdition.OSS
@@ -103,9 +119,17 @@ jooq {
                 logging = 'WARN'
                 jdbc {
                     driver = 'org.postgresql.Driver'
-                    url = "jdbc:postgresql://postgres:5432/${System.getenv('POSTGRES_DB')}"
-                    user = System.getenv('POSTGRES_USER')
-                    password = System.getenv('POSTGRES_PASSWORD')
+                    if (project.hasProperty('docker')) {
+                        // Docker build: Use environment variables provided by Docker Compose
+                        url = "jdbc:postgresql://postgres:5432/${System.getenv('POSTGRES_DB')}"
+                        user = System.getenv('POSTGRES_USER')
+                        password = System.getenv('POSTGRES_PASSWORD')
+                    } else {
+                        // Local IDE build: Use values from the .env file
+                        url = "jdbc:postgresql://localhost:5433/${envVars['POSTGRES_DB']}"
+                        user = envVars['POSTGRES_USER']
+                        password = envVars['POSTGRES_PASSWORD']
+                    }
                 }
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'

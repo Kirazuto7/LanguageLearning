@@ -22,6 +22,7 @@ public class StoryParagraph {
     private int paragraphNumber;
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
