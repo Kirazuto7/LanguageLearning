@@ -13,4 +13,11 @@ public interface StorageProvider {
      * @return The public URL of the saved file.
      */
     String save(byte[] fileData, String fileName);
+
+    /**
+     * Removes the specified file from the storage provider.
+     *
+     * @param fileName The name of the file to remove.
+     */
+     void remove(String fileName);
 }

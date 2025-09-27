@@ -35,6 +35,7 @@ public class MinioStorageProvider implements StorageProvider {
             s3Client.createBucket(CreateBucketRequest.builder().bucket(minioProperties.bucket()).build());
             log.info("MinIO bucket '{}' created successfully.", minioProperties.bucket());
         }
+        setPublicReadPolicy();
     }
 
     @Override
@@ -63,5 +64,52 @@ public class MinioStorageProvider implements StorageProvider {
             publicUrl = publicUrl.substring(0, publicUrl.length() - 1);
         }
         return String.format("%s/%s/%s", publicUrl, bucketName, fileName);
+    }
+
+    @Override
+    public void remove(String fileName) {
+        String bucketName = minioProperties.bucket();
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .build();
+        try {
+            log.info("MinioStorageProvider deleting file {} ...", fileName);
+            s3Client.deleteObject(deleteObjectRequest);
+            log.info("MinioStorageProvider successfully deleted file '{}' from bucket: '{}'.", fileName, bucketName);
+        }
+        catch (Exception e) {
+            log.error("Failed to delete file {} from bucket {}: {}", fileName, bucketName, e.getMessage(), e);
+        }
+    }
+
+    private void setPublicReadPolicy() {
+        String bucketName = minioProperties.bucket();
+        try {
+            log.info("Applying public-read policy to bucket: {}", bucketName);
+            String policy = """
+            {
+             "Version": "2012-10-17",
+             "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": ["s3:GetObject"],
+                    "Resource": ["arn:aws:s3:::%s/*"]
+                }
+             ]
+            }        
+            """.formatted(bucketName);
+            PutBucketPolicyRequest policyRequest = PutBucketPolicyRequest.builder()
+                    .bucket(bucketName)
+                    .policy(policy)
+                    .build();
+            s3Client.putBucketPolicy(policyRequest);
+            log.info("Successfully applied public-read policy to bucket: {}", bucketName);
+        }
+        catch (Exception e) {
+            log.error("Failed to apply public-read policy to bucket {}: {}", bucketName, e.getMessage(), e);
+            throw new RuntimeException("Failed to set bucket policy.", e);
+        }
     }
 }
