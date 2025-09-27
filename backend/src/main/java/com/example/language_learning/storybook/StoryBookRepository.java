@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StoryBookRepository extends JpaRepository<StoryBook, Long> {
+public interface StoryBookRepository extends JpaRepository<StoryBook, Long>, StoryBookRepositoryCustom {
 
     @EntityGraph(value = "StoryBook.withShortStories")
     Optional<StoryBook> findByUserAndLanguageAndDifficulty(@Param("user") User user, @Param("language") String language, @Param("difficulty") String difficulty);
