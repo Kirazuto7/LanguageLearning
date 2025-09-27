@@ -115,7 +115,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                         StoryParagraph paragraph = new StoryParagraph();
                         paragraph.setId(pr.get(STORY_PARAGRAPHS.ID));
                         paragraph.setParagraphNumber(pr.get(STORY_PARAGRAPHS.PARAGRAPH_NUMBER));
-                        paragraph.setContent(pr.get(STORY_PARAGRAPHS.CONTENT));
+                        paragraph.setContent(pr.get("content", String.class));
                         paragraphs.add(paragraph);
                     }
                     storyPage.setParagraphs(paragraphs);

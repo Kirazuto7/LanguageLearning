@@ -45,6 +45,7 @@ public class StoryBookService {
     @Transactional
     public StoryBookDTO findOrCreateBookDTO(StoryBookRequest request, User user) {
         StoryBook storyBook = findOrCreateBook(request.language(), request.difficulty(), user);
+        log.info("StoryBook Entity: {}", storyBook);
         StoryBookDTO dto = dtoMapper.toDto(storyBook);
         log.info("Returning StoryBookDTO: {}", dto);
         return dto;

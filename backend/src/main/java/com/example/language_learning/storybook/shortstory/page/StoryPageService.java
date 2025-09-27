@@ -3,6 +3,8 @@ package com.example.language_learning.storybook.shortstory.page;
 import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.ShortStoryRepository;
+import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
+import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,33 +27,39 @@ public class StoryPageService {
         ShortStory managedShortStory = findByIdAndInitializeCollections(shortStory.getId());
 
         return switch (storyPageDTO.type()) {
-            case StoryPageType.CONTENT -> {
-                StoryPage storyPage = StoryPage.builder()
-                        .shortStory(managedShortStory)
-                        .type(StoryPageType.CONTENT)
-                        .pageNumber(pageNumber)
-                        .englishSummary(storyPageDTO.englishSummary())
-                        .imageUrl(storyPageDTO.imageUrl())
-                        .paragraphs(storyPageDTO.paragraphs().stream()
-                                .map(dtoMapper::toEntity)
-                                .toList())
-                        .vocabulary(storyPageDTO.vocabulary().stream()
-                                .map(dtoMapper::toEntity)
-                                .toList())
-                        .build();
+            case CONTENT -> {
+                StoryPage storyPage = new StoryPage();
+                storyPage.setShortStory(managedShortStory);
+                storyPage.setType(StoryPageType.CONTENT);
+                storyPage.setPageNumber(pageNumber);
+                storyPage.setEnglishSummary(storyPageDTO.englishSummary());
+                storyPage.setImageUrl(storyPageDTO.imageUrl());
+
+                storyPageDTO.paragraphs().forEach(pDto -> {
+                    StoryParagraph paragraph = dtoMapper.toEntity(pDto);
+                    storyPage.addParagraph(paragraph);
+                });
+
+                storyPageDTO.vocabulary().forEach(vDto -> {
+                    StoryVocabularyItem vocabItem = dtoMapper.toEntity(vDto);
+                    storyPage.addVocabulary(vocabItem);
+                });
+
                 yield storyPageRepository.save(storyPage);
             }
-            case StoryPageType.VOCABULARY -> {
-                StoryPage storyPage = StoryPage.builder()
-                        .shortStory(managedShortStory)
-                        .type(StoryPageType.VOCABULARY)
-                        .pageNumber(pageNumber)
-                        .englishSummary(storyPageDTO.englishSummary())
-                        .imageUrl(storyPageDTO.imageUrl())
-                        .vocabulary(storyPageDTO.vocabulary().stream()
-                                .map(dtoMapper::toEntity)
-                                .toList())
-                        .build();
+            case VOCABULARY -> {
+                StoryPage storyPage = new StoryPage();
+                storyPage.setShortStory(managedShortStory);
+                storyPage.setType(StoryPageType.VOCABULARY);
+                storyPage.setPageNumber(pageNumber);
+                storyPage.setEnglishSummary(storyPageDTO.englishSummary());
+                storyPage.setImageUrl(storyPageDTO.imageUrl());
+
+                storyPageDTO.vocabulary().forEach(vDto -> {
+                    StoryVocabularyItem vocabItem = dtoMapper.toEntity(vDto);
+                    storyPage.addVocabulary(vocabItem);
+                });
+
                 yield storyPageRepository.save(storyPage);
             }
         };
