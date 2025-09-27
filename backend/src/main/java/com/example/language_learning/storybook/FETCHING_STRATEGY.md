@@ -1,116 +1,103 @@
-# JPA Fetching Strategy for Complex Nested Collections
+# Fetching Strategy for Complex Nested Collections
 
-This document outlines the strategy used to fetch the `StoryBook` entity graph, which includes multiple nested `List` collections (`StoryBook` -> `ShortStory` -> `StoryPage` -> `StoryParagraph` / `StoryVocabularyItem`), while avoiding the common `org.hibernate.loader.MultipleBagFetchException`.
+This document outlines the current best-practice strategy used to fetch the `StoryBook` entity graph, which includes multiple nested `List` collections (`StoryBook` -> `ShortStory` -> `StoryPage` -> `StoryParagraph` / `StoryVocabularyItem`).
 
-## The Problem: `MultipleBagFetchException`
-
-When using JPA and Hibernate, attempting to fetch more than one independent collection (a "bag," like a `List`) in a single query using `JOIN FETCH` results in a `MultipleBagFetchException`. This is because joining multiple collections creates a Cartesian product in the SQL result set, which Hibernate cannot reliably map back to distinct, correct Java collections.
-
-Our entity structure has this exact problem:
-1. `StoryBook` has a `List<ShortStory>`.
-2. `ShortStory` has a `List<StoryPage>`.
-3. `StoryPage` has both a `List<StoryParagraph>` and a `List<StoryVocabularyItem>`.
-
-A naive attempt to fetch this entire graph in one go will fail.
-
-## The Solution: A Multi-Step Hybrid Approach
-
-We solve this by combining several JPA and Hibernate features into a robust, multi-query pattern that is both correct and performant.
-
-1.  **`@NamedEntityGraph`**: For the first level of fetching.
-2.  **`@BatchSize`**: To optimize the lazy loading of nested collections.
-3.  **Targeted Repository Queries**: To explicitly load the final layers of the graph.
-4.  **Manual Re-attachment**: To connect the separately fetched data back to the main entity graph within the service layer.
+The previous JPA-based hybrid approach ultimately failed. It proved to be overly complex, difficult to maintain, and required multiple database queries and manual data-stitching in the service layer. This has been replaced by a single, efficient jOOQ query.
 
 ---
 
-### Step 1: Define a Simple Entity Graph
+## The jOOQ `multiset` Strategy
 
-On the root entity (`StoryBook`), we define a `@NamedEntityGraph` that only fetches the *first* level of the collection. This avoids the immediate `MultipleBagFetchException`.
+To overcome the complexity and inefficiency of the multi-query JPA approach, we have adopted a modern strategy using jOOQ's `multiset` operator. This allows us to fetch the entire nested object graph in a **single, highly efficient database query**.
 
-**File: `StoryBook.java`**
+### The Concept: Pushing Aggregation to the Database
+
+Instead of fetching flat tabular data and stitching it together in Java, we instruct the database (PostgreSQL) to build the nested JSON structure for us directly. jOOQ then transparently maps this JSON structure into our Java objects.
+
+This completely eliminates the `MultipleBagFetchException` and the N+1 query problem in one step.
+
+### The jOOQ Implementation
+
+The repository method uses `multiset` to define the nested collections. The query is complex, but this complexity is now properly contained within the data access layer.
+
+**File: `StoryBookRepositoryImpl.java`**
 ```java
-@NamedEntityGraph(
-    name = "StoryBook.withShortStories",
-    attributeNodes = {
-        @NamedAttributeNode(value = "shortStories")
-    }
-)
-@Entity
-public class StoryBook extends BaseBook {
-    // ...
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "storyBook", fetch = FetchType.LAZY)
-    @OrderBy("chapterNumber ASC")
-    @Builder.Default
-    private List<ShortStory> shortStories = new ArrayList<>();
-    // ...
+@Override
+public Optional<StoryBook> findStoryBookDetailsById(Long id) {
+    return dsl.select(
+                    STORY_BOOKS.ID, STORY_BOOKS.TITLE, STORY_BOOKS.DIFFICULTY, STORY_BOOKS.LANGUAGE,
+                    multiset(
+                        dsl.select(
+                                SHORT_STORIES.ID, SHORT_STORIES.CHAPTER_NUMBER, SHORT_STORIES.TITLE, SHORT_STORIES.NATIVE_TITLE, SHORT_STORIES.GENRE, SHORT_STORIES.TOPIC,
+                                multiset(
+                                    dsl.select(
+                                        STORY_PAGES.ID, STORY_PAGES.PAGE_NUMBER, STORY_PAGES.TYPE, STORY_PAGES.IMAGE_URL, STORY_PAGES.ENGLISH_SUMMARY,
+                                        multiset(dsl.select(STORY_PARAGRAPHS.ID, STORY_PARAGRAPHS.PARAGRAPH_NUMBER, cast(STORY_PARAGRAPHS.CONTENT, String.class).as("content")).from(STORY_PARAGRAPHS).where(STORY_PARAGRAPHS.STORY_PAGE_ID.eq(STORY_PAGES.ID))).as("paragraphs"),
+                                        multiset(dsl.select(STORY_VOCABULARY_ITEMS.ID, STORY_VOCABULARY_ITEMS.WORD, STORY_VOCABULARY_ITEMS.TRANSLATION, STORY_VOCABULARY_ITEMS.PAGE_NUMBER).from(STORY_VOCABULARY_ITEMS).where(STORY_VOCABULARY_ITEMS.STORY_PAGE_ID.eq(STORY_PAGES.ID))).as("vocabulary")
+                                    ).from(STORY_PAGES).where(STORY_PAGES.SHORT_STORY_ID.eq(SHORT_STORIES.ID))
+                                ).as("storyPages")
+                        ).from(SHORT_STORIES).where(SHORT_STORIES.STORY_BOOK_ID.eq(STORY_BOOKS.ID))
+                    ).as("shortStories")
+            )
+            .from(STORY_BOOKS)
+            .where(STORY_BOOKS.ID.eq(id))
+            .fetchOptional(r -> { /* Manual mapping logic... */ });
 }
 ```
 
-### Step 2: Use `@BatchSize` on Nested Collections
+### The Resulting SQL Query
 
-On the nested entities, we add `@BatchSize` to the collections. This annotation is a powerful optimization for lazy loading. When Hibernate needs to load one of these collections, it will fetch collections for multiple parent entities at once (e.g., fetch `storyPages` for 10 `ShortStory` entities) using an efficient `IN` clause, preventing the N+1 query problem.
+jOOQ translates the Java code above into a single, powerful SQL query using PostgreSQL's native JSON functions. This is what is actually sent to the database.
 
-**File: `ShortStory.java`**
-```java
-@Entity
-public class ShortStory extends BaseChapter {
-    // ...
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shortStory")
-    @OrderBy("pageNumber ASC")
-    @Builder.Default
-    @BatchSize(size = 10) // Crucial for optimizing the next level
-    private List<StoryPage> storyPages = new ArrayList<>();
-    // ...
-}
+```sql
+SELECT
+    sb.id, sb.title, sb.difficulty, sb.language,
+    (
+        SELECT json_agg(json_build_object(
+            'id', ss.id,
+            'chapterNumber', ss.chapter_number,
+            'title', ss.title,
+            'nativeTitle', ss.native_title,
+            'genre', ss.genre,
+            'topic', ss.topic,
+            'storyPages', (
+                SELECT json_agg(json_build_object(
+                    'id', sp.id,
+                    'pageNumber', sp.page_number,
+                    'type', sp.type,
+                    'imageUrl', sp.image_url,
+                    'englishSummary', sp.english_summary,
+                    'paragraphs', (
+                        SELECT json_agg(json_build_object('id', p.id, 'content', CAST(p.content AS TEXT)))
+                        FROM story_paragraphs p WHERE p.story_page_id = sp.id
+                    ),
+                    'vocabulary', (
+                        SELECT json_agg(json_build_object('id', v.id, 'word', v.word))
+                        FROM story_vocabulary_items v WHERE v.story_page_id = sp.id
+                    )
+                ))
+                FROM story_pages sp WHERE sp.short_story_id = ss.id
+            )
+        ))
+        FROM short_stories ss WHERE ss.story_book_id = sb.id
+    ) AS short_stories
+FROM
+    story_books sb
+WHERE
+    sb.id = ?;
 ```
 
-### Step 3: Use the Entity Graph in the Repository
+### Simplified Service Layer
 
-The repository method uses the `@EntityGraph` to trigger the initial fetch.
+With the jOOQ strategy, the service layer becomes dramatically simpler. All the complex data-stitching logic is gone, replaced by a single, clear call to the repository.
 
-**File: `StoryBookRepository.java`**
-```java
-@Repository
-public interface StoryBookRepository extends JpaRepository<StoryBook, Long> {
-
-    @EntityGraph(value = "StoryBook.withShortStories")
-    Optional<StoryBook> findByUserAndLanguageAndDifficulty(@Param("user") User user, @Param("language") String language, @Param("difficulty") String difficulty);
-
-}
-```
-
-### Step 4: Orchestrate Fetching in the Service Layer
-
-This is where all the pieces come together.
-
-1.  Call the repository method to get the `StoryBook` with its `shortStories` initialized.
-2.  Call specific repository methods (`loadPagesWith...In`) that fetch the `StoryPage` entities along with their deepest collections (`paragraphs` and `vocabulary`).
-3.  The results of these calls are `List<StoryPage>`. We group them into a `Map<Long, List<StoryPage>>`, where the key is the parent `ShortStory` ID.
-4.  Finally, we iterate over the `shortStories` from the original `StoryBook` object and manually set the fully-loaded `storyPages` list from our map. This replaces the uninitialized lazy collection with our fully hydrated one.
-
-**File: `StoryBookService.java`**
+**File: `StoryBookService.java` (Current Implementation)**
 ```java
 @Transactional(readOnly = true)
-public Optional<StoryBook> getStoryBook(String language, String difficulty, User user) {
-    // 1. Initial fetch using the entity graph
-    Optional<StoryBook> storyBookOptional = storyBookRepository.findByUserAndLanguageAndDifficulty(user, language, difficulty);
-    
-    storyBookOptional.ifPresent(book -> {
-        List<Long> storyIds = book.getShortStories().stream().map(ShortStory::getId).collect(Collectors.toList());
-
-        if (!storyIds.isEmpty()) {
-            // 2 & 3. Fetch deep collections and group them
-            Map<Long, List<StoryPage>> pagesWithDataById = storyPageRepository.loadPagesWithParagraphsIn(storyIds)
-                    .stream()
-                    .collect(Collectors.groupingBy(page -> page.getShortStory().getId()));
-            
-            // (Repeat for vocabulary and merge if necessary, or handle as shown)
-
-            // 4. Manually re-attach the fully loaded collections
-            book.getShortStories().forEach(story -> story.setStoryPages(pagesWithDataById.get(story.getId())));
-        }
-    });
-    return storyBookOptional;
+public StoryBook getStoryBookDetails(Long id) {
+    return storyBookRepository.findStoryBookDetailsById(id)
+            .orElseThrow(() -> new RuntimeException("Storybook with id '" + id + "' not found"));
 }
 ```
+
+This new approach is more efficient, easier to maintain, and less prone to bugs.
