@@ -1,7 +1,10 @@
+import nu.studer.gradle.jooq.JooqEdition
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.8'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id "nu.studer.jooq" version "9.0"
 }
 
 group = 'com.example'
@@ -9,6 +12,11 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '21'
+}
+
+// Explicitly set the main class for the Spring Boot application
+springBoot {
+    mainClass = 'com.example.language_learning.LanguageLearningApplication'
 }
 
 repositories {
@@ -21,6 +29,7 @@ dependencyManagement {
 		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0"
 	}
 }
+
 dependencies {
     // Spring-boot Dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -37,7 +46,9 @@ dependencies {
     // Database Dependencies
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
 	implementation 'org.postgresql:postgresql'
+	jooqGenerator 'org.postgresql:postgresql'
 
     // Security Dependencies
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
@@ -71,4 +82,51 @@ jar {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation"
+}
+
+jooq {
+    version = dependencyManagement.importedProperties['jooq.version']
+    edition = JooqEdition.OSS
+    configurations {
+        main {
+            generationTool {
+                logging = 'WARN'
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = "jdbc:postgresql://postgres:5432/${System.getenv('POSTGRES_DB')}"
+                    user = System.getenv('POSTGRES_USER')
+                    password = System.getenv('POSTGRES_PASSWORD')
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        includes = '.*'
+                        excludes = ''
+                        inputSchema = 'public'
+                    }
+                    generate {
+                        pojos = true
+                        daos = true
+                    }
+                    target {
+                        packageName = 'com.example.language_learning.generated.jooq'
+                        directory = "${buildDir}/generated-sources/jooq"
+                    }
+                    strategy {
+                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Add the generated jOOQ sources to the main source set
+sourceSets {
+    main {
+        java {
+            srcDir "${buildDir}/generated-sources/jooq"
+        }
+    }
 }

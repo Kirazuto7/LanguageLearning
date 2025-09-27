@@ -21,7 +21,7 @@ hs_err_pid*
 
 # ===================================================================
 # IDE & OS Files
-# =================================com==================================
+# ===================================================================
 # IntelliJ
 .idea/
 *.iml
@@ -52,6 +52,9 @@ Thumbs.db
 .gradle/
 build/
 bin/
+
+# jOOQ - Prevent accidentally committing generated code to the source tree
+/backend/src/main/java/com/example/language_learning/generated/
 
 # Maven
 /backend/.mvn/
