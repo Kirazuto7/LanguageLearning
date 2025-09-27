@@ -10,4 +10,4 @@ WORKDIR /app
 # The default command to run when the container starts.
 # 'bootRun' starts the application with Spring Boot DevTools, which enables hot-reloading.
 
-CMD ["gradle", "bootRun", "--no-daemon"]
+CMD ["gradle", "bootRun", "-Pdocker", "--no-daemon"]
