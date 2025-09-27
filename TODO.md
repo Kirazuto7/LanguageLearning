@@ -17,9 +17,12 @@ A roadmap for building out the LanguageLearning application into a comprehensive
         - [ ] Replace it with a single, efficient batch operation that runs after all AI text generation is complete.
         - [ ] Use jOOQ\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
     - [ ] **Fix Image Generation API Integration**
-        - [ ] Create a custom Dockerfile for the `image-api` service to host a standard Automatic1111 instance, ensuring a stable API contract.
+        - [x] Use a pre-built public image for the `image-api` service to ensure a stable API contract.
         - [ ] **Configure and use a LoRA** to enforce a consistent art style for all storybook illustrations.
-        - [ ] **Fix public URL generation for MinIO**. The `MinioStorageProvider` currently returns the internal Docker URL. It needs to be modified to return the public-facing URL (e.g., `http://localhost:9000/...`) so the frontend can display the images.
+        - [ ] **Fix public URL generation for MinIO**
+            - [x] Set `public-read` ACL on object upload to ensure images are publicly accessible.
+            - [x] Refactor URL generation to dynamically construct the permanent public URL instead of using string replacement on a pre-signed URL.
+            - [ ] Verify in the running application that the correct public URL is saved and images are displayed correctly.
     - [ ] Design frontend UI to allow story generation via two methods: user-provided topic OR random generation from a selected genre.
     - [ ] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
     - [ ] Update the frontend to display the generated image on content pages.
@@ -31,9 +34,9 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] Implement a self-validation step in prompts where the AI first checks if the user input is valid before proceeding.
 
 - [ ] **User Authentication & Onboarding**
-    - [ ] Build frontend Login page.
-    - [ ] Build frontend Register page.
-    - [ ] Create a "My Library" or "Dashboard" page to display a user\'s generated books.
+    - [x] Build frontend Login page.
+    - [x] Build frontend Register page.
+    - [ ] Implement a "My Library" / Dashboard page to display and organize a user\'s generated content (LessonBooks, StoryBooks, etc.).
 
 - [ ] **Interactive Vocabulary Practice**
     - [ ] Make vocabulary words in lessons/stories clickable.
@@ -43,6 +46,21 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 ---
 
 ### Tier 2: Enhancing the Learning Experience
+
+- [ ] **Implement Semantic Caching to Prevent Repetitive Content**
+    - [ ] **Infrastructure Setup:**
+        - [ ] Integrate a sentence transformer model (e.g., `all-MiniLM-L6-v2`) into a new, dedicated AI service container to generate embeddings.
+        - [ ] Add a new field (e.g., `summary_embedding` of type `vector(384)`) to relevant tables like `grammar_lessons`.
+        - [ ] Create a Spring Boot `ApplicationRunner` or similar configuration to run `CREATE EXTENSION IF NOT EXISTS vector;` in PostgreSQL on startup to enable `pgvector`.
+    - [ ] **Generation Workflow Modification:**
+        - [ ] Before generating a new lesson, create a summary/topic embedding for the proposed content.
+        - [ ] Perform a cosine similarity search against the most recent N lessons of the same type, language, and difficulty.
+        - [ ] If the similarity exceeds a defined threshold, identify the content as a "semantic duplicate".
+    - [ ] **AI Feedback Loop:**
+        - [ ] If a duplicate is detected, cancel the initial generation.
+        - [ ] Re-trigger the AI prompt, adding the summaries of the duplicate lessons as a negative constraint (e.g., "Avoid generating a lesson similar to these topics: ...").
+    - [ ] **Persistence:**
+        - [ ] When a new, unique lesson is successfully generated and saved, also save its summary embedding to the database.
 
 - [ ] **Audio Narration (Text-to-Speech)**
     - [ ] Integrate a third-party Text-to-Speech service (e.g., Google Cloud TTS).

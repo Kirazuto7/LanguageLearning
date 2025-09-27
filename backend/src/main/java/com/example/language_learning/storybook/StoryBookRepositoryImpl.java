@@ -7,6 +7,7 @@ import com.example.language_learning.storybook.shortstory.page.paragraph.StoryPa
 import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,6 @@ import static com.example.language_learning.generated.jooq.tables.StoryBooks.STO
 import static com.example.language_learning.generated.jooq.tables.StoryPages.STORY_PAGES;
 import static com.example.language_learning.generated.jooq.tables.StoryParagraphs.STORY_PARAGRAPHS;
 import static com.example.language_learning.generated.jooq.tables.StoryVocabularyItems.STORY_VOCABULARY_ITEMS;
-import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.multiset;
 
 @Repository
@@ -56,7 +56,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                                 dsl.select(
                                     STORY_PARAGRAPHS.ID,
                                     STORY_PARAGRAPHS.PARAGRAPH_NUMBER,
-                                    cast(STORY_PARAGRAPHS.CONTENT, String.class).as("content")
+                                    STORY_PARAGRAPHS.CONTENT
                                 )
                                 .from(STORY_PARAGRAPHS)
                                 .where(STORY_PARAGRAPHS.STORY_PAGE_ID.eq(STORY_PAGES.ID))
@@ -89,8 +89,8 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
             storyBook.setDifficulty(r.get(STORY_BOOKS.DIFFICULTY));
             storyBook.setLanguage(r.get(STORY_BOOKS.LANGUAGE));
             List<ShortStory> shortStories = new ArrayList<>();
-            Result<org.jooq.Record> shortStoryRecords = r.get("shortStories", Result.class);
-            for (org.jooq.Record ssr : shortStoryRecords) {
+            Result<Record> shortStoryRecords = r.get("shortStories", Result.class);
+            for (Record ssr : shortStoryRecords) {
                 ShortStory shortStory = new ShortStory();
                 shortStory.setId(ssr.get(SHORT_STORIES.ID));
                 shortStory.setChapterNumber(ssr.get(SHORT_STORIES.CHAPTER_NUMBER));
@@ -100,8 +100,8 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                 shortStory.setTopic(ssr.get(SHORT_STORIES.TOPIC));
 
                 List<StoryPage> storyPages = new ArrayList<>();
-                Result<org.jooq.Record> storyPageRecords = ssr.get("storyPages", Result.class);
-                for (org.jooq.Record srp : storyPageRecords) {
+                Result<Record> storyPageRecords = ssr.get("storyPages", Result.class);
+                for (Record srp : storyPageRecords) {
                     StoryPage storyPage = new StoryPage();
                     storyPage.setId(srp.get(STORY_PAGES.ID));
                     storyPage.setPageNumber(srp.get(STORY_PAGES.PAGE_NUMBER));
@@ -110,19 +110,19 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                     storyPage.setEnglishSummary(srp.get(STORY_PAGES.ENGLISH_SUMMARY));
 
                     List<StoryParagraph> paragraphs = new ArrayList<>();
-                    Result<org.jooq.Record> paragraphRecords = srp.get("paragraphs", Result.class);
-                    for (org.jooq.Record pr : paragraphRecords) {
+                    Result<Record> paragraphRecords = srp.get("paragraphs", Result.class);
+                    for (Record pr : paragraphRecords) {
                         StoryParagraph paragraph = new StoryParagraph();
                         paragraph.setId(pr.get(STORY_PARAGRAPHS.ID));
                         paragraph.setParagraphNumber(pr.get(STORY_PARAGRAPHS.PARAGRAPH_NUMBER));
-                        paragraph.setContent(pr.get("content", String.class));
+                        paragraph.setContent(pr.get(STORY_PARAGRAPHS.CONTENT));
                         paragraphs.add(paragraph);
                     }
                     storyPage.setParagraphs(paragraphs);
 
                     List<StoryVocabularyItem> vocabulary = new ArrayList<>();
-                    Result<org.jooq.Record> vocabularyRecords = srp.get("vocabulary", Result.class);
-                    for (org.jooq.Record vr : vocabularyRecords) {
+                    Result<Record> vocabularyRecords = srp.get("vocabulary", Result.class);
+                    for (Record vr : vocabularyRecords) {
                         StoryVocabularyItem item = new StoryVocabularyItem();
                         item.setId(vr.get(STORY_VOCABULARY_ITEMS.ID));
                         item.setWord(vr.get(STORY_VOCABULARY_ITEMS.WORD));

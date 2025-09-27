@@ -10,7 +10,6 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
-import java.net.URL;
 
 /**
  * An implementation of the StorageProvider interface that uses a MinIO server.
@@ -40,11 +39,12 @@ public class MinioStorageProvider implements StorageProvider {
 
     @Override
     public String save(byte[] fileData, String fileName) {
-        // 1. Create a PutObjectRequest with the bucket name, key (fileName), and metadata.
+        // 1. Create a PutObjectRequest with the bucket name, key (fileName), public read access, and metadata.
         String bucketName = minioProperties.bucket();
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                                                 .bucket(bucketName)
                                                 .key(fileName)
+                                                .acl(ObjectCannedACL.PUBLIC_READ)
                                                 .build();
         // 2. Call s3Client.putObject(request, requestBody).
         try {
@@ -57,15 +57,11 @@ public class MinioStorageProvider implements StorageProvider {
             throw new RuntimeException("Failed to save file to storage.", e);
         }
 
-        // 3. Construct and return the public URL of the newly uploaded object.
-        // Use S3Client's utility to build the encoded URL
-        GetUrlRequest getUrlRequest = GetUrlRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build();
-        String internalUrl = s3Client.utilities().getUrl(getUrlRequest).toString();
-
-        // Replace the internal Docker network URL with the public-facing URL.
-        return internalUrl.replace(minioProperties.url(), minioProperties.publicUrl());
+        // 3. Construct and return the public URL of the newly uploaded object. Format: PROTOCOL://HOSTNAME:PORT/BUCKET_NAME/OBJECT_KEY
+        String publicUrl = minioProperties.publicUrl();
+        if (publicUrl.endsWith("/")) {
+            publicUrl = publicUrl.substring(0, publicUrl.length() - 1);
+        }
+        return String.format("%s/%s/%s", publicUrl, bucketName, fileName);
     }
 }

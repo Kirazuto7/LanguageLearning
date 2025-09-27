@@ -29,17 +29,22 @@ echo *      Stopping Docker Environment...        *
 echo **********************************************
 echo.
 
-if "%DO_HARD_CLEANUP%" == "true" (
-    echo Performing hard cleanup (removing volumes and pruning builder cache)...
-    docker compose -f "%COMPOSE_FILE%" down -v
-    docker builder prune -f
-    docker volume prune -f
-    echo Hard cleanup complete.
-) else (
-    echo Stopping containers...
-    docker compose -f "%COMPOSE_FILE%" down
-    echo Containers stopped.
-)
+if "%DO_HARD_CLEANUP%" == "true" (goto :hard_cleanup) else (goto :soft_cleanup)
 
+:soft_cleanup
+echo Stopping containers...
+docker compose -f "%COMPOSE_FILE%" down
+echo Containers stopped.
+goto :end_script
+
+:hard_cleanup
+echo Performing hard cleanup (removing volumes and pruning builder cache)...
+docker compose -f "%COMPOSE_FILE%" down -v
+docker builder prune -f
+docker volume prune -f
+echo Hard cleanup complete.
+goto :end_script
+
+:end_script
 popd
 goto :eof
