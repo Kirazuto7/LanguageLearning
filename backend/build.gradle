@@ -57,6 +57,7 @@ dependencies {
 
     // Database Dependencies
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
 	implementation 'org.postgresql:postgresql'
@@ -147,7 +148,42 @@ jooq {
                         directory = "${buildDir}/generated-sources/jooq"
                     }
                     strategy {
-                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                        matchers {
+                            tables {
+                                // Rule for tables ending in 'ies', e.g., short_stories -> ShortStory
+                                table {
+                                    expression = '^(.*)ies$'
+                                    tableClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1y'
+                                    }
+                                    tableIdentifier {
+                                        transform = 'UPPER'
+                                        expression = '$1y'
+                                    }
+                                    recordClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1y_RECORD'
+                                    }
+                                }
+                                // Rule for tables ending in 's', e.g., story_pages -> StoryPage
+                                table {
+                                    expression = '^(.*)s$'
+                                    tableClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1'
+                                    }
+                                    tableIdentifier {
+                                        transform = 'UPPER'
+                                        expression = '$1'
+                                    }
+                                    recordClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1_RECORD'
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

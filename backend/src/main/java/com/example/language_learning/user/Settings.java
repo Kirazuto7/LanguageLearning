@@ -1,15 +1,18 @@
 package com.example.language_learning.user;
 
+import com.example.language_learning.shared.data.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "settings")
-@Builder
-@Data
+@SuperBuilder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Settings {
+public class Settings extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

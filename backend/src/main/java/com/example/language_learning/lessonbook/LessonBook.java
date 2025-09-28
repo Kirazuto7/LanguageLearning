@@ -12,7 +12,8 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "lesson_books")
 @SuperBuilder
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor

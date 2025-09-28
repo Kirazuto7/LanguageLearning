@@ -1,17 +1,16 @@
 package com.example.language_learning.shared.data;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @MappedSuperclass
 @SuperBuilder
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseChapter {
+public abstract class BaseChapter extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;

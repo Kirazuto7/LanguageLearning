@@ -1,8 +1,10 @@
 package com.example.language_learning.user;
 
 import com.example.language_learning.lessonbook.LessonBook;
+import com.example.language_learning.shared.data.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,11 +15,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Builder
-@Data
+@SuperBuilder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

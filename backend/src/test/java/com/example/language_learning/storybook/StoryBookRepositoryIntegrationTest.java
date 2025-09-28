@@ -6,6 +6,7 @@ import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import org.jooq.DSLContext;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +24,18 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
-import static com.example.language_learning.generated.jooq.tables.ShortStories.SHORT_STORIES;
-import static com.example.language_learning.generated.jooq.tables.StoryBooks.STORY_BOOKS;
-import static com.example.language_learning.generated.jooq.tables.StoryPages.STORY_PAGES;
-import static com.example.language_learning.generated.jooq.tables.StoryParagraphs.STORY_PARAGRAPHS;
-import static com.example.language_learning.generated.jooq.tables.StoryVocabularyItems.STORY_VOCABULARY_ITEMS;
+import static com.example.language_learning.generated.jooq.tables.ShortStory.SHORT_STORY;
+import static com.example.language_learning.generated.jooq.tables.StoryBook.STORY_BOOK;
+import static com.example.language_learning.generated.jooq.tables.StoryPage.STORY_PAGE;
+import static com.example.language_learning.generated.jooq.tables.StoryParagraph.STORY_PARAGRAPH;
+import static com.example.language_learning.generated.jooq.tables.StoryVocabularyItem.STORY_VOCABULARY_ITEM;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
 @Transactional
+@Slf4j
 public class StoryBookRepositoryIntegrationTest {
 
     @TestConfiguration
@@ -64,6 +66,7 @@ public class StoryBookRepositoryIntegrationTest {
         registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.jooq.sql-dialect", () -> "POSTGRES");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create");
     }
 
     @Autowired
@@ -74,46 +77,46 @@ public class StoryBookRepositoryIntegrationTest {
     @Test
     void findStoryBookDetailsByID_shouldReturnCorrectStoryBook() {
         // 1. Arrange
-        Long storyBookId = dsl.insertInto(STORY_BOOKS)
-                .set(STORY_BOOKS.TITLE, "My First Story Book")
-                .set(STORY_BOOKS.LANGUAGE, "ja")
-                .set(STORY_BOOKS.DIFFICULTY, "A1")
-                .returning(STORY_BOOKS.ID)
+        Long storyBookId = dsl.insertInto(STORY_BOOK)
+                .set(STORY_BOOK.TITLE, "My First Story Book")
+                .set(STORY_BOOK.LANGUAGE, "ja")
+                .set(STORY_BOOK.DIFFICULTY, "A1")
+                .returning(STORY_BOOK.ID)
                 .fetchOne()
                 .getId();
 
-        Long shortStoryId = dsl.insertInto(SHORT_STORIES)
-                .set(SHORT_STORIES.STORY_BOOK_ID, storyBookId)
-                .set(SHORT_STORIES.CHAPTER_NUMBER, 1)
-                .set(SHORT_STORIES.TITLE, "The Adventure Begins")
-                .set(SHORT_STORIES.NATIVE_TITLE, "冒険の始まり")
-                .set(SHORT_STORIES.GENRE, "Fantasy")
-                .set(SHORT_STORIES.TOPIC, "A magical journey")
-                .returning(SHORT_STORIES.ID)
+        Long shortStoryId = dsl.insertInto(SHORT_STORY)
+                .set(SHORT_STORY.STORY_BOOK_ID, storyBookId)
+                .set(SHORT_STORY.CHAPTER_NUMBER, 1)
+                .set(SHORT_STORY.TITLE, "The Adventure Begins")
+                .set(SHORT_STORY.NATIVE_TITLE, "冒険の始まり")
+                .set(SHORT_STORY.GENRE, "Fantasy")
+                .set(SHORT_STORY.TOPIC, "A magical journey")
+                .returning(SHORT_STORY.ID)
                 .fetchOne()
                 .getId();
 
-        Long storyPageId = dsl.insertInto(STORY_PAGES)
-                .set(STORY_PAGES.SHORT_STORY_ID, shortStoryId)
-                .set(STORY_PAGES.PAGE_NUMBER, 1)
-                .set(STORY_PAGES.TYPE, StoryPageType.CONTENT.name())
-                .set(STORY_PAGES.IMAGE_URL, "http://example.com/image.png")
-                .set(STORY_PAGES.ENGLISH_SUMMARY, "A summary of the page.")
-                .returning(STORY_PAGES.ID)
+        Long storyPageId = dsl.insertInto(STORY_PAGE)
+                .set(STORY_PAGE.SHORT_STORY_ID, shortStoryId)
+                .set(STORY_PAGE.PAGE_NUMBER, 1)
+                .set(STORY_PAGE.TYPE, StoryPageType.CONTENT.name())
+                .set(STORY_PAGE.IMAGE_URL, "http://example.com/image.png")
+                .set(STORY_PAGE.ENGLISH_SUMMARY, "A summary of the page.")
+                .returning(STORY_PAGE.ID)
                 .fetchOne()
                 .getId();
 
-        dsl.insertInto(STORY_PARAGRAPHS)
-                .set(STORY_PARAGRAPHS.STORY_PAGE_ID, storyPageId)
-                .set(STORY_PARAGRAPHS.PARAGRAPH_NUMBER, 1)
-                .set(STORY_PARAGRAPHS.CONTENT, "Once upon a time...")
+        dsl.insertInto(STORY_PARAGRAPH)
+                .set(STORY_PARAGRAPH.STORY_PAGE_ID, storyPageId)
+                .set(STORY_PARAGRAPH.PARAGRAPH_NUMBER, 1)
+                .set(STORY_PARAGRAPH.CONTENT, "Once upon a time...")
                 .execute();
 
-        dsl.insertInto(STORY_VOCABULARY_ITEMS)
-                .set(STORY_VOCABULARY_ITEMS.STORY_PAGE_ID, storyPageId)
-                .set(STORY_VOCABULARY_ITEMS.PAGE_NUMBER, 1)
-                .set(STORY_VOCABULARY_ITEMS.WORD, "昔々")
-                .set(STORY_VOCABULARY_ITEMS.TRANSLATION, "Once upon a time")
+        dsl.insertInto(STORY_VOCABULARY_ITEM)
+                .set(STORY_VOCABULARY_ITEM.STORY_PAGE_ID, storyPageId)
+                .set(STORY_VOCABULARY_ITEM.PAGE_NUMBER, 1)
+                .set(STORY_VOCABULARY_ITEM.WORD, "昔々")
+                .set(STORY_VOCABULARY_ITEM.TRANSLATION, "Once upon a time")
                 .execute();
 
         // 2. Act
@@ -151,6 +154,9 @@ public class StoryBookRepositoryIntegrationTest {
         // Assert deeply nested Paragraph and Vocabulary fields
         assertThat(foundPage.getParagraphs().get(0).getContent()).isEqualTo("Once upon a time...");
         assertThat(foundPage.getVocabulary().get(0).getWord()).isEqualTo("昔々");
+
+        // Final logging for confirmation
+        result.ifPresent(book -> log.info("Final fetched StoryBook object:\n{}", book));
     }
 
 }

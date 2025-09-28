@@ -14,7 +14,8 @@ import org.hibernate.annotations.BatchSize;
 @Entity
 @Table(name = "lesson_chapters")
 @SuperBuilder
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor

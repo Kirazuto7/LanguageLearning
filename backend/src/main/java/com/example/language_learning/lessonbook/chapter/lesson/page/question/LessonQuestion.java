@@ -1,22 +1,25 @@
 package com.example.language_learning.lessonbook.chapter.lesson.page.question;
 
 import com.example.language_learning.lessonbook.chapter.lesson.data.Lesson;
+import com.example.language_learning.shared.data.BaseEntity;
 import com.example.language_learning.shared.enums.QuestionType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.Builder.Default;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "lessonQuestions")
-@Builder
-@Data
+@SuperBuilder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonQuestion {
+public class LessonQuestion extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StoryPageRepository extends JpaRepository<StoryPage, Long> {
+public interface StoryPageRepository extends JpaRepository<StoryPage, Long>, StoryPageRepositoryCustom {
 
     @Query("SELECT sp FROM StoryPage sp LEFT JOIN FETCH sp.paragraphs WHERE sp.id = :id")
     Optional<StoryPage> findByIdWithParagraphs(@Param("id") Long id);

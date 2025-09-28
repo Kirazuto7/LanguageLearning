@@ -12,7 +12,8 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "lesson_pages")
 @SuperBuilder
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class LessonPage extends BasePage {

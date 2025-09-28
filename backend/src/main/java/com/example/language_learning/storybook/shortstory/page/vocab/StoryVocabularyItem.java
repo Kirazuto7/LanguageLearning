@@ -1,20 +1,20 @@
 package com.example.language_learning.storybook.shortstory.page.vocab;
 
+import com.example.language_learning.shared.data.BaseEntity;
 import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "story_vocabulary_items")
-@Builder
-@Data
+@SuperBuilder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoryVocabularyItem {
+public class StoryVocabularyItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

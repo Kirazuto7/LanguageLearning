@@ -1,16 +1,19 @@
 package com.example.language_learning.lessonbook.chapter.lesson.page.sentence;
 
+import com.example.language_learning.shared.data.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 
 @Entity
 @Table(name="sentences")
-@Builder
-@Data
+@SuperBuilder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonSentence {
+public class LessonSentence extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

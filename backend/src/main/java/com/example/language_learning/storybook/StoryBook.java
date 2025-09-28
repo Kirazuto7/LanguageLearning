@@ -19,7 +19,8 @@ import java.util.List;
 @Entity
 @Table(name = "story_books")
 @SuperBuilder
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
