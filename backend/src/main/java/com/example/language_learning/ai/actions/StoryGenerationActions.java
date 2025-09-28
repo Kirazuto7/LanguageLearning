@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class StoryGenerationActions {
     public StoryGenerationState handleMetadataGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
         log.info("Entering handleMetadataGeneration for story task ID: {}", context.getTaskId());
         try {
-            progressService.sendUpdate(context.getTaskId(), 15, "Preparing story data...");
+            progressService.sendUpdate(context.getTaskId(), 20, "Preparing story data...");
 
             AIRequest<ShortStoryMetadataDTO> aiRequest = AIRequest.builder()
                     .responseClass(ShortStoryMetadataDTO.class)
@@ -97,7 +98,7 @@ public class StoryGenerationActions {
     public StoryGenerationState handleStoryGeneration(StoryGenerationState fromState, StoryGenerationContext context) {
         log.info("Entering handleStoryGeneration for story task ID: {}", context.getTaskId());
         try {
-            progressService.sendUpdate(context.getTaskId(), 30, "Writing the story...");
+            progressService.sendUpdate(context.getTaskId(), 40, "Writing the story...");
             Thread.sleep(shortDelay.toMillis());
 
             ShortStoryMetadataDTO metadata = ((StoryGenerationState.STORY_GENERATION) fromState).metadataDto();
@@ -131,7 +132,7 @@ public class StoryGenerationActions {
         List<StoryPageDTO> storyPageDtos = currentState.storyPagesDto();
 
         try {
-            progressService.sendUpdate(context.getTaskId(), 40, "Creating illustrations for the story...");
+            progressService.sendUpdate(context.getTaskId(), 70, "Creating illustrations for the story...");
             Thread.sleep(shortDelay.toMillis());
             String imageContext = storyPageDtos.stream()
                     .filter(dto -> dto.type() == StoryPageType.CONTENT)
@@ -174,58 +175,48 @@ public class StoryGenerationActions {
     public StoryGenerationState handlePersistPages(StoryGenerationState fromState, StoryGenerationContext context) {
         log.info("Entering handlePersistPages for story task ID: {}", context.getTaskId());
         StoryGenerationState.PERSIST_PAGES currentState = (StoryGenerationState.PERSIST_PAGES) fromState;
-        List<StoryPageDTO> storyPageDtos = currentState.storyPagesDto();
-        int currentIndex = currentState.currentIndex();
-
-        if (currentIndex >= storyPageDtos.size()) {
-            return StoryGenerationState.COMPLETED;
-        }
 
         try {
-            int totalPages = storyPageDtos.size();
-            int startProgress = currentState.currentProgress();
-            int remainingProgress = 100 - startProgress;
-            int progressChunk = (totalPages > currentIndex) ? remainingProgress / (totalPages - currentIndex) : remainingProgress;
-
-            StoryPageDTO originalPageDto = storyPageDtos.get(currentIndex);
-            final int pageNumber = context.getPageCounter().getAndIncrement();
-            StoryPageDTO pageToPersist = originalPageDto;
-            // Update the dto to include the page number for each of its vocabulary in the content pages
-            List<StoryPageDTO> updatedPageDtos = new ArrayList<>(storyPageDtos);
-
-            if (originalPageDto.type() == StoryPageType.CONTENT) {
-                List<StoryVocabularyItemDTO> updatedVocab = originalPageDto.vocabulary().stream()
-                        .map(vocab -> vocab.withPageNumber(pageNumber))
-                        .toList();
-                pageToPersist = originalPageDto.withVocabulary(updatedVocab);
-
-                // Also update the master vocabulary list located on the final page
-                // We convert to a map to avoid nested loops for updating the master vocab list
-                StoryPageDTO lastPage = updatedPageDtos.get(totalPages - 1);
-                Map<String, StoryVocabularyItemDTO> masterVocabMap = lastPage.vocabulary().stream()
-                                .collect(Collectors.toMap(StoryVocabularyItemDTO::word, item -> item, (item1, item2) -> item2));
-                updatedVocab.forEach(item -> masterVocabMap.put(item.word(), item));
-                List<StoryVocabularyItemDTO> updatedMasterList = new ArrayList<>(masterVocabMap.values());
-                updatedPageDtos.set(totalPages - 1, lastPage.withVocabulary(updatedMasterList));
-            }
-
-            // Update the pages to include the updated page
-            updatedPageDtos.set(currentIndex, pageToPersist);
-
-            progressService.sendUpdate(context.getTaskId(), startProgress, "Saving page " + pageNumber + "...");
+            progressService.sendUpdate(context.getTaskId(), 90, "Proofreading the story pages...");
             Thread.sleep(shortDelay.toMillis());
 
-            StoryPage storyPage = storyPageService.createAndPersistPage(context.getShortStory(), pageToPersist, pageNumber);
+            List<StoryPageDTO> initialPageDtos = currentState.storyPagesDto();
+            int startingPageNumber = context.getPageCounter().get();
+            Map<String, StoryVocabularyItemDTO> masterVocabMap = new HashMap<>();
+            List<StoryPageDTO> finalPageDtos = new ArrayList<>();
 
-            StoryPageDTO pageDto = dtoMapper.toDto(storyPage);
-            log.info("Sending story page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
-            progressService.sendPageUpdate(context.getTaskId(), startProgress + progressChunk, "Saved page #" + storyPage.getPageNumber(), pageDto);
+            for(int i = 0; i < initialPageDtos.size(); i++) {
+                StoryPageDTO dto = initialPageDtos.get(i);
+                int currentPageNumber = startingPageNumber + i;
+                StoryPageDTO processedDto = dto.withPageNumber(currentPageNumber);
+
+                if (dto.type() == StoryPageType.CONTENT) {
+                    List<StoryVocabularyItemDTO> pageVocab = dto.vocabulary().stream()
+                            .map(v -> v.withPageNumber(currentPageNumber))
+                            .toList();
+                    processedDto = processedDto.withVocabulary(pageVocab);
+                    pageVocab.forEach(v -> masterVocabMap.put(v.word(), v));
+                }
+                finalPageDtos.add(processedDto);
+            }
+
+            // Update the final vocabulary page with the master list
+            int lastPageIndex = finalPageDtos.size() - 1;
+            StoryPageDTO vocabPageDto = finalPageDtos.get(lastPageIndex);
+            if (vocabPageDto.type() == StoryPageType.VOCABULARY) {
+                finalPageDtos.set(lastPageIndex, vocabPageDto.withVocabulary(new ArrayList<>(masterVocabMap.values())));
+            }
+
+            storyPageService.batchCreateAndPersistPages(context.getShortStory(), finalPageDtos);
+            log.info("Successfully persisted {} pages for task ID: {}", finalPageDtos.size(), context.getTaskId());
+
+            progressService.sendUpdate(context.getTaskId(), 100, "Story complete!");
             Thread.sleep(longDelay.toMillis());
 
-            return StoryGenerationState.PERSIST_PAGES(updatedPageDtos, currentIndex + 1, startProgress + progressChunk);
+            return StoryGenerationState.COMPLETED;
         }
         catch (Exception e) {
-            log.error("Failed to persist story page at index {}: {}", currentIndex, e.getMessage(), e);
+            log.error("Failed to persist story pages for task {}: {}", context.getTaskId(), e.getMessage(), e);
             return StoryGenerationState.FAILED("Page generation failed.");
         }
     }

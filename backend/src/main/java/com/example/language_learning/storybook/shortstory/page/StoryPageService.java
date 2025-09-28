@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -63,6 +67,36 @@ public class StoryPageService {
                 yield storyPageRepository.save(storyPage);
             }
         };
+    }
+
+    @Transactional
+    public void batchCreateAndPersistPages(ShortStory shortStory, List<StoryPageDTO> storyPageDTOs) {
+        ShortStory managedShortStory = findByIdAndInitializeCollections(shortStory.getId());
+        List<StoryPage> pagesToPersist = storyPageDTOs.stream().map(pageDto -> {
+            StoryPage storyPage = new StoryPage();
+            storyPage.setShortStory(managedShortStory);
+            storyPage.setType(pageDto.type());
+            storyPage.setPageNumber(pageDto.pageNumber());
+            storyPage.setEnglishSummary(pageDto.englishSummary());
+            storyPage.setImageUrl(pageDto.imageUrl());
+
+            if (pageDto.paragraphs() != null) {
+                pageDto.paragraphs().forEach(pDto -> {
+                    StoryParagraph paragraph = dtoMapper.toEntity(pDto);
+                    storyPage.addParagraph(paragraph);
+                });
+            }
+
+            if (pageDto.vocabulary() != null) {
+                pageDto.vocabulary().forEach(vDto -> {
+                StoryVocabularyItem vocabItem = dtoMapper.toEntity(vDto);
+                storyPage.addVocabulary(vocabItem);
+                });
+            }
+            return storyPage;
+        }).collect(Collectors.toList());
+
+        storyPageRepository.batchInsertPages(managedShortStory, pagesToPersist);
     }
 
     private ShortStory findByIdAndInitializeCollections(Long storyId) {

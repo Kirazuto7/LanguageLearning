@@ -12,20 +12,19 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] Update the AI generation workflow to create image prompts from story text.
     - [x] Add an `imageUrl` field to the `StoryPage` entity, DTO, and GraphQL type.
     - [x] **Fix and Verify Data Persistence**: The core issue of saving and fetching nested collections (`paragraphs`, `vocabulary`) is now solved. The `findStoryBookDetailsById` jOOQ query is working correctly.
-    - [ ] **Optimize Story Persistence with jOOQ Batching**
-        - [ ] Refactor the iterative, page-by-page persistence logic in `StoryGenerationActions` and `StoryPageService`.
-        - [ ] Replace it with a single, efficient batch operation that runs after all AI text generation is complete.
-        - [ ] Use jOOQ\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
-    - [ ] **Fix Image Generation API Integration**
+    - [x] **Optimize Story Persistence with jOOQ Batching**
+        - [x] Refactor the iterative, page-by-page persistence logic in `StoryGenerationActions` and `StoryPageService`.
+        - [x] Replace it with a single, efficient batch operation that runs after all AI text generation is complete.
+        - [x] Use jOOQ\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
+    - [x] **Fix Image Generation API Integration**
         - [x] Use a pre-built public image for the `image-api` service to ensure a stable API contract.
-        - [ ] **Configure and use a LoRA** to enforce a consistent art style for all storybook illustrations.
-        - [ ] **Fix public URL generation for MinIO**
+        - [x] **Configure and use a LoRA** to enforce a consistent art style for all storybook illustrations.
+        - [x] **Fix public URL generation for MinIO**
             - [x] Set `public-read` ACL on object upload to ensure images are publicly accessible.
             - [x] Refactor URL generation to dynamically construct the permanent public URL instead of using string replacement on a pre-signed URL.
-            - [ ] Verify in the running application that the correct public URL is saved and images are displayed correctly.
     - [ ] Design frontend UI to allow story generation via two methods: user-provided topic OR random generation from a selected genre.
-    - [ ] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
-    - [ ] Update the frontend to display the generated image on content pages.
+    - [x] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
+    - [x] Update the frontend to display the generated image on content pages.
 
 - [ ] **Secure AI Interaction**
     - [ ] Add frontend validation (e.g., `maxLength`) to all user input fields that are sent to the AI.
