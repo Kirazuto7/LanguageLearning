@@ -3,8 +3,7 @@ spring:
     name: language-learning
   jpa:
     hibernate:
-      ddl-auto: create-drop # Use "validate" in production to avoid accidental data loss.
-      #ddl-auto: update
+      ddl-auto: validate
   datasource:
     # This is now configured for local development, connecting to the mapped port.
     url: jdbc:postgresql://localhost:5433/${POSTGRES_DB}

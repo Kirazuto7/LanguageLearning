@@ -117,6 +117,7 @@ jooq {
         main {
             generationTool {
                 logging = 'WARN'
+
                 jdbc {
                     driver = 'org.postgresql.Driver'
                     if (project.hasProperty('docker')) {
@@ -135,8 +136,6 @@ jooq {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'
-                        includes = '.*'
-                        excludes = ''
                         inputSchema = 'public'
                     }
                     generate {
@@ -156,11 +155,27 @@ jooq {
     }
 }
 
-// Add the generated jOOQ sources to the main source set
 sourceSets {
     main {
         java {
             srcDir "${buildDir}/generated-sources/jooq"
         }
     }
+}
+
+tasks.named('bootRun', org.springframework.boot.gradle.tasks.run.BootRun) {
+    if (project.hasProperty('docker')) {
+        // In Docker, variables are passed by docker-compose
+    }
+    else {
+        // For local runs, load variables from the .env file
+        environment 'SPRING_DATASOURCE_URL', "jdbc:postgresql://localhost:5433/${envVars['POSTGRES_DB']}"
+        environment 'SPRING_DATASOURCE_USERNAME', envVars['POSTGRES_USER']
+        environment 'SPRING_DATASOURCE_PASSWORD', envVars['POSTGRES_PASSWORD']
+    }
+}
+
+// Establish the correct, linear build order
+tasks.named('compileJava') {
+    dependsOn(tasks.named('generateJooq'))
 }

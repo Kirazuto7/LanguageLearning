@@ -2,13 +2,18 @@ package com.example.language_learning.shared.services;
 
 import com.example.language_learning.config.properties.MinioProperties;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,6 +26,8 @@ import software.amazon.awssdk.services.s3.model.*;
 @Profile("!test") // Exclude this bean from the 'test' profile
 public class MinioStorageProvider implements StorageProvider {
 
+    @Value("${spring.jpa.hibernate.ddl-auto}")
+    private String ddlAuto;
     private final S3Client s3Client;
     private final MinioProperties minioProperties;
 
@@ -110,6 +117,44 @@ public class MinioStorageProvider implements StorageProvider {
         catch (Exception e) {
             log.error("Failed to apply public-read policy to bucket {}: {}", bucketName, e.getMessage(), e);
             throw new RuntimeException("Failed to set bucket policy.", e);
+        }
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        if (!List.of("create", "create-drop").contains(ddlAuto)) {
+            log.info("Skipping MinIO bucket cleanup because ddl-auto is not 'destructive' (current value: {}).", ddlAuto);
+            return;
+        }
+
+        String bucketName = minioProperties.bucket();
+        log.info("Performing cleanup for MinIO bucket: {}", bucketName);
+
+        try {
+            ListObjectsV2Request listObjectsRequest = ListObjectsV2Request.builder()
+                    .bucket(bucketName)
+                    .build();
+            List<S3Object> objects = s3Client.listObjectsV2(listObjectsRequest).contents();
+
+            if (objects.isEmpty()) {
+                log.info("Bucket {} is already empty. No cleanup needed.", bucketName);
+                return;
+            }
+
+            List<ObjectIdentifier> toDelete = new ArrayList<>();
+            for (S3Object object : objects) {
+                toDelete.add(ObjectIdentifier.builder().key(object.key()).build());
+            }
+
+            DeleteObjectsRequest deleteObjectsRequest = DeleteObjectsRequest.builder()
+                    .bucket(bucketName)
+                    .delete(Delete.builder().objects(toDelete).build())
+                    .build();
+            s3Client.deleteObjects(deleteObjectsRequest);
+            log.info("Successfully deleted all objects from bucket: {}", bucketName);
+        }
+        catch (Exception e) {
+            log.error("Failed to clean up bucket {}: {}", bucketName, e.getMessage(), e);
         }
     }
 }

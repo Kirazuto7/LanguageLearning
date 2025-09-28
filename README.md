@@ -2,9 +2,21 @@
 
 An AI-powered language learning application designed to generate dynamic, personalized lessons. This project leverages large language models to create chapters, vocabulary, grammar explanations, and interactive exercises on demand.
 
+## Table of Contents
+1. [Preview](#preview)
+2. [Key Features](#key-features)
+3. [Tech Stack](#tech-stack)
+4. [Architecture Overview](#architecture-overview)
+5. [Backend Architecture](#backend-architecture)
+6. [AI Service](#ai-service)
+7. [Getting Started](#getting-started)
+8. [Running the Application](#running-the-application)
+9. [Development Workflow](#development-workflow)
+10. [Project Structure](#project-structure)
+
 ## Preview
 
-![Lesson Book Screenshot](docs/images/lessonbook-screenshot.png)
+![Lesson Book Screenshot](/docs/images/lessonbook-screenshot.png)
 
 ## Key Features
 
@@ -31,7 +43,12 @@ An AI-powered language learning application designed to generate dynamic, person
 
 ## Architecture Overview
 
-The application is designed with a clean separation of concerns, containerized into four main services: `frontend`, `backend`, `ai`, and `postgres`.
+The application is designed with a clean separation of concerns and is fully containerized. The core services include:
+*   `frontend`: The React-based user interface.
+*   `backend`: The Spring Boot application providing the core business logic and API.
+*   `ai` & `image-api`: Services that host the AI models for text and image generation.
+*   `postgres`: The application's database.
+*   `init-db`: A short-lived "micro-container" responsible for initializing the database schema on startup. This ensures the `backend` only starts after the database is fully prepared.
 
 ## Backend Architecture
 
@@ -122,20 +139,14 @@ docker-compose -f docker-compose.cpu.yml up --build
 *   **Backend GraphQL Playground**: http://localhost:8080/graphiql
 *   **Ollama AI Service**: http://localhost:11434
 
-## Local Development and Testing
+## Development Workflow
 
-While the primary way to run the application is via Docker Compose, the backend is configured to support local development and testing directly from an IDE (like IntelliJ IDEA).
+### Resetting the Database
 
-### Running Integration Tests
-
-The integration tests require a running PostgreSQL database and up-to-date jOOQ generated code.
-
-1.  **Start the Database**: From the project root, start only the PostgreSQL container:
-    ```sh
-    docker-compose up -d postgres
-    ```
-2.  **Generate jOOQ Code**: The build script is configured to connect to the local database instance. From your IDE's Gradle tool window, run the `backend > Tasks > jooq > generateJooq` task. This only needs to be done once after making changes to the database schema (i.e., modifying a JPA `@Entity` class).
-3.  **Run Tests**: You can now run individual integration tests (like `StoryBookRepositoryIntegrationTest`) directly from your IDE using the "play" button next to the test class or method.
+If you need to reset your development database to a clean state at any time, simply run the `init-db` command again. It will drop all tables and recreate them.
+```sh
+docker-compose run --rm init-db
+```
 
 ## Project Structure
 
