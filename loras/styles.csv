@@ -1,0 +1,4 @@
+name,prompt,negative_prompt
+japanese_anime_style,"japanese anime style, <lora:japanese-art-style:0.8>, animated, dynamic, detailed, vibrant colors, beautiful eyes, detailed eyes","blurry, ugly, deformed, disfigured, poor details, bad anatomy, bad eyes, 3d render, photo, realistic, text, watermark"
+ghibli_style,"ghibli style, <lora:ghibli_style:0.7>, beautiful, detailed, animated, detailed eyes","blurry, ugly, deformed, disfigured, poor details, bad anatomy, bad eyes, 3d render, photo, realistic, text, watermark"
+children_cartoon,"picture book style, children's cartoon, <lora:children_cartoon:0.8>, cute, simple, colorful","blurry, ugly, deformed, disfigured, poor details, bad anatomy, bad eyes, 3d render, photo, realistic, text, watermark"

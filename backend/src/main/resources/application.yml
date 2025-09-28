@@ -48,16 +48,16 @@ spring:
           height: 512
           steps: 20
           batchSize: 1
-          negative-prompt: "blurry, ugly, deformed, disfigured, poor details, bad anatomy, 3d render, photo, realistic, text, watermark"
+          negative-prompt: "blurry, ugly, deformed, disfigured, poor details, bad anatomy, bad eyes, 3d render, photo, realistic, text, watermark"
           cfg-scale: 7.0
           sampler-name: "Euler a"
           styles:
-            - "ghibli art style"
-            - "animated"
-            - "dynamic"
+            - "ghibli style"
+            - "<lora:ghibli_style:0.7>"
+            - "beautiful"
             - "detailed"
-            - "vibrant colors"
-            - "beautiful eyes"
+            - "animated"
+            - "detailed eyes"
 app:
   job-queue:
     workers: 5

@@ -28,9 +28,12 @@ public class StableDiffusionClient {
 
     public StableDiffusionImageResponse promptTextToImage(String prompt) {
 
+        // Combine the main prompt with the configured styles into a single string.
+        // This is the correct way to apply dynamic styles and LoRAs with the API.
+        String fullPrompt = prompt + ", " + String.join(", ", properties.image().options().styles());
+
         Map<String, Object> requestBody = Map.of(
-                "prompt", prompt,
-                "styles", properties.image().options().styles(),
+                "prompt", fullPrompt,
                 "steps", properties.image().options().steps(),
                 "width", properties.image().options().width(),
                 "height", properties.image().options().height(),
@@ -39,7 +42,8 @@ public class StableDiffusionClient {
                 "cfg_scale", properties.image().options().cfgScale(),
                 "sampler_name", properties.image().options().samplerName()
         );
-
+        log.info("Image Request Body: {}", requestBody);
+        
         try {
             return webClient.post()
                     .uri("/sdapi/v1/txt2img")

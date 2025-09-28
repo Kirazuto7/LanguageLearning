@@ -116,3 +116,11 @@ docker-compose.aider.yml
 .aider.chat.history.md
 .aider.input.history
 .aider.tags.cache.v4
+
+# ===================================================================
+# AI Models
+# ===================================================================
+# Ignore large LoRA model files, but keep the README.md
+loras/*
+!loras/README.md
+!loras/styles.csv

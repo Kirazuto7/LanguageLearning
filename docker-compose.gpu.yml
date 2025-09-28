@@ -113,6 +113,7 @@ services:
           devices: [{ capabilities: [gpu] }]
     volumes:
       - stable-diffusion-models:/app/models/Stable-diffusion
+      - ./loras:/app/models/Lora
     healthcheck:
       # We check the /docs endpoint for a 200 OK response.
       test: ["CMD", "curl", "-f", "http://localhost:7860/docs"]
