@@ -3,10 +3,7 @@ package com.example.language_learning.storybook;
 import com.example.language_learning.shared.exceptions.ResourceNotFoundException;
 import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.storybook.requests.StoryBookRequest;
-import com.example.language_learning.storybook.shortstory.ShortStory;
-import com.example.language_learning.storybook.shortstory.ShortStoryRepository;
-import com.example.language_learning.storybook.shortstory.page.StoryPage;
-import com.example.language_learning.storybook.shortstory.page.StoryPageRepository;
+
 import com.example.language_learning.user.User;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,7 +20,6 @@ import java.util.stream.Collectors;
 public class StoryBookService {
 
     private final StoryBookRepository storyBookRepository;
-    private final StoryPageRepository storyPageRepository;
     private final DtoMapper dtoMapper;
 
     private static final List<String> TITLE_FORMATS = List.of(
@@ -45,10 +39,8 @@ public class StoryBookService {
     @Transactional
     public StoryBookDTO findOrCreateBookDTO(StoryBookRequest request, User user) {
         StoryBook storyBook = findOrCreateBook(request.language(), request.difficulty(), user);
-        log.info("StoryBook Entity: {}", storyBook);
-        StoryBookDTO dto = dtoMapper.toDto(storyBook);
-        log.info("Returning StoryBookDTO: {}", dto);
-        return dto;
+        log.info("StoryBook: {}", storyBook);
+        return dtoMapper.toDto(storyBook);
     }
 
     @Transactional

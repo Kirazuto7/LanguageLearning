@@ -2,6 +2,7 @@ package com.example.language_learning.lessonbook.chapter.lesson.page.sentence;
 
 import com.example.language_learning.lessonbook.chapter.lesson.data.ConjugationLesson;
 import com.example.language_learning.shared.data.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -31,5 +32,6 @@ public class LessonConjugationExample extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
+    @JsonBackReference("lesson-conjugatedWords")
     private ConjugationLesson lesson;
 }

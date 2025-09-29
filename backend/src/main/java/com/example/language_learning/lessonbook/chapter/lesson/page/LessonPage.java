@@ -3,6 +3,7 @@ package com.example.language_learning.lessonbook.chapter.lesson.page;
 import com.example.language_learning.lessonbook.chapter.lesson.data.Lesson;
 import com.example.language_learning.lessonbook.chapter.LessonChapter;
 import com.example.language_learning.shared.data.BasePage;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,5 +26,6 @@ public class LessonPage extends BasePage {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "lesson_id")
+    @JsonManagedReference("lesson-page")
     private Lesson lesson;
 }

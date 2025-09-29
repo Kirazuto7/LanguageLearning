@@ -1,6 +1,7 @@
 package com.example.language_learning.lessonbook.chapter.lesson.data;
 
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentence;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.*;
@@ -31,6 +32,7 @@ public class GrammarLesson extends Lesson {
     )
     @OrderBy("id ASC")
     @Builder.Default
+    @JsonManagedReference("lesson-exampleSentences")
     private List<LessonSentence> exampleLessonSentences = new ArrayList<>();
 
     public void addExampleSentence(LessonSentence lessonSentence) {
