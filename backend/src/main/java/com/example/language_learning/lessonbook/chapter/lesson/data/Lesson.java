@@ -2,6 +2,7 @@ package com.example.language_learning.lessonbook.chapter.lesson.data;
 
 import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPage;
 import com.example.language_learning.shared.data.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.example.language_learning.shared.enums.LessonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,5 +26,6 @@ public abstract class Lesson extends BaseEntity {
     private String title;
 
     @OneToOne(mappedBy = "lesson")
+    @JsonBackReference("lesson-page")
     private LessonPage lessonPage;
 }

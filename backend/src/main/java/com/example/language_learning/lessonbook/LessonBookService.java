@@ -4,6 +4,7 @@ import com.example.language_learning.user.User;
 import com.example.language_learning.shared.mapper.DtoMapper;
 import com.example.language_learning.lessonbook.requests.LessonBookRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LessonBookService {
     private final LessonBookRepository lessonBookRepository;
@@ -19,13 +21,20 @@ public class LessonBookService {
     @Transactional
     public LessonBookDTO findOrCreateBookDTO(LessonBookRequest request, User user) {
         LessonBook lessonBook = findOrCreateBook(request.language(), request.difficulty(), user);
+        log.info("LessonBook: {}", lessonBook);
         return dtoMapper.toDto(lessonBook);
     }
 
     @Transactional
     public LessonBook findOrCreateBook(String language, String difficulty, User user) {
-        return getLessonBook(language, difficulty, user)
-                .orElseGet(() -> createLessonBook(language, difficulty, user));
+        Optional<LessonBook> lessonBookOptional = lessonBookRepository.findDetailsByUserAndLanguageAndDifficulty(user, language, difficulty);
+
+        if (lessonBookOptional.isPresent()) {
+            return lessonBookOptional.get();
+        }
+        else {
+            return createLessonBook(language, difficulty, user);
+        }
     }
 
     @Transactional(readOnly = true)

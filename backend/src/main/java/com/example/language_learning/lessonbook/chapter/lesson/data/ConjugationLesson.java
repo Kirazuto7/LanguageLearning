@@ -1,6 +1,7 @@
 package com.example.language_learning.lessonbook.chapter.lesson.data;
 
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExample;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -24,6 +25,7 @@ public class ConjugationLesson extends Lesson {
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("id ASC")
     @Builder.Default
+    @JsonManagedReference("lesson-conjugatedWords")
     private List<LessonConjugationExample> conjugatedWords = new ArrayList<>();
 
     public void addConjugationExample(LessonConjugationExample example) {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface LessonBookRepository extends JpaRepository<LessonBook, Long> {
+public interface LessonBookRepository extends JpaRepository<LessonBook, Long>, LessonBookRepositoryCustom {
     // Chapter page's will be loaded lazily to avoid MultipleBagFetchException
     @Query("SELECT b FROM LessonBook b LEFT JOIN FETCH b.lessonChapters WHERE b.user = :user AND b.language = :language AND b.difficulty = :difficulty")
     Optional<LessonBook> findByUserAndLanguageAndDifficulty(@Param("user") User user, @Param("language") String language, @Param("difficulty") String difficulty);
