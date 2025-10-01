@@ -226,11 +226,7 @@ public class DtoMapper {
     /* *********************************** */
 
     public LessonConjugationExample toEntity(LessonConjugationExampleDTO dto, ConjugationLesson lesson) {
-        LessonConjugationExample example = lessonConjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
-        if (example != null) {
-            example.setLesson(lesson);
-        }
-        return example;
+        return lessonConjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonConjugationExampleDTO toDto(LessonConjugationExample entity) {

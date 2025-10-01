@@ -96,19 +96,13 @@ A roadmap for building out the LanguageLearning application into a comprehensive
         - [ ] Update the `DictionaryValidator` service to connect to and query the new database.
 
 - [ ] **Implement Semantic Caching to Prevent Repetitive Content**
-    - [ ] **Infrastructure Setup:**
-        - [ ] Integrate a sentence transformer model (e.g., `all-MiniLM-L6-v2`) into a new, dedicated AI service container to generate embeddings.
-        - [ ] Add a new field (e.g., `summary_embedding` of type `vector(384)`) to relevant tables like `grammar_lessons`.
-        - [ ] Create a Spring Boot `ApplicationRunner` or similar configuration to run `CREATE EXTENSION IF NOT EXISTS vector;` in PostgreSQL on startup to enable `pgvector`.
-    - [ ] **Generation Workflow Modification:**
-        - [ ] Before generating a new lesson, create a summary/topic embedding for the proposed content.
-        - [ ] Perform a cosine similarity search against the most recent N lessons of the same type, language, and difficulty.
-        - [ ] If the similarity exceeds a defined threshold, identify the content as a "semantic duplicate".
-    - [ ] **AI Feedback Loop:**
-        - [ ] If a duplicate is detected, cancel the initial generation.
-        - [ ] Re-trigger the AI prompt, adding the summaries of the duplicate lessons as a negative constraint (e.g., "Avoid generating a lesson similar to these topics: ...").
-    - [ ] **Persistence:**
-        - [ ] When a new, unique lesson is successfully generated and saved, also save its summary embedding to the database.
+- [ ] **Implement Fallback Translation Service**
+    - [ ] **Goal:** Improve application resilience by providing a simple, reliable translation when the primary AI generation fails validation or returns malformed data.
+    - [ ] **Technology:** Use the `UlionTse/translators` Python library (Link) wrapped in a small, dedicated microservice (e.g., using Flask/FastAPI) within the Docker environment.
+    - [ ] **Strategy:**
+        - [ ] When a generated lesson or story fails a validation step (e.g., a sentence is malformed), use the fallback service to get a direct, simple translation for the problematic part.
+        - [ ] Define a threshold for fallback usage. If too many parts of a generation fail, discard the result and retry the primary AI generation instead of over-relying on the fallback.
+        - [ ] This service will act as a safety net, not a primary content generator.
 
 - [ ] **Audio Narration (Text-to-Speech)**
     - [ ] Integrate a third-party Text-to-Speech service (e.g., Google Cloud TTS).
@@ -160,6 +154,30 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] Allow users to save vocabulary words to a personal review deck.
     - [ ] Create a new UI/page for the SRS flashcard experience.
     - [ ] Implement the SRS algorithm for scheduling reviews.
+
+- [ ] **Documentation Overhaul**
+    - [ ] Create a dedicated section in the `README.md` for each key feature.
+    - [ ] Add architectural diagrams for the backend workflows.
+
+---
+
+### Tier 4: Advanced Features (Requires Additional Funding)
+
+- [ ] **Implement Semantic Caching to Prevent Repetitive Content**
+    - [ ] **Goal:** Prevent the AI from generating content that is thematically too similar to recently created lessons, improving content diversity.
+    - [ ] **Infrastructure:**
+        - [ ] Integrate a sentence transformer model (e.g., `all-MiniLM-L6-v2`) into a new, dedicated AI service container to generate embeddings.
+        - [ ] Add a new field (e.g., `summary_embedding` of type `vector(384)`) to relevant tables like `grammar_lessons`.
+        - [ ] Create a Spring Boot `ApplicationRunner` or similar configuration to run `CREATE EXTENSION IF NOT EXISTS vector;` in PostgreSQL on startup to enable `pgvector`.
+    - [ ] **Generation Workflow Modification:**
+        - [ ] Before generating a new lesson, create a summary/topic embedding for the proposed content.
+        - [ ] Perform a cosine similarity search against the most recent N lessons of the same type, language, and difficulty.
+        - [ ] If the similarity exceeds a defined threshold, identify the content as a "semantic duplicate".
+    - [ ] **AI Feedback Loop:**
+        - [ ] If a duplicate is detected, cancel the initial generation.
+        - [ ] Re-trigger the AI prompt, adding the summaries of the duplicate lessons as a negative constraint (e.g., "Avoid generating a lesson similar to these topics: ...").
+    - [ ] **Persistence:**
+        - [ ] When a new, unique lesson is successfully generated and saved, also save its summary embedding to the database.
 
 - [ ] **Documentation Overhaul**
     - [ ] Create a dedicated section in the `README.md` for each key feature.

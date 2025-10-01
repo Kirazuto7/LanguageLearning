@@ -279,7 +279,8 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
                                                                         select(
                                                                                 CONJUGATION_EXAMPLE.asterisk()
                                                                         ).from(CONJUGATION_EXAMPLE)
-                                                                                .where(CONJUGATION_EXAMPLE.LESSON_ID.eq(CONJUGATION_LESSON.ID))
+                                                                                .join(CONJUGATION_LESSON_EXAMPLE).on(CONJUGATION_LESSON_EXAMPLE.EXAMPLE_ID.eq(CONJUGATION_EXAMPLE.ID))
+                                                                                .where(CONJUGATION_LESSON_EXAMPLE.LESSON_ID.eq(CONJUGATION_LESSON.ID))
                                                                 ).as("conjugatedWords")
                                                         ).from(CONJUGATION_LESSON)
                                                                 .where(CONJUGATION_LESSON.ID.eq(LESSON_PAGE.LESSON_ID))

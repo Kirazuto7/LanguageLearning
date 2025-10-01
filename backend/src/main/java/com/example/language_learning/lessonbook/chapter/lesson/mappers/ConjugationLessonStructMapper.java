@@ -28,11 +28,4 @@ public abstract class ConjugationLessonStructMapper {
         }
         return ConjugationLessonDTO.builder().build();
     }
-
-    @AfterMapping
-    protected void setLessonOnConjugatedWords(@MappingTarget ConjugationLesson lesson) {
-        if (lesson.getConjugatedWords() != null) {
-            lesson.getConjugatedWords().forEach(example -> example.setLesson(lesson));
-        }
-    }
 }
