@@ -27,7 +27,6 @@ public class AIStoryMapper {
         String nativeTitle = (String) params.get("nativeTitle");
         String topic = (String) params.get("topic");
         String genre = (String) params.get("genre");
-        int chapterNumber = (int) params.get("chapterNumber");
 
         // Convert lessonPages response into respective list of storypage dtos
         List<StoryPageDTO> storyPages = toStoryPageDTOs(response.pages());
@@ -37,7 +36,6 @@ public class AIStoryMapper {
                 .nativeTitle(nativeTitle)
                 .topic(topic)
                 .genre(genre)
-                .chapterNumber(chapterNumber)
                 .storyPages(storyPages)
                 .build();
     }

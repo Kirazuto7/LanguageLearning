@@ -1,6 +1,5 @@
 type LessonChapter implements Chapter {
     id: ID!
-    chapterNumber: Int!
     title: String!
     nativeTitle: String!
     lessonPages: [LessonPage!]!

@@ -10,7 +10,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ShortStoryDTO(
     Long id,
-    int chapterNumber,
     String title,
     String nativeTitle,
     String genre,

@@ -5,7 +5,6 @@ export const storyVocabularyItemFragment = gql`
         id
         word
         translation
-        pageNumber
     }
 `;
 
@@ -24,7 +23,6 @@ export const storyPageFragment = gql`
         __typename
         ... on StoryContentPage {
             id
-            pageNumber
             englishSummary
             imageUrl
             type
@@ -37,7 +35,6 @@ export const storyPageFragment = gql`
         }
         ... on StoryVocabularyPage {
             id
-            pageNumber
             englishSummary
             type
             vocabulary {
@@ -51,7 +48,6 @@ export const shortStoryFragment = gql`
     ${storyPageFragment}
     fragment ShortStoryFragment on ShortStory {
         id
-        chapterNumber
         title
         nativeTitle
         genre
@@ -68,6 +64,7 @@ export const storyBookFragment = gql`
         title
         difficulty
         language
+        createdAt
         shortStories {
             ...ShortStoryFragment
         }
@@ -77,7 +74,6 @@ export const storyBookFragment = gql`
 export const shortStoryShellFragment = gql`
     fragment ShortStoryShellFragment on ShortStory {
         id
-        chapterNumber
         title
         nativeTitle
         genre

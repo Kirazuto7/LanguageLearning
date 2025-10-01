@@ -127,3 +127,6 @@ loras/*
 
 # Wiktionary data
 /wiktionary/
+
+# Other
+business_model.md

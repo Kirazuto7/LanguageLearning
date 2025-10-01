@@ -9,8 +9,10 @@ import org.mapstruct.ObjectFactory;
 @Mapper(
     componentModel = "spring"
 )
-public abstract class ConjugationExampleStructMapper {
+public abstract class LessonConjugationExampleStructMapper {
     @Mapping(target = "lesson", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract LessonConjugationExample toEntity(LessonConjugationExampleDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract LessonConjugationExampleDTO toDto(LessonConjugationExample entity, @Context CycleAvoidingMappingContext context);

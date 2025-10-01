@@ -1,8 +1,8 @@
 package com.example.language_learning.lessonbook.chapter.lesson.mappers;
 
-import com.example.language_learning.lessonbook.chapter.lesson.page.question.QuestionStructMapper;
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.ConjugationExampleStructMapper;
-import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.SentenceStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExampleStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentenceStructMapper;
 import com.example.language_learning.shared.enums.LessonType;
 import com.example.language_learning.lessonbook.chapter.lesson.data.*;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
@@ -25,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class LessonStructMapper {
 
     protected WordStructMapper wordStructMapper;
-    protected SentenceStructMapper sentenceStructMapper;
-    protected QuestionStructMapper questionStructMapper;
-    protected ConjugationExampleStructMapper conjugationExampleStructMapper;
+    protected LessonSentenceStructMapper lessonSentenceStructMapper;
+    protected LessonQuestionStructMapper lessonQuestionStructMapper;
+    protected LessonConjugationExampleStructMapper lessonConjugationExampleStructMapper;
 
     @Autowired
     public void setWordStructMapper(WordStructMapper wordStructMapper) {
@@ -35,18 +35,18 @@ public abstract class LessonStructMapper {
     }
 
     @Autowired
-    public void setSentenceStructMapper(SentenceStructMapper sentenceStructMapper) {
-        this.sentenceStructMapper = sentenceStructMapper;
+    public void setSentenceStructMapper(LessonSentenceStructMapper lessonSentenceStructMapper) {
+        this.lessonSentenceStructMapper = lessonSentenceStructMapper;
     }
 
     @Autowired
-    public void setQuestionStructMapper(QuestionStructMapper questionStructMapper) {
-        this.questionStructMapper = questionStructMapper;
+    public void setQuestionStructMapper(LessonQuestionStructMapper lessonQuestionStructMapper) {
+        this.lessonQuestionStructMapper = lessonQuestionStructMapper;
     }
 
     @Autowired
-    public void setConjugationExampleStructMapper(ConjugationExampleStructMapper conjugationExampleStructMapper) {
-        this.conjugationExampleStructMapper = conjugationExampleStructMapper;
+    public void setConjugationExampleStructMapper(LessonConjugationExampleStructMapper lessonConjugationExampleStructMapper) {
+        this.lessonConjugationExampleStructMapper = lessonConjugationExampleStructMapper;
     }
 
     @ObjectFactory
@@ -113,6 +113,7 @@ public abstract class LessonStructMapper {
     @Mapping(target = "lessonPage", ignore = true) // Back-reference
     @Mapping(target = "title", ignore = true) // Set in factory
     @Mapping(target = "type", ignore = true) // Set in factory
+    @Mapping(target = "createdAt", ignore = true)
     public abstract Lesson toEntity(LessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     @SubclassMapping(source = VocabularyLesson.class, target = VocabularyLessonDTO.class)

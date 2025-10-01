@@ -15,6 +15,8 @@ import org.mapstruct.ObjectFactory;
 )
 public abstract class UserStructMapper {
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract User toEntity(UserDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract UserDTO toDto(User entity, @Context CycleAvoidingMappingContext context);

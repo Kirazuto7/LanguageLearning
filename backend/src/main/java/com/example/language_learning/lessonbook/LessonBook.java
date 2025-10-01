@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 public class LessonBook extends BaseBook {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonBook", fetch = FetchType.LAZY)
-    @OrderBy("chapterNumber ASC")
+    @OrderBy("id ASC")
     @Builder.Default
     private List<LessonChapter> lessonChapters = new ArrayList<>();
 

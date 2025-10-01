@@ -102,7 +102,6 @@ public class StoryGenerationActions {
             Thread.sleep(shortDelay.toMillis());
 
             ShortStoryMetadataDTO metadata = ((StoryGenerationState.STORY_GENERATION) fromState).metadataDto();
-            int chapterNumber = context.getShortStory().getChapterNumber();
             AIRequest<ShortStoryDTO> aiRequest = AIRequest.builder()
                     .responseClass(ShortStoryDTO.class)
                     .promptType(PromptType.STORY_PAGES)
@@ -112,7 +111,6 @@ public class StoryGenerationActions {
                     .param("difficulty", context.getRequest().difficulty())
                     .param("storyTitle", metadata.title())
                     .param("nativeStoryTitle", metadata.nativeTitle())
-                    .param("chapterNumber", chapterNumber)
                     .build();
 
             ShortStoryDTO storyDto = aiEngine.generate(aiRequest).block();
@@ -134,10 +132,17 @@ public class StoryGenerationActions {
         try {
             progressService.sendUpdate(context.getTaskId(), 70, "Creating illustrations for the story...");
             Thread.sleep(shortDelay.toMillis());
-            String imageContext = storyPageDtos.stream()
-                    .filter(dto -> dto.type() == StoryPageType.CONTENT)
-                    .map(StoryPageDTO::englishSummary)
-                    .collect(Collectors.joining("\n"));
+
+            Map<String, StoryPageDTO> pagesBySummary = storyPageDtos.stream()
+                    .filter(dto -> dto.type() == StoryPageType.CONTENT && dto.englishSummary() != null && !dto.englishSummary().isBlank())
+                    .collect(Collectors.toMap(
+                        StoryPageDTO::englishSummary,
+                        page -> page,
+                            (existing, replacement) -> existing
+                    ));
+            List<String> imagePrompts = new ArrayList<>(pagesBySummary.keySet());
+
+            String imageContext = String.join("\n", imagePrompts);
             log.info("Image generation context: {}", imageContext);
 
             AIImageRequest<GeneratedImageDTO> imageRequest = AIImageRequest.builder()
@@ -153,12 +158,12 @@ public class StoryGenerationActions {
             List<StoryPageDTO> updatedDtos = new ArrayList<>();
             for (int i = 0; i < storyPageDtos.size(); i++) {
                 StoryPageDTO originalDto = storyPageDtos.get(i);
-                if (originalDto.type() == StoryPageType.CONTENT) {
+
+                if (originalDto.type() == StoryPageType.CONTENT && pagesBySummary.get(originalDto.englishSummary()) != null) {
                     String imageUrl = permanentUrls.get(originalDto.englishSummary());
                     updatedDtos.add(originalDto.withImageUrl(imageUrl));
                 }
                 else {
-                    // Vocab Page
                     updatedDtos.add(originalDto);
                 }
             }
@@ -181,21 +186,16 @@ public class StoryGenerationActions {
             Thread.sleep(shortDelay.toMillis());
 
             List<StoryPageDTO> initialPageDtos = currentState.storyPagesDto();
-            int startingPageNumber = context.getPageCounter().get();
             Map<String, StoryVocabularyItemDTO> masterVocabMap = new HashMap<>();
             List<StoryPageDTO> finalPageDtos = new ArrayList<>();
 
-            for(int i = 0; i < initialPageDtos.size(); i++) {
-                StoryPageDTO dto = initialPageDtos.get(i);
-                int currentPageNumber = startingPageNumber + i;
-                StoryPageDTO processedDto = dto.withPageNumber(currentPageNumber);
+            for (StoryPageDTO dto : initialPageDtos) {
+                StoryPageDTO processedDto = dto;
 
                 if (dto.type() == StoryPageType.CONTENT) {
-                    List<StoryVocabularyItemDTO> pageVocab = dto.vocabulary().stream()
-                            .map(v -> v.withPageNumber(currentPageNumber))
-                            .toList();
-                    processedDto = processedDto.withVocabulary(pageVocab);
-                    pageVocab.forEach(v -> masterVocabMap.put(v.word(), v));
+                    // Collect all vocabulary from content pages into a master map
+                    // to build the final vocabulary page.
+                    dto.vocabulary().forEach(v -> masterVocabMap.put(v.word(), v));
                 }
                 finalPageDtos.add(processedDto);
             }

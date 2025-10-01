@@ -4,6 +4,13 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 
 ---
 
+- [x] **Architectural Refinement: Decouple Display Order from DB**
+    - [x] Modify all jOOQ fetch queries to `ORDER BY` the entity `id` instead of `chapterNumber` or `pageNumber`.
+    - [x] Remove the application's reliance on stored chapter/page numbers for ordering.
+    - [x] **Frontend:** Update UI components to calculate and display chapter/page numbers dynamically based on the item's index in the sorted list received from the backend.
+
+---
+
 ### Tier 1: Core Content & Interaction (Highest Priority)
 
 - [ ] **Complete the `storybook` Feature**
@@ -26,6 +33,16 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
     - [x] Update the frontend to display the generated image on content pages.
 
+- [ ] **Implement Robust Client-Side State Management**
+    - [ ] **Goal:** Persist user sessions across page reloads and synchronize state between multiple open tabs to prevent stale data and misuse.
+    - [ ] **Persistence (`redux-persist`):**
+        - [ ] Integrate `redux-persist` to save the Redux store to `localStorage`.
+        - [ ] Configure it to **only** persist the `auth` slice to keep the user logged in, while allowing RTK Query to fetch fresh data on load.
+    - [ ] **Synchronization (`BroadcastChannel`):**
+        - [ ] Create a new Redux middleware that uses the `BroadcastChannel` API.
+        - [ ] The middleware should listen for successful RTK Query mutations.
+        - [ ] When a mutation occurs, broadcast a message to other tabs to invalidate the relevant cache tags, triggering an automatic re-fetch.
+
 - [ ] **Secure AI Interaction**
     - [ ] Add frontend validation (e.g., `maxLength`) to all user input fields that are sent to the AI.
     - [ ] Add backend validation for length and content of all user input.
@@ -35,7 +52,27 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 - [ ] **User Authentication & Onboarding**
     - [x] Build frontend Login page.
     - [x] Build frontend Register page.
-    - [ ] Implement a "My Library" / Dashboard page to display and organize a user\'s generated content (LessonBooks, StoryBooks, etc.).
+    - [ ] **Implement "My Library" Dashboard & Content Management**
+        - [ ] **Dashboard UI:**
+            - [ ] Create a new page for the user's library/dashboard.
+            - [ ] Design horizontal carousels/stacks to display `LessonBooks` and `StoryBooks`.
+            - [ ] Fetch and display the 10 most recently created books for each type.
+        - [ ] **Content Management UI:**
+            - [ ] Create a separate page (e.g., `/my-content`) for managing all generated books.
+            - [ ] Display all `LessonBooks` and `StoryBooks` in a list or grid format.
+            - [ ] Implement a "Delete" button for each book with a confirmation modal.
+        - [ ] **Backend API:**
+            - [ ] Create a new GraphQL query (`myLibrary`) to fetch a combined, sorted list of a user's books.
+            - [ ] Implement a jOOQ repository using `UNION ALL` to efficiently query both `lesson_books` and `story_books` tables.
+            - [ ] Create a GraphQL mutation (`deleteBook`) to handle book deletion.
+
+- [ ] **Add Static Foundational Content**
+    - [ ] **Goal:** Provide a structured starting point for absolute beginners.
+    - [ ] **Content:** Alphabet lessons, basic greetings, number systems for each supported language.
+    - [ ] **Implementation:**
+        - [ ] Design a new entity/table for static content (e.g., `FoundationalLesson`).
+        - [ ] Use the AI engine once (internally or via a script) to generate high-quality lesson content and save it to the database as seed data.
+        - [ ] Build a dedicated UI page (e.g., `/learn/japanese/alphabet`) to display this static content.
 
 - [ ] **Interactive Vocabulary Practice**
     - [ ] Make vocabulary words in lessons/stories clickable.
@@ -45,6 +82,18 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 ---
 
 ### Tier 2: Enhancing the Learning Experience
+
+- [ ] **Implement AI Content Validation with Wiktionary**
+    - [ ] **Phase 1: Local Setup & Proof of Concept**
+        - [x] Create a standalone `wiktionary-importer` tool to parse the Wiktionary data dump.
+        - [x] Use JWKTL to generate a local, file-based database from the dump.
+        - [ ] Create a `DictionaryValidator` service in the main `backend` app to query the local database.
+        - [ ] Integrate the validator into the AI generation workflow to fact-check word translations.
+    - [ ] **Phase 2: Production-Ready Database (Future)**
+        - [ ] Design a schema for storing dictionary data in a SQL database (e.g., SQLite or a separate PostgreSQL DB).
+        - [ ] Create a `WiktionaryExporter` tool to read the local JWKTL database and generate a `.sql` file with INSERT statements.
+        - [ ] Use the generated `.sql` file to populate the target SQL database (e.g., SQLite).
+        - [ ] Update the `DictionaryValidator` service to connect to and query the new database.
 
 - [ ] **Implement Semantic Caching to Prevent Repetitive Content**
     - [ ] **Infrastructure Setup:**
@@ -73,6 +122,31 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 - [ ] **Search & Discovery**
     - [ ] Implement a search bar on the frontend.
     - [ ] Add logic to filter the user\'s generated books by title or topic.
+
+---
+
+### Tier 2.5: Monetization & Sustainability
+
+- [ ] **Implement Freemium Subscription Model**
+    - [ ] Add a `subscriptionStatus` field to the `User` entity (`FREE`, `PREMIUM`).
+    - [ ] Implement a hard limit on the number of saved `LessonBooks` and `StoryBooks` for `FREE` users (e.g., 5 total).
+    - [ ] Add logic to the `LessonBookService` and `StoryBookService` to check this limit before content creation.
+    - [ ] Create a custom exception (e.g., `ContentLimitExceededException`) to be thrown when the limit is reached.
+    - [ ] **Frontend:**
+        - [ ] Display the user's current content usage (e.g., "3/5 books used").
+        - [ ] When the limit is hit, show a modal prompting the user to upgrade or manage their existing content.
+    - [ ] Integrate a payment provider (e.g., Stripe) to handle subscriptions.
+
+- [ ] **Define Premium-Tier Features**
+    - [ ] Reserve storybook image generation as a feature for `PREMIUM` subscribers only.
+    - [ ] Reserve higher-quality AI models (e.g., `exaone3.5`) for `PREMIUM` subscribers.
+
+- [ ] **Implement Concurrency Limiting for AI Service**
+    - [ ] **Goal:** Prevent overwhelming the self-hosted AI service (Ollama) with concurrent requests to ensure stability and predictable performance, especially under load.
+    - [ ] **Implementation Idea:**
+        - [ ] Create a wrapper service around the `AIEngine`.
+        - [ ] Use a `Semaphore` (e.g., from Project Reactor) within the wrapper to limit the number of simultaneous requests that can be sent to the AI service (e.g., limit to 1 or 2).
+        - [ ] This will effectively create a request queue, ensuring the GPU resources are not exhausted and each generation task gets the full power of the hardware.
 
 ---
 

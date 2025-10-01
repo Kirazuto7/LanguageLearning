@@ -11,6 +11,8 @@ import org.mapstruct.*;
 )
 public abstract class ShortStoryStructMapper {
     @Mapping(target = "storyBook", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract ShortStory toEntity(ShortStoryDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract ShortStoryDTO toDto(ShortStory entity, @Context CycleAvoidingMappingContext context);

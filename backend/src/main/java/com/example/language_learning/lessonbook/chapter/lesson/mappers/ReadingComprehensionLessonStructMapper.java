@@ -3,7 +3,7 @@ package com.example.language_learning.lessonbook.chapter.lesson.mappers;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.ReadingComprehensionLessonDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.data.ReadingComprehensionLesson;
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
-import com.example.language_learning.lessonbook.chapter.lesson.page.question.QuestionStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionStructMapper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Context;
@@ -15,12 +15,14 @@ import org.mapstruct.ObjectFactory;
 
 @Mapper(
     componentModel = "spring",
-    uses = {QuestionStructMapper.class},
+    uses = {LessonQuestionStructMapper.class},
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
 )
 public abstract class ReadingComprehensionLessonStructMapper {
     @Mapping(target = "type", constant = "READING_COMPREHENSION")
     @Mapping(target = "lessonPage", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract ReadingComprehensionLesson toEntity(ReadingComprehensionLessonDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract ReadingComprehensionLessonDTO toDto(ReadingComprehensionLesson entity, @Context CycleAvoidingMappingContext context);

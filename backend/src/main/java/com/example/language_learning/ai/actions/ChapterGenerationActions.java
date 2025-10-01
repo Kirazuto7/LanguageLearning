@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,7 @@ public class ChapterGenerationActions {
     private final DtoMapper dtoMapper;
     private final Duration shortDelay = Duration.ofSeconds(2);
     private final Duration longDelay = Duration.ofSeconds(4);
+    private final Random random = new Random();
 
     public ChapterGenerationState handleInitialGeneration(ChapterGenerationState fromState, ChapterGenerationContext context) {
         log.debug("Entering handleInitialGeneration for task ID: {}", context.getTaskId());
@@ -117,15 +119,15 @@ public class ChapterGenerationActions {
             VocabularyLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
             log.debug("Generated vocabulary lesson DTO: {}", lessonDto);
-            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto));
 
             LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
             log.debug("Sending vocabulary page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
             progressService.sendPageUpdate(context.getTaskId(), 40, "Vocabulary created.", pageDto);
             Thread.sleep(longDelay.toMillis());
 
-            // 3. Decide the next state based on the branching logic and return it with the required data.
-            if (context.getLessonChapter().getChapterNumber() % 2 != 0) {
+            // 3. Randomly decide the next state to provide variety and avoid predictable, brittle patterns.
+            if (random.nextBoolean()) {
                 return ChapterGenerationState.GRAMMAR_LESSON(lessonDto);
             }
             else {
@@ -159,7 +161,7 @@ public class ChapterGenerationActions {
             GrammarLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
             log.debug("Generated grammar lesson DTO: {}", lessonDto);
-            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto));
 
             LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
             log.debug("Sending grammar page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
@@ -196,7 +198,7 @@ public class ChapterGenerationActions {
             ConjugationLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
 
             log.debug("Generated conjugation lesson DTO: {}", lessonDto);
-            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto));
 
             LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
             log.debug("Sending conjugation page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
@@ -245,7 +247,7 @@ public class ChapterGenerationActions {
                     .build();
             PracticeLessonDTO lessonDTO = aiEngine.generate(aiRequest).block();
             log.debug("Generated practice lesson DTO: {}", lessonDTO);
-            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDTO), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDTO));
 
             LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
             log.debug("Sending practice page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);
@@ -292,7 +294,7 @@ public class ChapterGenerationActions {
                     .build();
             ReadingComprehensionLessonDTO lessonDto = aiEngine.generate(aiRequest).block();
             log.debug("Generated reading comprehension lesson DTO: {}", lessonDto);
-            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto), context.getPageCounter().getAndIncrement());
+            LessonPage lessonPage = lessonPageService.createAndPersistPage(context.getLessonChapter(), dtoMapper.toEntity(lessonDto));
 
             LessonPageDTO pageDto = dtoMapper.toDto(lessonPage);
             log.debug("Sending reading comprehension page update for task ID: {}. DTO: {}", context.getTaskId(), pageDto);

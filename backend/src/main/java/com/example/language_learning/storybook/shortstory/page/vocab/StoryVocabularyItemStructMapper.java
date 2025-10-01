@@ -9,6 +9,8 @@ import org.mapstruct.Mapping;
 public abstract class StoryVocabularyItemStructMapper {
 
     @Mapping(target = "storyPage", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract StoryVocabularyItem toEntity(StoryVocabularyItemDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract StoryVocabularyItemDTO toDto(StoryVocabularyItem entity, @Context CycleAvoidingMappingContext context);

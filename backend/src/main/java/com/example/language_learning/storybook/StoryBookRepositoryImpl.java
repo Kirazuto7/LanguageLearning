@@ -35,38 +35,39 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
             STORY_BOOK.TITLE,
             STORY_BOOK.DIFFICULTY,
             STORY_BOOK.LANGUAGE,
+            STORY_BOOK.CREATED_AT,
             // Create a nested collection of short stories for each story book.
             multiset(
                 dsl.select(
                     SHORT_STORY.ID,
-                    SHORT_STORY.CHAPTER_NUMBER,
                     SHORT_STORY.TITLE,
                     SHORT_STORY.NATIVE_TITLE,
                     SHORT_STORY.GENRE,
                     SHORT_STORY.TOPIC,
+                    SHORT_STORY.CREATED_AT,
                     // nested pages
                     multiset(
                         dsl.select(
                             STORY_PAGE.ID,
-                            STORY_PAGE.PAGE_NUMBER,
                             STORY_PAGE.TYPE,
                             STORY_PAGE.IMAGE_URL,
                             STORY_PAGE.ENGLISH_SUMMARY,
+                            STORY_PAGE.CREATED_AT,
                             multiset(
                                 dsl.select(
                                     STORY_PARAGRAPH.ID,
-                                    STORY_PARAGRAPH.PARAGRAPH_NUMBER,
-                                    STORY_PARAGRAPH.CONTENT
+                                    STORY_PARAGRAPH.CONTENT,
+                                    STORY_PARAGRAPH.CREATED_AT
                                 )
                                 .from(STORY_PARAGRAPH)
                                 .where(STORY_PARAGRAPH.STORY_PAGE_ID.eq(STORY_PAGE.ID))
                             ).as("paragraphs"),
                             multiset(
-                                dsl.select(
+                                dsl.selectDistinct(
                                     STORY_VOCABULARY_ITEM.ID,
                                     STORY_VOCABULARY_ITEM.WORD,
                                     STORY_VOCABULARY_ITEM.TRANSLATION,
-                                    STORY_VOCABULARY_ITEM.PAGE_NUMBER
+                                    STORY_VOCABULARY_ITEM.CREATED_AT
                                 )
                                 .from(STORY_VOCABULARY_ITEM)
                                 .where(STORY_VOCABULARY_ITEM.STORY_PAGE_ID.eq(STORY_PAGE.ID))
@@ -74,10 +75,12 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                         )
                         .from(STORY_PAGE)
                         .where(STORY_PAGE.SHORT_STORY_ID.eq(SHORT_STORY.ID))
+                        .orderBy(STORY_PAGE.ID.asc())
                     ).as("storyPages")
                 )
                 .from(SHORT_STORY)
                 .where(SHORT_STORY.STORY_BOOK_ID.eq(STORY_BOOK.ID))
+                .orderBy(SHORT_STORY.ID.asc())
             ).as("shortStories")
         )
         .from(STORY_BOOK)
@@ -88,34 +91,35 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
             storyBook.setTitle(r.get(STORY_BOOK.TITLE));
             storyBook.setDifficulty(r.get(STORY_BOOK.DIFFICULTY));
             storyBook.setLanguage(r.get(STORY_BOOK.LANGUAGE));
+            storyBook.setCreatedAt(r.get(STORY_BOOK.CREATED_AT));
             List<ShortStory> shortStories = new ArrayList<>();
             Result<Record> shortStoryRecords = r.get("shortStories", Result.class);
             for (Record ssr : shortStoryRecords) {
                 ShortStory shortStory = new ShortStory();
                 shortStory.setId(ssr.get(SHORT_STORY.ID));
-                shortStory.setChapterNumber(ssr.get(SHORT_STORY.CHAPTER_NUMBER));
                 shortStory.setTitle(ssr.get(SHORT_STORY.TITLE));
                 shortStory.setNativeTitle(ssr.get(SHORT_STORY.NATIVE_TITLE));
                 shortStory.setGenre(ssr.get(SHORT_STORY.GENRE));
                 shortStory.setTopic(ssr.get(SHORT_STORY.TOPIC));
+                shortStory.setCreatedAt(ssr.get(SHORT_STORY.CREATED_AT));
 
                 List<StoryPage> storyPages = new ArrayList<>();
                 Result<Record> storyPageRecords = ssr.get("storyPages", Result.class);
                 for (Record srp : storyPageRecords) {
                     StoryPage storyPage = new StoryPage();
                     storyPage.setId(srp.get(STORY_PAGE.ID));
-                    storyPage.setPageNumber(srp.get(STORY_PAGE.PAGE_NUMBER));
                     storyPage.setType(StoryPageType.valueOf(srp.get(STORY_PAGE.TYPE, String.class)));
                     storyPage.setImageUrl(srp.get(STORY_PAGE.IMAGE_URL));
                     storyPage.setEnglishSummary(srp.get(STORY_PAGE.ENGLISH_SUMMARY));
+                    storyPage.setCreatedAt(srp.get(STORY_PAGE.CREATED_AT));
 
                     List<StoryParagraph> paragraphs = new ArrayList<>();
                     Result<Record> paragraphRecords = srp.get("paragraphs", Result.class);
                     for (Record pr : paragraphRecords) {
                         StoryParagraph paragraph = new StoryParagraph();
                         paragraph.setId(pr.get(STORY_PARAGRAPH.ID));
-                        paragraph.setParagraphNumber(pr.get(STORY_PARAGRAPH.PARAGRAPH_NUMBER));
                         paragraph.setContent(pr.get(STORY_PARAGRAPH.CONTENT));
+                        paragraph.setCreatedAt(pr.get(STORY_PARAGRAPH.CREATED_AT));
                         paragraphs.add(paragraph);
                     }
                     storyPage.setParagraphs(paragraphs);
@@ -127,7 +131,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                         item.setId(vr.get(STORY_VOCABULARY_ITEM.ID));
                         item.setWord(vr.get(STORY_VOCABULARY_ITEM.WORD));
                         item.setTranslation(vr.get(STORY_VOCABULARY_ITEM.TRANSLATION));
-                        item.setPageNumber(vr.get(STORY_VOCABULARY_ITEM.PAGE_NUMBER));
+                        item.setCreatedAt(vr.get(STORY_VOCABULARY_ITEM.CREATED_AT));
                         vocabulary.add(item);
                     }
                     storyPage.setVocabulary(vocabulary);

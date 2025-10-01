@@ -3,6 +3,7 @@ type LessonBook implements Book {
     title: String!
     difficulty: String!
     language: String!
+    createdAt: LocalDateTime!
     lessonChapters: [LessonChapter]!
 }
 

@@ -52,7 +52,7 @@ export const shortStoryApiSlice = graphqlApiSlice.injectEndpoints ({
                                         const shortStory = draft.shortStories.find((s) => s.id === newShortStory.id);
                                         if (shortStory && !shortStory.storyPages.some((p) => p.id === newPage.id)) {
                                             shortStory.storyPages.push(newPage);
-                                            shortStory.storyPages.sort((a, b) => a.pageNumber - b.pageNumber);
+                                            shortStory.storyPages.sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
                                         }
                                     })
                                 );

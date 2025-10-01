@@ -10,8 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface LessonChapterRepository extends JpaRepository<LessonChapter, Long> {
-    Optional<LessonChapter> findByIdAndLessonBook_User(Long id, User user);
-
     @Query("SELECT c FROM LessonChapter c JOIN FETCH c.lessonPages WHERE c.id = :id AND c.lessonBook.user = :user")
     Optional<LessonChapter> findByIdAndUserWithPages(@Param("id") Long id, @Param("user") User user);
 

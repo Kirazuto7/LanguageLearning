@@ -14,43 +14,51 @@ interface PageFlipAPI {
 }
 
 interface FlipBookProps {
-    navigateToPage: number | null;
-    onFlipComplete: () => void;
     stories: ShortStoryDTO[];
     title: string;
 }
 
-const FlipBook: React.FC<FlipBookProps> = ({ navigateToPage, onFlipComplete, stories, title }) => {
+const FlipBook: React.FC<FlipBookProps> = ({ stories, title }) => {
     const flipBookRef = useRef<PageFlipAPI | null>(null);
 
     const pages = useMemo(() => buildPagesFromStoryData(stories), [stories])
 
-    const onInit = () => {
-        // The number of static pages before the dynamic content (Cover, BehindCover, TOC)
-        const pageIndexOffset = 2;
-        if(flipBookRef.current && navigateToPage && navigateToPage > 0) {
-            flipBookRef.current.pageFlip().flip(navigateToPage + pageIndexOffset);
-            onFlipComplete();
-        }
-    }
-
     const handleTocNavigate = (pageIndex: number) => {
         if(flipBookRef.current) {
-            // The number of static pages before the dynamic content (Cover, BehindCover)
-            const pageIndexOffset = 1;
-            flipBookRef.current.pageFlip().flip(pageIndex+pageIndexOffset);
+            // Offset for static pages: Cover(1) + BehindCover (1) + TOC (1) = 3
+            // The pageIndex from TOC is 1-based so we substract 1 for the 0-based index in the pages array
+            flipBookRef.current.pageFlip().flip(pageIndex - 1 + 3);
         }
     }
 
-    const tocEntries: TocEntry[] = stories.map( (shortStory: ShortStoryDTO) => {
-        const firstPageOfStory = shortStory.storyPages?.[0];
-        const navigationPageIndex = firstPageOfStory?.pageNumber ?? 0;
+    const tocEntries: TocEntry[] = useMemo(() => {
+        let runningPageIndex = 1; // Start with 1 for 1-based indexing
+        return stories.map((shortStory: ShortStoryDTO, storyIndex: number) => {
+            const navigationPageIndex = runningPageIndex;
+
+            // Update the running total for the next story
+            runningPageIndex += shortStory.storyPages.length;
+
+            return {
+                entryNumber: storyIndex + 1,
+                title: shortStory.title,
+                navigationPageIndex: navigationPageIndex,
+            };
+        });
+    }, [stories]);
+
+    /*const tocEntries: TocEntry[] = stories.map( (shortStory: ShortStoryDTO, storyIndex: number) => {
+        // Calculate the starting page index for this story by summing the pages of all previous stories.
+        const navigationPageIndex = stories
+            .slice(0, storyIndex) // Get all stories before the current one
+            .reduce((acc, s) => acc + s.storyPages.length, 1);
+
         return {
-            entryNumber: shortStory.chapterNumber,
+            entryNumber: storyIndex + 1,
             title: shortStory.title,
             navigationPageIndex: navigationPageIndex,
         }
-    });
+    });*/
 
     return (
         <div className={styles.bookContainer}>
@@ -77,11 +85,10 @@ const FlipBook: React.FC<FlipBookProps> = ({ navigateToPage, onFlipComplete, sto
                 startPage={0}
                 mobileScrollSupport={true}
                 clickEventForward={true}
-                disableFlipByClick={false}
+                disableFlipByClick={true}
                 useMouseEvents={true}
                 swipeDistance={30}
                 showPageCorners={true}
-                onInit={onInit}
             >
 
 

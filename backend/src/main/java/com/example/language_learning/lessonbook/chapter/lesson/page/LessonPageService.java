@@ -21,11 +21,10 @@ public class LessonPageService {
      * and persists it to the database in a new transaction.
      */
     @Transactional
-    public LessonPage createAndPersistPage(LessonChapter lessonChapter, Lesson lesson, int pageNumber) {
+    public LessonPage createAndPersistPage(LessonChapter lessonChapter, Lesson lesson) {
        LessonChapter managedLessonChapter = lessonChapterRepository.findByIdWithPages(lessonChapter.getId())
                .orElseThrow(() -> new RuntimeException("Chapter not found during page creation: " + lessonChapter.getId()));
        LessonPage lessonPage = LessonPage.builder()
-               .pageNumber(pageNumber)
                .lesson(lesson)
                .lessonChapter(managedLessonChapter)
                .build();
@@ -36,7 +35,4 @@ public class LessonPageService {
        return lessonPageRepository.save(lessonPage);
     }
 
-    public int getLastPageNumberForBook(Long bookId) {
-        return lessonPageRepository.findMaxPageNumberByBookId(bookId).orElse(0);
-    }
 }

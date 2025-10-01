@@ -47,7 +47,7 @@ public class LessonChapterGenerationService {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                generateChapterAsync(request, output.getTaskId(), output.getLessonChapter().getId(), output.getStartingPageNumber());
+                generateChapterAsync(request, output.getTaskId(), output.getLessonChapter().getId());
             }
         });
 
@@ -58,11 +58,11 @@ public class LessonChapterGenerationService {
                 .build();
     }
 
-    private void generateChapterAsync(ChapterGenerationRequest request, String taskId, Long chapterId, int startingPageNumber) {
+    private void generateChapterAsync(ChapterGenerationRequest request, String taskId, Long chapterId) {
         // Asynchronously start the page(s) generation for the lessonChapter generation subscription
         Runnable chapterGenerationJob = () -> {
             try {
-                ChapterGenerationContext context = new ChapterGenerationContext(request, taskId, chapterId, new AtomicInteger(startingPageNumber));
+                ChapterGenerationContext context = new ChapterGenerationContext(request, taskId, chapterId);
 
                 var sm = stateMachineFactory.createInstance();
 

@@ -23,7 +23,7 @@ export const ChapterSelector: React.FC<ChapterSelectorProps> = ({ chapters, acti
             <Form.Select aria-label="Chapter select" value={activeChapterIndex} onChange={handleSelect} className={styles['lessonChapter-select']}>
                 {chapters.map((lessonChapter, index) => (
                     <option key={index} value={index}>
-                        Chapter {lessonChapter.chapterNumber}: {lessonChapter.title}
+                        Chapter {index + 1}: {lessonChapter.title}
                     </option>
                 ))}
             </Form.Select>

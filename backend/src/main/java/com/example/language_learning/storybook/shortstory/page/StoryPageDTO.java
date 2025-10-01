@@ -17,7 +17,6 @@ public record StoryPageDTO(
     StoryPageType type,
     String englishSummary,
     String imageUrl,
-    int pageNumber,
     List<StoryParagraphDTO> paragraphs,
     List<StoryVocabularyItemDTO> vocabulary
 ) implements ProgressData {}

@@ -29,20 +29,22 @@ const getPageFromLessonType = (lessonPage: LessonPageDTO, onAllCorrect?: () => v
     }
 }
 
-export const buildPagesForChapter = (lessonChapter: LessonChapterDTO, onAllCorrect?: () => void): React.ReactElement[] => {
+export const buildPagesForChapter = (lessonChapter: LessonChapterDTO, chapterIndex: number, pageOffset: number, onAllCorrect?: () => void): React.ReactElement[] => {
     if(!lessonChapter.lessonPages || lessonChapter.lessonPages.length === 0) {
         return [];
     }
 
     const pages: React.ReactElement[] = [];
+    const chapterNumber = chapterIndex + 1;
+    const chapterTitlePageNumber = pageOffset + 1;
 
     const firstPage = lessonChapter.lessonPages[0];
     pages.push(
         <ChapterPage
             key={`lessonChapter-title-${lessonChapter.id}`}
-            pageNumber={ firstPage.pageNumber } 
-            isRightPage={ firstPage.pageNumber % 2 === 0 } 
-            chapterNumber={lessonChapter.chapterNumber}
+            pageNumber={ chapterTitlePageNumber }
+            isRightPage={ chapterTitlePageNumber % 2 !== 0 }
+            chapterNumber={chapterNumber}
             chapterNativeTitle={lessonChapter.nativeTitle}
             chapterTitle={lessonChapter.title}
         >
@@ -51,12 +53,13 @@ export const buildPagesForChapter = (lessonChapter: LessonChapterDTO, onAllCorre
     )
 
     // Loop through the lessonPage(s) data for the lessonChapter starting from the 2nd lessonPage
-    lessonChapter.lessonPages.slice(1).forEach(lessonPage => {
+    lessonChapter.lessonPages.slice(1).forEach((lessonPage, index) => {
+        const currentPageNumber = pageOffset + index + 2; // +1 for slice offset, +1 for title page
         pages.push(
             <BookPage
                 key={`lessonPage-${lessonPage.id}`}
-                pageNumber={lessonPage.pageNumber}
-                isRightPage={lessonPage.pageNumber % 2 === 0}
+                pageNumber={currentPageNumber}
+                isRightPage={currentPageNumber % 2 !== 0}
             >
                 {getPageFromLessonType(lessonPage, onAllCorrect)}
             </BookPage>
@@ -68,6 +71,15 @@ export const buildPagesForChapter = (lessonChapter: LessonChapterDTO, onAllCorre
 // Helper function to process the Book Data into Component Pages
 export function buildPagesFromBookData(bookData: LessonBookDTO | null): React.ReactElement[] {
     if(!bookData || !bookData.lessonChapters) return [];
-    // Loop through the book chapters and build each lessonPage
-    return bookData.lessonChapters.flatMap(lessonChapter => buildPagesForChapter(lessonChapter));
+
+    let pageOffset = 0;
+    const allPages: React.ReactElement[] = [];
+
+    bookData.lessonChapters.forEach((chapter, chapterIndex) => {
+        const chapterPages = buildPagesForChapter(chapter, chapterIndex, pageOffset);
+        allPages.push(...chapterPages);
+        pageOffset += chapter.lessonPages.length;
+    });
+
+    return allPages;
 };

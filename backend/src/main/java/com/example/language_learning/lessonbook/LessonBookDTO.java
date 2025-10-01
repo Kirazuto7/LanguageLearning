@@ -1,5 +1,6 @@
 package com.example.language_learning.lessonbook;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.language_learning.lessonbook.chapter.LessonChapterDTO;
@@ -11,5 +12,6 @@ public record LessonBookDTO (
     String title,
     String difficulty,
     String language,
+    LocalDateTime createdAt,
     List<LessonChapterDTO> lessonChapters
 ) {}

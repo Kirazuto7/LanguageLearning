@@ -3,12 +3,12 @@ type StoryBook implements Book {
     title: String!
     difficulty: String!
     language: String!
+    createdAt: LocalDateTime!
     shortStories: [ShortStory!]!
 }
 
 type ShortStory implements Chapter {
     id: ID!
-    chapterNumber: Int! # Represents the story number in the book
     title: String!
     nativeTitle: String!
     genre: String
@@ -23,7 +23,6 @@ enum StoryPageType {
 
 type StoryContentPage implements Page {
     id: ID!
-    pageNumber: Int!
     type: StoryPageType!
     englishSummary: String
     imageUrl: String
@@ -33,7 +32,6 @@ type StoryContentPage implements Page {
 
 type StoryVocabularyPage implements Page {
     id: ID!
-    pageNumber: Int!
     type: StoryPageType!
     englishSummary: String
     vocabulary: [StoryVocabularyItem!]!
@@ -51,7 +49,6 @@ type StoryVocabularyItem {
     id: ID!
     word: String!
     translation: String!
-    pageNumber: Int!
 }
 
 # --- Inputs & Responses for Mutations ---

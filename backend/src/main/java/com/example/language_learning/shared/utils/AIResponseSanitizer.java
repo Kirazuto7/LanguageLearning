@@ -349,8 +349,10 @@ public class AIResponseSanitizer {
                 }
 
                 String sanitizedText = sanitizedBuilder.toString();
-                if (sanitizedText.isBlank()) {
-                    log.warn("Regex hot-fix for '{}' resulted in a blank string. Checking if field is nullable...", jsonPointerPath);
+                // If the sanitization results in a blank string or only punctuation,
+                // it's better to treat it as missing data.
+                if (sanitizedText.isBlank() || sanitizedText.matches("^[\\p{Punct}\\s]+$")) {
+                    log.warn("Regex hot-fix for '{}' resulted in a blank string or punctuation-only string. Checking if field is nullable...", jsonPointerPath);
 
                     // Find the schema definition for the field itself, not just the pattern keyword.
                     String propertySchemaPointer = error.getSchemaLocation().toString();
@@ -407,33 +409,5 @@ public class AIResponseSanitizer {
         return false;
     }
 
-    private boolean stripParenthical(JsonNode rootNode, String jsonPath) {
-        try {
-            // JsonPointer paths from networknt-schema start with $, which Jackson's JsonPointer doesn't use.
-            // We convert $.field[0] to /field/0
-
-            String jsonPointerPath = jsonPath.replace("$.", "/").replace("[", "/").replace("]", "");
-            String parentPath = jsonPointerPath.substring(0, jsonPointerPath.lastIndexOf('/'));
-            String fieldName = jsonPointerPath.substring(jsonPointerPath.lastIndexOf('/') + 1);
-
-            JsonNode parentNode = rootNode.at(parentPath);
-            JsonNode childNode = parentNode.get(fieldName);
-
-            if (childNode != null && childNode.isTextual()) {
-                String originalText = childNode.asText();
-                String sanitizedText = SanitizationPattern.PARENTHETICAL_TEXT.removeFrom(originalText).trim();
-
-                if (!originalText.equals(sanitizedText) && parentNode instanceof ObjectNode parentObject) {
-                    log.debug("Hot-fixing field '{}'. Stripping parenthetical text.", jsonPath);
-                    parentObject.put(fieldName, sanitizedText);
-                    return true;
-                }
-            }
-        }
-        catch (Exception e) {
-            log.warn("Could not apply 'stripParenthetical' hot-fix for path '{}': {}", jsonPath, e.getMessage());
-        }
-        return false;
-    }
 
 }

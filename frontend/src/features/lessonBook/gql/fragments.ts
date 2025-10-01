@@ -116,7 +116,6 @@ export const lessonPageFragment = gql`
     fragment LessonPageFragment on LessonPage {
         __typename
         id
-        pageNumber
         lesson {
             __typename
             ...LessonFragment
@@ -128,7 +127,6 @@ export const lessonChapterFragment = gql`
     ${lessonPageFragment}
     fragment LessonChapterFragment on LessonChapter {
         id
-        chapterNumber
         title
         nativeTitle
         lessonPages {
@@ -144,6 +142,7 @@ export const lessonBookFragment = gql`
         title
         difficulty
         language
+        createdAt
         lessonChapters {
             ...LessonChapterFragment
         }

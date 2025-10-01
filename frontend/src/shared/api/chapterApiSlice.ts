@@ -37,7 +37,6 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                             taskId
                             lessonChapter {
                                 id
-                                chapterNumber
                                 title
                                 nativeTitle
                                 lessonPages { id } # Initially empty
@@ -88,7 +87,7 @@ export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
                                             const lessonChapter = draft.lessonChapters.find((c) => c.id === newLessonChapter.id);
                                             if (lessonChapter && !lessonChapter.lessonPages.some((p) => p.id === newPage.id)) {
                                                 lessonChapter.lessonPages.push(newPage);
-                                                lessonChapter.lessonPages.sort((a, b) => a.pageNumber - b.pageNumber);
+                                                lessonChapter.lessonPages.sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
                                             }
                                         }
                                     )

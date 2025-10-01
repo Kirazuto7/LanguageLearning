@@ -59,6 +59,7 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
         lessonBook.setTitle(r.get(LESSON_BOOK.TITLE));
         lessonBook.setDifficulty(r.get(LESSON_BOOK.DIFFICULTY));
         lessonBook.setLanguage(r.get(LESSON_BOOK.LANGUAGE));
+        lessonBook.setCreatedAt(r.get(LESSON_BOOK.CREATED_AT));
         Long userId = r.get(LESSON_BOOK.USER_ID);
         userRepository.findById(userId).ifPresent(lessonBook::setUser);
 
@@ -67,16 +68,14 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
         for (Record cr : chapterRecords) {
             LessonChapter chapter = new LessonChapter();
             chapter.setId(cr.get(LESSON_CHAPTER.ID));
-            chapter.setChapterNumber(cr.get(LESSON_CHAPTER.CHAPTER_NUMBER));
             chapter.setTitle(cr.get(LESSON_CHAPTER.TITLE));
             chapter.setNativeTitle(cr.get(LESSON_CHAPTER.NATIVE_TITLE));
 
-            List<LessonPage> pages = new ArrayList<>();
             Result<Record> pageRecords = cr.get("lessonPages", Result.class);
+            List<LessonPage> pages = new ArrayList<>();
             for (Record pr: pageRecords) {
                 LessonPage page = new LessonPage();
                 page.setId(pr.get(LESSON_PAGE.ID));
-                page.setPageNumber(pr.get(LESSON_PAGE.PAGE_NUMBER));
 
                 LessonType lessonType = pr.get(LESSON.TYPE, LessonType.class);
                 String lessonTitle = pr.get(LESSON.TITLE);
@@ -210,8 +209,8 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
                     }
                 }
                 pages.add(page);
-                chapter.setLessonPages(pages);
             }
+            chapter.setLessonPages(pages);
             chapters.add(chapter);
         }
 
@@ -300,11 +299,11 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
                                         ).from(LESSON_PAGE)
                                                 .join(LESSON).on(LESSON_PAGE.LESSON_ID.eq(LESSON.ID))
                                                 .where(LESSON_PAGE.LESSON_CHAPTER_ID.eq(LESSON_CHAPTER.ID))
-                                                .orderBy(LESSON_PAGE.PAGE_NUMBER.asc())
+                                                .orderBy(LESSON_PAGE.ID.asc())
                                 ).as("lessonPages")
                         ).from(LESSON_CHAPTER)
                                 .where(LESSON_CHAPTER.BOOK_ID.eq(LESSON_BOOK.ID))
-                                .orderBy(LESSON_CHAPTER.CHAPTER_NUMBER.asc())
+                                .orderBy(LESSON_CHAPTER.ID.asc())
                 ).as("lessonChapters")
         ).from(LESSON_BOOK);
     }

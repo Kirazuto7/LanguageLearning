@@ -16,15 +16,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class StoryVocabularyItem extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String word;
 
     private String translation;
-
-    private int pageNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "story_page_id")

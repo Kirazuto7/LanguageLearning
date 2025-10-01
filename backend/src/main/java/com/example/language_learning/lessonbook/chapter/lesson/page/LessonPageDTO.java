@@ -8,6 +8,5 @@ import lombok.Builder;
 @Builder
 public record LessonPageDTO(
     Long id,
-    int pageNumber,
     LessonDTO lesson
 ) implements ProgressData {}

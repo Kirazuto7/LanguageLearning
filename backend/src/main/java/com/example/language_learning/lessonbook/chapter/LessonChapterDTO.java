@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record LessonChapterDTO(
      Long id,
-     int chapterNumber,
      String title,
      String nativeTitle,
      List<LessonPageDTO> lessonPages

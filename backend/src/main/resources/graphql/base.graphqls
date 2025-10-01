@@ -1,15 +1,17 @@
+scalar LocalDateTime
+
 # Base interface for all book types (LessonBook, StoryBook, etc.)
 interface Book {
     id: ID!
     title: String!
     difficulty: String!
     language: String!
+    createdAt: LocalDateTime!
 }
 
 # Base interface for all lessonChapter types
 interface Chapter {
     id: ID!
-    chapterNumber: Int!
     title: String!
     nativeTitle: String!
 }
@@ -17,5 +19,4 @@ interface Chapter {
 # Base interface for all page types
 interface Page {
     id: ID!
-    pageNumber: Int!
 }

@@ -6,7 +6,6 @@ import com.example.language_learning.storybook.StoryBook;
 import com.example.language_learning.storybook.StoryBookService;
 import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.ShortStoryService;
-import com.example.language_learning.storybook.shortstory.page.StoryPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,6 @@ import java.util.UUID;
 public class StoryPrepActions {
     private final StoryBookService storyBookService;
     private final ShortStoryService shortStoryService;
-    private final StoryPageService storyPageService;
 
     public void generateTaskId(StoryPrepInput input, StoryPrepOutput output) {
         String taskId = UUID.randomUUID().toString();
@@ -36,25 +34,13 @@ public class StoryPrepActions {
 
     public void createInitialShortStory(StoryPrepInput input, StoryPrepOutput output) {
         log.info("Creating initial short story for book ID: {}", output.getStoryBook().getId());
-        int nextStoryNumber = output.getStoryBook().getShortStories().stream()
-                .mapToInt(ShortStory::getChapterNumber)
-                .max()
-                .orElse(0) + 1;
-        log.info("Calculated next story number: {}", nextStoryNumber);
 
         String topic = input.request().topic() != null ? input.request().topic() : "Surprise Me";
 
-        ShortStory shortStory = shortStoryService.createShortStory(output.getStoryBook(), nextStoryNumber, "Generating...", "Generating...", topic, input.request().genre());
+        // Chapter number is now handled by the client based on order, so we create a shell with placeholder titles.
+        ShortStory shortStory = shortStoryService.createShortStory(output.getStoryBook(), "Generating...", "Generating...", topic, input.request().genre());
         log.info("Created new ShortStory shell. Is it null? {}. ID: {}", shortStory == null, shortStory != null ? shortStory.getId() : "N/A");
         output.setShortStory(shortStory);
-    }
-
-    public void calculateStartingPage(StoryPrepInput input, StoryPrepOutput output) {
-        log.info("Calculating starting page for story book ID: {}", output.getStoryBook().getId());
-        int lastPageNumber = storyPageService.getLastPageForBook(output.getStoryBook().getId());
-        int nextPageNumber = lastPageNumber + 1;
-        log.info("Calculated next page number for story: {}", nextPageNumber);
-        output.setStartingPageNumber(nextPageNumber);
     }
 
 }

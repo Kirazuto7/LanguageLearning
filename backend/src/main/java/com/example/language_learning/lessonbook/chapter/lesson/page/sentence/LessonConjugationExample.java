@@ -15,10 +15,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LessonConjugationExample extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String infinitive; // Dictionary Form aka base form
 
     @Column(columnDefinition = "TEXT")

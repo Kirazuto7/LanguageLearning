@@ -22,12 +22,8 @@ public class StoryPageService {
     private final ShortStoryRepository shortStoryRepository;
     private final DtoMapper dtoMapper;
 
-    public int getLastPageForBook(Long id) {
-        return storyPageRepository.findMaxPageNumberByBookId(id).orElse(0);
-    }
-
     @Transactional
-    public StoryPage createAndPersistPage(ShortStory shortStory, StoryPageDTO storyPageDTO, int pageNumber) {
+    public StoryPage createAndPersistPage(ShortStory shortStory, StoryPageDTO storyPageDTO) {
         ShortStory managedShortStory = findByIdAndInitializeCollections(shortStory.getId());
 
         return switch (storyPageDTO.type()) {
@@ -35,7 +31,6 @@ public class StoryPageService {
                 StoryPage storyPage = new StoryPage();
                 storyPage.setShortStory(managedShortStory);
                 storyPage.setType(StoryPageType.CONTENT);
-                storyPage.setPageNumber(pageNumber);
                 storyPage.setEnglishSummary(storyPageDTO.englishSummary());
                 storyPage.setImageUrl(storyPageDTO.imageUrl());
 
@@ -55,7 +50,6 @@ public class StoryPageService {
                 StoryPage storyPage = new StoryPage();
                 storyPage.setShortStory(managedShortStory);
                 storyPage.setType(StoryPageType.VOCABULARY);
-                storyPage.setPageNumber(pageNumber);
                 storyPage.setEnglishSummary(storyPageDTO.englishSummary());
                 storyPage.setImageUrl(storyPageDTO.imageUrl());
 
@@ -76,7 +70,6 @@ public class StoryPageService {
             StoryPage storyPage = new StoryPage();
             storyPage.setShortStory(managedShortStory);
             storyPage.setType(pageDto.type());
-            storyPage.setPageNumber(pageDto.pageNumber());
             storyPage.setEnglishSummary(pageDto.englishSummary());
             storyPage.setImageUrl(pageDto.imageUrl());
 

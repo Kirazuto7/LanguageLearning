@@ -17,6 +17,9 @@ const TableOfContentsPage: React.FC<TableOfContentsPageProps> = ({ entries, onNa
     return (
         <div className={styles['page-content']}>
             <h1>Table of Contents</h1>
+            <p className="lead mt-4">
+                Select a story below to begin your reading adventure.
+            </p>
             <ul className="list-unstyled mt-4">
                 {entries.map((entry) => (
                     <li key={entry.entryNumber} className="mb-3">
