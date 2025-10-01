@@ -148,9 +148,9 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
                                 conjugationExample.setExampleSentence(cwr.get(CONJUGATION_EXAMPLE.EXAMPLE_SENTENCE));
                                 conjugationExample.setInfinitive(cwr.get(CONJUGATION_EXAMPLE.INFINITIVE));
                                 conjugationExample.setSentenceTranslation(cwr.get(CONJUGATION_EXAMPLE.SENTENCE_TRANSLATION));
-                                lesson.addConjugationExample(conjugationExample);
                                 conjugationExamples.add(conjugationExample);
                             }
+                            lesson.setConjugatedWords(conjugationExamples);
                             page.setLesson(lesson);
                             lesson.setLessonPage(page);
                         }
@@ -257,23 +257,6 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
                                                 ).as("grammarLesson"),
                                                 multiset(
                                                         select(
-                                                                READING_COMPREHENSION_LESSON.asterisk(),
-                                                                multiset(
-                                                                        select(
-                                                                                LESSON_QUESTION.asterisk(),
-                                                                                field(
-                                                                                        select(arrayAgg(QUESTION_ANSWER_CHOICE.ANSWER_CHOICE))
-                                                                                                .from(QUESTION_ANSWER_CHOICE)
-                                                                                                .where(QUESTION_ANSWER_CHOICE.QUESTION_ID.eq(LESSON_QUESTION.ID))
-                                                                                ).as("answerChoices")
-                                                                        ).from(LESSON_QUESTION)
-                                                                                .where(LESSON_QUESTION.LESSON_ID.eq(READING_COMPREHENSION_LESSON.ID))
-                                                                ).as("lessonQuestions")
-                                                        ).from(READING_COMPREHENSION_LESSON)
-                                                                .where(READING_COMPREHENSION_LESSON.ID.eq(LESSON_PAGE.LESSON_ID))
-                                                ).as("readingComprehensionLesson"),
-                                                multiset(
-                                                        select(
                                                                 CONJUGATION_LESSON.asterisk(),
                                                                 multiset(
                                                                         select(
@@ -296,7 +279,24 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
                                                                 ).as("lessonQuestions")
                                                         ).from(PRACTICE_LESSON)
                                                                 .where(PRACTICE_LESSON.ID.eq(LESSON_PAGE.LESSON_ID))
-                                                ).as("practiceLesson")
+                                                ).as("practiceLesson"),
+                                                multiset(
+                                                        select(
+                                                                READING_COMPREHENSION_LESSON.asterisk(),
+                                                                multiset(
+                                                                        select(
+                                                                                LESSON_QUESTION.asterisk(),
+                                                                                field(
+                                                                                        select(arrayAgg(QUESTION_ANSWER_CHOICE.ANSWER_CHOICE))
+                                                                                                .from(QUESTION_ANSWER_CHOICE)
+                                                                                                .where(QUESTION_ANSWER_CHOICE.QUESTION_ID.eq(LESSON_QUESTION.ID))
+                                                                                ).as("answerChoices")
+                                                                        ).from(LESSON_QUESTION)
+                                                                                .where(LESSON_QUESTION.LESSON_ID.eq(READING_COMPREHENSION_LESSON.ID))
+                                                                ).as("lessonQuestions")
+                                                        ).from(READING_COMPREHENSION_LESSON)
+                                                                .where(READING_COMPREHENSION_LESSON.ID.eq(LESSON_PAGE.LESSON_ID))
+                                                ).as("readingComprehensionLesson")
                                         ).from(LESSON_PAGE)
                                                 .join(LESSON).on(LESSON_PAGE.LESSON_ID.eq(LESSON.ID))
                                                 .where(LESSON_PAGE.LESSON_CHAPTER_ID.eq(LESSON_CHAPTER.ID))

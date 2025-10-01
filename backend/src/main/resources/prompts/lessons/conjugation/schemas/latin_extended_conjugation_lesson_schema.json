@@ -24,12 +24,12 @@
         "properties": {
           "infinitive": {
             "type": "string",
-            "description": "The base form of the word in the native language.",
+            "description": "The dictionary form (unconjugated base form) of the word in the native language.",
             "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
           },
           "conjugated_form": {
             "type": "string",
-            "description": "The word after conjugation in the native language.",
+            "description": "The word after conjugation in the native language (e.g., walks, ate).",
             "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
           },
           "example_sentence": {

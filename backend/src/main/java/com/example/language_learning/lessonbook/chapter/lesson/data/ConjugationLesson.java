@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "conjugation_lessons")
 @SuperBuilder
 @Getter
 @Setter
