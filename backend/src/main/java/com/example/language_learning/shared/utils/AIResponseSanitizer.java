@@ -349,6 +349,8 @@ public class AIResponseSanitizer {
                 }
 
                 String sanitizedText = sanitizedBuilder.toString();
+                sanitizedText = removeTrailingPunctuatedParentheses(sanitizedText);
+
                 // If the sanitization results in a blank string or only punctuation,
                 // it's better to treat it as missing data.
                 if (sanitizedText.isBlank() || sanitizedText.matches("^[\\p{Punct}\\s]+$")) {
@@ -408,6 +410,24 @@ public class AIResponseSanitizer {
         }
         return false;
     }
+
+    /**
+     *  Removes trailing parenthetical expressions that only contain whitespace and punctuation.
+     *       * For example, "등산로를 걸어요. (    .)" becomes "등산로를 걸어요.".
+     *       *
+     *       * @param text The text to sanitize.
+     *       * @return The sanitized text.
+     */
+     private String removeTrailingPunctuatedParentheses(String text) {
+        if (text == null || text.isBlank()) {
+            return text;
+        }
+         // This regex finds parenthetical groups that contain only whitespace (\\s)
+         // and punctuation (\\p{Punct}), along with any preceding whitespace.
+         // It replaces all occurrences throughout the string.
+         String sanitized = text.replaceAll("\\s*\\([\\s\\p{Punct}]*\\)", "");
+         return sanitized.trim();
+     }
 
 
 }
