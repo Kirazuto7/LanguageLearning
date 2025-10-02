@@ -35,9 +35,17 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 
 - [ ] **Implement Robust Client-Side State Management**
     - [ ] **Goal:** Persist user sessions across page reloads and synchronize state between multiple open tabs to prevent stale data and misuse.
+    - [ ] **Refactor & Centralize Progress Handling (High Priority)**
+        - [ ] **Goal:** Create a single source of truth for managing WebSocket progress subscriptions to eliminate race conditions and simplify component logic.
+        - [ ] **`ProgressSubscriptionManager`:**
+            - [ ] Modify it to be the *sole* component responsible for subscribing to and unsubscribing from all active generation tasks found in the `progress` slice of the Redux store.
+            - [ ] It should dynamically manage subscriptions as tasks are added or removed from the state.
+        - [ ] **Generation Hooks (`useChapterGeneration`, `useShortStoryGeneration`):**
+            - [ ] Remove all local state management (`useState`, `useEffect` for cleanup/timeouts) related to subscriptions.
+            - [ ] Simplify the hooks to only perform two actions: 1) trigger the generation mutation and 2) read progress data directly from the Redux store via selectors.
     - [ ] **Persistence (`redux-persist`):**
         - [ ] Integrate `redux-persist` to save the Redux store to `localStorage`.
-        - [ ] Configure it to **only** persist the `auth` slice to keep the user logged in, while allowing RTK Query to fetch fresh data on load.
+        - [ ] Configure it to persist the `auth` and `progress` slices. This keeps the user logged in and ensures orphaned tasks are available for re-subscription on page load.
     - [ ] **Synchronization (`BroadcastChannel`):**
         - [ ] Create a new Redux middleware that uses the `BroadcastChannel` API.
         - [ ] The middleware should listen for successful RTK Query mutations.

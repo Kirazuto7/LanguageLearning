@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useUpdateSettingsMutation } from "../../../shared/api/userApiSlice";
 import { SettingsDTO } from "../../../shared/types/dto";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {selectCurrentSettings} from "../settingsSlice";
 
 /* ------------------------------------------------------------- */
@@ -32,7 +32,12 @@ export function useSettingsManager(): SettingsManagerResult {
             console.error("Failed to update settings:", err);
             return undefined;
         }
-    }, [settings, updateSettingsMutation])
+    }, [updateSettingsMutation])
 
-    return { settings, updateSettings, isLoading, error};
+    return useMemo(() => ({
+        settings,
+        updateSettings,
+        isLoading,
+        error
+    }), [settings, updateSettings, isLoading, error]);
 }

@@ -1,13 +1,13 @@
-import { graphqlApiSlice } from "./graphqlApiSlice";
-import { gql } from "graphql-request";
-import {LessonChapterDTO, ChapterGenerationRequest, isLessonPageDTO, ProgressUpdateDTO} from "../types/dto";
-import { lessonBookApiSlice } from "./lessonBookApiSlice";
+import {graphqlApiSlice} from "./graphqlApiSlice";
+import {gql} from "graphql-request";
+import {ChapterGenerationRequest, isLessonPageDTO, LessonChapterDTO, ProgressUpdateDTO} from "../types/dto";
+import {lessonBookApiSlice} from "./lessonBookApiSlice";
 import {logToServer, safeToString} from "../utils/loggingService";
-import { lessonChapterFragment } from "../../features/lessonBook/gql/fragments";
-import { startSubscription } from "../../app/services/subscriptionManager";
-import { chapterGenerationProgressQuery } from "../../features/lessonBook/gql/queries";
-import { updateProgress } from "../../widgets/progressBar/progressSlice";
-import { store } from "../../app/store";
+import {lessonChapterFragment} from "../../features/lessonBook/gql/fragments";
+import {startSubscription} from "../../app/services/subscriptionManager";
+import {chapterGenerationProgressQuery} from "../../features/lessonBook/gql/queries";
+import {updateProgress} from "../../widgets/progressBar/progressSlice";
+import {store} from "../../app/store";
 
 export const chapterApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({

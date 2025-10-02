@@ -1,12 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProgressUpdateDTO } from "../../shared/types/dto";
 import {RootState} from "../../app/store";
+import { logOut } from "../../features/authentication/authSlice";
+import {GenerationType} from "../../shared/types/types";
 
 interface  ProgressEntry {
+    generationType: GenerationType;
+    userId: number;
+    parentId: string;
     progressData: ProgressUpdateDTO;
     language: string;
     difficulty: string;
-    isStale?: boolean;
 }
 
 interface ProgressState {
@@ -19,8 +23,15 @@ const progressSlice = createSlice({
     name: "progress",
     initialState,
     reducers: {
-        startGenerationTracking(state, action: PayloadAction<{ taskId: string; language: string; difficulty: string }>) {
-            const { taskId, language, difficulty } = action.payload;
+        startGenerationTracking(state, action: PayloadAction<{
+            taskId: string;
+            language: string;
+            difficulty: string;
+            userId: number;
+            generationType: GenerationType;
+            parentId: string; }>
+        ) {
+            const { taskId, language, difficulty, generationType, parentId, userId } = action.payload;
             state[taskId] = {
                 progressData: {
                     taskId,
@@ -31,41 +42,51 @@ const progressSlice = createSlice({
                     error: undefined,
                 },
                 language,
-                difficulty
+                difficulty,
+                generationType,
+                parentId,
+                userId,
             };
         },
 
         updateProgress(state, action: PayloadAction<ProgressUpdateDTO>) {
             const taskId = action.payload.taskId;
             if (state[taskId]) {
-                //state[taskId]!.progressData = action.payload;
-                if (action.payload.isComplete || action.payload.error) {
-                    delete state[taskId];
-                }
-                else {
-                    state[taskId]!.progressData = action.payload;
-                }
+                state[taskId]!.progressData = action.payload;
             }
         },
 
-        markProgressAsStale(state, action: PayloadAction<string>) {
+        clearProgressTask(state, action: PayloadAction<string>) {
             const taskId = action.payload;
-            if (state[taskId]) {
-                state[taskId]!.isStale = true;
-            }
+            delete state[taskId];
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(logOut, () => {
+            return initialState; // Reset to initial empty state on logout
+        });
     }
 });
 
-export const { startGenerationTracking, updateProgress, markProgressAsStale } = progressSlice.actions;
+export const { startGenerationTracking, updateProgress, clearProgressTask } = progressSlice.actions;
 export const selectProgressByTaskId = (state: RootState, taskId: string): ProgressUpdateDTO | undefined => state.progress[taskId]?.progressData;
 export const selectIsAnyGenerationLoading = (state: RootState): boolean => {
-    return Object.values(state.progress).some(task => task && !task.progressData.isComplete && !task.progressData.error && !task.isStale);
+    return !!state.progress && Object.values(state.progress).some(task => task && !task.progressData.isComplete && !task.progressData.error);
 };
 
-export const selectActiveTaskIdForContext = (state: RootState, { language, difficulty }: { language: string, difficulty: string }): string | undefined => {
+export const selectActiveTaskIdForContext = (
+    state: RootState,
+    { language, difficulty, generationType }: { language: string, difficulty: string, generationType: GenerationType }
+): string | undefined => {
     return Object.values(state.progress)
-        .find(task => task && task.language === language && task.difficulty === difficulty && !task.progressData.isComplete && !task.progressData.error && !task.isStale)
+        .find(task =>
+            task &&
+            task.language === language &&
+            task.difficulty === difficulty &&
+            task.generationType === generationType &&
+            !task.progressData.isComplete &&
+            !task.progressData.error
+        )
         ?.progressData.taskId;
 };
 

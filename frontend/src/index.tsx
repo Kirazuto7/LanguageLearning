@@ -10,6 +10,7 @@ import { persistor, store } from './app/store';
 import { subscribeToBroadcast } from "./app/broadcastMiddleware";
 import { Provider } from 'react-redux';
 import { PersistGate } from "redux-persist/integration/react";
+import ChunkLoadErrorBoundary from "./app/ChunkLoadErrorBoundary";
 
 subscribeToBroadcast(store);
 
@@ -26,13 +27,15 @@ root.render(
             - v7_startTransition: Wraps state updates in React.startTransition for better UI responsiveness.
             - v7_relativeSplatPath: Changes how relative paths are resolved in splat routes.
         */}
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
-                    <App />
-                </PersistGate>
-            </Provider>
-        </BrowserRouter>
+        <ChunkLoadErrorBoundary>
+            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <Provider store={store}>
+                    <PersistGate loading={null} persistor={persistor}>
+                        <App />
+                    </PersistGate>
+                </Provider>
+            </BrowserRouter>
+        </ChunkLoadErrorBoundary>
     </React.StrictMode>
 );
 

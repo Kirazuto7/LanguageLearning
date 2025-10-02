@@ -1,11 +1,14 @@
 import {useAppDispatch, useAppSelector} from "../../../../app/hooks";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect} from "react";
 import {useGenerateShortStoryMutation} from "../../../../shared/api/shortStoryApiSlice";
 import {
-    markProgressAsStale,
+    clearProgressTask,
     selectActiveTaskIdForContext,
-    selectProgressByTaskId, startGenerationTracking
+    selectProgressByTaskId,
+    startGenerationTracking
 } from "../../../../widgets/progressBar/progressSlice";
+import {GenerationType} from "../../../../shared/types/types";
+import {selectCurrentUser} from "../../../authentication/authSlice";
 
 interface GenerationParams {
     topic?: string;
@@ -13,67 +16,57 @@ interface GenerationParams {
 }
 
 /**
- * A custom hook to manage the entire short story generation workflow.
- * It orchestrates the mutation to start the generation and reads real-time
- * progress from the global state, which is managed by the subscriptionManager.
+ * A custom hook to manage the short story generation workflow.
+ * It reads real-time progress from the global state (managed by ProgressSubscriptionManager)
+ * and provides a function to start the generation.
  *
  * @param language The language of the story book being updated.
  * @param difficulty The difficulty of the story book being updated.
  */
 export const useShortStoryGeneration = (language: string, difficulty: string) => {
     const dispatch = useAppDispatch();
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [generateShortStory, { isLoading: isMutationLoading, error: mutationError }] = useGenerateShortStoryMutation();
+    const user = useAppSelector(selectCurrentUser);
 
-    // Check if there is an active task in the global state
-    const activeTaskId = useAppSelector(state => selectActiveTaskIdForContext(state, { language, difficulty }));
+    // Get the active task ID for the current context directly from the Redux state.
+    const activeTaskId = useAppSelector(state => selectActiveTaskIdForContext(state, { language, difficulty, generationType: GenerationType.STORY }));
+
+
+    const progress = useAppSelector(state => activeTaskId ? selectProgressByTaskId(state, activeTaskId) : undefined);
+
+    // When a task completes or errors, this effect will trigger the cleanup after a delay.
     useEffect(() => {
-        if (activeTaskId) {
-            setTaskId(activeTaskId);
-        }
-    }, [activeTaskId]);
-
-    const progress = useAppSelector(state => taskId ? selectProgressByTaskId(state, taskId) : undefined);
-    const wasClearedPrematurely = !!taskId && !progress;
-
-    // If the language/difficulty changes, reset the local taskId.
-    useEffect(() => {
-        setTaskId(null);
-    }, [language, difficulty]);
-
-    // Triggered when the generation is complete or fails to reset after a short delay
-    // to allow the UI to show the final "complete" or "error" state.
-    useEffect(() => {
-        if (progress?.isComplete || progress?.error || wasClearedPrematurely) {
+        if (activeTaskId && progress && (progress.isComplete || progress.error)){
             const timer = setTimeout(() => {
-                if (taskId) {
-                    dispatch(markProgressAsStale(taskId));
-                }
-                setTaskId(null);
+                dispatch(clearProgressTask(activeTaskId));
             }, 5000);
-            return () => {
-                clearTimeout(timer);
-            }
+            return () => clearTimeout(timer);
         }
-    }, [progress?.isComplete, progress?.error, wasClearedPrematurely, taskId, dispatch]);
+    }, [activeTaskId, progress, dispatch]);
 
     const startGeneration = useCallback(async ({ topic, genre }: GenerationParams) => {
-        if (isMutationLoading || taskId) return; // Prevent starting a new generation if one is active
+        // Prevent starting a new generation if one is already active for this context.
+        if (isMutationLoading || activeTaskId || !user) return;
 
         try {
-            const { taskId: newTaskId } = await generateShortStory({ language, difficulty, topic, genre }).unwrap();
-            dispatch(startGenerationTracking({ taskId: newTaskId, language, difficulty }));
-            setTaskId(newTaskId);
+            const { taskId: newTaskId, shortStory } = await generateShortStory({ language, difficulty, topic, genre }).unwrap();
+            dispatch(startGenerationTracking({
+                taskId: newTaskId,
+                language,
+                difficulty,
+                userId: user.id,
+                generationType: GenerationType.STORY,
+                parentId: String(shortStory.id),
+            }));
         }
         catch (err) {
             console.error('Failed to start short story generation:', err);
-            setTaskId(null);
         }
-    }, [generateShortStory, language, difficulty, taskId, isMutationLoading, dispatch]);
+    }, [generateShortStory, language, difficulty, activeTaskId, isMutationLoading, dispatch, user]);
 
     const isComplete = !!progress?.isComplete;
-    const generationError = mutationError || progress?.error || (wasClearedPrematurely ? 'Connection to the server was lost.' : undefined);
-    const isLoading = isMutationLoading || (!!taskId && !isComplete && !generationError && !wasClearedPrematurely);
+    const generationError = mutationError || progress?.error;
+    const isLoading = isMutationLoading || (!!activeTaskId && !isComplete && !generationError);
 
     return {
         startGeneration,

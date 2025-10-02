@@ -1,7 +1,8 @@
-import {Routes, Route, useLocation} from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 import React, { lazy, Suspense } from "react";
 import './App.scss';
 import NavigationBar from '../widgets/navigationBar/NavigationBar';
+import ProgressSubscriptionManager from "../widgets/progressBar/ProgressSubscriptionManager";
 import SessionManager from './SessionManager';
 import BackgroundLayout from "../shared/layouts/BackgroundLayout";
 import ProtectedRoute from "../features/authentication/components/ProtectedRoute";
@@ -29,6 +30,7 @@ const App: React.FC = () => {
   return (
       <>
         <SessionManager/>
+        <ProgressSubscriptionManager/>
         <ThemeManager />
         <NavigationBar />
 
