@@ -35,17 +35,17 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 
 - [ ] **Implement Robust Client-Side State Management**
     - [ ] **Goal:** Persist user sessions across page reloads and synchronize state between multiple open tabs to prevent stale data and misuse.
-    - [ ] **Refactor & Centralize Progress Handling (High Priority)**
-        - [ ] **Goal:** Create a single source of truth for managing WebSocket progress subscriptions to eliminate race conditions and simplify component logic.
-        - [ ] **`ProgressSubscriptionManager`:**
-            - [ ] Modify it to be the *sole* component responsible for subscribing to and unsubscribing from all active generation tasks found in the `progress` slice of the Redux store.
-            - [ ] It should dynamically manage subscriptions as tasks are added or removed from the state.
-        - [ ] **Generation Hooks (`useChapterGeneration`, `useShortStoryGeneration`):**
-            - [ ] Remove all local state management (`useState`, `useEffect` for cleanup/timeouts) related to subscriptions.
-            - [ ] Simplify the hooks to only perform two actions: 1) trigger the generation mutation and 2) read progress data directly from the Redux store via selectors.
-    - [ ] **Persistence (`redux-persist`):**
-        - [ ] Integrate `redux-persist` to save the Redux store to `localStorage`.
-        - [ ] Configure it to persist the `auth` and `progress` slices. This keeps the user logged in and ensures orphaned tasks are available for re-subscription on page load.
+    - [x] **Refactor & Centralize Progress Handling (High Priority)**
+        - [x] **Goal:** Create a single source of truth for managing WebSocket progress subscriptions to eliminate race conditions and simplify component logic.
+        - [x] **`ProgressSubscriptionManager`:**
+            - [x] Modify it to be the *sole* component responsible for subscribing to and unsubscribing from all active generation tasks found in the `progress` slice of the Redux store.
+            - [x] It should dynamically manage subscriptions as tasks are added or removed from the state.
+        - [x] **Generation Hooks (`useChapterGeneration`, `useShortStoryGeneration`):**
+            - [x] Remove all local state management (`useState`, `useEffect` for cleanup/timeouts) related to subscriptions.
+            - [x] Simplify the hooks to only perform two actions: 1) trigger the generation mutation and 2) read progress data directly from the Redux store via selectors.
+    - [x] **Persistence (`redux-persist`):**
+        - [x] Integrate `redux-persist` to save the Redux store to `localStorage`.
+        - [x] Configure it to persist the `auth` and `progress` slices. This keeps the user logged in and ensures orphaned tasks are available for re-subscription on page load.
     - [ ] **Synchronization (`BroadcastChannel`):**
         - [ ] Create a new Redux middleware that uses the `BroadcastChannel` API.
         - [ ] The middleware should listen for successful RTK Query mutations.
@@ -82,14 +82,27 @@ A roadmap for building out the LanguageLearning application into a comprehensive
         - [ ] Use the AI engine once (internally or via a script) to generate high-quality lesson content and save it to the database as seed data.
         - [ ] Build a dedicated UI page (e.g., `/learn/japanese/alphabet`) to display this static content.
 
-- [ ] **Interactive Vocabulary Practice**
-    - [ ] Make vocabulary words in lessons/stories clickable.
-    - [ ] On click, show a modal or popover with detailed definitions and examples.
-    - [ ] Integrate text-to-speech for word pronunciation on click.
+- [x] **Advanced Vocabulary Highlighting (Backend-Driven)**
+    - [x] Implemented a robust highlighting system where the backend performs linguistic analysis to identify conjugated vocabulary words.
+    - [x] **Backend:** Added `NlpService` with Apache Lucene for lemmatization. Updated `StoryParagraph` entity and DTO to store `wordsToHighlight` metadata. Updated `StoryPageService` to populate this metadata during story generation.
+    - [x] **Frontend:** Updated `StoryContentPage` to use a simple, efficient regex for highlighting based on the backend-provided data.
 
 ---
 
 ### Tier 2: Enhancing the Learning Experience
+
+- [ ] **Structural Validation of AI-Generated Word Details**
+    - [ ] **Description:** Extend the `NlpService` to perform structural validation on the `WordDetails` DTOs returned by the AI.
+    - [ ] **Goal:** Ensure linguistic data (e.g., Japanese `hiragana` readings, German `gender`) is correct before being saved.
+    - [ ] **Implementation:** Start with Japanese, using the `JapaneseAnalyzer` (Kuromoji) to verify that the `hiragana` reading matches the `kanji` form.
+
+- [ ] **Implement Offline Dictionary for Word Translation**
+    - [ ] **Description:** Create a `DictionaryService` to provide fast, offline, low-cost translations for single words, replacing the AI's translation for `Word` entities.
+    - [ ] **Goal:** Improve performance, reduce AI costs, and increase translation reliability.
+    - [ ] **Resources:**
+        - [ ] **Data Source:** [FreeDict](https://freedict.org/)
+        - [ ] **Java Library Research:** Find a Java library to parse the DICT format. (See [Stack Overflow Discussion](https://stackoverflow.com/questions/7455513/is-there-a-java-translation-library-that-works-offline)).
+        - [ ] **Tools:** The `freedict-tools` package may contain useful utilities. ([Debian Package](https://packages.debian.org/trixie/freedict-tools))
 
 - [ ] **Implement AI Content Validation with Wiktionary**
     - [ ] **Phase 1: Local Setup & Proof of Concept**
@@ -105,7 +118,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 
 - [ ] **Implement Semantic Caching to Prevent Repetitive Content**
 - [ ] **Implement Fallback Translation Service**
-    - [ ] **Goal:** Improve application resilience by providing a simple, reliable translation when the primary AI generation fails validation or returns malformed data.
+    - [ ] **Goal:** Improve application resilience by providing a simple, reliable translation for **full sentences** when the primary AI generation fails validation or returns malformed data.
     - [ ] **Technology:** Use the `UlionTse/translators` Python library (Link) wrapped in a small, dedicated microservice (e.g., using Flask/FastAPI) within the Docker environment.
     - [ ] **Strategy:**
         - [ ] When a generated lesson or story fails a validation step (e.g., a sentence is malformed), use the fallback service to get a direct, simple translation for the problematic part.
