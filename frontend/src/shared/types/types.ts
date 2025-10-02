@@ -8,3 +8,5 @@ export const mascotGenders: Record<MascotName, MascotGender> = {
     yuna: 'female',
     jinwoo: 'male'
 };
+
+export type Theme = 'default' | 'light' | 'sunset' | 'nebula' | 'cafe' | 'hanok' | 'fuji' | 'school';

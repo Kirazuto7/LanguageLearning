@@ -38,7 +38,13 @@ const progressSlice = createSlice({
         updateProgress(state, action: PayloadAction<ProgressUpdateDTO>) {
             const taskId = action.payload.taskId;
             if (state[taskId]) {
-                state[taskId]!.progressData = action.payload;
+                //state[taskId]!.progressData = action.payload;
+                if (action.payload.isComplete || action.payload.error) {
+                    delete state[taskId];
+                }
+                else {
+                    state[taskId]!.progressData = action.payload;
+                }
             }
         },
 

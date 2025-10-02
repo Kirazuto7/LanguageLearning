@@ -1,12 +1,14 @@
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
+import { selectCurrentUser } from "../../features/authentication/authSlice";
+import {selectCurrentSettings, selectCurrentTheme} from "../../features/userSettings/settingsSlice";
 import React from "react";
 
 const HomePage: React.FC = () => {
 
-  const { user } = useSelector((state: RootState) => state.auth);
+  const user = useSelector(selectCurrentUser);
+  const settings = useSelector(selectCurrentSettings);
 
   return (
     <Container fluid className="d-flex flex-column flex-grow-1 py-5">
@@ -20,7 +22,7 @@ const HomePage: React.FC = () => {
       <div className="divider mb-4"/>
       <Card>
           <Card.Header>
-              <Card.Title className="text-center fw-bold">Study Your {user?.settings.language} Book</Card.Title>
+              <Card.Title className="text-center fw-bold">Study Your {settings?.language} Book</Card.Title>
           </Card.Header>
           <Card.Body>
               <p>This is an interactive book where you can generate lessons on any topic.</p>

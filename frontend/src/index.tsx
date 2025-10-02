@@ -6,9 +6,12 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
-import { store } from './app/store';
+import { persistor, store } from './app/store';
+import { subscribeToBroadcast } from "./app/broadcastMiddleware";
 import { Provider } from 'react-redux';
-import {ThemeProvider} from './shared/contexts/ThemeContext';
+import { PersistGate } from "redux-persist/integration/react";
+
+subscribeToBroadcast(store);
 
 const rootElement = document.getElementById('root');
 if(!rootElement) {
@@ -25,9 +28,9 @@ root.render(
         */}
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Provider store={store}>
-                <ThemeProvider>
+                <PersistGate loading={null} persistor={persistor}>
                     <App />
-                </ThemeProvider>
+                </PersistGate>
             </Provider>
         </BrowserRouter>
     </React.StrictMode>

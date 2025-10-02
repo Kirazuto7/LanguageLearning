@@ -8,20 +8,21 @@ interface SettingsState {
     settings: SettingsDTO | null;
 }
 
-const storedSettings = localStorage.getItem('settings');
-
 const initialState: SettingsState = {
-    settings: storedSettings ? JSON.parse(storedSettings) : null,
+    settings: null,
 };
 
 export const settingsSlice = createSlice({
     name: 'settings',
     initialState,
-    reducers: {},
+    reducers: {
+        syncSettings: (state, action: PayloadAction<SettingsDTO>) => {
+            state.settings = action.payload;
+        }
+    },
     extraReducers: (builder) => {
          builder.addCase(logOut, (state) => {
             state.settings = null;
-            localStorage.removeItem('settings');
         });
 
         builder.addMatcher(
@@ -30,7 +31,6 @@ export const settingsSlice = createSlice({
                 userApiSlice.endpoints.register.matchFulfilled(action),
             (state, { payload }) => {
                 state.settings = payload.settings;
-                localStorage.setItem('settings', JSON.stringify(payload.settings));
             }
         );
 
@@ -39,12 +39,12 @@ export const settingsSlice = createSlice({
                 userApiSlice.endpoints.updateSettings.matchFulfilled(action),
            (state, { payload }: PayloadAction<SettingsDTO>) => {
                state.settings = payload;
-               localStorage.setItem('settings', JSON.stringify(payload));
           }
         );
     }
 })
 
 export const selectCurrentSettings = (state: RootState) => state.settings.settings;
+export const { syncSettings } = settingsSlice.actions;
 export const selectCurrentTheme = (state: RootState) => state.settings.settings?.theme ?? 'default';
 export default settingsSlice.reducer;

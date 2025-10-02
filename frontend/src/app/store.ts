@@ -1,27 +1,48 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "../shared/api/apiSlice";
+import {combineReducers, configureStore} from "@reduxjs/toolkit";
+import {apiSlice} from "../shared/api/apiSlice";
 import authReducer from "../features/authentication/authSlice";
 import settingsReducer from "../features/userSettings/settingsSlice";
 import {graphqlApiSlice} from "../shared/api/graphqlApiSlice";
 import progressReducer from "../widgets/progressBar/progressSlice";
+import { broadcastMiddleware } from "./broadcastMiddleware";
+
+import {FLUSH, persistReducer, persistStore, REHYDRATE} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import {PAUSE, PERSIST, PURGE, REGISTER} from "redux-persist/es/constants";
+
+const rootReducer = combineReducers({
+    [apiSlice.reducerPath]: apiSlice.reducer,
+    [graphqlApiSlice.reducerPath]: graphqlApiSlice.reducer,
+    auth: authReducer,
+    settings: settingsReducer,
+    progress: progressReducer
+});
+
+const persistConfig = {
+    key: 'root',
+    storage,
+    whitelist: ['auth', 'progress', 'settings'] // Persisted states
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-    reducer: {
-        [apiSlice.reducerPath]: apiSlice.reducer, // top-level slice reducer
-        [graphqlApiSlice.reducerPath]: graphqlApiSlice.reducer,
-        auth: authReducer,
-        settings: settingsReducer,
-        progress: progressReducer
-    },
+    reducer: persistedReducer,
     /*//////////////////////////////////////////////////////////////*/
     /* Adding the api middleware enables rtk-query features such as */
     /*         caching, invalidation, polling, etc...               */
     /*//////////////////////////////////////////////////////////////*/
     middleware: getDefaultMiddleware =>
-        getDefaultMiddleware()
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        })
             .concat(apiSlice.middleware)
             .concat(graphqlApiSlice.middleware)
+            .concat(broadcastMiddleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export const persistor = persistStore(store);
