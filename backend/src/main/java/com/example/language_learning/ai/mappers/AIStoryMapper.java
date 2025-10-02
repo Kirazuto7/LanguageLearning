@@ -53,6 +53,7 @@ public class AIStoryMapper {
         for (AIGeneratedPage aiGeneratedPage : aiGeneratedPages) {
             List<StoryVocabularyItemDTO> pageVocabulary = aiGeneratedPage.vocabulary().stream()
                     .map(this::toStoryVocabularyItemDTO)
+                    .filter(Objects::nonNull)
                     .filter(item -> encounteredWords.add(item.word()))
                     .toList();
             storyVocabulary.addAll(pageVocabulary);
@@ -76,6 +77,9 @@ public class AIStoryMapper {
     }
 
     private StoryVocabularyItemDTO toStoryVocabularyItemDTO(AIVocabularyItem aiVocabularyItem) {
+        if (aiVocabularyItem.word() == null || aiVocabularyItem.word().isBlank()) {
+            return  null;
+        }
         return StoryVocabularyItemDTO.builder()
                 .word(aiVocabularyItem.word())
                 .translation(aiVocabularyItem.translation())

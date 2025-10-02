@@ -7,7 +7,10 @@ import com.example.language_learning.generated.jooq.tables.records.StoryVocabula
 import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
 import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +26,12 @@ import static com.example.language_learning.generated.jooq.tables.StoryParagraph
 import static com.example.language_learning.generated.jooq.tables.StoryVocabularyItem.STORY_VOCABULARY_ITEM;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class StoryPageRepositoryImpl implements StoryPageRepositoryCustom {
 
     private final DSLContext dsl;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -85,6 +90,17 @@ public class StoryPageRepositoryImpl implements StoryPageRepositoryCustom {
                     record.setParagraphNumber(paragraph.getParagraphNumber());
                     record.setContent(paragraph.getContent());
                     record.setCreatedAt(now);
+
+                    // Convert the Set<String> to a JSONB object for JOOQ
+                    try {
+                        String jsonString = objectMapper.writeValueAsString(paragraph.getWordsToHighlight());
+                        record.setWordsToHighlight(JSONB.valueOf(jsonString));
+                    }
+                    catch (JsonProcessingException e) {
+                        log.error("Error serializing wordsToHighlight for paragraph {}", paragraph.getId(), e);
+                        record.setWordsToHighlight(JSONB.valueOf("[]"));
+                    }
+
                     paragraphRecords.add(record);
                 }
             }
@@ -94,6 +110,7 @@ public class StoryPageRepositoryImpl implements StoryPageRepositoryCustom {
                     StoryVocabularyItemRecord record = dsl.newRecord(STORY_VOCABULARY_ITEM);
                     record.setStoryPageId(pageId);
                     record.setWord(vocabItem.getWord());
+                    record.setStem(vocabItem.getStem());
                     record.setTranslation(vocabItem.getTranslation());
                     record.setCreatedAt(now);
                     vocabularyItemRecords.add(record);

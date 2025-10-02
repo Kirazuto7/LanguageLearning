@@ -43,12 +43,14 @@ type StoryParagraph {
     id: ID!
     paragraphNumber: Int!
     content: String!
+    wordsToHighlight: [String!]!
 }
 
 type StoryVocabularyItem {
     id: ID!
     word: String!
-    translation: String!
+    stem: String!
+    translation: String
 }
 
 # --- Inputs & Responses for Mutations ---

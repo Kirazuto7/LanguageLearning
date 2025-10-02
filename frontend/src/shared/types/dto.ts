@@ -91,11 +91,13 @@ export interface StoryParagraphDTO {
     id: string;
     paragraphNumber: number;
     content: string;
+    wordsToHighlight: string[];
 }
 
 export interface StoryVocabularyItemDTO {
     id: string;
     word: string;
+    stem: string;
     translation: string;
 }
 

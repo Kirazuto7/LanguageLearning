@@ -2,26 +2,36 @@ import {StoryContentPageDTO} from "../../../../shared/types/dto";
 import React from "react";
 import styles from "./storycontentpage.module.scss";
 
+
 interface StoryContentPageProps {
     page: StoryContentPageDTO;
 }
 
 const StoryContentPage: React.FC<StoryContentPageProps> = ({ page }) => {
-    const vocabWords = React.useMemo(() => new Set(page.vocabulary.map(vocabItem => vocabItem.word)), [page.vocabulary]);
+    const wordsToHighlight = React.useMemo(() => {
+        const allWords = page.paragraphs.flatMap(p => p.wordsToHighlight || []);
+        return [...new Set(allWords)];
+    }, [page.paragraphs]);
+
+    const highlightRegex = React.useMemo(() => {
+        if (wordsToHighlight.length === 0) {
+            return null;
+        }
+        return new RegExp(`(${wordsToHighlight.join('|')})`, 'g');
+    }, [wordsToHighlight]);
 
     const renderHighlightedText = (text: string) => {
-        if (!vocabWords.size) {
+        if (!highlightRegex) {
             return text;
         }
 
-        // Find all vocabulary words in the text and highlight them
-        const regex = new RegExp(`(${Array.from(vocabWords).join('|')})`, 'g');
-        const parts = text.split(regex);
+        const parts = text.split(highlightRegex);
 
         return parts.map((part, index) =>
-            vocabWords.has(part)
-            ? <span key={index} className={styles.highlighted}>{part}</span>
-            : (part)
+            // Every other part in the split array is a matched highlighted word.
+            index % 2 === 1
+                ? <span key={index} className={styles.highlighted}>{part}</span>
+                : part
         );
     };
 

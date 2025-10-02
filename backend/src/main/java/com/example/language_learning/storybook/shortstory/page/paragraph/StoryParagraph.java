@@ -6,6 +6,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "story_paragraphs")
@@ -19,6 +24,11 @@ public class StoryParagraph extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @Builder.Default
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "words_to_highlight", nullable = false, columnDefinition = "jsonb")
+    private Set<String> wordsToHighlight = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "story_page_id")

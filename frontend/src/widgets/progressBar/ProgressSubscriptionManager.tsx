@@ -32,8 +32,6 @@ const ProgressSubscriptionManager: React.FC = () => {
             return;
         }
 
-        const activeTaskIdsInState = new Set(Object.keys(progressState));
-
         // Subscribe to new, relevant tasks
         Object.values(progressState).forEach(task => {
             if (!task?.progressData) return;

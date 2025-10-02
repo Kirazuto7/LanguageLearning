@@ -10,5 +10,6 @@ import lombok.With;
 public record StoryVocabularyItemDTO(
     Long id,
     String word,
-    String translation
+    String translation,
+    String stem
 ) {}

@@ -4,6 +4,7 @@ export const storyVocabularyItemFragment = gql`
     fragment StoryVocabularyItemFragment on StoryVocabularyItem {
         id
         word
+        stem
         translation
     }
 `;
@@ -13,6 +14,7 @@ export const storyParagraphFragment = gql`
         id
         paragraphNumber
         content
+        wordsToHighlight
     }
 `;
 

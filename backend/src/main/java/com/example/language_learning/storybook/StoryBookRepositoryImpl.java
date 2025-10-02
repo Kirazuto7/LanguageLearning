@@ -5,15 +5,18 @@ import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
 import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 
 import static com.example.language_learning.generated.jooq.tables.ShortStory.SHORT_STORY;
 import static com.example.language_learning.generated.jooq.tables.StoryBook.STORY_BOOK;
@@ -23,10 +26,12 @@ import static com.example.language_learning.generated.jooq.tables.StoryVocabular
 import static org.jooq.impl.DSL.multiset;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
 
     private final DSLContext dsl;
+    private final ObjectMapper objectMapper;
 
     @Override
     public Optional<StoryBook> findStoryBookDetailsById(Long id) {
@@ -57,6 +62,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                                 dsl.select(
                                     STORY_PARAGRAPH.ID,
                                     STORY_PARAGRAPH.CONTENT,
+                                    STORY_PARAGRAPH.WORDS_TO_HIGHLIGHT,
                                     STORY_PARAGRAPH.CREATED_AT
                                 )
                                 .from(STORY_PARAGRAPH)
@@ -66,6 +72,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                                 dsl.selectDistinct(
                                     STORY_VOCABULARY_ITEM.ID,
                                     STORY_VOCABULARY_ITEM.WORD,
+                                    STORY_VOCABULARY_ITEM.STEM,
                                     STORY_VOCABULARY_ITEM.TRANSLATION,
                                     STORY_VOCABULARY_ITEM.CREATED_AT
                                 )
@@ -120,6 +127,22 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                         paragraph.setId(pr.get(STORY_PARAGRAPH.ID));
                         paragraph.setContent(pr.get(STORY_PARAGRAPH.CONTENT));
                         paragraph.setCreatedAt(pr.get(STORY_PARAGRAPH.CREATED_AT));
+
+                        JSONB wordsToHighlightJson = pr.get(STORY_PARAGRAPH.WORDS_TO_HIGHLIGHT);
+                        if (wordsToHighlightJson != null && wordsToHighlightJson.data() != null) {
+                            try {
+                                Set<String> wordsToHighlight = objectMapper.readValue(wordsToHighlightJson.data(), new TypeReference<Set<String>>() {});
+                                paragraph.setWordsToHighlight(wordsToHighlight);
+                            }
+                            catch (IOException e) {
+                                log.error("Error deserializing wordsToHighlight for paragraph {}", paragraph.getId(), e);
+                                paragraph.setWordsToHighlight(new HashSet<>());
+                            }
+                        }
+                        else {
+                            paragraph.setWordsToHighlight(new HashSet<>());
+                        }
+
                         paragraphs.add(paragraph);
                     }
                     storyPage.setParagraphs(paragraphs);
@@ -130,6 +153,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
                         StoryVocabularyItem item = new StoryVocabularyItem();
                         item.setId(vr.get(STORY_VOCABULARY_ITEM.ID));
                         item.setWord(vr.get(STORY_VOCABULARY_ITEM.WORD));
+                        item.setStem(vr.get(STORY_VOCABULARY_ITEM.STEM));
                         item.setTranslation(vr.get(STORY_VOCABULARY_ITEM.TRANSLATION));
                         item.setCreatedAt(vr.get(STORY_VOCABULARY_ITEM.CREATED_AT));
                         vocabulary.add(item);
