@@ -1,11 +1,13 @@
 package com.example.language_learning.config;
 
 import com.example.language_learning.security.JwtService;
+import com.example.language_learning.user.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.graphql.server.*;
 import org.springframework.graphql.server.webmvc.GraphQlWebSocketHandler;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +27,18 @@ import java.util.Optional;
 
 
 @Configuration
-@RequiredArgsConstructor
 @Slf4j
 public class WebSocketGraphQlConfig {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserService userService;
+
+    public WebSocketGraphQlConfig(JwtService jwtService, UserDetailsService userDetailsService, @Lazy UserService userService) {
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+        this.userService = userService;
+    }
 
     @Bean
     public GraphQlWebSocketHandler graphQlWebSocketHandler(WebGraphQlHandler graphQlHandler) {
@@ -57,6 +65,23 @@ public class WebSocketGraphQlConfig {
                 }
                 return token.map(this::authenticate)
                         .orElse(Mono.empty())
+                        .switchIfEmpty(Mono.defer(() -> {
+                            log.debug("Access token failed or not present, attempting to authenticate with refresh token for session {}", sessionInfo.getId());
+                            String cookieHeader = sessionInfo.getHeaders().getFirst(HttpHeaders.COOKIE);
+                            return jwtService.extractRefreshTokenFromCookieHeader(cookieHeader)
+                                    .map(refreshToken -> {
+                                        try {
+                                            UserDetails userDetails = userService.loadUserByRefreshToken(refreshToken);
+                                            log.info("Successfully authenticated user {} via refresh token during WebSocket handshake.", userDetails.getUsername());
+                                            return Mono.just(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
+                                        }
+                                        catch (Exception e) {
+                                            log.warn("Refresh token validation failed during WebSocket handshake: {}", e.getMessage());
+                                            return Mono.<Authentication>empty();
+                                        }
+                                    })
+                                    .orElse(Mono.empty());
+                        }))
                         .doOnNext(authentication -> {
                             sessionInfo.getAttributes().put("user-authentication", authentication);
                             log.info("Stored authentication for user {} in Websocket session {}", authentication.getName(), sessionInfo.getId());

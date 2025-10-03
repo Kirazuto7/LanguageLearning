@@ -4,9 +4,11 @@ import com.example.language_learning.user.requests.CreateUserRequest;
 import com.example.language_learning.user.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +32,7 @@ public class UserController {
         log.info("Received request to create a user with username: {}", request.username());
         AuthenticationResponse authenticationResponse = userService.register(request);
         jwtService.addJwtCookieToResponse(servletResponse, authenticationResponse);
+        jwtService.addRefreshTokenCookieToResponse(servletResponse, authenticationResponse.refreshToken());
         return ResponseEntity.ok(authenticationResponse.user());
     }
 
@@ -41,13 +44,38 @@ public class UserController {
         );
         AuthenticationResponse authenticationResponse = userService.login((User) authentication.getPrincipal());
         jwtService.addJwtCookieToResponse(servletResponse, authenticationResponse);
+        jwtService.addRefreshTokenCookieToResponse(servletResponse, authenticationResponse.refreshToken());
         return ResponseEntity.ok(authenticationResponse.user());
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletResponse response) {
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Extract the refresh token from the cookie
+        String refreshToken = jwtService.extractRefreshTokenFromRequest(request);
+
+        // Invalidate the token in the db
+        userService.logout(refreshToken);
+
+        // Clear cookies from the client
         jwtService.clearJwtCookieFromResponse(response);
+        jwtService.clearRefreshTokenCookieFromResponse(response);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = jwtService.extractRefreshTokenFromRequest(request);
+        try {
+            AuthenticationResponse newAuthResponse = userService.refreshToken(refreshToken);
+            jwtService.addJwtCookieToResponse(response, newAuthResponse);
+            jwtService.addRefreshTokenCookieToResponse(response, newAuthResponse.refreshToken());
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e) {
+            jwtService.clearJwtCookieFromResponse(response);
+            jwtService.clearRefreshTokenCookieFromResponse(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PatchMapping("/settings")

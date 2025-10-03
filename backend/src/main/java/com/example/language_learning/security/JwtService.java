@@ -26,6 +26,9 @@ public class JwtService {
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
+    @Value("${application.security.jwt.refresh-token-expiration}")
+    private long refreshTokenExpiration;
+
     public void addJwtCookieToResponse(HttpServletResponse servletResponse, AuthenticationResponse response) {
         ResponseCookie cookie = createJwtCookie(response.token());
         servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -33,6 +36,16 @@ public class JwtService {
 
     public void clearJwtCookieFromResponse(HttpServletResponse servletResponse) {
         ResponseCookie cookie = createLogoutCookie();
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    public void addRefreshTokenCookieToResponse(HttpServletResponse servletResponse, String refreshToken) {
+        ResponseCookie cookie = createRefreshTokenCookie(refreshToken);
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    public void clearRefreshTokenCookieFromResponse(HttpServletResponse servletResponse) {
+        ResponseCookie cookie = createLogoutRefreshTokenCookie();
         servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
@@ -46,6 +59,19 @@ public class JwtService {
         }
         return Arrays.stream(cookies)
                 .filter(cookie -> "jwt-token".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public String extractRefreshTokenFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        return Arrays.stream(cookies)
+                .filter(cookie -> "refresh-token".equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);
@@ -65,7 +91,18 @@ public class JwtService {
                 .findFirst();
     }
 
-    private ResponseCookie createJwtCookie(String jwt) {
+    public Optional<String> extractRefreshTokenFromCookieHeader(String cookieHeader) {
+        if (cookieHeader == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(cookieHeader.split(";"))
+                .map(String::trim)
+                .filter(cookieStr -> cookieStr.startsWith("refresh-token="))
+                .map(cookieStr -> cookieStr.substring("refresh-token=".length()))
+                .findFirst();
+    }
+
+    public ResponseCookie createJwtCookie(String jwt) {
         return ResponseCookie.from("jwt-token", jwt)
                 .httpOnly(true)
                 .secure(true)
@@ -77,6 +114,26 @@ public class JwtService {
 
     private ResponseCookie createLogoutCookie() {
         return ResponseCookie.from("jwt-token", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
+    }
+
+    public ResponseCookie createRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from("refresh-token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(refreshTokenExpiration / 1000)
+                .build();
+    }
+
+    private ResponseCookie createLogoutRefreshTokenCookie() {
+        return ResponseCookie.from("refresh-token", "")
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
@@ -104,6 +161,15 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(getSignInKey())
+                .compact();
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(getSignInKey())
                 .compact();
     }

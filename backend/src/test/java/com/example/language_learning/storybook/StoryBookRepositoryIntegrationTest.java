@@ -87,7 +87,6 @@ public class StoryBookRepositoryIntegrationTest {
 
         Long shortStoryId = dsl.insertInto(SHORT_STORY)
                 .set(SHORT_STORY.STORY_BOOK_ID, storyBookId)
-                .set(SHORT_STORY.CHAPTER_NUMBER, 1)
                 .set(SHORT_STORY.TITLE, "The Adventure Begins")
                 .set(SHORT_STORY.NATIVE_TITLE, "冒険の始まり")
                 .set(SHORT_STORY.GENRE, "Fantasy")
@@ -98,7 +97,6 @@ public class StoryBookRepositoryIntegrationTest {
 
         Long storyPageId = dsl.insertInto(STORY_PAGE)
                 .set(STORY_PAGE.SHORT_STORY_ID, shortStoryId)
-                .set(STORY_PAGE.PAGE_NUMBER, 1)
                 .set(STORY_PAGE.TYPE, StoryPageType.CONTENT.name())
                 .set(STORY_PAGE.IMAGE_URL, "http://example.com/image.png")
                 .set(STORY_PAGE.ENGLISH_SUMMARY, "A summary of the page.")
@@ -114,7 +112,6 @@ public class StoryBookRepositoryIntegrationTest {
 
         dsl.insertInto(STORY_VOCABULARY_ITEM)
                 .set(STORY_VOCABULARY_ITEM.STORY_PAGE_ID, storyPageId)
-                .set(STORY_VOCABULARY_ITEM.PAGE_NUMBER, 1)
                 .set(STORY_VOCABULARY_ITEM.WORD, "昔々")
                 .set(STORY_VOCABULARY_ITEM.TRANSLATION, "Once upon a time")
                 .execute();
@@ -142,7 +139,6 @@ public class StoryBookRepositoryIntegrationTest {
 
         // Assert nested StoryPage fields
         StoryPage foundPage = foundShortStory.getStoryPages().get(0);
-        assertThat(foundPage.getPageNumber()).isEqualTo(1);
         assertThat(foundPage.getType()).isEqualTo(StoryPageType.CONTENT);
         assertThat(foundPage.getImageUrl()).isEqualTo("http://example.com/image.png");
         assertThat(foundPage.getEnglishSummary()).isEqualTo("A summary of the page.");
