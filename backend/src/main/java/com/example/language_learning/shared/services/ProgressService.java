@@ -17,13 +17,11 @@ public class  ProgressService {
     private final Map<String, Sinks.Many<ProgressUpdateDTO>> taskSinks = new ConcurrentHashMap<>();
 
     public Flux<ProgressUpdateDTO> getPublisher(String taskId) {
+        // The sink is now only removed when the task completes or errors, not when a client disconnects.
         return taskSinks
                 .computeIfAbsent(taskId, k -> Sinks.many().multicast().onBackpressureBuffer())
                 .asFlux()
-                .doFinally(signalType -> {
-                    log.info("Stream for task {} finished with signal: {}. Removing sink.", taskId, signalType);
-                    taskSinks.remove(taskId);
-                });
+                .doOnCancel(() -> log.info("Client disconnected from task {}. Sink will remain for other subscribers.", taskId));
     }
 
     public void sendUpdate(String taskId, int progress, String message) {
@@ -48,6 +46,12 @@ public class  ProgressService {
         log.info("Completion for Task {}: {}", taskId, message);
         ProgressUpdateDTO update = ProgressUpdateDTO.forCompletion(taskId, message);
         send(taskId, update);
+
+        // When the task is complete, signal all listeners and remove the sink.
+        Sinks.Many<ProgressUpdateDTO> sink = taskSinks.remove(taskId);
+        if (sink != null) {
+            sink.tryEmitComplete();
+        }
     }
 
     public void sendError(String taskId, Throwable error) {
@@ -55,6 +59,12 @@ public class  ProgressService {
         log.error("Task {} failed with error: {}", taskId, errorMessage, error); // Log the full stack trace
         ProgressUpdateDTO update = ProgressUpdateDTO.forError(taskId, errorMessage);
         send(taskId, update);
+
+        // When the task errors, signal all listeners and remove the sink.
+        Sinks.Many<ProgressUpdateDTO> sink = taskSinks.remove(taskId);
+        if (sink != null) {
+            sink.tryEmitComplete();
+        }
     }
 
     private void send(String taskId, ProgressUpdateDTO update) {
@@ -73,10 +83,5 @@ public class  ProgressService {
         });
 
         sink.tryEmitNext(update);
-
-        /*if (update.isComplete() || update.error() != null) {
-            log.info("SENDING COMPLETE signal for task {}", taskId);
-            sink.tryEmitComplete();
-        }*/
     }
 }
