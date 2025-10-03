@@ -201,3 +201,9 @@ docker-compose run --rm init-db
     *   `docker-compose.gpu.yml` - Docker Compose configuration for GPU.
     *   `docker-compose.cpu.yml` - Docker Compose configuration for CPU.
     *   `.env.example` - Template for environment variables
+
+## Notice
+
+This project is copyright © 2025 Jordan Sukhnandan.  
+You are free to use and learn from the code under the Apache 2.0 license,  
+but please do not claim the project as your own.
