@@ -102,7 +102,6 @@ public class LessonBookRepositoryIntegrationTest {
 
         Long lessonChapterId = dsl.insertInto(LESSON_CHAPTER)
                 .set(LESSON_CHAPTER.BOOK_ID, lessonBookId)
-                .set(LESSON_CHAPTER.CHAPTER_NUMBER, 1)
                 .set(LESSON_CHAPTER.TITLE, "Greetings")
                 .set(LESSON_CHAPTER.NATIVE_TITLE, "挨拶")
                 .returning(LESSON_CHAPTER.ID)
@@ -137,7 +136,6 @@ public class LessonBookRepositoryIntegrationTest {
         dsl.insertInto(LESSON_PAGE)
                 .set(LESSON_PAGE.LESSON_CHAPTER_ID, lessonChapterId)
                 .set(LESSON_PAGE.LESSON_ID, vocabLessonId)
-                .set(LESSON_PAGE.PAGE_NUMBER, 1)
                 .execute();
 
         // --- Page 2: Grammar Lesson ---
@@ -164,7 +162,6 @@ public class LessonBookRepositoryIntegrationTest {
         dsl.insertInto(LESSON_PAGE)
                 .set(LESSON_PAGE.LESSON_CHAPTER_ID, lessonChapterId)
                 .set(LESSON_PAGE.LESSON_ID, grammarLessonId)
-                .set(LESSON_PAGE.PAGE_NUMBER, 2)
                 .execute();
 
         // --- Page 3: Practice Lesson ---
@@ -185,7 +182,6 @@ public class LessonBookRepositoryIntegrationTest {
         dsl.insertInto(LESSON_PAGE)
                 .set(LESSON_PAGE.LESSON_CHAPTER_ID, lessonChapterId)
                 .set(LESSON_PAGE.LESSON_ID, practiceLessonId)
-                .set(LESSON_PAGE.PAGE_NUMBER, 3)
                 .execute();
 
         // --- Page 4: Conjugation Lesson ---
@@ -200,14 +196,12 @@ public class LessonBookRepositoryIntegrationTest {
                 .set(CONJUGATION_LESSON.EXPLANATION, "The polite form of verbs.")
                 .execute();
         dsl.insertInto(CONJUGATION_EXAMPLE)
-                .set(CONJUGATION_EXAMPLE.LESSON_ID, conjugationLessonId)
                 .set(CONJUGATION_EXAMPLE.INFINITIVE, "食べる")
                 .set(CONJUGATION_EXAMPLE.CONJUGATED_FORM, "食べます")
                 .execute();
         dsl.insertInto(LESSON_PAGE)
                 .set(LESSON_PAGE.LESSON_CHAPTER_ID, lessonChapterId)
                 .set(LESSON_PAGE.LESSON_ID, conjugationLessonId)
-                .set(LESSON_PAGE.PAGE_NUMBER, 4)
                 .execute();
 
         // --- Page 5: Reading Comprehension Lesson ---
@@ -228,7 +222,6 @@ public class LessonBookRepositoryIntegrationTest {
         dsl.insertInto(LESSON_PAGE)
                 .set(LESSON_PAGE.LESSON_CHAPTER_ID, lessonChapterId)
                 .set(LESSON_PAGE.LESSON_ID, readingLessonId)
-                .set(LESSON_PAGE.PAGE_NUMBER, 5)
                 .execute();
 
         // 2. Act
@@ -253,7 +246,6 @@ public class LessonBookRepositoryIntegrationTest {
 
         // --- Assert Page 1: Vocabulary Lesson ---
         LessonPage vocabPage = foundChapter.getLessonPages().get(0);
-        assertThat(vocabPage.getPageNumber()).isEqualTo(1);
         assertThat(vocabPage.getLesson()).isNotNull().isInstanceOf(VocabularyLesson.class);
         VocabularyLesson vocabLesson = (VocabularyLesson) vocabPage.getLesson();
         assertThat(vocabLesson.getVocabularies()).isNotNull().hasSize(1);
@@ -263,7 +255,6 @@ public class LessonBookRepositoryIntegrationTest {
 
         // --- Assert Page 2: Grammar Lesson ---
         LessonPage grammarPage = foundChapter.getLessonPages().get(1);
-        assertThat(grammarPage.getPageNumber()).isEqualTo(2);
         assertThat(grammarPage.getLesson()).isNotNull().isInstanceOf(GrammarLesson.class);
         GrammarLesson grammarLesson = (GrammarLesson) grammarPage.getLesson();
         assertThat(grammarLesson.getGrammarConcept()).isEqualTo("Topic Marker は (wa)");
@@ -272,7 +263,6 @@ public class LessonBookRepositoryIntegrationTest {
 
         // --- Assert Page 3: Practice Lesson ---
         LessonPage practicePage = foundChapter.getLessonPages().get(2);
-        assertThat(practicePage.getPageNumber()).isEqualTo(3);
         assertThat(practicePage.getLesson()).isNotNull().isInstanceOf(PracticeLesson.class);
         PracticeLesson practiceLesson = (PracticeLesson) practicePage.getLesson();
         assertThat(practiceLesson.getInstructions()).isEqualTo("Translate the following sentences.");
@@ -281,7 +271,6 @@ public class LessonBookRepositoryIntegrationTest {
 
         // --- Assert Page 4: Conjugation Lesson ---
         LessonPage conjugationPage = foundChapter.getLessonPages().get(3);
-        assertThat(conjugationPage.getPageNumber()).isEqualTo(4);
         assertThat(conjugationPage.getLesson()).isNotNull().isInstanceOf(ConjugationLesson.class);
         ConjugationLesson conjugationLesson = (ConjugationLesson) conjugationPage.getLesson();
         assertThat(conjugationLesson.getConjugationRuleName()).isEqualTo("Masu-form");
@@ -290,7 +279,6 @@ public class LessonBookRepositoryIntegrationTest {
 
         // --- Assert Page 5: Reading Comprehension Lesson ---
         LessonPage readingPage = foundChapter.getLessonPages().get(4);
-        assertThat(readingPage.getPageNumber()).isEqualTo(5);
         assertThat(readingPage.getLesson()).isNotNull().isInstanceOf(ReadingComprehensionLesson.class);
         ReadingComprehensionLesson readingLesson = (ReadingComprehensionLesson) readingPage.getLesson();
         assertThat(readingLesson.getStory()).isEqualTo("猫は公園にいます。");
