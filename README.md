@@ -92,11 +92,12 @@ The application features a sophisticated vocabulary highlighting system. To prov
 
 ### Resilient State & Subscription Management
 
-The application ensures a seamless user experience by making asynchronous tasks, like content generation, persistent across page refreshes.
+The application ensures a seamless user experience by making asynchronous tasks, like content generation, persistent and synchronized across multiple browser tabs.
 
-- **Centralized Subscription Manager:** A single React component, `ProgressSubscriptionManager`, is responsible for managing all WebSocket subscriptions for real-time progress updates.
-- **Redux Persistence:** The Redux state for ongoing tasks is persisted to `localStorage`. When the user refreshes the page, the state is rehydrated, and the `ProgressSubscriptionManager` automatically re-establishes subscriptions for any tasks that were in progress.
-- **Clean Separation of Concerns:** This architecture separates the network logic (subscriptions) from the UI logic (displaying progress), making the hooks (`useChapterGeneration`, `useShortStoryGeneration`) simpler and purely reactive to the global state.
+- **Backend Resilience (`ProgressService`):** The backend's progress broadcasting service was refactored to be fully stateless. It correctly handles multiple clients (tabs) subscribing to the same task. When a client disconnects, the data stream remains active for other listeners, preventing the "last tab closed" bug.
+- **Frontend Resilience (`graphql-ws`):** The WebSocket client is configured with `retryAttempts`. If a tab is closed, causing the shared connection to drop, the clients in the remaining open tabs will automatically and seamlessly reconnect to the backend, ensuring they continue to receive progress updates without interruption.
+- **State Persistence (`redux-persist`):** The Redux state for ongoing tasks is persisted to `localStorage`. When a user opens a new tab or refreshes the page, the state is rehydrated, and the `ProgressSubscriptionManager` automatically re-establishes subscriptions for any tasks that were in progress.
+- **Live State Sync (`BroadcastChannel`):** A Redux middleware uses the `BroadcastChannel` API to send notifications between open tabs. When a user logs in, logs out, or changes their settings in one tab, all other tabs are immediately notified and their state is updated to match, ensuring a consistent experience everywhere.
 
 ## AI Service
 

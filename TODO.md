@@ -6,8 +6,8 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 
 - [x] **Architectural Refinement: Decouple Display Order from DB**
     - [x] Modify all jOOQ fetch queries to `ORDER BY` the entity `id` instead of `chapterNumber` or `pageNumber`.
-    - [x] Remove the application's reliance on stored chapter/page numbers for ordering.
-    - [x] **Frontend:** Update UI components to calculate and display chapter/page numbers dynamically based on the item's index in the sorted list received from the backend.
+    - [x] Remove the application\'s reliance on stored chapter/page numbers for ordering.
+    - [x] **Frontend:** Update UI components to calculate and display chapter/page numbers dynamically based on the item\'s index in the sorted list received from the backend.
 
 - [ ] **Decouple jOOQ Generation from Live Database**
     - [ ] **Goal:** Use Testcontainers to spin up an ephemeral PostgreSQL database for the `generateJooq` task. This removes the development dependency on a running database instance.
@@ -28,7 +28,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] **Optimize Story Persistence with jOOQ Batching**
         - [x] Refactor the iterative, page-by-page persistence logic in `StoryGenerationActions` and `StoryPageService`.
         - [x] Replace it with a single, efficient batch operation that runs after all AI text generation is complete.
-        - [x] Use jOOQ\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
+        - [x] Use jOOQ\\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
     - [x] **Fix Image Generation API Integration**
         - [x] Use a pre-built public image for the `image-api` service to ensure a stable API contract.
         - [x] **Configure and use a LoRA** to enforce a consistent art style for all storybook illustrations.
@@ -39,8 +39,8 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] Implement frontend UI components for displaying stories (handling the `StoryPage` union).
     - [x] Update the frontend to display the generated image on content pages.
 
-- [ ] **Implement Robust Client-Side State Management**
-    - [ ] **Goal:** Persist user sessions across page reloads and synchronize state between multiple open tabs to prevent stale data and misuse.
+- [x] **Implement Robust Client-Side State Management**
+    - [x] **Goal:** Persist user sessions across page reloads and synchronize state between multiple open tabs to prevent stale data and misuse.
     - [x] **Refactor & Centralize Progress Handling (High Priority)**
         - [x] **Goal:** Create a single source of truth for managing WebSocket progress subscriptions to eliminate race conditions and simplify component logic.
         - [x] **`ProgressSubscriptionManager`:**
@@ -52,10 +52,10 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] **Persistence (`redux-persist`):**
         - [x] Integrate `redux-persist` to save the Redux store to `localStorage`.
         - [x] Configure it to persist the `auth` and `progress` slices. This keeps the user logged in and ensures orphaned tasks are available for re-subscription on page load.
-    - [ ] **Synchronization (`BroadcastChannel`):**
-        - [ ] Create a new Redux middleware that uses the `BroadcastChannel` API.
-        - [ ] The middleware should listen for successful RTK Query mutations.
-        - [ ] When a mutation occurs, broadcast a message to other tabs to invalidate the relevant cache tags, triggering an automatic re-fetch.
+    - [x] **Synchronization (`BroadcastChannel`):**
+        - [x] Implemented a `broadcastMiddleware` to sync state changes (auth, settings, progress) across multiple tabs.
+        - [x] Made WebSocket client resilient to disconnections to ensure subscriptions persist across tab closures.
+        - [x] Fixed backend `ProgressService` to prevent premature subscription closure.
 
 - [ ] **Secure AI Interaction**
     - [ ] Add frontend validation (e.g., `maxLength`) to all user input fields that are sent to the AI.
@@ -68,7 +68,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] Build frontend Register page.
     - [ ] **Implement "My Library" Dashboard & Content Management**
         - [ ] **Dashboard UI:**
-            - [ ] Create a new page for the user's library/dashboard.
+            - [ ] Create a new page for the user\'s library/dashboard.
             - [ ] Design horizontal carousels/stacks to display `LessonBooks` and `StoryBooks`.
             - [ ] Fetch and display the 10 most recently created books for each type.
         - [ ] **Content Management UI:**
@@ -76,7 +76,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
             - [ ] Display all `LessonBooks` and `StoryBooks` in a list or grid format.
             - [ ] Implement a "Delete" button for each book with a confirmation modal.
         - [ ] **Backend API:**
-            - [ ] Create a new GraphQL query (`myLibrary`) to fetch a combined, sorted list of a user's books.
+            - [ ] Create a new GraphQL query (`myLibrary`) to fetch a combined, sorted list of a user\'s books.
             - [ ] Implement a jOOQ repository using `UNION ALL` to efficiently query both `lesson_books` and `story_books` tables.
             - [ ] Create a GraphQL mutation (`deleteBook`) to handle book deletion.
 
@@ -103,7 +103,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] **Implementation:** Start with Japanese, using the `JapaneseAnalyzer` (Kuromoji) to verify that the `hiragana` reading matches the `kanji` form.
 
 - [ ] **Implement Offline Dictionary for Single Word Translation**
-    - [ ] **Description:** Create a `DictionaryService` to provide fast, offline, low-cost translations for single words, replacing the AI's translation for `Word` entities.
+    - [ ] **Description:** Create a `DictionaryService` to provide fast, offline, low-cost translations for single words, replacing the AI\'s translation for `Word` entities.
     - [ ] **Goal:** Improve performance, reduce AI costs, and increase translation reliability for individual vocabulary items.
     - [ ] **Resources:**
         - [ ] **Data Source:** [FreeDict](https://freedict.org/)
@@ -138,11 +138,11 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 - [ ] **User Progress Tracking**
     - [ ] Add a `isCompleted` field to `LessonChapter` and `StoryChapter` entities.
     - [ ] Implement a "Mark as Complete" button in the UI.
-    - [ ] Display progress indicators (e.g., a checkmark) on completed books in the user\'s library.
+    - [ ] Display progress indicators (e.g., a checkmark) on completed books in the user\\'s library.
 
 - [ ] **Search & Discovery**
     - [ ] Implement a search bar on the frontend.
-    - [ ] Add logic to filter the user\'s generated books by title or topic.
+    - [ ] Add logic to filter the user\\'s generated books by title or topic.
 
 ---
 
@@ -154,7 +154,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] Add logic to the `LessonBookService` and `StoryBookService` to check this limit before content creation.
     - [ ] Create a custom exception (e.g., `ContentLimitExceededException`) to be thrown when the limit is reached.
     - [ ] **Frontend:**
-        - [ ] Display the user's current content usage (e.g., "3/5 books used").
+        - [ ] Display the user\\'s current content usage (e.g., "3/5 books used").
         - [ ] When the limit is hit, show a modal prompting the user to upgrade or manage their existing content.
     - [ ] Integrate a payment provider (e.g., Stripe) to handle subscriptions.
 
@@ -221,7 +221,7 @@ Create a dedicated admin console for debugging and development monitoring.
 -   **Frontend:** A separate single-page application (e.g., React) running on its own port (e.g., `localhost:3001`).
 -   **Backend:** Use the **existing** Spring Boot server.
     -   **Reasoning:** Provides direct access to application services, repositories, and the database context. Operationally simpler and more cost-effective than a separate server.
-    -   **CORS:** Configure CORS on the backend to allow requests from the admin frontend\'s origin.
+    -   **CORS:** Configure CORS on the backend to allow requests from the admin frontend\\'s origin.
 -   **Code Organization (Backend):**
     -   Place all admin-related controllers, services, and DTOs in a dedicated root package: `com.example.language_learning.admin`.
 -   **Production Safety:**
