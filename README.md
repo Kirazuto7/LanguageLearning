@@ -202,8 +202,12 @@ docker-compose run --rm init-db
     *   `docker-compose.cpu.yml` - Docker Compose configuration for CPU.
     *   `.env.example` - Template for environment variables
 
-## Notice
+## Attribution
 
-This project is copyright © 2025 Jordan Sukhnandan.  
-You are free to use and learn from the code under the Apache 2.0 license,  
-but please do not claim the project as your own.
+© 2025 Jordan Sukhnandan All rights reserved.
+
+This project is licensed under the [Apache License 2.0](./LICENSE).  
+You are free to use, modify, and distribute the code in accordance with the license terms.  
+
+While redistribution and modification are permitted, please **do not claim this project as your own**.  
+If you fork, copy, or build upon this project, proper credit to the original author is appreciated.
