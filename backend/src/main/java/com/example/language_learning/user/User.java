@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,10 @@ public class User extends BaseEntity implements UserDetails {
     @JsonIgnore
     @ToString.Exclude
     private String password;
+
+    private String refreshToken;
+
+    private Instant refreshTokenExpiry;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "settings_id")

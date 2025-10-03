@@ -5,7 +5,6 @@ import settingsReducer from "../features/userSettings/settingsSlice";
 import {graphqlApiSlice} from "../shared/api/graphqlApiSlice";
 import progressReducer from "../widgets/progressBar/progressSlice";
 import { broadcastMiddleware } from "./broadcastMiddleware";
-
 import {FLUSH, persistReducer, persistStore, REHYDRATE} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {PAUSE, PERSIST, PURGE, REGISTER} from "redux-persist/es/constants";

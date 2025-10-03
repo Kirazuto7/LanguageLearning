@@ -19,6 +19,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
             })
         }),
 
+        refreshToken: builder.mutation<void, void>({
+            query: () => ({
+                url: '/users/refresh',
+                method: 'POST',
+            })
+        }),
+
         logout: builder.mutation<void, void>({
             query: () => ({
                 url: '/users/logout',
@@ -43,4 +50,4 @@ export const userApiSlice = apiSlice.injectEndpoints({
     })
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useUpdateSettingsMutation, useHealthCheckQuery } = userApiSlice;
+export const { useLoginMutation, useRegisterMutation, useRefreshTokenMutation, useLogoutMutation, useUpdateSettingsMutation, useHealthCheckQuery } = userApiSlice;

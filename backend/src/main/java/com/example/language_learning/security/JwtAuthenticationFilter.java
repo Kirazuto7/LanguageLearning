@@ -50,10 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         log.trace("Authenticated user '{}' from JWT for request: {}", username, request.getRequestURI());
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 log.warn("JWT Token processing failed for request {}: {}", request.getRequestURI(), e.getMessage());
-                //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                //response.getWriter().write("Authentication Error: Invalid or expired token.");
             }
         }
         filterChain.doFilter(request, response);

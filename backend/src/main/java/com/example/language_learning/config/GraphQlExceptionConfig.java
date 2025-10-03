@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter;
 import org.springframework.graphql.execution.ErrorType;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class GraphQlExceptionConfig {
             @Override
             protected GraphQLError resolveToSingleError(Throwable ex, DataFetchingEnvironment env) {
                 // Handle specific security exceptions first
-                if (ex instanceof SecurityException) {
+                if (ex instanceof AuthorizationDeniedException) {
                     return GraphqlErrorBuilder.newError(env)
                             .message(ex.getMessage())
                             .errorType(ErrorType.UNAUTHORIZED)

@@ -87,10 +87,14 @@ application:
   security:
     jwt:
       secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
-      expiration: 86400000
+      # Access token expiration: 15 mins
+      expiration: 900000
+      # Refresh token expiration: 7 days
+      refresh-token-expiration: 604800000 
     public-paths:
       - "/api/users/register"
       - "/api/users/login"
+      - "/api/users/refresh"
       - "/api/logs/client"
       - "/api/users/logout"
       - "/error"
