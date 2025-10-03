@@ -9,12 +9,13 @@ An AI-powered language learning application designed to generate dynamic, person
 4. [Architecture Overview](#architecture-overview)
 5. [Backend Architecture](#backend-architecture)
 6. [Frontend Architecture](#frontend-architecture)
-7. [AI Service](#ai-service)
-8. [Getting Started](#getting-started)
-9. [Running the Application](#running-the-application)
-10. [Development Workflow](#development-workflow)
-11. [Project Structure](#project-structure)
-12. [Attribution](#attribution)
+7. [Authentication Architecture](#authentication-architecture)
+8. [AI Service](#ai-service)
+9. [Getting Started](#getting-started)
+10. [Running the Application](#running-the-application)
+11. [Development Workflow](#development-workflow)
+12. [Project Structure](#project-structure)
+13. [Attribution](#attribution)
 
 ## Preview
 
@@ -99,6 +100,24 @@ The application ensures a seamless user experience by making asynchronous tasks,
 - **Frontend Resilience (`graphql-ws`):** The WebSocket client is configured with `retryAttempts`. If a tab is closed, causing the shared connection to drop, the clients in the remaining open tabs will automatically and seamlessly reconnect to the backend, ensuring they continue to receive progress updates without interruption.
 - **State Persistence (`redux-persist`):** The Redux state for ongoing tasks is persisted to `localStorage`. When a user opens a new tab or refreshes the page, the state is rehydrated, and the `ProgressSubscriptionManager` automatically re-establishes subscriptions for any tasks that were in progress.
 - **Live State Sync (`BroadcastChannel`):** A Redux middleware uses the `BroadcastChannel` API to send notifications between open tabs. When a user logs in, logs out, or changes their settings in one tab, all other tabs are immediately notified and their state is updated to match, ensuring a consistent experience everywhere.
+
+## Authentication Architecture
+
+The application uses a robust, modern token-based authentication system designed for security and a seamless user experience. It is built around a silent refresh mechanism that prevents the user from being logged out unexpectedly.
+
+*   **Token Strategy**: The system uses two tokens:
+    *   A **short-lived access token** (JWT) used to authenticate most API requests. Its short lifetime (e.g., 15 minutes) minimizes the risk of a stolen token.
+    *   A **long-lived refresh token** used to obtain a new access token without requiring the user to log in again.
+
+*   **Secure Cookie Storage**: Both tokens are stored in secure, `HttpOnly` cookies, which prevents them from being accessed by client-side JavaScript. This is a critical security measure against XSS attacks. The refresh token also uses token rotation for enhanced security, where a new refresh token is issued each time one is used.
+
+*   **Silent Refresh Mechanism**: The frontend employs a "silent refresh" pattern using custom RTK Query `baseQuery` wrappers.
+    1.  When an API request fails with a `401 Unauthorized` or `403 Forbidden` error (indicating an expired access token), the request is not immediately rejected.
+    2.  The `baseQuery` wrapper automatically intercepts this error and makes a request to the backend's `/api/users/refresh` endpoint, sending the refresh token.
+    3.  If the refresh is successful, the backend responds with a new access token and a new refresh token in `Set-Cookie` headers.
+    4.  The wrapper then automatically retries the original, failed API request, which now succeeds with the new access token.
+
+*   **Unified Error Handling**: This silent refresh logic is centralized in custom wrappers for both the REST API (`baseQueryWithReauth`) and the GraphQL API (`graphqlBaseQueryWithReauth`), ensuring a consistent and seamless experience across the entire application.
 
 ## AI Service
 
