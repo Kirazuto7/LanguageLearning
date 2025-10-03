@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { selectCurrentTheme } from "../features/userSettings/settingsSlice";
+import { selectIsAuthenticated } from "../features/authentication/authSlice";
 
 const themedPaths = ['/home', '/study', '/read'];
 
@@ -12,12 +13,15 @@ const themedPaths = ['/home', '/study', '/read'];
  const ThemeManager: React.FC = () => {
     const location = useLocation();
     const userTheme = useSelector(selectCurrentTheme);
+    const isAuthenticated = useSelector(selectIsAuthenticated);
 
     useEffect(() => {
-        const isThemedPage = themedPaths.some(path => location.pathname.startsWith(path));
+        const isRootForAuthUser = isAuthenticated && location.pathname === '/';
+        const isThemedPage = themedPaths.some(path => location.pathname.startsWith(path)) || isRootForAuthUser;
         const themeToApply = isThemedPage ? userTheme : 'default';
+
         document.body.className = `themed-body ${themeToApply}`;
-    }, [location, userTheme]);
+    }, [location, userTheme, isAuthenticated]);
 
     return null;
  };
