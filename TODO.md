@@ -9,6 +9,12 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] Remove the application's reliance on stored chapter/page numbers for ordering.
     - [x] **Frontend:** Update UI components to calculate and display chapter/page numbers dynamically based on the item's index in the sorted list received from the backend.
 
+- [ ] **Decouple jOOQ Generation from Live Database**
+    - [ ] **Goal:** Use Testcontainers to spin up an ephemeral PostgreSQL database for the `generateJooq` task. This removes the development dependency on a running database instance.
+    - [ ] **Implementation:**
+        - [ ] Integrate the Testcontainers Gradle plugin.
+        - [ ] Configure the `generateJooq` task to use a containerized database, initialized with the `dev-schema.sql` script.
+
 ---
 
 ### Tier 1: Core Content & Interaction (Highest Priority)
@@ -96,13 +102,13 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] **Goal:** Ensure linguistic data (e.g., Japanese `hiragana` readings, German `gender`) is correct before being saved.
     - [ ] **Implementation:** Start with Japanese, using the `JapaneseAnalyzer` (Kuromoji) to verify that the `hiragana` reading matches the `kanji` form.
 
-- [ ] **Implement Offline Dictionary for Word Translation**
+- [ ] **Implement Offline Dictionary for Single Word Translation**
     - [ ] **Description:** Create a `DictionaryService` to provide fast, offline, low-cost translations for single words, replacing the AI's translation for `Word` entities.
-    - [ ] **Goal:** Improve performance, reduce AI costs, and increase translation reliability.
+    - [ ] **Goal:** Improve performance, reduce AI costs, and increase translation reliability for individual vocabulary items.
     - [ ] **Resources:**
         - [ ] **Data Source:** [FreeDict](https://freedict.org/)
         - [ ] **Java Library Research:** Find a Java library to parse the DICT format. (See [Stack Overflow Discussion](https://stackoverflow.com/questions/7455513/is-there-a-java-translation-library-that-works-offline)).
-        - [ ] **Tools:** The `freedict-tools` package may contain useful utilities. ([Debian Package](https://packages.debian.org/trixie/freedict-tools))
+        - [ ] **Tools:** The `freedict-tools` package may contain useful utilities. ([Debian Package](https://packages.debian.org/search?keywords=freedict&searchon=names&suite=stable&section=all), [Trixie Package](https://packages.debian.org/trixie/freedict-tools)).
 
 - [ ] **Implement AI Content Validation with Wiktionary**
     - [ ] **Phase 1: Local Setup & Proof of Concept**
@@ -117,7 +123,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
         - [ ] Update the `DictionaryValidator` service to connect to and query the new database.
 
 - [ ] **Implement Semantic Caching to Prevent Repetitive Content**
-- [ ] **Implement Fallback Translation Service**
+- [ ] **Implement Fallback Translation Service (for Sentences)**
     - [ ] **Goal:** Improve application resilience by providing a simple, reliable translation for **full sentences** when the primary AI generation fails validation or returns malformed data.
     - [ ] **Technology:** Use the `UlionTse/translators` Python library (Link) wrapped in a small, dedicated microservice (e.g., using Flask/FastAPI) within the Docker environment.
     - [ ] **Strategy:**
