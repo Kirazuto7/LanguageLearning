@@ -25,14 +25,18 @@ export function useSettingsManager(): SettingsManagerResult {
             return undefined;
         }
 
+        // Merge the new settings with the existing ones to prevent overwriting.
+        const mergedSettings = { ...settings, ...newSettings };
+
         try{
-            return await updateSettingsMutation(newSettings).unwrap();
+            // Send the complete, merged settings object to the backend.
+            return await updateSettingsMutation(mergedSettings).unwrap();
         }
         catch (err) {
             console.error("Failed to update settings:", err);
             return undefined;
         }
-    }, [updateSettingsMutation])
+    }, [settings, updateSettingsMutation])
 
     return useMemo(() => ({
         settings,
