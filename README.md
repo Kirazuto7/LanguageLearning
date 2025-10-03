@@ -14,6 +14,7 @@ An AI-powered language learning application designed to generate dynamic, person
 9. [Running the Application](#running-the-application)
 10. [Development Workflow](#development-workflow)
 11. [Project Structure](#project-structure)
+12. [Attribution](#attribution)
 
 ## Preview
 
