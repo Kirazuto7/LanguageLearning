@@ -25,7 +25,7 @@ public class ShortStory extends BaseChapter {
     private String topic;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shortStory")
-    @OrderBy("pageNumber ASC")
+    @OrderBy("id ASC")
     @Builder.Default
     @BatchSize(size = 10)
     private List<StoryPage> storyPages = new ArrayList<>();

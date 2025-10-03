@@ -11,8 +11,10 @@ import org.mapstruct.Mapping;
     componentModel = "spring",
     uses = {LessonStructMapper.class}
 )
-public abstract class PageStructMapper {
+public abstract class LessonPageStructMapper {
     @Mapping(target = "lessonChapter", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract LessonPage toEntity(LessonPageDTO dto, @Context CycleAvoidingMappingContext context);
     public abstract LessonPageDTO toDto(LessonPage entity, @Context CycleAvoidingMappingContext context);
 

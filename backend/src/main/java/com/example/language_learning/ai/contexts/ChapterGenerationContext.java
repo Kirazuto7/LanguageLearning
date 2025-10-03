@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * The context object that holds all the data that persists across all states of the lessonChapter generation process.
  */
@@ -20,6 +18,5 @@ public class ChapterGenerationContext {
     private final ChapterGenerationRequest request;
     private final String taskId;
     private final Long chapterId;
-    private final AtomicInteger pageCounter;
     private LessonChapter lessonChapter;
 }

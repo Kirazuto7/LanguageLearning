@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class StoryGenerationService {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                generateStoryAsync(request, output.getTaskId(), output.getShortStory().getId(), output.getStartingPageNumber());
+                generateStoryAsync(request, output.getTaskId(), output.getShortStory().getId());
             }
         });
 
@@ -52,10 +50,10 @@ public class StoryGenerationService {
                 .build();
     }
 
-    private void generateStoryAsync(ShortStoryGenerationRequest request, String taskId, Long storyId, int startingPageNumber) {
+    private void generateStoryAsync(ShortStoryGenerationRequest request, String taskId, Long storyId) {
         Runnable storyGenerationJob = () -> {
             try {
-                StoryGenerationContext context = new StoryGenerationContext(request, taskId, storyId, new AtomicInteger(startingPageNumber));
+                StoryGenerationContext context = new StoryGenerationContext(request, taskId, storyId);
                 var sm = stateMachineFactory.createInstance();
                 sm.runToCompletion(context)
                         .onCompletion(StoryGenerationState.COMPLETED.class, completed -> {

@@ -9,8 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface LessonPageRepository extends JpaRepository<LessonPage, Long> {
-
-    @Query("SELECT MAX(p.pageNumber) FROM LessonPage p WHERE p.lessonChapter.lessonBook.id = :bookId")
-    Optional<Integer> findMaxPageNumberByBookId(@Param("bookId") Long bookId);
 }
 

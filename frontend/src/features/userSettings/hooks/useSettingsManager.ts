@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useUpdateSettingsMutation } from "../../../shared/api/userApiSlice";
 import { SettingsDTO } from "../../../shared/types/dto";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {selectCurrentSettings} from "../settingsSlice";
 
 /* ------------------------------------------------------------- */
@@ -25,8 +25,12 @@ export function useSettingsManager(): SettingsManagerResult {
             return undefined;
         }
 
+        // Merge the new settings with the existing ones to prevent overwriting.
+        const mergedSettings = { ...settings, ...newSettings };
+
         try{
-            return await updateSettingsMutation(newSettings).unwrap();
+            // Send the complete, merged settings object to the backend.
+            return await updateSettingsMutation(mergedSettings).unwrap();
         }
         catch (err) {
             console.error("Failed to update settings:", err);
@@ -34,5 +38,10 @@ export function useSettingsManager(): SettingsManagerResult {
         }
     }, [settings, updateSettingsMutation])
 
-    return { settings, updateSettings, isLoading, error};
+    return useMemo(() => ({
+        settings,
+        updateSettings,
+        isLoading,
+        error
+    }), [settings, updateSettings, isLoading, error]);
 }

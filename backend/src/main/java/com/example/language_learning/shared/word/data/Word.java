@@ -16,10 +16,6 @@ import org.hibernate.type.SqlTypes;
 @Entity
 @Table(name = "words")
 public class Word extends BaseEntity  {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String englishTranslation; // English translation
 

@@ -12,5 +12,4 @@ public class ChapterPrepOutput {
     private String taskId;
     private LessonBook book;
     private LessonChapter lessonChapter;
-    private int startingPageNumber;
 }

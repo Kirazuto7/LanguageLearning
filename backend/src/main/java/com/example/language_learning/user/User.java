@@ -2,6 +2,7 @@ package com.example.language_learning.user;
 
 import com.example.language_learning.lessonbook.LessonBook;
 import com.example.language_learning.shared.data.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -21,11 +22,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String username;
+
+    @JsonIgnore
+    @ToString.Exclude
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL)

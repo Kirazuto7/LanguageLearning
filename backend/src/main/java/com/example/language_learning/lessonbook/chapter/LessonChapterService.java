@@ -25,29 +25,24 @@ public class LessonChapterService {
     @Transactional(readOnly = true)
     public LessonChapterDTO getChapterDtoByIdAndUser(Long chapterId, User user) {
         return lessonChapterRepository.findByIdAndUserWithPages(chapterId, user)
-                .map(dtoMapper::toDto)
-                .orElse(null);
+                .map(dtoMapper::toDto) // .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Chapter not found or user does not have access."));
     }
 
     @Transactional
-    public LessonChapter createChapter(LessonBook lessonBook, int chapterNumber, String title, String nativeTitle) {
+    public LessonChapter createChapter(LessonBook lessonBook, String title, String nativeTitle) {
         LessonChapter lessonChapter = LessonChapter.builder()
                 .lessonBook(lessonBook)
-                .chapterNumber(chapterNumber)
                 .title(title)
                 .nativeTitle(nativeTitle)
                 .build();
         lessonBook.addLessonChapter(lessonChapter);
         return lessonChapterRepository.save(lessonChapter);
     }
-
     @Transactional
-    public LessonChapter updateChapter(Long chapterId, int chapterNumber, String title, String nativeTitle) {
+    public LessonChapter updateChapter(Long chapterId, String title, String nativeTitle) {
         LessonChapter lessonChapter = getChapter(chapterId)
                 .orElseThrow(() -> new RuntimeException("Chapter not found."));
-        if (chapterNumber != 0) {
-            lessonChapter.setChapterNumber(chapterNumber);
-        }
         if (title != null && !title.isBlank()) {
             lessonChapter.setTitle(title);
         }

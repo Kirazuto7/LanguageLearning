@@ -10,6 +10,8 @@ import org.mapstruct.ObjectFactory;
 public abstract class StoryParagraphStructMapper {
 
     @Mapping(target = "storyPage", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract StoryParagraph toEntity(StoryParagraphDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract StoryParagraphDTO toDto(StoryParagraph entity, @Context CycleAvoidingMappingContext context);

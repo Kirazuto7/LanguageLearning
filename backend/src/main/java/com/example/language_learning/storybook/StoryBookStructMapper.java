@@ -12,6 +12,8 @@ import org.mapstruct.*;
 public abstract class StoryBookStructMapper {
 
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract StoryBook toEntity(StoryBookDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract StoryBookDTO toDto(StoryBook storyBook, @Context CycleAvoidingMappingContext context);

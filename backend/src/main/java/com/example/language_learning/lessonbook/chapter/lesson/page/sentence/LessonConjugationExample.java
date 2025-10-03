@@ -1,8 +1,6 @@
 package com.example.language_learning.lessonbook.chapter.lesson.page.sentence;
 
-import com.example.language_learning.lessonbook.chapter.lesson.data.ConjugationLesson;
 import com.example.language_learning.shared.data.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -15,10 +13,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LessonConjugationExample extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String infinitive; // Dictionary Form aka base form
 
     @Column(columnDefinition = "TEXT")
@@ -29,9 +23,4 @@ public class LessonConjugationExample extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String sentenceTranslation;
-
-    @ManyToOne
-    @JoinColumn(name = "lesson_id", nullable = false)
-    @JsonBackReference("lesson-conjugatedWords")
-    private ConjugationLesson lesson;
 }

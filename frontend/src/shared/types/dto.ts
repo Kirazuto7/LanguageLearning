@@ -23,6 +23,7 @@ export interface BookDTO {
     title: string;
     difficulty: string;
     language: string;
+    createdAt: string; // ISO 8601 date string
 }
 
 export interface LessonBookDTO extends BookDTO {
@@ -37,7 +38,6 @@ export interface StoryBookDTO extends BookDTO {
 
 export interface ChapterDTO {
     id: string;
-    chapterNumber: number;
     title: string;
     nativeTitle: string;
 }
@@ -60,7 +60,6 @@ export enum StoryPageType {
 
 export interface PageDTO {
     id: string;
-    pageNumber: number;
 }
 
 export interface LessonPageDTO extends PageDTO {
@@ -92,13 +91,14 @@ export interface StoryParagraphDTO {
     id: string;
     paragraphNumber: number;
     content: string;
+    wordsToHighlight: string[];
 }
 
 export interface StoryVocabularyItemDTO {
     id: string;
     word: string;
+    stem: string;
     translation: string;
-    pageNumber: number;
 }
 
 // --- Lesson-Specific Interfaces ---

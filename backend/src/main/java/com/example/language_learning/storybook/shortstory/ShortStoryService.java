@@ -28,14 +28,13 @@ public class ShortStoryService {
     public ShortStoryDTO getShortStoryDtoByIdAndUser(Long shortStoryId, User user) {
         return findByIdAndUserAndInitializeCollections(shortStoryId, user)
                 .map(dtoMapper::toDto)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Short Story not found or user does not have access."));
     }
 
     @Transactional
-    public ShortStory createShortStory(StoryBook storyBook, int storyNumber, String title, String nativeTitle, String topic, String genre) {
+    public ShortStory createShortStory(StoryBook storyBook, String title, String nativeTitle, String topic, String genre) {
         ShortStory shortStory = ShortStory.builder()
                 .storyBook(storyBook)
-                .chapterNumber(storyNumber)
                 .title(title)
                 .nativeTitle(nativeTitle)
                 .topic(topic)

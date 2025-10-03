@@ -16,10 +16,12 @@ const Settings: React.FC<SettingsProps> = ({
     openSettings,
     setOpenSettings
 }) => {
-    const { settings, updateSettings, isLoading: isSettingsLoading } = useSettingsManager();
+    const { settings, updateSettings, isLoading: isUpdatingSettings } = useSettingsManager();
     const isGenerationLoading = useAppSelector(selectIsAnyGenerationLoading);
     const settingsRef = useRef<HTMLDivElement>(null);
-    const isDisabled = isSettingsLoading || isGenerationLoading;
+
+    // Only language and difficulty are disabled during generation
+    const isGenerationDisabled = isUpdatingSettings || isGenerationLoading;
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -27,10 +29,8 @@ const Settings: React.FC<SettingsProps> = ({
                 setOpenSettings(false);
             }
         }
-        // Bind the event listener
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            // Unbind the event listener on clean up
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [setOpenSettings]);
@@ -64,8 +64,8 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="language-select"
                                             className="form-select"
                                             value={settings?.language || ''}
-                                            onChange={(e) => updateSettings({ ...settings, language: e.target.value })}
-                                            disabled={isDisabled}
+                                            onChange={(e) => updateSettings({ language: e.target.value })}
+                                            disabled={isGenerationDisabled}
                                         >
                                             {languages.map(lang => (
                                                 <option key={lang.value} value={lang.value}>{lang.label}</option>
@@ -80,8 +80,8 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="level-select"
                                             className="form-select"
                                             value={settings?.difficulty || ''}
-                                            onChange={(e) => updateSettings({ ...settings, difficulty: e.target.value })}
-                                            disabled={isDisabled}
+                                            onChange={(e) => updateSettings({ difficulty: e.target.value })}
+                                            disabled={isGenerationDisabled}
                                         >
                                             {difficulties.map(diff => (
                                                 <option key={diff.value} value={diff.value}>{diff.label}</option>
@@ -96,8 +96,8 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="theme-select"
                                             className="form-select"
                                             value={settings?.theme || ''}
-                                            onChange={(e) => updateSettings({ ...settings, theme: e.target.value })}
-                                            disabled={isDisabled}
+                                            onChange={(e) => updateSettings({ theme: e.target.value })}
+                                            disabled={isUpdatingSettings}
                                         >
                                             {themes.map(theme => (
                                                 <option key={theme.value} value={theme.value}>{theme.label}</option>
@@ -112,8 +112,8 @@ const Settings: React.FC<SettingsProps> = ({
                                             id="mascot-select"
                                             className="form-select"
                                             value={settings?.mascot || ''}
-                                            onChange={(e) => updateSettings({ ...settings, mascot: e.target.value as MascotName })}
-                                            disabled={isDisabled}
+                                            onChange={(e) => updateSettings({ mascot: e.target.value as MascotName })}
+                                            disabled={isUpdatingSettings}
                                         >
                                             {mascots.map(mascot => (
                                                 <option key={mascot.value} value={mascot.value}>{mascot.label}</option>
@@ -132,8 +132,8 @@ const Settings: React.FC<SettingsProps> = ({
                                                     role="switch"
                                                     id="auto-speak-toggle"
                                                     checked={settings?.autoSpeakEnabled ?? true}
-                                                    onChange={(e) => updateSettings({ ...settings, autoSpeakEnabled: e.target.checked})}
-                                                    disabled={isDisabled}
+                                                    onChange={(e) => updateSettings({ autoSpeakEnabled: e.target.checked})}
+                                                    disabled={isUpdatingSettings}
                                                 />
                                             </div>
                                         </div>

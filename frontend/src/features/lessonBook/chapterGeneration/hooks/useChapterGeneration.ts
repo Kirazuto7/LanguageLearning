@@ -1,72 +1,65 @@
-import { useState, useEffect, useCallback } from "react";
-import { useGenerateChapterMutation } from "../../../../shared/api/chapterApiSlice";
-import { useAppSelector, useAppDispatch } from "../../../../app/hooks";
-import { selectProgressByTaskId, startGenerationTracking, selectActiveTaskIdForContext, markProgressAsStale } from "../../../../widgets/progressBar/progressSlice";
+import {useCallback, useEffect} from "react";
+import {useGenerateChapterMutation} from "../../../../shared/api/chapterApiSlice";
+import {useAppDispatch, useAppSelector} from "../../../../app/hooks";
+import {
+    clearProgressTask,
+    selectActiveTaskIdForContext,
+    selectProgressByTaskId,
+    startGenerationTracking
+} from "../../../../widgets/progressBar/progressSlice";
+import {GenerationType} from "../../../../shared/types/types";
+import {selectCurrentUser} from "../../../authentication/authSlice";
 
 /**
- * A custom hook to manage the entire lessonChapter generation workflow.
- * It orchestrates the mutation to start the generation and reads real-time
- * progress from the global state, which is managed by the subscriptionManager.
+ * A custom hook to manage the chapter generation workflow.
+ * It reads real-time progress from the global state (managed by ProgressSubscriptionManager)
+ * and provides a function to start the generation.
  *
  * @param language The language of the book being updated.
  * @param difficulty The difficulty of the book being updated.
  */
 export const useChapterGeneration = (language: string, difficulty: string) => {
     const dispatch = useAppDispatch();
-    const [taskId, setTaskId] = useState<string | null>(null);
     const [generateChapter, { isLoading: isMutationLoading, error: mutationError }] = useGenerateChapterMutation();
+    const user = useAppSelector(selectCurrentUser);
 
-    // Check if there is an active task in the global state
-    const activeTaskId = useAppSelector(state => selectActiveTaskIdForContext(state, { language, difficulty }));
+    const activeTaskId = useAppSelector(state => selectActiveTaskIdForContext(state, { language, difficulty, generationType: GenerationType.CHAPTER }));
+
+    const progress = useAppSelector(state => activeTaskId ? selectProgressByTaskId(state, activeTaskId) : undefined);
+
+    // When a task completes or errors, this effect will trigger the cleanup after a delay.
     useEffect(() => {
-        if (activeTaskId) {
-            setTaskId(activeTaskId);
-        }
-    }, [activeTaskId]);
-
-
-    const progress = useAppSelector(state => taskId ? selectProgressByTaskId(state, taskId) : undefined);
-    const wasClearedPrematurely = !!taskId && !progress;
-
-    // If the language/difficulty changes, reset the local taskId.
-    useEffect(() => {
-        setTaskId(null);
-    }, [language, difficulty]);
-
-    // Triggered when the generation is complete or fails to reset after a short delay
-    // to allow the UI to show the final "complete" or "error" state.
-    useEffect(() => {
-        if (progress?.isComplete || progress?.error || wasClearedPrematurely) {
+        if (activeTaskId && progress && (progress.isComplete || progress.error)) {
             const timer = setTimeout(() => {
-                if (taskId) {
-                    dispatch(markProgressAsStale(taskId));
-                }
-                setTaskId(null);
-            }, 5000);
-            return () => {
-                clearTimeout(timer);
-            }
+                dispatch(clearProgressTask(activeTaskId));
+            }, 5000); // Keep the final state visible for 5 seconds.
+            return () => clearTimeout(timer);
         }
-    }, [progress?.isComplete, progress?.error, wasClearedPrematurely, taskId, dispatch]);
+    }, [activeTaskId, progress, dispatch]);
 
     const startGeneration = useCallback(async (topic: string) => {
-        if (isMutationLoading || taskId) return; // Prevent starting a new generation if one is active
+        // Prevent starting a new generation if one is already active for this context.
+        if (isMutationLoading || activeTaskId || !user) return;
 
         try {
-            const { taskId: newTaskId } = await generateChapter({ language, difficulty, topic }).unwrap();
-            dispatch(startGenerationTracking({ taskId: newTaskId, language, difficulty }));
-            // By setting the taskId, we trigger the subscription query to begin tracking progress updates.
-            setTaskId(newTaskId);
+            const { taskId: newTaskId, lessonChapter } = await generateChapter({ language, difficulty, topic }).unwrap();
+            dispatch(startGenerationTracking({
+                taskId: newTaskId,
+                language,
+                difficulty,
+                userId: user.id,
+                generationType: GenerationType.CHAPTER,
+                parentId: lessonChapter.id,
+            }));
         }
         catch (err) {
-            console.error('Failed to start lessonChapter generation:', err);
-            setTaskId(null);
+            console.error('Failed to start chapter generation:', err);
         }
-    }, [generateChapter, language, difficulty, taskId, isMutationLoading, dispatch]);
+    }, [generateChapter, language, difficulty, activeTaskId, isMutationLoading, dispatch, user]);
 
     const isComplete = !!progress?.isComplete;
-    const generationError = mutationError || progress?.error || (wasClearedPrematurely ? 'Connection to the server was lost.' : undefined);
-    const isLoading = isMutationLoading || (!!taskId && !isComplete && !generationError && !wasClearedPrematurely);
+    const generationError = mutationError || progress?.error;
+    const isLoading = isMutationLoading || (!!activeTaskId && !isComplete && !generationError);
 
     return {
         startGeneration,

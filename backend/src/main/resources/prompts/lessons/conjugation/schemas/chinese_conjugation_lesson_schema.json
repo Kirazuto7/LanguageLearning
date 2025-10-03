@@ -24,12 +24,12 @@
         "properties": {
           "infinitive": {
             "type": "string",
-            "description": "单词的中文基本形式。",
+            "description": "单词的词典形式（未变化的原始形式） (例如: 走, 吃)。",
             "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF]+$"
           },
           "conjugated_form": {
             "type": "string",
-            "description": "活用后的中文单词。",
+            "description": "活用后的中文单词 (例如: 走了, 吃了)。",
             "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF]+$"
           },
           "example_sentence": {

@@ -9,5 +9,4 @@ public class StoryPrepOutput {
     private String taskId;
     private StoryBook storyBook;
     private ShortStory shortStory;
-    private int startingPageNumber;
 }

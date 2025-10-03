@@ -18,14 +18,25 @@ interface LessonBookViewerProps {
 const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex, onAllCorrect }) => {
     const [activePageIndex, setActivePageIndex] = useState(0);
 
+    const chapterPageOffsets = useMemo(() => {
+        const offsets: number[] = [];
+        let runningOffset = 0;
+        for (const chapter of chapters) {
+            offsets.push(runningOffset);
+            runningOffset += chapter.lessonPages?.length || 0;
+        }
+        return offsets;
+    }, [chapters]);
+
     const currentChapter = useMemo(()=> {
         return chapters?.[activeChapterIndex]
     }, [chapters, activeChapterIndex]);
 
     const chapterPages = useMemo(() => {
         if(!currentChapter) return [];
-        return buildPagesForChapter(currentChapter, onAllCorrect);
-    }, [currentChapter, onAllCorrect]);
+        const pageOffset = chapterPageOffsets[activeChapterIndex] ?? 0;
+        return buildPagesForChapter(currentChapter, activeChapterIndex, pageOffset, onAllCorrect);
+    }, [currentChapter, activeChapterIndex, chapterPageOffsets, onAllCorrect]);
 
     useEffect(() => {
         setActivePageIndex(0);

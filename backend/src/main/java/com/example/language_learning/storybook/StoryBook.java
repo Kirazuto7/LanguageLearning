@@ -27,7 +27,7 @@ import java.util.List;
 public class StoryBook extends BaseBook {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "storyBook", fetch = FetchType.LAZY)
-    @OrderBy("chapterNumber ASC")
+    @OrderBy("id ASC")
     @Builder.Default
     private List<ShortStory> shortStories = new ArrayList<>();
 

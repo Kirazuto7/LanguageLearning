@@ -13,6 +13,8 @@ import org.mapstruct.*;
 public abstract class StoryPageStructMapper {
 
     @Mapping(target = "shortStory", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract StoryPage toEntity(StoryPageDTO dto, @Context CycleAvoidingMappingContext context);
 
     @Mapping(source = "type", target = "type")

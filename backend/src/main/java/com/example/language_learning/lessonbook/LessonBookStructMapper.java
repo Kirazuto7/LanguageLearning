@@ -22,6 +22,8 @@ public abstract class LessonBookStructMapper {
 
     //@Mapping(target = "user", expression = "java(userStructMapper.toEntity(dto.user(), context))")
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract LessonBook toEntity(LessonBookDTO dto, @Context CycleAvoidingMappingContext context);
 
     //@Mapping(target = "user", ignore = true) // Manually mapped in the factory to handle cycles

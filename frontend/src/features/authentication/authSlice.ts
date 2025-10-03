@@ -33,7 +33,8 @@ const initialState: AuthState = {
 
 const handleUserLogout = (state: AuthState) => {
     state.user = null;
-    localStorage.removeItem('user');
+    // CLear all persisted state to ensure a clean state.
+    localStorage.clear();
 };
 
 const authSlice = createSlice({

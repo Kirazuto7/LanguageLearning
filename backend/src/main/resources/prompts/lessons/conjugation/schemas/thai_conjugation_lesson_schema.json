@@ -24,17 +24,17 @@
         "properties": {
           "infinitive": {
             "type": "string",
-            "description": "The base form of the word in Thai.",
+            "description": "คำกริยาในรูปพจนานุกรม (รูปแบบพื้นฐานที่ยังไม่ได้ผัน) เป็นภาษาไทย (เช่น กิน, เดิน)",
             "pattern": "^[\\u0E00-\\u0E7F ]+$"
           },
           "conjugated_form": {
             "type": "string",
-            "description": "The word after conjugation in Thai.",
+            "description": "คำที่ผันแล้วเป็นภาษาไทย (เช่น กินแล้ว, เดินแล้ว)",
             "pattern": "^[\\u0E00-\\u0E7F ]+$"
           },
           "example_sentence": {
             "type": "string",
-            "description": "A full sentence in Thai using the conjugated form.",
+            "description": "ประโยคตัวอย่างฉบับเต็มที่ใช้คำที่ผันแล้วเป็นภาษาไทย",
             "pattern": "^[\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:/\\[\\]…ฯๆ\\n]+$"
           },
           "sentence_translation": {

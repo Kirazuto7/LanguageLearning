@@ -349,8 +349,12 @@ public class AIResponseSanitizer {
                 }
 
                 String sanitizedText = sanitizedBuilder.toString();
-                if (sanitizedText.isBlank()) {
-                    log.warn("Regex hot-fix for '{}' resulted in a blank string. Checking if field is nullable...", jsonPointerPath);
+                sanitizedText = removeTrailingPunctuatedParentheses(sanitizedText);
+
+                // If the sanitization results in a blank string or only punctuation,
+                // it's better to treat it as missing data.
+                if (sanitizedText.isBlank() || sanitizedText.matches("^[\\p{Punct}\\s]+$")) {
+                    log.warn("Regex hot-fix for '{}' resulted in a blank string or punctuation-only string. Checking if field is nullable...", jsonPointerPath);
 
                     // Find the schema definition for the field itself, not just the pattern keyword.
                     String propertySchemaPointer = error.getSchemaLocation().toString();
@@ -407,33 +411,23 @@ public class AIResponseSanitizer {
         return false;
     }
 
-    private boolean stripParenthical(JsonNode rootNode, String jsonPath) {
-        try {
-            // JsonPointer paths from networknt-schema start with $, which Jackson's JsonPointer doesn't use.
-            // We convert $.field[0] to /field/0
-
-            String jsonPointerPath = jsonPath.replace("$.", "/").replace("[", "/").replace("]", "");
-            String parentPath = jsonPointerPath.substring(0, jsonPointerPath.lastIndexOf('/'));
-            String fieldName = jsonPointerPath.substring(jsonPointerPath.lastIndexOf('/') + 1);
-
-            JsonNode parentNode = rootNode.at(parentPath);
-            JsonNode childNode = parentNode.get(fieldName);
-
-            if (childNode != null && childNode.isTextual()) {
-                String originalText = childNode.asText();
-                String sanitizedText = SanitizationPattern.PARENTHETICAL_TEXT.removeFrom(originalText).trim();
-
-                if (!originalText.equals(sanitizedText) && parentNode instanceof ObjectNode parentObject) {
-                    log.debug("Hot-fixing field '{}'. Stripping parenthetical text.", jsonPath);
-                    parentObject.put(fieldName, sanitizedText);
-                    return true;
-                }
-            }
+    /**
+     *  Removes trailing parenthetical expressions that only contain whitespace and punctuation.
+     *       * For example, "등산로를 걸어요. (    .)" becomes "등산로를 걸어요.".
+     *       *
+     *       * @param text The text to sanitize.
+     *       * @return The sanitized text.
+     */
+     private String removeTrailingPunctuatedParentheses(String text) {
+        if (text == null || text.isBlank()) {
+            return text;
         }
-        catch (Exception e) {
-            log.warn("Could not apply 'stripParenthetical' hot-fix for path '{}': {}", jsonPath, e.getMessage());
-        }
-        return false;
-    }
+         // This regex finds parenthetical groups that contain only whitespace (\\s)
+         // and punctuation (\\p{Punct}), along with any preceding whitespace.
+         // It replaces all occurrences throughout the string.
+         String sanitized = text.replaceAll("\\s*\\([\\s\\p{Punct}]*\\)", "");
+         return sanitized.trim();
+     }
+
 
 }

@@ -150,15 +150,15 @@ public class AIGenerationActions {
         // Check if this is a retry attempt and add specific feedback
         if (params.containsKey("validationFeedback")) {
             StringBuilder messageBuilder = new StringBuilder();
-            messageBuilder.append("Your previous response was invalid. You MUST correct it. ");
+            messageBuilder.append("Your previous response was invalid. You MUST provide a corrected JSON object that fixes the specified errors. ");
             messageBuilder.append(params.get("validationFeedback"));
             if (params.containsKey("invalidJson")) {
                 messageBuilder.append("\n\nInvalid JSON Response:\n```json\n")
                         .append(params.get("invalidJson"))
                         .append("\n```");
             }
-            messageBuilder.append("\n\n--- Original Instructions ---\n");
-            messageBuilder.append(instructionContent); // Re-include original instructions
+            messageBuilder.append("\n\nPlease review your original instructions, the errors, and the invalid JSON, then provide a new, complete, and valid JSON object. Do not include any extra text or explanations outside of the JSON object itself.");
+            messageBuilder.append("\n\n--- Original Instructions ---\n").append(instructionContent);
             return messageBuilder.toString();
         }
 

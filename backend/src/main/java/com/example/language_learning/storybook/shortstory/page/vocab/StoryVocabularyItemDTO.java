@@ -11,5 +11,5 @@ public record StoryVocabularyItemDTO(
     Long id,
     String word,
     String translation,
-    int pageNumber
+    String stem
 ) {}

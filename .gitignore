@@ -124,3 +124,9 @@ docker-compose.aider.yml
 loras/*
 !loras/README.md
 !loras/styles.csv
+
+# Wiktionary data
+/wiktionary/
+
+# Other
+business_model.md

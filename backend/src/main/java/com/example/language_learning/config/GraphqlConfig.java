@@ -7,10 +7,18 @@ import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import graphql.scalars.ExtendedScalars;
-import graphql.schema.TypeResolver;
+import graphql.GraphQLContext;
+import graphql.execution.CoercedVariables;
+import graphql.language.StringValue;
+import graphql.language.Value;
+import graphql.schema.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 
 @Configuration
@@ -18,6 +26,39 @@ public class GraphqlConfig {
 
     @Bean
     public RuntimeWiringConfigurer runtimeWiringConfigurer() {
+        GraphQLScalarType localDateTimeScalar = GraphQLScalarType.newScalar()
+            .name("LocalDateTime")
+            .description("A custom scalar that handles Java's LocalDateTime")
+            .coercing(new Coercing<LocalDateTime, String>() {
+                @Override
+                public String serialize(Object dataFetcherResult, GraphQLContext graphQLContext, Locale locale) throws CoercingSerializeException {
+                    if (dataFetcherResult instanceof LocalDateTime) {
+                        return dataFetcherResult.toString();
+                    }
+                    throw new CoercingSerializeException("Expected a LocalDateTime object.");
+                }
+
+                @Override
+                public LocalDateTime parseValue(Object input, GraphQLContext graphQLContext, Locale locale) throws CoercingParseValueException {
+                    try {
+                        if (input instanceof String) {
+                            return LocalDateTime.parse((String) input);
+                        }
+                        throw new CoercingParseValueException("Expected a String");
+                    } catch (DateTimeParseException e) {
+                        throw new CoercingParseValueException("Not a valid LocalDateTime: " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public LocalDateTime parseLiteral(Value<?> input, CoercedVariables variables, GraphQLContext graphQLContext, Locale locale) throws CoercingParseLiteralException {
+                    if (input instanceof StringValue) {
+                        return LocalDateTime.parse(((StringValue) input).getValue());
+                    }
+                    throw new CoercingParseLiteralException("Expected a StringValue.");
+                }
+            }).build();
+
         TypeResolver lessonTypeResolver = env -> {
             Object javaObject = env.getObject();
             if (javaObject instanceof LessonDTO lessonDTO) {
@@ -77,6 +118,7 @@ public class GraphqlConfig {
 
         return wiringBuilder -> wiringBuilder
             .scalar(ExtendedScalars.Json)
+            .scalar(localDateTimeScalar)
             .type("Lesson", typeWiring -> typeWiring.typeResolver(lessonTypeResolver))
             .type("ProgressData", typeWiring -> typeWiring.typeResolver(progressDataTypeResolver))
             .type("StoryPage", typeWiring -> typeWiring.typeResolver(storyPageTypeResolver))

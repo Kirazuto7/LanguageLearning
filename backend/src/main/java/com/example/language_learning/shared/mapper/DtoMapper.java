@@ -4,8 +4,8 @@ import com.example.language_learning.lessonbook.LessonBookStructMapper;
 import com.example.language_learning.lessonbook.chapter.LessonChapterStructMapper;
 import com.example.language_learning.lessonbook.chapter.LessonChapter;
 import com.example.language_learning.lessonbook.chapter.lesson.mappers.*;
-import com.example.language_learning.lessonbook.chapter.lesson.page.PageStructMapper;
-import com.example.language_learning.lessonbook.chapter.lesson.page.question.QuestionStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.LessonPageStructMapper;
+import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionStructMapper;
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.*;
 import com.example.language_learning.shared.word.mappers.WordDetailsStructMapper;
 import com.example.language_learning.shared.word.mappers.WordStructMapper;
@@ -53,7 +53,7 @@ public class DtoMapper {
     private final SettingsStructMapper settingsStructMapper;
     private final LessonBookStructMapper lessonBookStructMapper;
     private final LessonChapterStructMapper lessonChapterStructMapper;
-    private final PageStructMapper pageStructMapper;
+    private final LessonPageStructMapper lessonPageStructMapper;
     private final LessonStructMapper lessonStructMapper;
     private final VocabularyLessonStructMapper vocabularyLessonStructMapper;
     private final GrammarLessonStructMapper grammarLessonStructMapper;
@@ -62,9 +62,9 @@ public class DtoMapper {
     private final ReadingComprehensionLessonStructMapper readingComprehensionLessonStructMapper;
     private final WordStructMapper wordStructMapper;
     private final WordDetailsStructMapper wordDetailsStructMapper;
-    private final SentenceStructMapper sentenceStructMapper;
-    private final QuestionStructMapper questionStructMapper;
-    private final ConjugationExampleStructMapper conjugationExampleStructMapper;
+    private final LessonSentenceStructMapper lessonSentenceStructMapper;
+    private final LessonQuestionStructMapper lessonQuestionStructMapper;
+    private final LessonConjugationExampleStructMapper lessonConjugationExampleStructMapper;
     private final KoreanWordDetailsStructMapper koreanWordDetailsStructMapper;
     private final ChineseWordDetailsStructMapper chineseWordDetailsStructMapper;
     private final JapaneseWordDetailsStructMapper japaneseWordDetailsStructMapper;
@@ -132,11 +132,11 @@ public class DtoMapper {
     /* ***************** */
 
     public LessonPage toEntity(LessonPageDTO dto) {
-        return pageStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        return lessonPageStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonPageDTO toDto(LessonPage entity) {
-        return pageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        return lessonPageStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ************************ */
@@ -214,11 +214,11 @@ public class DtoMapper {
     /* ********************* */
 
     public LessonSentence toEntity(LessonSentenceDTO dto) {
-        return sentenceStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        return lessonSentenceStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonSentenceDTO toDto(LessonSentence entity) {
-        return sentenceStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        return lessonSentenceStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* *********************************** */
@@ -226,15 +226,11 @@ public class DtoMapper {
     /* *********************************** */
 
     public LessonConjugationExample toEntity(LessonConjugationExampleDTO dto, ConjugationLesson lesson) {
-        LessonConjugationExample example = conjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
-        if (example != null) {
-            example.setLesson(lesson);
-        }
-        return example;
+        return lessonConjugationExampleStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
     }
 
     public LessonConjugationExampleDTO toDto(LessonConjugationExample entity) {
-        return conjugationExampleStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        return lessonConjugationExampleStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* ************************ */
@@ -242,7 +238,7 @@ public class DtoMapper {
     /* ************************ */
 
     public LessonQuestion toEntity(LessonQuestionDTO dto, Lesson lesson) {
-        LessonQuestion lessonQuestion = questionStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
+        LessonQuestion lessonQuestion = lessonQuestionStructMapper.toEntity(dto, new CycleAvoidingMappingContext());
         if (lessonQuestion != null) {
             lessonQuestion.setLesson(lesson);
         }
@@ -250,7 +246,7 @@ public class DtoMapper {
     }
 
     public LessonQuestionDTO toDto(LessonQuestion entity) {
-        return questionStructMapper.toDto(entity, new CycleAvoidingMappingContext());
+        return lessonQuestionStructMapper.toDto(entity, new CycleAvoidingMappingContext());
     }
 
     /* **************************** */

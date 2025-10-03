@@ -1,5 +1,4 @@
 import {useStoryBookManager} from "../../features/storyBook/hooks/useStoryBookManager";
-import {useCallback, useEffect, useState} from "react";
 import {useShortStoryGeneration} from "../../features/storyBook/shortStoryGeneration/hooks/useShortStoryGeneration";
 import Container from "react-bootstrap/Container";
 import {Alert, Spinner} from "react-bootstrap";
@@ -9,7 +8,6 @@ import StoryBookMascot from "../../widgets/storyBookMascot/StoryBookMascot";
 
 const StoryBookPage: React.FC = () => {
     const { title, stories, isLoading: isBookLoading, language, difficulty } = useStoryBookManager();
-    const [navigateToPage, setNavigateToPage] = useState<number | null>(null);
 
     const {
         startGeneration,
@@ -19,21 +17,8 @@ const StoryBookPage: React.FC = () => {
         error: generationError,
     } = useShortStoryGeneration(language, difficulty);
 
-    const handleFlipComplete = useCallback(() => {
-        setNavigateToPage(null);
-    }, []);
 
     const isInitialLoading = isBookLoading && stories.length === 0;
-
-    useEffect(() => {
-        if (stories.length > 0) {
-            const latestStory = stories[stories.length - 1];
-            if (latestStory && latestStory.storyPages.length > 0) {
-                const firstPageOfLatestStory = latestStory.storyPages[0];
-                setNavigateToPage(firstPageOfLatestStory.pageNumber);
-            }
-        }
-    }, [stories]);
 
     return(
         <div>
@@ -44,8 +29,6 @@ const StoryBookPage: React.FC = () => {
                 ) : (
                     <>
                         <FlipBook
-                            navigateToPage={navigateToPage}
-                            onFlipComplete={handleFlipComplete}
                             stories={stories}
                             title={title}
                         />

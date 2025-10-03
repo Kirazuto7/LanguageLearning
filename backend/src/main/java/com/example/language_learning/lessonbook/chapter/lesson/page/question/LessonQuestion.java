@@ -20,10 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LessonQuestion extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
 

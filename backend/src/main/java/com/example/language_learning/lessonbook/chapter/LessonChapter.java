@@ -22,7 +22,7 @@ import org.hibernate.annotations.BatchSize;
 public class LessonChapter extends BaseChapter {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "lessonChapter", fetch = FetchType.LAZY)
-    @OrderBy("pageNumber ASC")
+    @OrderBy("id ASC")
     @BatchSize(size = 25)
     @Builder.Default
     private List<LessonPage> lessonPages = new ArrayList<>();

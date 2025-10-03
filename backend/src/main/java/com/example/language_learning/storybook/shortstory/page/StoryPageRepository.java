@@ -17,9 +17,6 @@ public interface StoryPageRepository extends JpaRepository<StoryPage, Long>, Sto
     @Query("SELECT sp FROM StoryPage sp LEFT JOIN FETCH sp.vocabulary WHERE sp.id = :id")
     Optional<StoryPage> findByIdWithVocabulary(@Param("id") Long id);
 
-    @Query("SELECT MAX(sp.pageNumber) FROM StoryPage sp WHERE sp.shortStory.storyBook.id = :bookId")
-    Optional<Integer> findMaxPageNumberByBookId(@Param("bookId") Long bookId);
-
     @Query("SELECT DISTINCT sp FROM StoryPage sp LEFT JOIN FETCH sp.paragraphs WHERE sp.shortStory.id = :storyId")
     List<StoryPage> loadPagesWithParagraphs(@Param("storyId") Long storyId);
 

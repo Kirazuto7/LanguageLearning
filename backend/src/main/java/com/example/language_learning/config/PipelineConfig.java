@@ -19,7 +19,6 @@ public class PipelineConfig {
                 .addTask(actions::generateTaskId)
                 .addTask(actions::findOrCreateBook)
                 .addTask(actions::createInitialChapter)
-                .addTask(actions::calculateStartingPage)
                 .build();
     }
 
@@ -29,7 +28,6 @@ public class PipelineConfig {
                 .addTask(actions::generateTaskId)
                 .addTask(actions::findOrCreateBook)
                 .addTask(actions::createInitialShortStory)
-                .addTask(actions::calculateStartingPage)
                 .build();
     }
 }
