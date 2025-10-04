@@ -22,7 +22,7 @@ const LoginPage = () => {
     const showLoginForm = () => setShowRegister(false);
 
     return(
-        <Container fluid id={styles['login-lessonPage-container']}>
+        <Container fluid id={styles['login-page-container']}>
             {showRegister ? <Register onShowLogin={showLoginForm} /> : <Login onShowRegister={showRegisterForm} />}
         </Container>
     )

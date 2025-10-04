@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserDTO } from "../../shared/types/dto";
 import { userApiSlice } from "../../shared/api/userApiSlice";
 import { RootState } from "../../app/store";
+import { logToServer } from "../../shared/utils/loggingService";
 
 /*//////////////////////////////////////////////////////////////////////////////////////*/
 /*     This Redux "slice" will manage the user's authentication state on                */
@@ -21,7 +22,7 @@ const loadUserFromStorage = (): UserDTO | null => {
         return JSON.parse(storedUser);
     }
     catch (error) {
-        console.error("Failed to parse user from localStorage", error);
+        logToServer("error", "Failed to parse user from localStorage", error);
         localStorage.removeItem('user');
         return null;
     }
@@ -33,7 +34,6 @@ const initialState: AuthState = {
 
 const handleUserLogout = (state: AuthState) => {
     state.user = null;
-    // CLear all persisted state to ensure a clean state.
     localStorage.clear();
 };
 
@@ -51,7 +51,9 @@ const authSlice = createSlice({
         builder.addMatcher(
             (action): action is PayloadAction<UserDTO> =>
                 userApiSlice.endpoints.login.matchFulfilled(action) || // Login
-                userApiSlice.endpoints.register.matchFulfilled(action), // Register
+                userApiSlice.endpoints.register.matchFulfilled(action) || // Register
+                userApiSlice.endpoints.refreshToken.matchFulfilled(action) || // Refresh Token
+                userApiSlice.endpoints.completeOidcRegistration.matchFulfilled(action), // Complete OIDC Registration
             (state, { payload }) => {
                 state.user = payload;
                 localStorage.setItem('user', JSON.stringify(payload));

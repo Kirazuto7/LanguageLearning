@@ -29,6 +29,26 @@ public class JwtService {
     @Value("${application.security.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
+    public String generateOnboardingToken(String email, String name) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("name", name);
+        extraClaims.put("email", email);
+
+        long onboardingTokenExpiration = 300000;
+
+        return Jwts.builder()
+                .claims(extraClaims)
+                .subject(email)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + onboardingTokenExpiration))
+                .signWith(getSignInKey())
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
     public void addJwtCookieToResponse(HttpServletResponse servletResponse, AuthenticationResponse response) {
         ResponseCookie cookie = createJwtCookie(response.token());
         servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -179,7 +199,7 @@ public class JwtService {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 

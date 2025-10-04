@@ -28,7 +28,9 @@ export const settingsSlice = createSlice({
         builder.addMatcher(
             (action): action is PayloadAction<UserDTO> =>
                 userApiSlice.endpoints.login.matchFulfilled(action) ||
-                userApiSlice.endpoints.register.matchFulfilled(action),
+                userApiSlice.endpoints.register.matchFulfilled(action) ||
+                userApiSlice.endpoints.refreshToken.matchFulfilled(action) ||
+                userApiSlice.endpoints.completeOidcRegistration.matchFulfilled(action),
             (state, { payload }) => {
                 state.settings = payload.settings;
             }

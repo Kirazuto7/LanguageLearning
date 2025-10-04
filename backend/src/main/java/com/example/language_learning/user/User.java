@@ -23,10 +23,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity implements UserDetails {
+
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @JsonIgnore
     @ToString.Exclude
+    @Column(nullable = false)
     private String password;
 
     private String refreshToken;

@@ -18,18 +18,22 @@ import '../shared/assets/_global.scss';
 import ThemeManager from "./ThemeManager";
 import LoginPage from "../pages/login/LoginPage";
 import { TranslationToolButton } from "../widgets/translationTool/components";
+import SessionSynchronizer from "./SessionSynchronizer";
 
 const LandingPage = lazy(() => import('../pages/home/LandingPage'));
 const HomePage = lazy(() => import('../pages/home/HomePage'));
 const LessonBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
 const StoryBookPage = lazy(() => import('../pages/lessontools/StoryBookPage'));
+const OidcOnboarding = lazy(() => import('../features/authentication/components/OidcOnboarding'));
 
 const App: React.FC = () => {
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
+
   return (
       <>
         <SessionManager/>
+        <SessionSynchronizer/>
         <ProgressSubscriptionManager/>
         <ThemeManager />
         <NavigationBar />
@@ -38,6 +42,7 @@ const App: React.FC = () => {
             <Routes>
                 <Route path="/" element={<LandingPage/>} />
                 <Route path="/login" element={<LoginPage/>} />
+                <Route path="/welcome/oidc" element={<OidcOnboarding/>} />
 
                 <Route element={<ProtectedRoute/>}>
                     <Route element={<BackgroundLayout/>}>

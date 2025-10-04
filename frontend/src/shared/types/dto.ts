@@ -251,7 +251,15 @@ export interface ConjugationExampleDTO {
 
 export interface CreateUserRequest {
     username: string;
+    email: string;
     password: string;
+    language: string;
+    difficulty: string;
+}
+
+export interface CompleteOidcRegistrationRequest {
+    onboardingToken: string;
+    username: string;
     language: string;
     difficulty: string;
 }

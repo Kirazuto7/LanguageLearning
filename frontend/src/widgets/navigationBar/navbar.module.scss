@@ -23,6 +23,12 @@
   color: var(--primary-color);
 }
 
+.brand-name {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+}
+
 :global(.navbar).customNavbar {
   position: relative;
   z-index: 10;

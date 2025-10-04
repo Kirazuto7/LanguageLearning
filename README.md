@@ -103,11 +103,13 @@ The application ensures a seamless user experience by making asynchronous tasks,
 
 ## Authentication Architecture
 
-The application uses a robust, modern token-based authentication system designed for security and a seamless user experience. It is built around a silent refresh mechanism that prevents the user from being logged out unexpectedly.
+The application uses a robust, modern token-based authentication system designed for security and a seamless user experience. It supports both traditional username/password registration and Single Sign-On (SSO) via Google, all built around a silent refresh mechanism that prevents the user from being logged out unexpectedly.
 
 *   **Token Strategy**: The system uses two tokens:
     *   A **short-lived access token** (JWT) used to authenticate most API requests. Its short lifetime (e.g., 15 minutes) minimizes the risk of a stolen token.
     *   A **long-lived refresh token** used to obtain a new access token without requiring the user to log in again.
+
+*   **OIDC and Single Sign-On (SSO)**: The application integrates with Google's OpenID Connect (OIDC) provider, allowing users to sign up or log in with a single click. When a new user authenticates via Google, they are guided through a brief onboarding process to set their initial language preferences.
 
 *   **Secure Cookie Storage**: Both tokens are stored in secure, `HttpOnly` cookies, which prevents them from being accessed by client-side JavaScript. This is a critical security measure against XSS attacks. The refresh token also uses token rotation for enhanced security, where a new refresh token is issued each time one is used.
 
