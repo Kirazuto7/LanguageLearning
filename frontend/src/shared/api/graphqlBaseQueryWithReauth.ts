@@ -3,6 +3,7 @@ import {BaseQueryFn} from "@reduxjs/toolkit/query/react";
 import {logToServer, toString} from "../utils/loggingService";
 import {logOut} from "../../features/authentication/authSlice";
 import {userApiSlice} from "./userApiSlice";
+import {Mutex} from "async-mutex";
 
 interface GraphQlQueryError {
     status: number;
@@ -12,6 +13,8 @@ interface GraphQlQueryError {
 const client = new GraphQLClient(`${window.location.origin}/graphql`, {
     credentials: 'include',
 });
+
+const mutex = new Mutex();
 
 const graphqlBaseQuery: BaseQueryFn<
     { body: string; variables?: any },
@@ -36,6 +39,7 @@ export const graphqlBaseQueryWithReauth: BaseQueryFn<
     unknown,
     unknown
 > = async(args, api, extraOptions) => {
+    await mutex.waitForUnlock();
     let result = await graphqlBaseQuery(args, api, extraOptions);
 
     if (result.error) {
@@ -45,25 +49,35 @@ export const graphqlBaseQueryWithReauth: BaseQueryFn<
                          e.message.includes('Access Denied')
         );
         if (hasAuthError) {
-            logToServer('debug', 'Received GraphQL auth error. Attempting to refresh token.');
+            if (!mutex.isLocked()) {
+                const release = await mutex.acquire();
 
-            try {
-                await api.dispatch(userApiSlice.endpoints.refreshToken.initiate()).unwrap();
-                logToServer('debug', 'Token refresh successful. Retrying original GraphQL request.');
-                result = await graphqlBaseQuery(args, api, extraOptions);
-            }
-            catch (refreshError: any) {
-                // The error object from `unwrap()` contains status and data properties.
-                // If the refresh token fails with 401, it means the session is truly expired.
-                if (refreshError.status === 401) {
-                    logToServer('error', 'Token refresh failed with 401 during GraphQL request. Logging out user.', {error: refreshError});
-                    api.dispatch(logOut());
+                try {
+                    logToServer('debug', 'graphqlBaseQueryWithReauth: Acquired mutex. Attempting to refresh token.');
+                    await api.dispatch(userApiSlice.endpoints.refreshToken.initiate()).unwrap();
+                    logToServer('debug', 'Token refresh successful. Retrying original GraphQL request.');
                 }
-                else {
-                    logToServer('error', 'Token refresh failed with a non-401 error during GraphQL request.', {error: refreshError});
+                catch (refreshError: any) {
+                    // The error object from `unwrap()` contains status and data properties.
+                    // If the refresh token fails with 401, it means the session is truly expired.
+                    if (refreshError.status === 401) {
+                        logToServer('error', 'Token refresh failed with 401 during GraphQL request. Logging out user.', {error: refreshError});
+                        api.dispatch(logOut());
+                        // After a failed refresh, return the original error to avoid a pointless retry.
+                        return result;
+                    }
+                    else {
+                        logToServer('error', 'Token refresh failed with a non-401 error during GraphQL request.', {error: refreshError});
+                    }
+                }
+                finally {
+                    release();
+                    logToServer('info', 'graphqlBaseQueryWithReauth: Releasing mutex.');
                 }
             }
         }
+        // Retry the request after the mutex has been released.
+        result = await graphqlBaseQuery(args, api, extraOptions);
     }
 
     return result;
