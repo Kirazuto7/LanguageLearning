@@ -40,18 +40,28 @@ export const graphqlBaseQueryWithReauth: BaseQueryFn<
 
     if (result.error) {
         const hasAuthError = Array.isArray(result.error?.data) && result.error.data.some(
-            (e: any) => e.extensions?.classification === 'UNAUTHORIZED' || e.message.includes('Access Denied')
+            (e: any) => e.extensions?.classification === 'UNAUTHORIZED' ||
+                         e.extensions?.classification === 'FORBIDDEN' ||
+                         e.message.includes('Access Denied')
         );
         if (hasAuthError) {
-            logToServer('info', 'Received GraphQL auth error. Attempting to refresh token.');
+            logToServer('debug', 'Received GraphQL auth error. Attempting to refresh token.');
 
             try {
                 await api.dispatch(userApiSlice.endpoints.refreshToken.initiate()).unwrap();
-                logToServer('info', 'Token refresh successful. Retrying original GraphQL request.');
+                logToServer('debug', 'Token refresh successful. Retrying original GraphQL request.');
                 result = await graphqlBaseQuery(args, api, extraOptions);
-            } catch (refreshError) {
-                logToServer('error', 'Token refresh failed during GraphQL request. Logging out user.', {error: refreshError});
-                api.dispatch(logOut());
+            }
+            catch (refreshError: any) {
+                // The error object from `unwrap()` contains status and data properties.
+                // If the refresh token fails with 401, it means the session is truly expired.
+                if (refreshError.status === 401) {
+                    logToServer('error', 'Token refresh failed with 401 during GraphQL request. Logging out user.', {error: refreshError});
+                    api.dispatch(logOut());
+                }
+                else {
+                    logToServer('error', 'Token refresh failed with a non-401 error during GraphQL request.', {error: refreshError});
+                }
             }
         }
     }

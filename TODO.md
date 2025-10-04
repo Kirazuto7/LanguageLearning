@@ -1,5 +1,9 @@
 # Project TODO List
 
+- [ ] **Project Renaming: Wayword**
+    - [ ] **Decision:** The project will be renamed from "LanguageLearning" to "Wayword".
+    - [ ] **Action:** In the future, refactor all relevant project modules, package names, and documentation to reflect the new name.
+
 A roadmap for building out the LanguageLearning application into a comprehensive, feature-rich platform.
 
 ---
@@ -28,7 +32,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [x] **Optimize Story Persistence with jOOQ Batching**
         - [x] Refactor the iterative, page-by-page persistence logic in `StoryGenerationActions` and `StoryPageService`.
         - [x] Replace it with a single, efficient batch operation that runs after all AI text generation is complete.
-        - [x] Use jOOQ\\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
+        - [x] Use jOOQ\\\'s `batchInsert()` API for inserting all `StoryPage`, `StoryParagraph`, and `StoryVocabularyItem` entities in one go to improve performance.
     - [x] **Fix Image Generation API Integration**
         - [x] Use a pre-built public image for the `image-api` service to ensure a stable API contract.
         - [x] **Configure and use a LoRA** to enforce a consistent art style for all storybook illustrations.

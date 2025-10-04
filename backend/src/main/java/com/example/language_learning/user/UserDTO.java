@@ -10,6 +10,7 @@ import java.util.List;
 public record UserDTO (
     Long id,
     String username,
+    String email,
     SettingsDTO settings,
     List<LessonBookDTO> lessonBookList
 ) {}

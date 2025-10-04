@@ -5,27 +5,32 @@ import Container from 'react-bootstrap/Container';
 import { Button } from 'react-bootstrap';
 import { useLogoutMutation } from '../../shared/api/userApiSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
+import {AppDispatch, RootState} from '../../app/store';
 import styles from './navbar.module.scss';
 import LearningToolsNavigation from "../toolsNavigationBar/LearningToolsNavigation";
-import { logOut } from '../../features/authentication/authSlice';
 import Settings from "../../features/userSettings/components/Settings";
 import {useState} from "react";
+import {logOut} from "../../features/authentication/authSlice";
+import {logToServer} from "../../shared/utils/loggingService";
 
 const NavigationBar = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [openSettings, setOpenSettings] = useState(false);
   const [logout] = useLogoutMutation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
     const handleLogout = async() => {
       try {
         await logout().unwrap();
-        dispatch(logOut());
-        navigate('/login');
       }
       catch(err) {
-        console.error('Failed to logout.', err);
+        logToServer('error', "Failed to logout.", err);
+
+      }
+      finally {
+          dispatch(logOut());
+          navigate('/login');
       }
     }
 
@@ -41,7 +46,7 @@ const NavigationBar = () => {
                       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                   </svg>
                   </div>
-                  <span className="fw-bold ms-2">LangMaster</span>
+                  <span className={`fw-bold ms-2 ${styles['brand-name']}`}>Wayword</span>
               </Navbar.Brand>
               <Navbar.Toggle aria-controls="basic-navbar-nav"/>
               <Navbar.Collapse id="basic-navbar-nav">

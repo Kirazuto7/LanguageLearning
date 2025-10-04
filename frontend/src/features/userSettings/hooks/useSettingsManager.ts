@@ -3,6 +3,7 @@ import { useUpdateSettingsMutation } from "../../../shared/api/userApiSlice";
 import { SettingsDTO } from "../../../shared/types/dto";
 import { useCallback, useMemo } from "react";
 import {selectCurrentSettings} from "../settingsSlice";
+import {logToServer} from "../../../shared/utils/loggingService";
 
 /* ------------------------------------------------------------- */
 /* ---   Hook to Handle Fetching & Updating User Settings    --- */
@@ -21,7 +22,7 @@ export function useSettingsManager(): SettingsManagerResult {
 
     const updateSettings = useCallback(async(newSettings: Partial<Omit<SettingsDTO, 'id'>>) => {
         if(!settings) {
-            console.error("Cannot update settings: user is not logged in.");
+            logToServer('error', "Cannot update settings: user is not logged in.");
             return undefined;
         }
 

@@ -2,7 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from "../../features/authentication/authSlice";
-import {selectCurrentSettings, selectCurrentTheme} from "../../features/userSettings/settingsSlice";
+import {selectCurrentSettings} from "../../features/userSettings/settingsSlice";
 import React from "react";
 
 const HomePage: React.FC = () => {
@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
   return (
     <Container fluid className="d-flex flex-column flex-grow-1 py-5">
     <div className={"glass-container mb-4"}>
-      <h1 className="mb-4 text-center">Welcome {user ? `, ${user.username}` : 'to LangMaster'}</h1>
+      <h1 className="mb-4 text-center">Welcome {user ? `, ${user.username}` : 'Guest'}!</h1>
       <p className="text-center">Select a tool from the navigation bar above to begin your language journey.</p>
     </div>
 

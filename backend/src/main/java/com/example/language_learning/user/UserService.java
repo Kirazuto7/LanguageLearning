@@ -1,10 +1,10 @@
 package com.example.language_learning.user;
 
 import com.example.language_learning.shared.mapper.DtoMapper;
+import com.example.language_learning.user.requests.CompleteOidcRegistrationRequest;
 import com.example.language_learning.user.requests.CreateUserRequest;
 import com.example.language_learning.security.AuthenticationResponse;
 import com.example.language_learning.security.JwtService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -33,36 +35,14 @@ public class UserService implements UserDetailsService {
     @Transactional
     public AuthenticationResponse register(CreateUserRequest request) {
         User user = createNewUser(request);
-        String accessToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        user.setRefreshToken(refreshToken);
-        user.setRefreshTokenExpiry(Instant.now().plusMillis(refreshTokenExpiration));
-        userRepository.save(user);
-
-        return AuthenticationResponse.builder()
-                .token(accessToken)
-                .refreshToken(refreshToken)
-                .user(mapper.toDto(user))
-                .build();
+        return buildAuthenticationResponse(user);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthenticationResponse login(User user) {
         User managedUser = userRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + user.getUsername()));
-        String accessToken = jwtService.generateToken(managedUser);
-        String refreshToken = jwtService.generateRefreshToken(managedUser);
-
-        managedUser.setRefreshToken(refreshToken);
-        managedUser.setRefreshTokenExpiry(Instant.now().plusMillis(refreshTokenExpiration));
-        userRepository.save(managedUser);
-
-        return AuthenticationResponse.builder()
-                .token(accessToken)
-                .refreshToken(refreshToken)
-                .user(mapper.toDto(managedUser))
-                .build();
+        return buildAuthenticationResponse(managedUser);
     }
 
     @Transactional
@@ -86,28 +66,18 @@ public class UserService implements UserDetailsService {
         }
         UserDetails userDetails = loadUserByRefreshToken(refreshToken);
         User user = (User) userDetails;
-
-        String newAccessToken = jwtService.generateToken(user);
-        String newRefreshToken = jwtService.generateRefreshToken(user);
-        user.setRefreshToken(newRefreshToken);
-        user.setRefreshTokenExpiry(Instant.now().plusMillis(refreshTokenExpiration));
-        userRepository.save(user);
-
-        return AuthenticationResponse.builder()
-                .token(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .user(mapper.toDto(user))
-                .build();
+        return buildAuthenticationResponse(user);
     }
 
     @Transactional
     public User createNewUser(CreateUserRequest request) {
-        userRepository.findByUsername(request.username()).ifPresent(u -> {
-            throw new IllegalArgumentException("Username already exists");
+        userRepository.findByUsernameOrEmail(request.username(), request.email()).ifPresent(u -> {
+            throw new IllegalArgumentException("Username or Email already exists");
         });
 
         User user = new User();
         user.setUsername(request.username());
+        user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
 
         Settings settings = new Settings();
@@ -119,6 +89,32 @@ public class UserService implements UserDetailsService {
         user.setSettings(settings);
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public AuthenticationResponse completeOidcRegistration(CompleteOidcRegistrationRequest request) {
+        if (jwtService.isTokenExpired(request.onboardingToken())) {
+            throw new BadCredentialsException("Invalid or expired onboarding token.");
+        }
+
+        String email = jwtService.extractEmail(request.onboardingToken());
+        String username = request.username();
+
+        userRepository.findByUsernameOrEmail(username, email).ifPresent(u -> {
+            throw new IllegalArgumentException("User with this email already exists.");
+        });
+
+        String password = UUID.randomUUID().toString();
+
+        CreateUserRequest createUserRequest = new CreateUserRequest(
+            username,
+            email,
+            password,
+            request.language(),
+            request.difficulty()
+        );
+        User user = createNewUser(createUserRequest);
+        return buildAuthenticationResponse(user);
     }
 
     @Override
@@ -174,5 +170,32 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
         return mapper.toDto(settings);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Transactional
+    public AuthenticationResponse buildAuthenticationResponse(User user) {
+        String accessToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        user.setRefreshToken(refreshToken);
+        user.setRefreshTokenExpiry(Instant.now().plusMillis(refreshTokenExpiration));
+        userRepository.save(user);
+
+        return AuthenticationResponse.builder()
+                .token(accessToken)
+                .refreshToken(refreshToken)
+                .user(mapper.toDto(user))
+                .build();
+    }
+
+    @Transactional
+    public AuthenticationResponse buildAuthenticationResponseForOidcUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("OIDC User not found with email: " + email));
+        return buildAuthenticationResponse(user);
     }
 }

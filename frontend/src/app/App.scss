@@ -53,10 +53,33 @@
 }
 
 .divider {
-    height: 3px;
-    background: linear-gradient(90deg, transparent 0%, var(--primary-color) 50%, transparent 100%);
-    margin: 8px auto;
-    max-width: 600px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--primary-color) 50%, transparent 100%);
+  margin: 8px auto;
+  max-width: 600px;
+}
+
+.text-divider {
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+  }
+
+  &::before {
+    background: linear-gradient(to left, var(--primary-color) 0%, transparent 100%);
+    margin-right: 1em;
+  }
+
+  &::after {
+    background: linear-gradient(to right, var(--primary-color) 0%, transparent 100%);
+    margin-left: 1em;
+  }
 }
 
 .glass-container {

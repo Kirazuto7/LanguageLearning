@@ -17,6 +17,17 @@ spring:
     path: /graphql
     websocket:
       path: /graphql
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
   ai:
     # Disable auto-configuration to allow for full manual bean definition.
     model:
@@ -94,6 +105,8 @@ application:
     public-paths:
       - "/api/users/register"
       - "/api/users/login"
+      - "/api/users/complete-oidc-registration"
+      - "/login/oauth2/**"
       - "/api/users/refresh"
       - "/api/logs/client"
       - "/api/users/logout"

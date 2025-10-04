@@ -1,5 +1,6 @@
 package com.example.language_learning.user;
 
+import com.example.language_learning.user.requests.CompleteOidcRegistrationRequest;
 import com.example.language_learning.user.requests.CreateUserRequest;
 import com.example.language_learning.user.requests.LoginRequest;
 import com.example.language_learning.security.AuthenticationResponse;
@@ -36,6 +37,15 @@ public class UserController {
         return ResponseEntity.ok(authenticationResponse.user());
     }
 
+    @PostMapping("/complete-oidc-registration")
+    public ResponseEntity<UserDTO> completeOidcRegistration(@Valid @RequestBody CompleteOidcRegistrationRequest request, HttpServletResponse servletResponse) {
+        log.info("Received request to complete OIDC registration for a new user.");
+        AuthenticationResponse authenticationResponse = userService.completeOidcRegistration(request);
+        jwtService.addJwtCookieToResponse(servletResponse, authenticationResponse);
+        jwtService.addRefreshTokenCookieToResponse(servletResponse, authenticationResponse.refreshToken());
+        return ResponseEntity.ok(authenticationResponse.user());
+    }
+
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequest request, HttpServletResponse servletResponse) {
         log.info("Received request to login with username: {}", request.username());
@@ -63,13 +73,13 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<UserDTO> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtService.extractRefreshTokenFromRequest(request);
         try {
             AuthenticationResponse newAuthResponse = userService.refreshToken(refreshToken);
             jwtService.addJwtCookieToResponse(response, newAuthResponse);
             jwtService.addRefreshTokenCookieToResponse(response, newAuthResponse.refreshToken());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(newAuthResponse.user());
         }
         catch (Exception e) {
             jwtService.clearJwtCookieFromResponse(response);
