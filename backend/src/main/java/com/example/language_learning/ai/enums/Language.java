@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public enum Language {
-    JAPANESE("japanese", "exaone", SchemaGroup.JAPANESE, VocabularySchema.JAPANESE, InstructionGroup.JAPANESE),
-    KOREAN("korean", "exaone", SchemaGroup.KOREAN, VocabularySchema.KOREAN, InstructionGroup.KOREAN),
+    //exaone - kr/jp
+    JAPANESE("japanese", "qwen3", SchemaGroup.JAPANESE, VocabularySchema.JAPANESE, InstructionGroup.JAPANESE),
+    KOREAN("korean", "qwen3", SchemaGroup.KOREAN, VocabularySchema.KOREAN, InstructionGroup.KOREAN),
     CHINESE("chinese", "qwen3", SchemaGroup.CHINESE, VocabularySchema.CHINESE, InstructionGroup.CHINESE),
     THAI("thai", "qwen3", SchemaGroup.THAI, VocabularySchema.THAI, InstructionGroup.THAI),
     ITALIAN("italian", "qwen3", SchemaGroup.LATIN_EXTENDED, VocabularySchema.ITALIAN, InstructionGroup.ITALIAN),

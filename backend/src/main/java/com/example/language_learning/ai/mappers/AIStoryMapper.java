@@ -7,7 +7,6 @@ import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraphDTO;
 import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItemDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
-@RequiredArgsConstructor
 public class AIStoryMapper {
 
     public ShortStoryMetadataDTO toShortStoryMetadataDTO(AIStoryMetadataResponse response, String genre) {

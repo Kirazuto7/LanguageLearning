@@ -17,6 +17,8 @@ public abstract class UserStructMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "refreshToken", ignore = true)
+    @Mapping(target = "refreshTokenExpiry", ignore = true)
     public abstract User toEntity(UserDTO dto, @Context CycleAvoidingMappingContext context);
 
     public abstract UserDTO toDto(User entity, @Context CycleAvoidingMappingContext context);

@@ -99,7 +99,7 @@ application:
     jwt:
       secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
       # Access token expiration: 15 mins
-      expiration: 900000
+      expiration: 60000 #900000
       # Refresh token expiration: 7 days
       refresh-token-expiration: 604800000 
     public-paths:
@@ -120,6 +120,15 @@ application:
       - "/manifest.json"
       - "/static/**"
       - "/logo*.png"
+
+# ===============================================
+# DJL CONFIGURATION
+# ===============================================
+djl:
+  embedding:
+    enabled: true
+    model-url: "djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    similarity-threshold: 0.7
 
 # ===============================================
 # MINIO CONFIGURATION

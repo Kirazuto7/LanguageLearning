@@ -3,6 +3,7 @@ import { UserDTO } from "../../shared/types/dto";
 import { userApiSlice } from "../../shared/api/userApiSlice";
 import { RootState } from "../../app/store";
 import { logToServer } from "../../shared/utils/loggingService";
+import { authApiSlice } from "../../shared/api/authApiSlice";
 
 /*//////////////////////////////////////////////////////////////////////////////////////*/
 /*     This Redux "slice" will manage the user's authentication state on                */
@@ -52,7 +53,7 @@ const authSlice = createSlice({
             (action): action is PayloadAction<UserDTO> =>
                 userApiSlice.endpoints.login.matchFulfilled(action) || // Login
                 userApiSlice.endpoints.register.matchFulfilled(action) || // Register
-                userApiSlice.endpoints.refreshToken.matchFulfilled(action) || // Refresh Token
+                authApiSlice.endpoints.refreshToken.matchFulfilled(action) || // Refresh Token
                 userApiSlice.endpoints.completeOidcRegistration.matchFulfilled(action), // Complete OIDC Registration
             (state, { payload }) => {
                 state.user = payload;

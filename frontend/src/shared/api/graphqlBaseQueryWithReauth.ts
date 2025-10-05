@@ -2,7 +2,7 @@ import {ClientError, GraphQLClient} from "graphql-request";
 import {BaseQueryFn} from "@reduxjs/toolkit/query/react";
 import {logToServer, toString} from "../utils/loggingService";
 import {logOut} from "../../features/authentication/authSlice";
-import {userApiSlice} from "./userApiSlice";
+import {authApiSlice} from "./authApiSlice";
 import {Mutex} from "async-mutex";
 
 interface GraphQlQueryError {
@@ -54,7 +54,7 @@ export const graphqlBaseQueryWithReauth: BaseQueryFn<
 
                 try {
                     logToServer('debug', 'graphqlBaseQueryWithReauth: Acquired mutex. Attempting to refresh token.');
-                    await api.dispatch(userApiSlice.endpoints.refreshToken.initiate()).unwrap();
+                    await api.dispatch(authApiSlice.endpoints.refreshToken.initiate()).unwrap();
                     logToServer('debug', 'Token refresh successful. Retrying original GraphQL request.');
                 }
                 catch (refreshError: any) {

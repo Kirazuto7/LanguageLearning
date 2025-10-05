@@ -3,6 +3,7 @@ import { SettingsDTO, UserDTO } from "../../shared/types/dto";
 import { userApiSlice } from "../../shared/api/userApiSlice";
 import { logOut } from "../authentication/authSlice";
 import {RootState} from "../../app/store";
+import {authApiSlice} from "../../shared/api/authApiSlice";
 
 interface SettingsState {
     settings: SettingsDTO | null;
@@ -29,7 +30,7 @@ export const settingsSlice = createSlice({
             (action): action is PayloadAction<UserDTO> =>
                 userApiSlice.endpoints.login.matchFulfilled(action) ||
                 userApiSlice.endpoints.register.matchFulfilled(action) ||
-                userApiSlice.endpoints.refreshToken.matchFulfilled(action) ||
+                authApiSlice.endpoints.refreshToken.matchFulfilled(action) ||
                 userApiSlice.endpoints.completeOidcRegistration.matchFulfilled(action),
             (state, { payload }) => {
                 state.settings = payload.settings;

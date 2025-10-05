@@ -131,4 +131,29 @@ public class AIWordMapper {
                 .details(details)
                 .build();
     }
+
+    /**
+     * A helper method to safely extract the "original" source word from a WordDTO
+     * by inspecting its language-specific details record.
+     *
+     * @param wordDTO The WordDTO to inspect.
+     * @return The original source word (e.g., kanji, hangul, lemma), or null if not found.
+     */
+    public String getOriginalWordFromDTO(WordDTO wordDTO) {
+        if (wordDTO == null || wordDTO.details() == null) {
+            return null;
+        }
+
+        return switch (wordDTO.details()) {
+            case JapaneseWordDetailsDTO j -> j.kanji();
+            case KoreanWordDetailsDTO k -> k.hangul();
+            case ChineseWordDetailsDTO c -> c.simplified();
+            case ThaiWordDetailsDTO t -> t.thaiScript();
+            case ItalianWordDetailsDTO i -> i.lemma();
+            case SpanishWordDetailsDTO s -> s.lemma();
+            case FrenchWordDetailsDTO f -> f.lemma();
+            case GermanWordDetailsDTO g -> g.lemma();
+            default -> null;
+        };
+    }
 }

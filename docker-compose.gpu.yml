@@ -44,8 +44,6 @@ services:
         condition: service_completed_successfully
       minio:
         condition: service_healthy
-      image-api:
-        condition: service_healthy
     healthcheck:
       # This check requires curl to be installed in the backend container.
       # It polls the Spring Boot Actuator health endpoint.
