@@ -10,12 +10,16 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.ValidationMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.json.JSONTokener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -24,6 +28,9 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class AIResponseSanitizer {
     private final ObjectMapper objectMapper;
+
+    private static final LevenshteinDistance LEVENSHTEIN_DISTANCE = LevenshteinDistance.getDefaultInstance();
+    private static final int FUZZY_MATCH_THRESHOLD = 2; // Allow up to 2 character differences
 
     /**
      * Sanitizes a sentence by trimming whitespace and removing potential leading/trailing quotes
@@ -59,76 +66,45 @@ public class AIResponseSanitizer {
         return sanitizedOutput.trim();
     }
 
-    /**
-     * Extracts a JSON object from a raw string response that may contain conversational text.
-     * Sanitize the response string before passing it to the convertor to remove any suspicious/duplicate fields.
-     * @param rawResponse The raw string response from the AI.
-     * @return A string containing only the JSON object.
-     */
-    public String extractAndSanitizeJson(String rawResponse) {
-        String extractedJson = extractJson(rawResponse);
-
-        try {
-            // Convert the json string into a map and then back into a string
-            Map<String, Object> objectMap = objectMapper.readValue(extractedJson, new TypeReference<>(){});
-            return objectMapper.writeValueAsString(objectMap);
-        } catch (Exception e) {
-            log.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
-            return extractedJson;
-        }
-    }
-
-    /**
-     * Extracts a JSON object from a raw string response that may contain conversational text.
-     * @param rawResponse The raw string response from the AI.
-     * @return A string containing only the JSON object.
-     */
-    private String extractJson(String rawResponse) {
-        int firstBrace = rawResponse.indexOf('{');
-        if (firstBrace == -1) {
-            log.warn("AI response did not contain a JSON object. Raw response: {}", rawResponse);
-            return "{}";
-        }
-        //int lastBrace = rawResponse.lastIndexOf('}');
-        int braceCount = 0;
-        int lastBrace = -1;
-        boolean inString = false;
-
-        for (int i = firstBrace; i < rawResponse.length(); i++) {
-            char c = rawResponse.charAt(i);
-
-            // Handle entering/exiting strings & ignoring escaped quotes
-            if (c == '"' && (i == 0 || rawResponse.charAt(i - 1) != '\\')) {
-                inString = !inString;
-            }
-
-            if (!inString) {
-                if (c == '{') {
-                    braceCount++;
-                }
-                else if (c == '}') {
-                    braceCount--;
-                }
-            }
-
-            if (braceCount == 0) {
-                lastBrace = i;
-                break;
-            }
-        }
-
-        if (lastBrace != -1) {
-            return rawResponse.substring(firstBrace, lastBrace + 1);
-        }
-        log.warn("Could not find a balanced JSON object in the AI response. Raw response: {}", rawResponse);
-        return "{}";
-    }
-
     private String removeInvalidEnglishCharacters(String text) {
         if (text == null) {
             return null;
         }
         return SanitizationPattern.NON_ENGLISH_CHARS.removeFrom(text).trim();
+    }
+
+    /**
+     * Extracts, repairs, and sanitizes a JSON string from a raw AI response.
+     * This method performs a two-step process:
+     * 1. Uses a repair library to fix common syntax errors (e.g., trailing commas, missing quotes).
+     * 2. Deserializes and re-serializes the JSON to remove any duplicate keys.
+     *
+     * @param rawResponse The raw string response from the AI.
+     * @return A valid, de-duplicated JSON string, or "{}" if repair fails.
+     */
+
+    public String repairAndSanitizeJson(String rawResponse) {
+        String repairedJson;
+        try {
+            // 1. Use the library to repair the raw JSON string's syntax.
+            Object json = new JSONTokener(rawResponse).nextValue();
+            repairedJson = json.toString();
+        }
+        catch (Exception e) {
+            log.warn("JSON repair library failed. Falling back to legacy extraction method. Error: {}", e.getMessage());
+            return extractAndSanitizeJson(rawResponse);
+        }
+
+        try {
+            // 2. Perform the de-duplication step by reading into a generic Object
+            // This handles both maps and list inputs before writing it back to a string. It also implicitly removes duplicate keys.
+            Object jsonObject = objectMapper.readValue(repairedJson, new TypeReference<>() {});
+            return objectMapper.writeValueAsString(jsonObject);
+        }
+        catch (Exception e) {
+            log.error("Failed to de-duplicate JSON after repair, returning repaired (but not de-duplicated) string: {}", e.getMessage());
+            return repairedJson;
+        }
     }
 
     /**
@@ -141,25 +117,35 @@ public class AIResponseSanitizer {
     public JsonNode sanitizeJsonValidationErrors(JsonNode rootNode, Set<ValidationMessage> errors, JsonSchema schema) {
         // We need a mutable copy to apply fixes.
         JsonNode mutableRoot = rootNode.deepCopy();
-        boolean sanitized = false;
+
+        // 1. Fix all structural errors first (e.g., malformed property names).
+        boolean sanitizedKeys = fixAllMalformedKeys(mutableRoot, errors);
+
+        // If any keys were fixed, we must re-validate to get an accurate set of errors
+        Set<ValidationMessage> currentErrors = sanitizedKeys ? schema.validate(mutableRoot) : errors;
+
+        if (currentErrors.isEmpty()) {
+            return mutableRoot;
+        }
+
+        // 2. Fix value-based errors
+        boolean sanitizedValues = false;
 
         for (ValidationMessage error : errors) {
-            String errorMessage = error.getMessage();
-
             // RULE 1: If the error is a 'type' mismatch, attempt to coerce or nullify the value.
             if ("type".equals(error.getMessageKey())) {
                 if (coerceOrNullField(mutableRoot, error, schema)) {
-                    sanitized = true;
+                    sanitizedValues = true;
                 }
             }
             // RULE 2: If it's a 'pattern' mismatch, attempt to strip invalid characters.
             else if ("pattern".equals(error.getMessageKey())) {
                 if (fixValidationError(mutableRoot, error, schema)) {
-                    sanitized = true;
+                    sanitizedValues = true;
                 }
             }
         }
-        return sanitized ? mutableRoot : rootNode;
+        return (sanitizedKeys || sanitizedValues) ? mutableRoot : rootNode;
     }
 
     private boolean coerceOrNullField(JsonNode rootNode, ValidationMessage error, JsonSchema schema)  {
@@ -411,6 +397,63 @@ public class AIResponseSanitizer {
         return false;
     }
 
+
+    /**
+     * Iterates through all "required property not found" errors and attempts to fix them
+     * by renaming malformed keys.
+     *
+     * @param rootNode The root JsonNode to modify.
+     * @param errors   The initial set of validation errors.
+     * @return True if any key was successfully renamed, false otherwise.
+     */
+    private boolean fixAllMalformedKeys(JsonNode rootNode, Set<ValidationMessage> errors) {
+        boolean wasSanitized = false;
+        for (ValidationMessage error : errors) {
+            if ("required".equals(error.getMessageKey())) {
+                if (fixMalformedPropertyName(rootNode, error)) {
+                    wasSanitized = true;
+                }
+            }
+        }
+        return wasSanitized;
+    }
+
+    private boolean fixMalformedPropertyName(JsonNode rootNode, ValidationMessage error) {
+        String message = error.getMessage();
+        Pattern pattern = Pattern.compile("required property '([^']*)' not found");
+        Matcher matcher = pattern.matcher(message);
+
+        if (matcher.find()) {
+            String requiredPropertyName = matcher.group(1);
+            // Correctly get the JSON Pointer path from the error location.
+            // The toString() method returns a path like '#/path/to/node', so we strip the leading '#'.
+            String pointer = error.getInstanceLocation().toString().replaceFirst("^#", "");
+            JsonNode parentNode = rootNode.at(pointer);
+
+            if (parentNode.isObject()) {
+                ObjectNode parentObject = (ObjectNode) parentNode;
+                List<String> fieldNames = new ArrayList<>();
+                parentObject.fieldNames().forEachRemaining(fieldNames::add);
+
+                for (String fieldName : fieldNames) {
+                    String sanitizedFieldName = fieldName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                    String sanitizedRequiredName = requiredPropertyName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+                    boolean exactMatch = sanitizedFieldName.equals(sanitizedRequiredName);
+                    boolean fuzzyMatch = !exactMatch && LEVENSHTEIN_DISTANCE.apply(sanitizedFieldName, sanitizedRequiredName) <= FUZZY_MATCH_THRESHOLD;
+
+                    if ((exactMatch || fuzzyMatch) && !fieldName.equals(requiredPropertyName)) {
+                        log.info("Hot-fixing malformed key: Renaming '{}' to '{}' at path '{}'", fieldName, requiredPropertyName, error.getInstanceLocation());
+                        JsonNode value = parentObject.remove(fieldName);
+                        parentObject.set(requiredPropertyName, value);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      *  Removes trailing parenthetical expressions that only contain whitespace and punctuation.
      *       * For example, "등산로를 걸어요. (    .)" becomes "등산로를 걸어요.".
@@ -429,5 +472,88 @@ public class AIResponseSanitizer {
          return sanitized.trim();
      }
 
+    /**
+     * Extracts a JSON object from a raw string response that may contain conversational text.
+     * Sanitize the response string before passing it to the convertor to remove any suspicious/duplicate fields.
+     * @param rawResponse The raw string response from the AI.
+     * @return A string containing only the JSON object.
+     */
+    private String extractAndSanitizeJson(String rawResponse) {
+        String extractedJson = extractJson(rawResponse);
+
+        try {
+            // Convert the json string into a generic object and then back into a string to handle both maps and lists
+           Object jsonObject = objectMapper.readValue(extractedJson, new TypeReference<>(){});
+            return objectMapper.writeValueAsString(jsonObject);
+        } catch (Exception e) {
+            log.error("Failed to sanitize JSON, returning unsanitized json string: {}", e.getMessage());
+            return extractedJson;
+        }
+    }
+
+    /**
+     * Extracts a JSON object from a raw string response that may contain conversational text.
+     * @param rawResponse The raw string response from the AI.
+     * @return A string containing only the JSON object.
+     */
+    private String extractJson(String rawResponse) {
+        char startChar;
+        char endChar;
+
+        // Find the first occurrence of either a '{' or a '[' to start the extraction,
+        // ignoring any preceding conversational text from the AI.
+        int firstBrace = rawResponse.indexOf('{');
+        int firstBracket = rawResponse.indexOf('[');
+
+        int startCharIndex;
+        // Determine if the JSON starts with an object or an array
+        if (firstBrace != -1 &&  (firstBracket == -1 || firstBrace < firstBracket)) {
+            startCharIndex = firstBrace;
+            startChar = '{';
+            endChar = '}';
+        }
+        else if (firstBracket != -1) {
+            startCharIndex = firstBracket;
+            startChar = '[';
+            endChar = ']';
+        }
+        else {
+            log.warn ("AI response did not contain any meaningful characters. Raw response: {}", rawResponse);
+            return "{}";
+        }
+
+        int braceCount = 0;
+        int lastEnclosingChar = -1;
+        boolean inString = false;
+
+        for (int i = startCharIndex; i < rawResponse.length(); i++) {
+            char c = rawResponse.charAt(i);
+
+            // Handle entering/exiting strings & ignoring escaped quotes
+            if (c == '"' && (i == 0 || rawResponse.charAt(i - 1) != '\\')) {
+                inString = !inString;
+            }
+
+            if (!inString) {
+                if (c == startChar) {
+                    braceCount++;
+                }
+                else if (c == endChar) {
+                    braceCount--;
+                }
+            }
+
+            if (braceCount == 0) {
+                lastEnclosingChar = i;
+                break;
+            }
+        }
+
+        if (lastEnclosingChar != -1) {
+            return rawResponse.substring(startCharIndex, lastEnclosingChar + 1);
+        }
+        log.warn("Could not find a balanced JSON object in the AI response. Raw response: {}", rawResponse);
+        return "{}";
+    }
 
 }

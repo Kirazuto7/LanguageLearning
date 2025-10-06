@@ -1,6 +1,10 @@
 package com.example.language_learning.ai.mappers;
 
 import com.example.language_learning.ai.dtos.details.*;
+import com.example.language_learning.ai.enums.Language;
+import com.example.language_learning.shared.services.ChineseNlpService;
+import com.example.language_learning.shared.services.KoreanNlpService;
+import com.example.language_learning.shared.services.NlpService;
 import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.shared.services.FuriganaService;
 import com.example.language_learning.shared.utils.AIResponseSanitizer;
@@ -10,8 +14,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AIWordMapper {
-    private final FuriganaService furiganaService;
     private final AIResponseSanitizer sanitizer;
+    private final NlpService nlpService;
+    private final KoreanNlpService koreanNlpService;
+    private final FuriganaService furiganaService;
+    private final ChineseNlpService chineseNlpService;
 
     public WordDTO toWordDTO(Object aiVocab, String language) {
         if (aiVocab == null) return null;
@@ -40,9 +47,10 @@ public class AIWordMapper {
     }
 
     private WordDTO toWordDTO(AIKoreanVocabularyItemDTO aiVocab, String language) {
+        String verifiedHanja = koreanNlpService.getHanja(aiVocab.hangul());
         KoreanWordDetailsDTO details = KoreanWordDetailsDTO.builder()
                 .hangul(aiVocab.hangul())
-                .hanja(aiVocab.hanja())
+                .hanja(verifiedHanja != null ? verifiedHanja : aiVocab.hanja())
                 .romaja(aiVocab.romaja())
                 .build();
         return WordDTO.builder()
@@ -55,7 +63,7 @@ public class AIWordMapper {
     private WordDTO toWordDTO(AIChineseVocabularyItemDTO aiVocab, String language) {
         ChineseWordDetailsDTO details = ChineseWordDetailsDTO.builder()
                 .simplified(aiVocab.simplified())
-                .traditional(aiVocab.traditional())
+                .traditional(chineseNlpService.verifyTraditional(aiVocab.simplified(), aiVocab.traditional()))
                 .pinyin(aiVocab.pinyin())
                 .toneNumber(aiVocab.toneNumber())
                 .build();
@@ -80,8 +88,9 @@ public class AIWordMapper {
     }
 
     private WordDTO toWordDTO(AIItalianVocabularyItemDTO aiVocab, String language) {
+        String verifiedLemma = verifyLemma(aiVocab.lemma(), Language.ITALIAN);
         ItalianWordDetailsDTO details = ItalianWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
+                .lemma(verifiedLemma)
                 .gender(aiVocab.gender())
                 .pluralForm(aiVocab.pluralForm())
                 .build();
@@ -93,8 +102,9 @@ public class AIWordMapper {
     }
 
     private WordDTO toWordDTO(AIGermanVocabularyItemDTO aiVocab, String language) {
+        String verifiedLemma = verifyLemma(aiVocab.lemma(), Language.GERMAN);
         GermanWordDetailsDTO details = GermanWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
+                .lemma(verifiedLemma)
                 .gender(aiVocab.gender())
                 .pluralForm(aiVocab.pluralForm())
                 .separablePrefix(aiVocab.separablePrefix())
@@ -107,8 +117,9 @@ public class AIWordMapper {
     }
 
     private WordDTO toWordDTO(AIFrenchVocabularyItemDTO aiVocab, String language) {
+        String verifiedLemma = verifyLemma(aiVocab.lemma(), Language.FRENCH);
         FrenchWordDetailsDTO details = FrenchWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
+                .lemma(verifiedLemma)
                 .gender(aiVocab.gender())
                 .pluralForm(aiVocab.pluralForm())
                 .build();
@@ -120,8 +131,9 @@ public class AIWordMapper {
     }
 
     private WordDTO toWordDTO(AISpanishVocabularyItemDTO aiVocab, String language) {
+        String verifiedLemma = verifyLemma(aiVocab.lemma(), Language.SPANISH);
         SpanishWordDetailsDTO details = SpanishWordDetailsDTO.builder()
-                .lemma(aiVocab.lemma())
+                .lemma(verifiedLemma)
                 .gender(aiVocab.gender())
                 .pluralForm(aiVocab.pluralForm())
                 .build();
@@ -155,5 +167,10 @@ public class AIWordMapper {
             case GermanWordDetailsDTO g -> g.lemma();
             default -> null;
         };
+    }
+
+    private String verifyLemma(String aiLemma, Language language) {
+        String verifiedLemma = nlpService.getLemma(aiLemma, language);
+        return verifiedLemma != null ? verifiedLemma : aiLemma;
     }
 }
