@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {selectIsAuthenticated} from "../features/authentication/authSlice";
-import {useRefreshTokenMutation} from "../shared/api/userApiSlice";
+import {useRefreshTokenMutation} from "../shared/api/authApiSlice";
 import {useEffect, useState} from "react";
 import FullScreenLoader from "../shared/components/fullscreenLoader/FullScreenLoader";
 
@@ -22,8 +22,8 @@ const SessionSynchronizer: React.FC = () => {
                 .catch(() => {})
                 .finally(() => setIsSyncing(false));
         }
-    }, [isAuthenticated, refreshToken]);
-
+    }, []);
+    // isAuthenticated, refreshToken?
     return isSyncing ? <FullScreenLoader/> : null;
 };
 export default  SessionSynchronizer;

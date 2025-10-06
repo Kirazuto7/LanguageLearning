@@ -140,13 +140,23 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] Add a "Play" button to story paragraphs and reading comprehension passages.
 
 - [ ] **User Progress Tracking**
-    - [ ] Add a `isCompleted` field to `LessonChapter` and `StoryChapter` entities.
+    - [ ] Add a `isCompleted` field to `lesson_chapters` and `story_chapters` tables.
     - [ ] Implement a "Mark as Complete" button in the UI.
     - [ ] Display progress indicators (e.g., a checkmark) on completed books in the user\\'s library.
 
-- [ ] **Search & Discovery**
-    - [ ] Implement a search bar on the frontend.
-    - [ ] Add logic to filter the user\\'s generated books by title or topic.
+- [ ] **Implement Semantic Search & Discovery**
+    - [ ] **Goal:** Allow users to search for content based on meaning and intent, not just keywords.
+    - [ ] **Backend - Indexing:**
+        - [ ] Add a `vector` column to searchable entities (e.g., `lessons`, `short_stories`) to store embeddings. Consider using the `pgvector` extension for PostgreSQL for efficient similarity searches.
+        - [ ] Create a `ContentIndexingService` to generate and save embeddings for all searchable content (e.g., titles, topics). This can be a background job or run on content creation/update.
+    - [ ] **Backend - Querying:**
+        - [ ] Create a `SemanticSearchService` that takes a user's text query.
+        - [ ] Use the `EmbeddingService` to generate a vector for the user's query.
+        - [ ] Perform a cosine similarity search against the indexed vectors in the database to find the most relevant content.
+        - [ ] Create a new GraphQL query (e.g., `searchContent`) to expose this functionality.
+    - [ ] **Frontend:**
+        - [ ] Implement a global search bar in the application.
+        - [ ] Create a search results page to display the ranked, semantically relevant content returned from the backend.
 
 ---
 
@@ -203,7 +213,7 @@ A roadmap for building out the LanguageLearning application into a comprehensive
     - [ ] **Generation Workflow Modification:**
         - [ ] Before generating a new lesson, create a summary/topic embedding for the proposed content.
         - [ ] Perform a cosine similarity search against the most recent N lessons of the same type, language, and difficulty.
-        - [ ] If the similarity exceeds a defined threshold, identify the content as a "semantic duplicate".
+        - [ ] If the similarity for a given chapter type (e.g., a `GrammarLesson`) exceeds a defined threshold, identify the content as a "semantic duplicate".
     - [ ] **AI Feedback Loop:**
         - [ ] If a duplicate is detected, cancel the initial generation.
         - [ ] Re-trigger the AI prompt, adding the summaries of the duplicate lessons as a negative constraint (e.g., "Avoid generating a lesson similar to these topics: ...").

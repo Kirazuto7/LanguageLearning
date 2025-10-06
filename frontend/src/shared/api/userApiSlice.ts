@@ -29,13 +29,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             })
         }),
 
-        refreshToken: builder.mutation<UserDTO, void>({
-            query: () => ({
-                url: '/users/refresh',
-                method: 'POST',
-            }),
-        }),
-
         logout: builder.mutation<void, void>({
             query: () => ({
                 url: '/users/logout',
@@ -82,7 +75,6 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useCompleteOidcRegistrationMutation,
-    useRefreshTokenMutation,
     useLogoutMutation,
     useUpdateSettingsMutation,
     useHealthCheckQuery

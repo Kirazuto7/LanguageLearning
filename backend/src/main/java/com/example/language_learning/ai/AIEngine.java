@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -120,9 +121,12 @@ public class AIEngine {
         AIPrompt aiPrompt = aiConfig.getPrompt(language, request.getPromptType());
         var aiResponseType = mapping.javaTypeProvider().apply(request.getParams());
 
+        Map<String, Object> contextParams = new HashMap<>(request.getParams());
+        contextParams.put("promptType", request.getPromptType());
+
         AIGenerationContext context = new AIGenerationContext(
             chatClient,
-            request.getParams(),
+            contextParams,
             aiPrompt,
             aiResponseType,
             3,

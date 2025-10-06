@@ -1,29 +1,35 @@
 package com.example.language_learning.ai.mappers;
 
+import com.example.language_learning.ai.AIValidationService;
 import com.example.language_learning.ai.dtos.lessonbook.*;
 import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExampleDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentenceDTO;
 import com.example.language_learning.shared.enums.QuestionType;
+import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
 import com.example.language_learning.shared.services.FuriganaService;
 import com.example.language_learning.shared.utils.AIResponseSanitizer;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class AILessonMapper {
 
     private final AIWordMapper aiWordMapper;
     private final FuriganaService furiganaService;
     private final AIResponseSanitizer sanitizer;
+    private final AIValidationService aiValidationService;
+
+    public AILessonMapper(AIWordMapper aiWordMapper, FuriganaService furiganaService, AIResponseSanitizer sanitizer, Optional<AIValidationService> aiValidationService) {
+        this.aiWordMapper = aiWordMapper;
+        this.furiganaService = furiganaService;
+        this.sanitizer = sanitizer;
+        this.aiValidationService = aiValidationService.orElse(null);
+    }
 
     public ChapterMetadataDTO toChapterMetadataDTO(AIChapterMetadataResponse response, String topic) {
         return ChapterMetadataDTO.builder()
@@ -34,12 +40,18 @@ public class AILessonMapper {
     }
 
     public VocabularyLessonDTO toVocabularyLessonDTO(AIVocabularyLessonResponse<?> response, String language) {
+        Set<String> seenWords = new HashSet<>();
         return VocabularyLessonDTO.builder()
                 .title(response.title())
                 .vocabularies(response.vocabularies().stream()
                         .filter(Objects::nonNull)
                         .map(aiVocab -> aiWordMapper.toWordDTO(aiVocab, language)) // Polymorphic dispatch
                         .filter(Objects::nonNull)
+                        // Filter out duplicates based on the original word (e.g., hangul, kanji, lemma).
+                        .filter(wordDTO -> {
+                            String originalWord = aiWordMapper.getOriginalWordFromDTO(wordDTO);
+                            return originalWord != null && seenWords.add(originalWord);
+                        })
                         .toList())
                 .build();
     }
@@ -123,25 +135,32 @@ public class AILessonMapper {
                         .filter(aiQuestion -> aiQuestion.questionText() != null && !aiQuestion.questionText().isBlank())
                         .map(aiQuestion -> {
                             String questionText;
-                            String answer;
+                            String validatedAnswer;
                             List<String> answerChoices;
 
                             if ("japanese".equalsIgnoreCase(language)) {
                                 questionText = furiganaService.addFurigana(aiQuestion.questionText());
-                                answer = furiganaService.addFurigana(aiQuestion.answer());
+                                String rawAnswer = furiganaService.addFurigana(aiQuestion.answer());
                                 answerChoices = aiQuestion.answerChoices() != null
                                         ? aiQuestion.answerChoices().stream().map(furiganaService::addFurigana).collect(Collectors.toList())
                                         : Collections.emptyList();
+                                // Skip validation if the service is disabled
+                                validatedAnswer = (aiValidationService != null)
+                                        ? aiValidationService.findBestMatchingAnswer(rawAnswer, answerChoices)
+                                        : rawAnswer;
                             } else {
                                 questionText = aiQuestion.questionText();
-                                answer = aiQuestion.answer();
                                 answerChoices = aiQuestion.answerChoices() != null ? aiQuestion.answerChoices() : Collections.emptyList();
+                                // Skip validation if the service is disabled
+                                validatedAnswer = (aiValidationService != null)
+                                        ? aiValidationService.findBestMatchingAnswer(aiQuestion.answer(), answerChoices)
+                                        : aiQuestion.answer();
                             }
 
                             return LessonQuestionDTO.builder()
                                     .questionText(questionText)
                                     .questionType(QuestionType.MULTIPLE_CHOICE.name())
-                                    .answer(answer)
+                                    .answer(validatedAnswer)
                                     .answerChoices(answerChoices)
                                     .build();
                         }).collect(Collectors.toList()))
