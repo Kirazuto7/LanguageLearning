@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "../../../../shared/components/mascot/mascot.module.scss";
+import chapterStyles from "./chapterGenerationInputField.module.scss";
 
 interface ChapterGenerationInputFieldProps {
     onSend: (value:string) => void;
@@ -17,12 +18,12 @@ const ChapterGenerationInputField: React.FC<ChapterGenerationInputFieldProps> = 
     }
 
     return(
-        <form id={styles.chatForm} className={styles.inputArea} onSubmit={handleSubmit}>
+        <form id={styles.chatForm} className={chapterStyles.inputForm} onSubmit={handleSubmit}>
             <input
                 type="text"
                 id={styles.userInput}
                 placeholder="Suggest a topic..."
-                className={styles.textInput}
+                className={`${styles.textInput} ${chapterStyles.textInput}`}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 disabled={disabled}

@@ -1,5 +1,6 @@
 package com.example.language_learning.user;
 
+import com.example.language_learning.user.dashboard.UserDataDTO;
 import com.example.language_learning.user.requests.CompleteOidcRegistrationRequest;
 import com.example.language_learning.user.requests.CreateUserRequest;
 import com.example.language_learning.user.requests.LoginRequest;
@@ -93,6 +94,13 @@ public class UserController {
         String username = authentication.getName();
         SettingsDTO updatedSettings = userService.updateSettings(username, updateRequest);
         return ResponseEntity.ok(updatedSettings);
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<UserDataDTO> getUserDashboardData(Authentication authentication) {
+        String username = authentication.getName();
+        UserDataDTO userData = userService.getUserDashboardData(username);
+        return ResponseEntity.ok(userData);
     }
 
     @GetMapping("/health")

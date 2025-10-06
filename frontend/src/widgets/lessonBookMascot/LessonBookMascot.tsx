@@ -1,5 +1,6 @@
 import React, {Suspense, useState, useEffect} from 'react';
 import styles from "../../shared/components/mascot/mascot.module.scss";
+import lessonMascotStyles from "./lessonBookMascot.module.scss";
 import { useSettingsManager } from '../../features/userSettings/hooks/useSettingsManager';
 import Blackboard from "../../shared/components/blackboard/Blackboard";
 import ChapterGenerationInputField from "../../features/lessonBook/chapterGeneration/components/ChapterGenerationInputField";
@@ -29,7 +30,7 @@ const LessonBookMascot: React.FC<LessonBookMascotProps> = ({ onTopicSubmit, isLo
         }
         else if (!isLoading) {
             // When the language is changed in settings, update the mascot's speech.
-            setSpeech(`Ready to learn some ${settings?.language || 'new things'}? Suggest a topic to get started! (^_^)`);
+            setSpeech(`Ready to learn some ${settings?.language || 'new things'}? Suggest a topic to get started! 😄`);
         }
     }, [isLoading, message, settings?.language, celebrate]);
 
@@ -57,19 +58,21 @@ const LessonBookMascot: React.FC<LessonBookMascotProps> = ({ onTopicSubmit, isLo
     }
 
     return(
-        <div id={styles.mascotContainer}>
-            <div className={styles.mascotContentWrapper}>
-                <div className={styles.blackboardWrapper}>
-                    <Blackboard
-                        text={speech}
-                        gender={mascotGenders[settings?.mascot || 'jinny']}
-                        forceSpeak={isLoading || celebrate}
-                    />
-                </div>
-                <div className={styles.characterWrapper}>
-                    <Suspense fallback={<div style={{ height: '120px', width: '120px'}}/>}>
-                        <Mascot character={settings?.mascot || 'jinny'} hop={hop} celebrate={celebrate}/>
-                    </Suspense>
+        <div id={styles.mascotContainer} className={lessonMascotStyles.lessonMascotContainer}>
+            <div id={styles.mascotContentWrapper}>
+                <div className={styles.visualsWrapper}>
+                    <div className={styles.blackboardWrapper}>
+                        <Blackboard
+                            text={speech}
+                            gender={mascotGenders[settings?.mascot || 'jinny']}
+                            forceSpeak={isLoading || celebrate}
+                        />
+                    </div>
+                    <div className={styles.characterWrapper}>
+                        <Suspense fallback={<div style={{ height: '120px', width: '120px'}}/>}>
+                            <Mascot character={settings?.mascot || 'jinny'} hop={hop} celebrate={celebrate}/>
+                        </Suspense>
+                    </div>
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>
                     <ChapterGenerationInputField onSend={handleSendButton} disabled={isLoading}/>

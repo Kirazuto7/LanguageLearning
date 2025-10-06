@@ -1,4 +1,5 @@
 import React, { Suspense, useState, useEffect } from 'react';
+import storyMascotStyles from "./storyBookMascot.module.scss";
 import styles from "../../shared/components/mascot/mascot.module.scss";
 import { useSettingsManager } from '../../features/userSettings/hooks/useSettingsManager';
 import Blackboard from "../../shared/components/blackboard/Blackboard";
@@ -37,19 +38,21 @@ const StoryBookMascot: React.FC<StoryBookMascotProps> = ({ onTopicSubmit, isLoad
     }
 
     return (
-        <div id={styles.mascotContainer}>
-            <div className={styles.mascotContentWrapper}>
-                <div className={styles.blackboardWrapper}>
-                    <Blackboard
-                        text={speech}
-                        gender={mascotGenders[settings?.mascot || 'jinny']}
-                        forceSpeak={isLoading}
-                    />
-                </div>
-                <div className={styles.characterWrapper}>
-                    <Suspense fallback={<div style={{ height: '120px', width: '120px' }} />}>
-                        <Mascot character={settings?.mascot || 'jinny'} hop={hop} />
-                    </Suspense>
+        <div id={styles.mascotContainer} className={storyMascotStyles.storyMascotContainer}>
+            <div id={styles.mascotContentWrapper}>
+                <div className={styles.visualsWrapper}>
+                    <div className={styles.blackboardWrapper}>
+                        <Blackboard
+                            text={speech}
+                            gender={mascotGenders[settings?.mascot || 'jinny']}
+                            forceSpeak={isLoading}
+                        />
+                    </div>
+                    <div className={styles.characterWrapper}>
+                        <Suspense fallback={<div style={{ height: '120px', width: '120px' }} />}>
+                            <Mascot character={settings?.mascot || 'jinny'} hop={hop} />
+                        </Suspense>
+                    </div>
                 </div>
                 <div className={`${styles.inputRow} mt-3`}>
                     <ShortStoryGenerationInputField onSend={handleSendButton} disabled={isLoading} />

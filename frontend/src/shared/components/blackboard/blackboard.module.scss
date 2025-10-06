@@ -4,9 +4,6 @@
 }
 
 .textContainer {
-  color: white;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -16,6 +13,12 @@
   word-wrap: break-word;
   text-shadow: 0 0 5px rgba(255,255,255,0.5);
   padding: 8px;
+
+  .blackboardText {
+    color: white;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+  }
 }
 
 .speakButton {

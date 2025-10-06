@@ -49,7 +49,7 @@ public class AIGenerationActions {
 
     public Mono<AIGenerationState> handleValidation(AIGenerationState fromState, AIGenerationContext context) {
         String rawResponse = ((AIGenerationState.VALIDATION) fromState).rawResponse();
-        String jsonString = sanitizer.repairAndSanitizeJson(rawResponse);
+        String jsonString = sanitizer.repairJson(rawResponse);
         int attempt = context.attemptCounter().get();
         PromptType promptType = (PromptType) context.params().get("promptType");
         log.debug("Extracted JSON for {} (Attempt {}): {}", promptType, attempt, jsonString);

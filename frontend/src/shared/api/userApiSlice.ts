@@ -1,14 +1,22 @@
 import { apiSlice } from "./apiSlice";
-import {LoginRequest, CreateUserRequest, SettingsDTO, UserDTO, CompleteOidcRegistrationRequest} from "../types/dto";
+import {
+    LoginRequest,
+    CreateUserRequest,
+    SettingsDTO,
+    UserDTO,
+    CompleteOidcRegistrationRequest,
+    UserDataDTO
+} from "../types/dto";
 import {logOut} from "../../features/authentication/authSlice";
 import {logToServer} from "../utils/loggingService";
+import {HttpMethod} from "../types/types";
 
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         login: builder.mutation<UserDTO, LoginRequest>({
             query: credentials => ({
                 url:'/users/login',
-                method: 'POST',
+                method: HttpMethod.POST,
                 body: credentials
             })
         }),
@@ -16,7 +24,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         register: builder.mutation<UserDTO, CreateUserRequest>({
             query: userData => ({
                 url: '/users/register',
-                method: 'POST',
+                method: HttpMethod.POST,
                 body: userData
             })
         }),
@@ -24,7 +32,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         completeOidcRegistration: builder.mutation<UserDTO, CompleteOidcRegistrationRequest>({
             query: (request) => ({
                 url: '/users/complete-oidc-registration',
-                method: 'POST',
+                method: HttpMethod.POST,
                 body: request
             })
         }),
@@ -32,7 +40,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         logout: builder.mutation<void, void>({
             query: () => ({
                 url: '/users/logout',
-                method: 'POST',
+                method: HttpMethod.POST,
             }),
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
@@ -56,16 +64,23 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
         updateSettings: builder.mutation<SettingsDTO, Partial<SettingsDTO>>({
             query: (settingsData) => ({
-                url: `/users/settings`,
-                method: 'PATCH',
+                url: '/users/settings',
+                method: HttpMethod.PATCH,
                 body: settingsData,
+            })
+        }),
+
+        getUserDashboardData: builder.query<UserDataDTO, void>({
+            query: () => ({
+                url: '/users/dashboard',
+                method: HttpMethod.GET
             })
         }),
 
         healthCheck: builder.query<void, void>({
             query: () => ({
                 url: '/users/health',
-                method: 'GET',
+                method: HttpMethod.GET,
             })
         })
     })
@@ -77,5 +92,6 @@ export const {
     useCompleteOidcRegistrationMutation,
     useLogoutMutation,
     useUpdateSettingsMutation,
+    useGetUserDashboardDataQuery,
     useHealthCheckQuery
 } = userApiSlice;

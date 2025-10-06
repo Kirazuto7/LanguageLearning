@@ -1,5 +1,5 @@
 import {Routes, Route} from 'react-router-dom';
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import './App.scss';
 import NavigationBar from '../widgets/navigationBar/NavigationBar';
 import ProgressSubscriptionManager from "../widgets/progressBar/ProgressSubscriptionManager";
@@ -21,36 +21,54 @@ import { TranslationToolButton } from "../widgets/translationTool/components";
 import SessionSynchronizer from "./SessionSynchronizer";
 
 const LandingPage = lazy(() => import('../pages/home/LandingPage'));
-const HomePage = lazy(() => import('../pages/home/HomePage'));
+const DashboardPage = lazy(() => import('../pages/home/./DashboardPage'));
 const LessonBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
 const StoryBookPage = lazy(() => import('../pages/lessontools/StoryBookPage'));
 const OidcOnboarding = lazy(() => import('../features/authentication/components/OidcOnboarding'));
 
 const App: React.FC = () => {
+    const [isSessionChecked, setIsSessionChecked] = useState(false);
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
+    if (!isSessionChecked) {
+        return (
+            <>
+                <ThemeManager />
+                <SessionSynchronizer onSyncComplete={() => setIsSessionChecked(true)} />
+                <FullScreenLoader />
+            </>
+        );
+    }
 
   return (
       <>
         <SessionManager/>
-        <SessionSynchronizer/>
         <ProgressSubscriptionManager/>
         <ThemeManager />
         <NavigationBar />
 
         <Suspense fallback={<FullScreenLoader/>}>
             <Routes>
-                <Route path="/" element={<LandingPage/>} />
-                <Route path="/login" element={<LoginPage/>} />
-                <Route path="/welcome/oidc" element={<OidcOnboarding/>} />
-
-                <Route element={<ProtectedRoute/>}>
-                    <Route element={<BackgroundLayout/>}>
-                        <Route path="/home" element={<HomePage />} />
-                        <Route path="/study" element={<LessonBookPage />} />
-                        <Route path="/read" element={<StoryBookPage />} />
+                {isAuthenticated ? (
+                    <Route element={<ProtectedRoute/>}>
+                        <Route element={<BackgroundLayout/>}>
+                            <Route index element={<DashboardPage />} />
+                            <Route path="/home" element={<DashboardPage />} />
+                            <Route path="/study" element={<LessonBookPage />} />
+                            <Route path="/read" element={<StoryBookPage />} />
+                            {/* Add a catch-all to redirect to home if authenticated and on a public route */}
+                            <Route path="*" element={<DashboardPage />} />
+                        </Route>
                     </Route>
-                </Route>
+                ) : (
+                    <>
+                        <Route path="/welcome" element={<LandingPage/>} />
+                        <Route path="/login" element={<LoginPage/>} />
+                        <Route path="/welcome/oidc" element={<OidcOnboarding/>} />
+                        {/* Add a catch-all to redirect to welcome if not authenticated */}
+                        <Route path="*" element={<LandingPage />} />
+                    </>
+                )}
             </Routes>
         </Suspense>
 

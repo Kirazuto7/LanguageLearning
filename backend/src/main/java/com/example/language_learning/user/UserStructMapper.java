@@ -1,8 +1,6 @@
 package com.example.language_learning.user;
 
-import com.example.language_learning.lessonbook.LessonBookStructMapper;
 import com.example.language_learning.shared.mapper.CycleAvoidingMappingContext;
-import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,8 +8,7 @@ import org.mapstruct.ObjectFactory;
 
 @Mapper(
     componentModel = "spring",
-    uses = {SettingsStructMapper.class, LessonBookStructMapper.class},
-    collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
+    uses = {SettingsStructMapper.class}
 )
 public abstract class UserStructMapper {
     @Mapping(target = "password", ignore = true)

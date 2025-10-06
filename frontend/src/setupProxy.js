@@ -26,4 +26,13 @@ module.exports = function(app) {
             pathRewrite: (path, req) => req.originalUrl,
         })
     );
+
+    // This is needed for the dev server's hot-reloading WebSocket to work correctly.
+    app.use(
+        '/ws',
+        createProxyMiddleware({
+            target: 'http://backend:8080',
+            ws: true,
+        })
+    );
 };

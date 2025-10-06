@@ -5,25 +5,33 @@ import {useEffect, useState} from "react";
 import FullScreenLoader from "../shared/components/fullscreenLoader/FullScreenLoader";
 
 
+interface SessionSynchronizerProps {
+    onSyncComplete: () => void;
+}
+
 /**
  * This component synchronizes the application's session state on initial load.
  * It's intended to be rendered once at the top level of the application.
  * It checks if the user is authenticated in Redux. If not, it attempts to use the
  * refresh token cookie to re-establish the session (e.g., after an OIDC redirect).
  */
-const SessionSynchronizer: React.FC = () => {
+const SessionSynchronizer: React.FC<SessionSynchronizerProps> = ({ onSyncComplete }) => {
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const [refreshToken, { isLoading }] = useRefreshTokenMutation();
-    const [isSyncing, setIsSyncing] = useState(!isAuthenticated);
 
     useEffect(() => {
         if (!isAuthenticated) {
             refreshToken().unwrap()
                 .catch(() => {})
-                .finally(() => setIsSyncing(false));
+                .finally(onSyncComplete);
+        } else {
+            onSyncComplete();
         }
+        // We only want this to run once on initial mount.
     }, []);
-    // isAuthenticated, refreshToken?
-    return isSyncing ? <FullScreenLoader/> : null;
+
+    // This component will now only control the initial sync logic, not the UI.
+    // The loader will be handled by the App component.
+    return null;
 };
 export default  SessionSynchronizer;

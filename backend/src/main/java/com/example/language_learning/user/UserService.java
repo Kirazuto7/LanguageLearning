@@ -1,6 +1,8 @@
 package com.example.language_learning.user;
 
 import com.example.language_learning.shared.mapper.DtoMapper;
+import com.example.language_learning.user.dashboard.UserDataDTO;
+import com.example.language_learning.user.dashboard.UserDataRepository;
 import com.example.language_learning.user.requests.CompleteOidcRegistrationRequest;
 import com.example.language_learning.user.requests.CreateUserRequest;
 import com.example.language_learning.security.AuthenticationResponse;
@@ -25,12 +27,20 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final UserDataRepository userDataRepository;
     private final PasswordEncoder passwordEncoder;
     private final DtoMapper mapper;
     private final JwtService jwtService;
 
     @Value("${application.security.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
+
+    @Transactional(readOnly = true)
+    public UserDataDTO getUserDashboardData(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return userDataRepository.findUserDataByUserId(user.getId());
+    }
 
     @Transactional
     public AuthenticationResponse register(CreateUserRequest request) {

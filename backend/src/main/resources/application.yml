@@ -99,7 +99,7 @@ application:
     jwt:
       secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
       # Access token expiration: 15 mins
-      expiration: 60000 #900000
+      expiration: 900000
       # Refresh token expiration: 7 days
       refresh-token-expiration: 604800000 
     public-paths:
