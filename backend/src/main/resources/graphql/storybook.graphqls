@@ -75,11 +75,9 @@ input StoryBookRequestInput {
 # --- Queries, Mutations, & Subscriptions ---
 
 extend type Query {
-    getStoryBook(request: StoryBookRequestInput!): StoryBook
-}
-
-extend type Query {
     getStoryBooks: [StoryBook]!
+    getStoryBook(request: StoryBookRequestInput!): StoryBook
+    getStoryBookById(id: ID!): StoryBook
 }
 
 extend type Mutation {

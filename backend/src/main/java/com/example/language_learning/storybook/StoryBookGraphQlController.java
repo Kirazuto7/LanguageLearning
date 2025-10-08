@@ -40,6 +40,12 @@ public class StoryBookGraphQlController {
 
     @QueryMapping
     @PreAuthorize("isAuthenticated()")
+    public StoryBookDTO getStoryBookById(@Argument Long id, @AuthenticationPrincipal User user) {
+        return storyBookService.getStoryBookById(id, user);
+    }
+
+    @QueryMapping
+    @PreAuthorize("isAuthenticated()")
     public List<StoryBookDTO> getStoryBooks(@AuthenticationPrincipal User user) {
         return storyBookService.fetchUserStoryBooks(user);
     }

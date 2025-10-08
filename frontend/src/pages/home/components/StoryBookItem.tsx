@@ -8,9 +8,10 @@ import { getStoryBookDesign } from "../../../shared/utils/designUtils";
 
 interface StoryBookItemProps {
     book: StoryBookLibraryItemDTO;
+    onClick: () => void;
 }
 
-const StoryBookItem: React.FC<StoryBookItemProps> = ({ book }) => {
+const StoryBookItem: React.FC<StoryBookItemProps> = ({ book, onClick }) => {
     const bookStyle = {
         // Use a CSS variable to set the base color for the gradient in the stylesheet
         '--storybook-color': getStoryBookDifficultyColor(book.difficulty)
@@ -20,7 +21,7 @@ const StoryBookItem: React.FC<StoryBookItemProps> = ({ book }) => {
     const designClass = styles[getStoryBookDesign(book.id)] || '';
 
     return(
-        <div className={`${styles.book} ${designClass}`} style={bookStyle}>
+        <div className={`${styles.book} ${designClass}`} style={bookStyle} onClick={onClick}>
             {countryCode && <Flag code={countryCode} size={32} className={styles.flag} />}
             <h4 className={styles.title}>{book.title}</h4>
 

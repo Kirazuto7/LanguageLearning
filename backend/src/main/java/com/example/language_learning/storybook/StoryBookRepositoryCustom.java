@@ -1,5 +1,7 @@
 package com.example.language_learning.storybook;
 
+import com.example.language_learning.user.User;
+
 import java.util.Optional;
 
 public interface StoryBookRepositoryCustom {
@@ -9,5 +11,5 @@ public interface StoryBookRepositoryCustom {
      * @param id The ID of the StoryBook to find.
      * @return an Optional containing the fully populated StoryBook, or an empty Optional if not found.
      */
-    Optional<StoryBook> findStoryBookDetailsById(Long id);
+    Optional<StoryBook> findStoryBookDetailsById(Long id, User user);
 }

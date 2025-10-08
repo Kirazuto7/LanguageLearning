@@ -1,8 +1,8 @@
 import Container from 'react-bootstrap/Container';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from "../../features/authentication/authSlice";
-import React from "react";
-import { useDashboardData } from "./useDashboardData";
+import {useSelector} from 'react-redux';
+import {selectCurrentUser} from "../../features/authentication/authSlice";
+import React, {useState} from "react";
+import {useDashboardData} from "./useDashboardData";
 import FullScreenLoader from "../../shared/components/fullscreenLoader/FullScreenLoader";
 import EmptyDashboard from "./components/EmptyDashboard";
 import styles from "./components/dashboardpage.module.scss";
@@ -13,17 +13,25 @@ import StoryBookIllustration from "./components/subcomponents/StoryBookIllustrat
 import HorizontalStack from "../../shared/components/horizontalstack/HorizontalStack";
 import LessonBookItem from "./components/LessonBookItem";
 import StoryBookItem from "./components/StoryBookItem";
+import {BookType} from "../../shared/types/types";
+import BookReaderModal from "./components/BookReaderModal";
 
 const DashboardPage: React.FC = () => {
   const user = useSelector(selectCurrentUser);
   const { isLoading, lessonBooks, storyBooks, hasData } = useDashboardData();
   const navigate = useNavigate();
+  const [selectedBook, setSelectedBook] = useState<{ id: number; type: BookType} | null>(null);
 
   if (isLoading) {
     return <FullScreenLoader/>;
   }
 
+  const handleSelectBook = (id: number, type: BookType) => {
+    setSelectedBook({ id, type });
+  };
+
   return (
+  <>
     <Container fluid className="d-flex flex-column align-items-center flex-grow-1 py-5">
       <div className="glass-container" style={{ width: '90vw', maxWidth: '1600px' }}>
         <h1 className="mb-4 text-center">Welcome {user ? `, ${user.username}` : 'Guest'}!</h1>
@@ -41,13 +49,21 @@ const DashboardPage: React.FC = () => {
                     borderRadius="8px"
                >
                    {lessonBooks.map(book => (
-                       <LessonBookItem key={book.id} book={book} />
+                       <LessonBookItem
+                            key={book.id}
+                            book={book}
+                            onClick={() => handleSelectBook(book.id, BookType.LESSON)}
+                       />
                    ))}
                </HorizontalStack>
 
                <HorizontalStack title="My Story Books" width="100%">
                    {storyBooks.map(book => (
-                       <StoryBookItem key={book.id} book={book} />
+                       <StoryBookItem
+                            key={book.id}
+                            book={book}
+                            onClick={() => handleSelectBook(book.id, BookType.STORY)}
+                       />
                    ))}
                </HorizontalStack>
             </>
@@ -76,6 +92,17 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
     </Container>
+
+    {selectedBook && (
+        <BookReaderModal
+            show={true}
+            onHide={() => setSelectedBook(null)}
+            bookId={selectedBook.id}
+            bookType={selectedBook.type}
+        />    
+    )}
+
+  </>
   );
 }
 export default DashboardPage;

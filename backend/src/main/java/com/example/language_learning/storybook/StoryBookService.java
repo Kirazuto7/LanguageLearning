@@ -36,6 +36,11 @@ public class StoryBookService {
     );
     private final Random random = new Random();
 
+    public StoryBookDTO getStoryBookById(Long id, User user) {
+        Optional<StoryBook> storyBookOptional = storyBookRepository.findStoryBookDetailsById(id, user);
+        return storyBookOptional.map(dtoMapper::toDto).orElse(null);
+    }
+
     @Transactional
     public StoryBookDTO findOrCreateBookDTO(StoryBookRequest request, User user) {
         StoryBook storyBook = findOrCreateBook(request.language(), request.difficulty(), user);
@@ -50,7 +55,7 @@ public class StoryBookService {
         if (storyBookOptional.isPresent()) {
             // Story book exists, deep fetch
             StoryBook storyBook = storyBookOptional.get();
-            return storyBookRepository.findStoryBookDetailsById(storyBook.getId())
+            return storyBookRepository.findStoryBookDetailsById(storyBook.getId(), user)
                     .orElseThrow(() -> new ResourceNotFoundException("Storybook with id '" + storyBook.getId() + "' not found"));
         }
         else {

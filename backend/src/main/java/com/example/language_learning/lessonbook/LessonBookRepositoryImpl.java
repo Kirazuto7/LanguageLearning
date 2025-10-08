@@ -38,9 +38,10 @@ public class LessonBookRepositoryImpl implements LessonBookRepositoryCustom {
     private final UserRepository userRepository;
 
     @Override
-    public Optional<LessonBook> findDetailsById(Long id) {
+    public Optional<LessonBook> findDetailsById(Long id, User user) {
         return selectLessonBookDetails()
          .where(LESSON_BOOK.ID.eq(id))
+         .and(LESSON_BOOK.USER_ID.eq(user.getId()))
          .fetchOptional(this::mapToLessonBook);
     }
 

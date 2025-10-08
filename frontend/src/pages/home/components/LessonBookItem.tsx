@@ -7,9 +7,10 @@ import { FlagIcon as Flag } from 'react-flag-kit';
 
 interface LessonBookItemProps {
     book: LessonBookLibraryItemDTO;
+    onClick: () => void;
 }
 
-const LessonBookItem: React.FC<LessonBookItemProps> = ({ book }) => {
+const LessonBookItem: React.FC<LessonBookItemProps> = ({ book, onClick }) => {
     const bookStyle = {
         '--book-cover-color': getDifficultyColor(book.difficulty)
     } as React.CSSProperties;
@@ -17,7 +18,7 @@ const LessonBookItem: React.FC<LessonBookItemProps> = ({ book }) => {
     const countryCode = getCountryCodeForLanguage(book.language);
 
     return(
-        <div className={styles.book} style={bookStyle}>
+        <div className={styles.book} style={bookStyle} onClick={onClick}>
             {countryCode && <Flag code={countryCode} size={32} className={styles.flag} />}
             <h4 className={styles.title}>{book.title}</h4>
 

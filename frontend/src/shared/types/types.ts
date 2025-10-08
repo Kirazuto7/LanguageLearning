@@ -24,6 +24,11 @@ export enum HttpMethod {
     PUT = 'PUT'
 }
 
+export enum BookType {
+    LESSON = 'lesson',
+    STORY = 'story'
+}
+
 export enum ActionCardDesign {
     LESSON = 'lesson',
     STORY = 'story'

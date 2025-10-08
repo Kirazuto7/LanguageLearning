@@ -12,7 +12,7 @@ public interface LessonBookRepositoryCustom {
      * @param id The ID of the LessonBook to find.
      * @return an Optional containing the fully populated LessonBook, or an empty Optional if not found.
      */
-    Optional<LessonBook> findDetailsById(Long id);
+    Optional<LessonBook> findDetailsById(Long id, User user);
 
     Optional<LessonBook> findDetailsByUserAndLanguageAndDifficulty(User user, String language, String difficulty);
 }

@@ -13,6 +13,7 @@ input LessonBookRequestInput {
 }
 
 extend type Query {
-    getLessonBooks: [LessonBook!]!
+    getLessonBooks: [LessonBook]!
     getLessonBook(request: LessonBookRequestInput!): LessonBook
+    getLessonBookById(id: ID!): LessonBook
 }

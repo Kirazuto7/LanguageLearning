@@ -30,4 +30,10 @@ public class LessonBookGraphQlController {
         }
         return lessonBookService.findOrCreateBookDTO(request, user);
     }
+
+    @QueryMapping
+    @PreAuthorize("isAuthenticated()")
+    public LessonBookDTO getLessonBookById(@Argument Long id, @AuthenticationPrincipal User user) {
+        return lessonBookService.getLessonBookById(id, user);
+    }
 }

@@ -36,7 +36,23 @@ export const storyBookApiSlice = graphqlApiSlice.injectEndpoints({
             providesTags: (result) => (result ? [{ type: 'Book', id: String(result.id) }] : []),
         }),
 
+        getStoryBookById: builder.query<StoryBookDTO, number>({
+            query: (request) => ({
+                body: gql`
+                    ${storyBookFragment}
+                    query GetStoryBookById($id: ID!) {
+                        getStoryBookById(id: $id) {
+                            ...StoryBookFragment
+                        }
+                    }
+                `,
+                variables: { request },
+            }),
+            transformResponse: (response: { getStoryBookById: StoryBookDTO }) => response.getStoryBookById,
+            providesTags: (result) => (result ? [{ type: 'Book', id: String(result.id) }] : []),
+        }),
+
     })
 });
 
-export const { useGetStoryBooksQuery, useGetStoryBookQuery } = storyBookApiSlice;
+export const { useGetStoryBooksQuery, useGetStoryBookQuery, useGetStoryBookByIdQuery, useLazyGetStoryBookByIdQuery } = storyBookApiSlice;
