@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.image.ImagePrompt;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -47,6 +48,8 @@ public class AIEngine {
     private final AIResponseMapperRegistry mapperRegistry;
     private final ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory;
     private final ImageService imageService;
+    @Value("${spring.ai.max-retries}")
+    private int maxRetries;
 
     /**
      * Generates images based on a list of text prompts provided in the request.
@@ -129,14 +132,17 @@ public class AIEngine {
             contextParams,
             aiPrompt,
             aiResponseType,
-            3,
+            maxRetries,
             new AtomicInteger(1)
         );
 
         Mono<T_AI> apiResponseMono = aiGenerationStateMachineFactory.createInstance()
                 .runToCompletion(context)
                 .onCompletion(AIGenerationState.COMPLETED.class, AIGenerationState.COMPLETED::result)
-                .onError(AIGenerationState.FAILED.class, failed -> new AIEngineException(failed.reason()))
+                .onError(AIGenerationState.FAILED.class, failed -> {
+                    log.error("AI generation failed for prompt type '{}'. Reason: {}", request.getPromptType(), failed.reason(), failed.cause());
+                    return new AIEngineException(failed.reason(), failed.cause());
+                })
                 .asMono()
                 .map(obj -> (T_AI) obj);
         return apiResponseMono.map(response -> mapping.mapper().apply(response, request.getParams()));

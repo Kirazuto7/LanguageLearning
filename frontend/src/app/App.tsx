@@ -1,5 +1,5 @@
 import {Routes, Route} from 'react-router-dom';
-import React, { lazy, Suspense, useState } from "react";
+import React, { useState } from "react";
 import './App.scss';
 import NavigationBar from '../widgets/navigationBar/NavigationBar';
 import ProgressSubscriptionManager from "../widgets/progressBar/ProgressSubscriptionManager";
@@ -20,11 +20,12 @@ import LoginPage from "../pages/login/LoginPage";
 import { TranslationToolButton } from "../widgets/translationTool/components";
 import SessionSynchronizer from "./SessionSynchronizer";
 
-const LandingPage = lazy(() => import('../pages/home/LandingPage'));
-const DashboardPage = lazy(() => import('../pages/home/./DashboardPage'));
-const LessonBookPage = lazy(() => import('../pages/lessontools/LessonBookPage'));
-const StoryBookPage = lazy(() => import('../pages/lessontools/StoryBookPage'));
-const OidcOnboarding = lazy(() => import('../features/authentication/components/OidcOnboarding'));
+// Eagerly import all page components to prevent chunk load errors
+import LandingPage from '../pages/home/LandingPage';
+import DashboardPage from '../pages/home/./DashboardPage';
+import LessonBookPage from '../pages/lessontools/LessonBookPage';
+import StoryBookPage from '../pages/lessontools/StoryBookPage';
+import OidcOnboarding from '../features/authentication/components/OidcOnboarding';
 
 const App: React.FC = () => {
     const [isSessionChecked, setIsSessionChecked] = useState(false);
@@ -47,30 +48,28 @@ const App: React.FC = () => {
         <ThemeManager />
         <NavigationBar />
 
-        <Suspense fallback={<FullScreenLoader/>}>
-            <Routes>
-                {isAuthenticated ? (
-                    <Route element={<ProtectedRoute/>}>
-                        <Route element={<BackgroundLayout/>}>
-                            <Route index element={<DashboardPage />} />
-                            <Route path="/home" element={<DashboardPage />} />
-                            <Route path="/study" element={<LessonBookPage />} />
-                            <Route path="/read" element={<StoryBookPage />} />
-                            {/* Add a catch-all to redirect to home if authenticated and on a public route */}
-                            <Route path="*" element={<DashboardPage />} />
-                        </Route>
+        <Routes>
+            {isAuthenticated ? (
+                <Route element={<ProtectedRoute/>}>
+                    <Route element={<BackgroundLayout/>}>
+                        <Route index element={<DashboardPage />} />
+                        <Route path="/home" element={<DashboardPage />} />
+                        <Route path="/study" element={<LessonBookPage />} />
+                        <Route path="/read" element={<StoryBookPage />} />
+                        {/* Add a catch-all to redirect to home if authenticated and on a public route */}
+                        <Route path="*" element={<DashboardPage />} />
                     </Route>
-                ) : (
-                    <>
-                        <Route path="/welcome" element={<LandingPage/>} />
-                        <Route path="/login" element={<LoginPage/>} />
-                        <Route path="/welcome/oidc" element={<OidcOnboarding/>} />
-                        {/* Add a catch-all to redirect to welcome if not authenticated */}
-                        <Route path="*" element={<LandingPage />} />
-                    </>
-                )}
-            </Routes>
-        </Suspense>
+                </Route>
+            ) : (
+                <>
+                    <Route path="/welcome" element={<LandingPage/>} />
+                    <Route path="/login" element={<LoginPage/>} />
+                    <Route path="/welcome/oidc" element={<OidcOnboarding/>} />
+                    {/* Add a catch-all to redirect to welcome if not authenticated */}
+                    <Route path="*" element={<LandingPage />} />
+                </>
+            )}
+        </Routes>
 
           {isAuthenticated && <TranslationToolButton/>}
       </>

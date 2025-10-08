@@ -17,8 +17,8 @@
     },
     "conjugated_words": {
       "type": "array",
-      "minItems": 4,
-      "maxItems": 6,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
@@ -43,9 +43,11 @@
             "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
           }
         },
-        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"]
+        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"]
+  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"],
+  "additionalProperties": false
 }

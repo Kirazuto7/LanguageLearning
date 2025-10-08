@@ -1,9 +1,18 @@
 import { createClient, Client } from "graphql-ws";
 
-const wsClient: Client = createClient({
-    url: `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/graphql`,
-    retryAttempts: 5,
-});
+let wsClient: Client | null = null;
+
+const getWsClient = (): Client => {
+    if (!wsClient) {
+        wsClient = createClient({
+            url: `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/graphql`,
+            // Expect a keep-alive message every 25 seconds. If not received, the client will close and retry.
+            keepAlive: 25_000,
+            retryAttempts: 5,
+        });
+    }
+    return wsClient;
+};
 
 export function subscribe<T = any>(
     query: string,
@@ -12,7 +21,7 @@ export function subscribe<T = any>(
     onError: (err: any) => void,
     onComplete: () => void
 ) {
-    return wsClient.subscribe<T>(
+    return getWsClient().subscribe<T>(
         { query, variables },
         {
             next: ({ data }) => onNext(data as T),
@@ -20,4 +29,11 @@ export function subscribe<T = any>(
             complete: onComplete,
         }
     );
+}
+
+export function closeWsClient() {
+    if (wsClient) {
+        wsClient.dispose();
+        wsClient = null;
+    }
 }

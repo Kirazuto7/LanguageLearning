@@ -17,10 +17,14 @@ export interface LibraryItemDTO {
 
 export interface LessonBookLibraryItemDTO extends LibraryItemDTO {
     type: LibraryItemType.LESSON_BOOK;
+    chapterCount: number;
+    pageCount: number;
 }
 
 export interface StoryBookLibraryItemDTO extends LibraryItemDTO {
     type: LibraryItemType.STORY_BOOK;
+    storyCount: number;
+    pageCount: number;
 }
 
 export interface UserDTO {

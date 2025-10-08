@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import styles from "../../../pages/login/loginpage.module.scss";
-import {useRegisterMutation} from "../../../shared/api/userApiSlice";
+import {useRegisterMutation} from "../../../shared/api/authApiSlice";
 import {CreateUserRequest} from "../../../shared/types/dto";
 import {Alert, Button, Form, InputGroup} from "react-bootstrap";
 import Blackboard from "../../../shared/components/blackboard/Blackboard";

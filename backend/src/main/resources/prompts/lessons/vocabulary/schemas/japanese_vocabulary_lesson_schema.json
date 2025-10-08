@@ -11,8 +11,8 @@
     "vocabularies": {
       "type": "array",
       "description": "A list of Japanese vocabulary words related to the topic.",
-      "minItems": 10,
-      "maxItems": 15,
+      "minItems": 1,
+      "maxItems": 20,
       "items": {
         "type": "object",
         "properties": {
@@ -42,9 +42,11 @@
             "pattern": "^[a-zA-Z'-āīūēōĀĪŪĒŌ ]+$"
           }
         },
-        "required": ["englishTranslation", "hiragana"]
+        "required": ["englishTranslation", "hiragana"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "vocabularies"]
+  "required": ["title", "vocabularies"],
+  "additionalProperties": false
 }

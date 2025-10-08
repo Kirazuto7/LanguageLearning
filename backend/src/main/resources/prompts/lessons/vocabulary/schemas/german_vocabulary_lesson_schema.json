@@ -1,4 +1,3 @@
-
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "GermanVocabularyLesson",
@@ -12,8 +11,8 @@
     "vocabularies": {
       "type": "array",
       "description": "A list of German vocabulary words.",
-      "minItems": 10,
-      "maxItems": 15,
+      "minItems": 1,
+      "maxItems": 20,
       "items": {
         "type": "object",
         "properties": {
@@ -43,9 +42,11 @@
             "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]*$"
           }
         },
-        "required": ["englishTranslation", "lemma"]
+        "required": ["englishTranslation", "lemma"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "vocabularies"]
+  "required": ["title", "vocabularies"],
+  "additionalProperties": false
 }

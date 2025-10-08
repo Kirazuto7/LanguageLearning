@@ -10,6 +10,9 @@ import ActionCard from "./components/ActionCard";
 import {useNavigate} from "react-router-dom";
 import LessonBookIllustration from "./components/subcomponents/LessonBookIllustration";
 import StoryBookIllustration from "./components/subcomponents/StoryBookIllustration";
+import HorizontalStack from "../../shared/components/horizontalstack/HorizontalStack";
+import LessonBookItem from "./components/LessonBookItem";
+import StoryBookItem from "./components/StoryBookItem";
 
 const DashboardPage: React.FC = () => {
   const user = useSelector(selectCurrentUser);
@@ -32,7 +35,21 @@ const DashboardPage: React.FC = () => {
             <EmptyDashboard />
         ) : (
             <>
-                {/* Book lists will be rendered here later */}
+               <HorizontalStack
+                    title="My Lesson Books"
+                    width="100%"
+                    borderRadius="8px"
+               >
+                   {lessonBooks.map(book => (
+                       <LessonBookItem key={book.id} book={book} />
+                   ))}
+               </HorizontalStack>
+
+               <HorizontalStack title="My Story Books" width="100%">
+                   {storyBooks.map(book => (
+                       <StoryBookItem key={book.id} book={book} />
+                   ))}
+               </HorizontalStack>
             </>
         )}
 

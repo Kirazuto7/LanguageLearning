@@ -17,7 +17,8 @@
     },
     "exampleSentences": {
       "type": "array",
-      "minItems": 5,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
@@ -32,9 +33,11 @@
             "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
           }
         },
-        "required": ["text", "translation"]
+        "required": ["text", "translation"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "grammarConcept", "explanation", "exampleSentences"]
+  "required": ["title", "grammarConcept", "explanation", "exampleSentences"],
+  "additionalProperties": false
 }

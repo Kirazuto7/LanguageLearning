@@ -1,7 +1,6 @@
 package com.example.language_learning.ai.config;
 
-import com.example.language_learning.ai.config.properties.ExaoneAIProperties;
-import com.example.language_learning.ai.config.properties.Qwen3AIProperties;
+import com.example.language_learning.ai.config.properties.Client1Properties;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -17,7 +16,7 @@ import org.springframework.core.io.Resource;
  * This provides full control and avoids auto-configuration issues.
  */
 @Configuration
-@EnableConfigurationProperties({Qwen3AIProperties.class, ExaoneAIProperties.class})
+@EnableConfigurationProperties({Client1Properties.class/*, Client2Properties.class*/})
 public class AIChatClientConfig {
 
     @Value("classpath:prompts/system/system_prompt.txt")
@@ -25,20 +24,20 @@ public class AIChatClientConfig {
 
     // 1. Create separate OllamaApi beans for each instance using the builder
     @Bean
-    public OllamaApi ollamaApi1(Qwen3AIProperties props) {
+    public OllamaApi ollamaApi1(Client1Properties props) {
         return OllamaApi.builder()
                 .baseUrl(props.baseUrl()).build();
     }
 
-    @Bean
-    public OllamaApi ollamaApi2(ExaoneAIProperties props) {
+    /*@Bean
+    public OllamaApi ollamaApi2(Client2Properties props) {
         return OllamaApi.builder()
                 .baseUrl(props.baseUrl()).build();
-    }
+    }*/
 
     // 2. Create OllamaChatModel beans using the builder pattern
     @Bean
-    public OllamaChatModel qwen3ChatModel(OllamaApi ollamaApi1, Qwen3AIProperties props) {
+    public OllamaChatModel client1ChatModel(OllamaApi ollamaApi1, Client1Properties props) {
         OllamaOptions options = OllamaOptions.builder()
                 .model(props.chat().model())
                 .format(props.chat().options().format())
@@ -53,8 +52,8 @@ public class AIChatClientConfig {
                 .build();
     }
 
-    @Bean
-    public OllamaChatModel exaoneChatModel(OllamaApi ollamaApi2, ExaoneAIProperties props) {
+    /*@Bean
+    public OllamaChatModel client2ChatModel(OllamaApi ollamaApi2, Client2Properties props) {
         OllamaOptions options = OllamaOptions.builder()
                 .model(props.chat().model())
                 .format(props.chat().options().format())
@@ -67,17 +66,17 @@ public class AIChatClientConfig {
                 .ollamaApi(ollamaApi2)
                 .defaultOptions(options)
                 .build();
-    }
+    }*/
 
 
     // 3. Create ChatClient beans based on the specific ChatModels
     @Bean("qwen3")
-    public ChatClient qwen3ChatClient(OllamaChatModel qwen3ChatModel) {
-        return ChatClient.builder(qwen3ChatModel).defaultSystem(systemPrompt).build();
+    public ChatClient chatClient1(OllamaChatModel client1ChatModel) {
+        return ChatClient.builder(client1ChatModel).defaultSystem(systemPrompt).build();
     }
 
-    @Bean("exaone")
-    public ChatClient exaoneChatClient(OllamaChatModel exaoneChatModel) {
-        return ChatClient.builder(exaoneChatModel).defaultSystem(systemPrompt).build();
-    }
+    /*@Bean("deepseek")
+    public ChatClient chatClient2(OllamaChatModel client2ChatModel) {
+        return ChatClient.builder(client2ChatModel).defaultSystem(systemPrompt).build();
+    }*/
 }

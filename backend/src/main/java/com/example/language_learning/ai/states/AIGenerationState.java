@@ -12,7 +12,7 @@ public sealed interface AIGenerationState {
     record SANITIZING(JsonNode responseNode, Set<ValidationMessage> errors) implements AIGenerationState {}
     record RETRYING() implements AIGenerationState {}
     record COMPLETED(Object result) implements AIGenerationState, ReactiveTerminalState {}
-    record FAILED(String reason) implements AIGenerationState, ReactiveTerminalState {}
+    record FAILED(String reason, Throwable cause) implements AIGenerationState, ReactiveTerminalState {}
 
     static AIGenerationState GENERATION = new GENERATION();
     static AIGenerationState RETRYING = new RETRYING();
@@ -29,7 +29,7 @@ public sealed interface AIGenerationState {
         return new COMPLETED(result);
     }
 
-    public static AIGenerationState FAILED(String reason) {
-        return new FAILED(reason);
+    public static AIGenerationState FAILED(String reason, Throwable cause) {
+        return new FAILED(reason, cause);
     }
 }

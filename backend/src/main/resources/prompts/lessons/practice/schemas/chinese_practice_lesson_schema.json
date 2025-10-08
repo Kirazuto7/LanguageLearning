@@ -14,15 +14,16 @@
     },
     "questions": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 5,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
           "questionText": {
             "type": "string",
             "description": "开放式中文问题。",
-            "pattern": "^[A-Za-z\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～？！，\\n]+$"
+            "pattern": "^[A-Za-z\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～？！，\\n]+$",
+            "maxLength": 400
           },
           "answer": {
             "type": "null",
@@ -34,9 +35,11 @@
             "maxItems": 0
           }
         },
-        "required": ["questionText"]
+        "required": ["questionText"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "instructions", "questions"]
+  "required": ["title", "instructions", "questions"],
+  "additionalProperties": false
 }

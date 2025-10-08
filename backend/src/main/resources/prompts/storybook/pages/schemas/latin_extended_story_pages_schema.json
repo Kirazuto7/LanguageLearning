@@ -7,8 +7,8 @@
     "pages": {
       "type": "array",
       "description": "A list of pages that make up the story.",
-      "minItems": 4,
-      "maxItems": 7,
+      "minItems": 1,
+      "maxItems": 8,
       "items": {
         "type": "object",
         "properties": {
@@ -25,8 +25,8 @@
           "vocabulary": {
             "type": "array",
             "description": "A list of key vocabulary words from the page.",
-            "minItems": 2,
-            "maxItems": 3,
+            "minItems": 1,
+            "maxItems": 10,
             "items": {
               "type": "object",
               "properties": {
@@ -41,13 +41,16 @@
                   "pattern": "^[A-Za-z0-9'() -]+$"
                 }
               },
-              "required": ["word", "translation"]
+              "required": ["word", "translation"],
+              "additionalProperties": false
             }
           }
         },
-        "required": ["englishSummary", "content", "vocabulary"]
+        "required": ["englishSummary", "content", "vocabulary"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["pages"]
+  "required": ["pages"],
+  "additionalProperties": false
 }

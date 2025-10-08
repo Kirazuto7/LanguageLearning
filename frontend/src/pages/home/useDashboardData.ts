@@ -12,7 +12,9 @@ export const useDashboardData = () => {
     const lessonBooks = useMemo(() => data?.lessonBooks ?? [], [data]);
     const storyBooks = useMemo(() => data?.storyBooks ?? [], [data]);
     const hasData = useMemo(() => {
-        return lessonBooks.length > 0 || storyBooks.length > 0;
+        const hasLessonBooksWithContent = lessonBooks.some(book => book.pageCount > 0);
+        const hasStoryBooksWithContent = storyBooks.some(book => book.pageCount > 0);
+        return hasLessonBooksWithContent || hasStoryBooksWithContent;
     }, [lessonBooks, storyBooks])
 
     return { isLoading, isError, error, lessonBooks, storyBooks, hasData };

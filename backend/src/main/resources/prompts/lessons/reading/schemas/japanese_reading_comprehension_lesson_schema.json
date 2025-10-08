@@ -15,15 +15,16 @@
     },
     "questions": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 4,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
           "questionText": {
             "type": "string",
             "description": "読解問題の質問を日本語で。",
-            "pattern": "^[A-Za-z\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:()/\\[\\]…。「」“”\\n、]+$"
+            "pattern": "^[A-Za-z\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:()/\\[\\]…。「」“”\\n、]+$",
+            "maxLength": 400
           },
           "answer": {
             "type": "string",
@@ -32,8 +33,8 @@
           },
           "answerChoices": {
             "type": "array",
-            "minItems": 3,
-            "maxItems": 4,
+            "minItems": 2,
+            "maxItems": 10,
             "items": {
               "type": "string",
               "description": "選択肢の日本語の回答。",
@@ -41,9 +42,11 @@
             }
           }
         },
-        "required": ["questionText", "answer", "answerChoices"]
+        "required": ["questionText", "answer", "answerChoices"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "story", "questions"]
+  "required": ["title", "story", "questions"],
+  "additionalProperties": false
 }

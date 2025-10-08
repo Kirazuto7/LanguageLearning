@@ -13,6 +13,9 @@ spring:
   mvc:
     async:
       request-timeout: -1
+  devtools:
+    restart:
+      exclude: logs/**
   graphql:
     path: /graphql
     websocket:
@@ -29,6 +32,7 @@ spring:
               - profile
               - email
   ai:
+    max-retries: 1
     # Disable auto-configuration to allow for full manual bean definition.
     model:
       chat: none
@@ -42,14 +46,14 @@ spring:
           num-predict: 8192
           temperature: 0.5
 
-    ollama2:
-      base-url: ${SPRING_AI_OLLAMA_BASE_URL}
-      chat:
-        options:
-          format: json
-          num-ctx: 8192
-          num-predict: 8192
-          temperature: 0.5
+    #ollama2:
+      #base-url: ${SPRING_AI_OLLAMA_BASE_URL}
+      #chat:
+        #options:
+          #format: json
+          #num-ctx: 8192
+          #num-predict: 8192
+          #temperature: 0.5
     stablediffusion:
       base-url: ${SPRING_AI_IMAGE_BASE_URL}
       image:
@@ -126,7 +130,7 @@ application:
 # ===============================================
 djl:
   embedding:
-    enabled: true
+    enabled: false
     model-url: "djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     similarity-threshold: 0.7
 

@@ -34,3 +34,7 @@ export const mascots = [
     { value: 'yuna', label: 'Yuna' },
     { value: 'jinwoo', label: 'Jinwoo' }
 ];
+
+export const publicPaths = ['/', '/welcome', '/login', '/welcome/oidc'];
+
+export const protectedPaths = ['/home', '/study', '/read'];

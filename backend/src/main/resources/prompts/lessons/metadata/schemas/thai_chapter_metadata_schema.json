@@ -15,5 +15,6 @@
       "pattern": "^[\\u0E00-\\u0E7F0-9 ,.?!'\"-;:\\[\\]…―]+$"
     }
   },
-  "required": ["title", "nativeTitle"]
+  "required": ["title", "nativeTitle"],
+  "additionalProperties": false
 }

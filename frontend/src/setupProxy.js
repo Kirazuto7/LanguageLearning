@@ -8,6 +8,10 @@ module.exports = function(app) {
         res.status(200).send('OK');
     });
 
+    app.use('/ws', (req, res) => {
+        res.end();
+    });
+
     app.use(
         '/api',
         createProxyMiddleware({
@@ -24,15 +28,6 @@ module.exports = function(app) {
             changeOrigin: true,
             ws: true,
             pathRewrite: (path, req) => req.originalUrl,
-        })
-    );
-
-    // This is needed for the dev server's hot-reloading WebSocket to work correctly.
-    app.use(
-        '/ws',
-        createProxyMiddleware({
-            target: 'http://backend:8080',
-            ws: true,
         })
     );
 };

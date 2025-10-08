@@ -8,5 +8,7 @@ public record StoryBookLibraryItem(
     String language,
     String difficulty,
     LocalDateTime createdAt,
-    String type
+    String type,
+    int storyCount,
+    int pageCount
 ) implements LibraryItem {}

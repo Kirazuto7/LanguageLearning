@@ -14,26 +14,30 @@ export const baseQueryWithReauth: BaseQueryFn<
     unknown,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
+    const url = typeof args === 'string' ? args : args.url;
+
+    // Define endpoints that should not trigger a token refresh.
+    const nonAuthEndpoints = ['/users/refresh', '/users/health', '/logs/client', '/users/login', '/users/register', '/users/complete-oidc-registration'];
+    const isNonAuthEndpoint = nonAuthEndpoints.some(endpoint => url.includes(endpoint));
+
+    // If the endpoint is a non-authentication endpoint, bypass the re-authentication logic entirely.
+    if (isNonAuthEndpoint) {
+        logToServer('debug', `Skipping re-auth for non-authentication endpoint: ${url}`);
+        return baseQuery(args, api, extraOptions);
+    }
+
+    // Wait for any ongoing token refresh to complete before making the initial request.
     await mutex.waitForUnlock();
 
-    const url = typeof args === 'string' ? args : args.url;
-    if (!url.includes('/users/health')) {
-        logToServer('debug', 'baseQueryWithReauth: Making initial request.', { args });
-    }
-
+    logToServer('debug', 'baseQueryWithReauth: Making initial request.', { args });
     let result = await baseQuery(args, api, extraOptions);
-
-    // Do not retry for 'refreshToken' endpoint to avoid infinite loops
-    if (typeof args !== 'string' && args.url.includes('/users/refresh')) {
-        logToServer('debug', 'Skipping re-auth for refresh token endpoint.');
-        return result;
-    }
 
     if (result.error && (result.error.status === 401 || result.error.status === 403)) {
         logToServer('warn', 'baseQueryWithReauth: Initial request failed with auth error. Attempting refresh.', { error: result.error });
+
+        // The first request to fail will acquire the mutex and attempt to refresh the token.
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
-
             try {
                 logToServer('debug', "baseQueryWithReauth: Acquired mutex. Attempting token refresh.");
                 await api.dispatch(authApiSlice.endpoints.refreshToken.initiate()).unwrap();
@@ -50,8 +54,12 @@ export const baseQueryWithReauth: BaseQueryFn<
                 logToServer('debug', 'baseQueryWithReauth: Releasing mutex.');
             }
         }
-        // Retry the request after the mutex has been released.
+
+        // All requests (the original that initiated the refresh and any subsequent ones that were waiting)
+        // will retry the request after the mutex is released.
+        logToServer('debug', 'baseQueryWithReauth: Retrying original request after mutex release.');
         result = await baseQuery(args, api, extraOptions);
     }
+
     return result;
 };

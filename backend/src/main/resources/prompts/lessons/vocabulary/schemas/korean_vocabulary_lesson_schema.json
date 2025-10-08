@@ -11,8 +11,8 @@
     "vocabularies": {
       "type": "array",
       "description": "A list of vocabulary words related to the topic.",
-      "minItems": 10,
-      "maxItems": 15,
+      "minItems": 1,
+      "maxItems": 20,
       "items": {
         "type": "object",
         "properties": {
@@ -42,9 +42,11 @@
             "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F -]+$"
           }
         },
-        "required": ["englishTranslation", "hangul"]
+        "required": ["englishTranslation", "hangul"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "vocabularies"]
+  "required": ["title", "vocabularies"],
+  "additionalProperties": false
 }

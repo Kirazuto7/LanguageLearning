@@ -449,9 +449,22 @@ public class AIResponseSanitizer {
 
         if (matcher.find()) {
             String requiredPropertyName = matcher.group(1);
-            // Correctly get the JSON Pointer path from the error location.
+            // Get the JSON Pointer path from the error location.
+            String pointer = error.getInstanceLocation().toString();
+
             // The toString() method returns a path like '#/path/to/node', so we strip the leading '#'.
-            String pointer = error.getInstanceLocation().toString().replaceFirst("^#", "");
+            if ("$".equals(pointer)) {
+                pointer = "";
+            }
+            else if (!pointer.startsWith("#/"))
+            {
+                log.warn("Cannot fix malformed key for an invalid JSON Pointer path: {}", pointer);
+                return false;
+            }
+            else {
+                pointer = pointer.replaceFirst("^#", "");
+            }
+
             JsonNode parentNode = rootNode.at(pointer);
 
             if (parentNode.isObject()) {

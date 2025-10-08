@@ -15,5 +15,6 @@
       "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
     }
   },
-  "required": ["correctedSentence", "feedback"]
+  "required": ["correctedSentence", "feedback"],
+  "additionalProperties": false
 }

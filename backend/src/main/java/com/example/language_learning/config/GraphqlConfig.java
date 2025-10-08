@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
@@ -32,8 +33,8 @@ public class GraphqlConfig {
             .coercing(new Coercing<LocalDateTime, String>() {
                 @Override
                 public String serialize(Object dataFetcherResult, GraphQLContext graphQLContext, Locale locale) throws CoercingSerializeException {
-                    if (dataFetcherResult instanceof LocalDateTime) {
-                        return dataFetcherResult.toString();
+                    if (dataFetcherResult instanceof LocalDateTime localDateTime) {
+                        return localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                     }
                     throw new CoercingSerializeException("Expected a LocalDateTime object.");
                 }
@@ -42,18 +43,24 @@ public class GraphqlConfig {
                 public LocalDateTime parseValue(Object input, GraphQLContext graphQLContext, Locale locale) throws CoercingParseValueException {
                     try {
                         if (input instanceof String) {
-                            return LocalDateTime.parse((String) input);
+                            return LocalDateTime.parse((String) input, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                         }
                         throw new CoercingParseValueException("Expected a String");
-                    } catch (DateTimeParseException e) {
-                        throw new CoercingParseValueException("Not a valid LocalDateTime: " + e.getMessage());
+                    }
+                    catch (DateTimeParseException e) {
+                        throw new CoercingParseValueException("Not a valid ISO_LOCAL_DATE_TIME: '" + input + "'.", e);
                     }
                 }
 
                 @Override
                 public LocalDateTime parseLiteral(Value<?> input, CoercedVariables variables, GraphQLContext graphQLContext, Locale locale) throws CoercingParseLiteralException {
-                    if (input instanceof StringValue) {
-                        return LocalDateTime.parse(((StringValue) input).getValue());
+                    if (input instanceof StringValue stringValue) {
+                        try {
+                            return LocalDateTime.parse(stringValue.getValue(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                        }
+                        catch (DateTimeParseException e) {
+                            throw new CoercingParseLiteralException("Not a valid ISO_LOCAL_DATE_TIME: '" + stringValue.getValue() + "'.", e);
+                        }
                     }
                     throw new CoercingParseLiteralException("Expected a StringValue.");
                 }

@@ -15,15 +15,16 @@
     },
     "questions": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 4,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
           "questionText": {
             "type": "string",
             "description": "The comprehension question in the native language.",
-            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$",
+            "maxLength": 400
           },
           "answer": {
             "type": "string",
@@ -32,8 +33,8 @@
           },
           "answerChoices": {
             "type": "array",
-            "minItems": 3,
-            "maxItems": 4,
+            "minItems": 2,
+            "maxItems": 10,
             "items": {
               "type": "string",
               "description": "A possible answer choice in the native language.",
@@ -41,9 +42,11 @@
             }
           }
         },
-        "required": ["questionText", "answer", "answerChoices"]
+        "required": ["questionText", "answer", "answerChoices"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "story", "questions"]
+  "required": ["title", "story", "questions"],
+  "additionalProperties": false
 }

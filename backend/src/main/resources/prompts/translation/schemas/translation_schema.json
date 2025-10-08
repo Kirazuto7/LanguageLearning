@@ -10,5 +10,6 @@
       "pattern": "^[A-Za-z0-9 \\n'\\-.,!?;:\"\\[\\]…]+$"
     }
   },
-  "required": ["translated_text"]
+  "required": ["translated_text"],
+  "additionalProperties": false
 }

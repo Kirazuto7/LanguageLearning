@@ -9,6 +9,7 @@ import {FLUSH, persistReducer, persistStore, REHYDRATE} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {PAUSE, PERSIST, PURGE, REGISTER} from "redux-persist/es/constants";
 import {authApiSlice} from "../shared/api/authApiSlice";
+import {setupListeners} from "@reduxjs/toolkit/query";
 
 const rootReducer = combineReducers({
     [apiSlice.reducerPath]: apiSlice.reducer,
@@ -48,3 +49,4 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export const persistor = persistStore(store);
+setupListeners(store.dispatch);

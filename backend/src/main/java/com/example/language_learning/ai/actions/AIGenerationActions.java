@@ -107,7 +107,7 @@ public class AIGenerationActions {
             }
             catch (Exception e) {
                 log.error("Failed to convert sanitized JSON to DTO: {}", e.getMessage());
-                return Mono.just(AIGenerationState.FAILED("DTO conversion failed after sanitization."));
+                return Mono.just(AIGenerationState.FAILED("DTO conversion failed after sanitization.", e));
             }
         }
         else {
@@ -122,11 +122,12 @@ public class AIGenerationActions {
     }
 
     public Mono<AIGenerationState> handleRetry(AIGenerationState fromState, AIGenerationContext context) {
-        if (context.attemptCounter().incrementAndGet() > context.maxRetries()) {
+        if (context.attemptCounter().get() >= context.maxRetries()) {
             PromptType promptType = (PromptType) context.params().get("promptType");
             String reason = String.format("AI response validation failed after %d retries for prompt type: %s.", context.maxRetries(), promptType);
-            return Mono.just(new AIGenerationState.FAILED(reason));
+            return Mono.just(new AIGenerationState.FAILED(reason, null));
         }
+        context.attemptCounter().incrementAndGet();
         return Mono.just(AIGenerationState.GENERATION);
     }
 

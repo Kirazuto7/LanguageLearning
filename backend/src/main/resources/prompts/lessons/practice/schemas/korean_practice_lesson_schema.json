@@ -14,15 +14,16 @@
     },
     "questions": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 5,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
           "questionText": {
             "type": "string",
             "description": "한국어로 된 자유 형식 질문입니다.",
-            "pattern": "^[A-Za-z\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+            "pattern": "^[A-Za-z\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$",
+            "maxLength": 400
           },
           "answer": {
             "type": "null",
@@ -34,9 +35,11 @@
             "maxItems": 0
           }
         },
-        "required": ["questionText"]
+        "required": ["questionText"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["title", "instructions", "questions"]
+  "required": ["title", "instructions", "questions"],
+  "additionalProperties": false
 }
