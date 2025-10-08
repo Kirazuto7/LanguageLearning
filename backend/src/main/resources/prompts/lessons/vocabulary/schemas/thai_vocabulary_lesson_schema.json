@@ -37,11 +37,9 @@
             "pattern": "^(mid|low|falling|high|rising)$"
           }
         },
-        "required": ["englishTranslation", "thaiScript"],
-        "additionalProperties": false
+        "required": ["englishTranslation", "thaiScript"]
       }
     }
   },
-  "required": ["title", "vocabularies"],
-  "additionalProperties": false
+  "required": ["title", "vocabularies"]
 }

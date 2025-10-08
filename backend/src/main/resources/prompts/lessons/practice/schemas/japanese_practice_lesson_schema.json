@@ -35,11 +35,9 @@
             "maxItems": 0
           }
         },
-        "required": ["questionText"],
-        "additionalProperties": false
+        "required": ["questionText"]
       }
     }
   },
-  "required": ["title", "instructions", "questions"],
-  "additionalProperties": false
+  "required": ["title", "instructions", "questions"]
 }

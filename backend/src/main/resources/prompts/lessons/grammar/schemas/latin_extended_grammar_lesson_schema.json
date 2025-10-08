@@ -33,11 +33,9 @@
             "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
           }
         },
-        "required": ["text", "translation"],
-        "additionalProperties": false
+        "required": ["text", "translation"]
       }
     }
   },
-  "required": ["title", "grammarConcept", "explanation", "exampleSentences"],
-  "additionalProperties": false
+  "required": ["title", "grammarConcept", "explanation", "exampleSentences"]
 }

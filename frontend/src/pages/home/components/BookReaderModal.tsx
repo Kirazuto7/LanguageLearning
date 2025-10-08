@@ -1,61 +1,101 @@
 import {BookType} from "../../../shared/types/types";
-import {useLazyGetLessonBookByIdQuery} from "../../../shared/api/lessonBookApiSlice";
-import {useLazyGetStoryBookByIdQuery} from "../../../shared/api/storyBookApiSlice";
+import {lessonBookApiSlice, useLazyGetLessonBookByIdQuery} from "../../../shared/api/lessonBookApiSlice";
+import {storyBookApiSlice, useLazyGetStoryBookByIdQuery} from "../../../shared/api/storyBookApiSlice";
 import React, {useEffect, useMemo} from "react";
 import {Button, Modal, Spinner} from "react-bootstrap";
 import {buildPagesFromStoryData} from "../../../features/storyBook/utils/buildPagesFromStoryData";
 import styles from "./bookreadermodal.module.scss";
 import HTMLFlipBook from "react-pageflip";
 import {buildPagesFromBookData} from "../../../features/lessonBook/utils/buildPagesFromLessonData";
+import {useAppDispatch} from "../../../app/hooks";
+import {logToServer, safeToString} from "../../../shared/utils/loggingService";
 
 interface BookReaderModalProps {
     bookId: number;
     bookType: BookType;
+    bookColor: string;
     show: boolean;
     onHide: () => void;
 }
 
-const BookReaderModal: React.FC<BookReaderModalProps> = ({ bookId, bookType, show, onHide }) => {
-    const [triggerGetLessonBook, { data: lessonBook, isLoading: lessonBookIsLoading, isError: lessonBookIsError }] = useLazyGetLessonBookByIdQuery();
-    const [triggerGetStoryBook, { data: storyBook, isLoading: storyBookIsLoading, isError: storyBookIsError }] = useLazyGetStoryBookByIdQuery();
+const BookReaderModal: React.FC<BookReaderModalProps> = ({ bookId, bookType, bookColor, show, onHide }) => {
+    const [triggerGetLessonBook, { data: lessonBook, isFetching: lessonBookIsFetching, isError: lessonBookIsError }] = useLazyGetLessonBookByIdQuery();
+    const [triggerGetStoryBook, { data: storyBook, isFetching: storyBookIsFetching, isError: storyBookIsError }] = useLazyGetStoryBookByIdQuery();
     const title = bookType === BookType.LESSON ? lessonBook?.title : storyBook?.title;
+    const dispatch = useAppDispatch();
+    const bookColorStyle = {
+        [bookType === BookType.LESSON ? '--book-cover-color' : '--storybook-cover-bg']: bookColor,
+    } as React.CSSProperties;
 
     useEffect(() => {
-        if (show && bookType == BookType.LESSON) {
-            triggerGetLessonBook(bookId);
-        }
-        else if (show && bookType == BookType.STORY) {
-            triggerGetStoryBook(bookId);
+        if (!show || !bookId) return;
+
+        if (show) {
+            switch (bookType) {
+                case BookType.LESSON:
+                    triggerGetLessonBook(bookId);
+                    break;
+                case BookType.STORY:
+                    triggerGetStoryBook(bookId);
+                    break;
+            }
         }
     }, [show, bookId, bookType, triggerGetLessonBook, triggerGetStoryBook]);
 
     const pages = useMemo(() => {
-        if (bookType === BookType.STORY && storyBook) {
-            return buildPagesFromStoryData(storyBook.shortStories);
+        switch(bookType) {
+            case BookType.LESSON:
+                return lessonBook ? buildPagesFromBookData(lessonBook) : [];
+            case BookType.STORY:
+                return storyBook ? buildPagesFromStoryData(storyBook.shortStories) : [];
+            default:
+                return [];
         }
-
-        if (bookType === BookType.LESSON && lessonBook) {
-            return buildPagesFromBookData(lessonBook);
-        }
-
-        return [];
     }, [lessonBook, storyBook, bookType])
 
+    const handleClose = () => {
+        console.log("called");
+
+        switch(bookType) {
+            case BookType.LESSON:
+                dispatch(lessonBookApiSlice.util.invalidateTags([{ type: 'Book', id: bookId }]));
+                break;
+            case BookType.STORY:
+                dispatch(storyBookApiSlice.util.invalidateTags([{ type: 'Book', id: bookId }]));
+                break;
+        }
+        onHide();
+    }
+
     const renderContent = () => {
-        if (bookType === BookType.LESSON) {
-            if (lessonBookIsLoading) return <Spinner animation="border" />;
-            if (lessonBookIsError || !lessonBook)  return <p>Could not load the lesson book. Please try again later.</p>;
+        let isFetching, isError, data;
+        switch (bookType) {
+            case BookType.LESSON:
+                isFetching = lessonBookIsFetching;
+                isError = lessonBookIsError;
+                data = lessonBook;
+                logToServer('debug', "Book Data:", safeToString(data));
+                break;
+            case BookType.STORY:
+                isFetching = storyBookIsFetching;
+                isError = storyBookIsError;
+                data = storyBook;
+                logToServer('debug', "Book Data:", safeToString(data));
+                break;
+            default:
+                return <p>Invalid book type selected.</p>;
         }
 
-        if (bookType === BookType.STORY) {
-            if (storyBookIsLoading) return <Spinner animation="border" />;
-            if (storyBookIsError || !storyBook) return <p>Could not load the story book. Please try again later.</p>;
-        }
+        if (isFetching) return <Spinner animation="border" />;
+        if (isError || !data) return <p>Could not load the book. Please try again later.</p>;
+        logToServer('debug', "# Pages: ", safeToString(pages?.length));
 
         return (
+        <div className={styles.bookContainer}>
+            <div className={styles.bookBinding}></div>
             <HTMLFlipBook
-                key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
-                width={450} height={600}
+                key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || '')) + bookId + bookType}
+                width={400} height={550}
                 size="stretch"
                 minWidth={315}
                 maxWidth={1000}
@@ -78,13 +118,19 @@ const BookReaderModal: React.FC<BookReaderModalProps> = ({ bookId, bookType, sho
                 swipeDistance={30}
                 showPageCorners={true}
             >
-                {pages.map((page: React.ReactElement) => page)}
+                {pages && pages.filter(Boolean).map((page: React.ReactElement) => page)}
+
+                {pages && pages.length % 2 !== 0 &&
+                     <div className={styles.backcover} style={bookColorStyle}>
+                        <h2 className={`mt-5 text-center ${styles['book-title']}`}>The End</h2>
+                    </div>
+                }
             </HTMLFlipBook>
+        </div>
         );
     }
-
     return(
-        <Modal show={show} onHide={onHide} size="lg" centered>
+        <Modal show={show} onHide={handleClose} size="xl" centered>
             <Modal.Header closeButton>
                 <Modal.Title>{title || 'Loading...'}</Modal.Title>
             </Modal.Header>
@@ -92,7 +138,7 @@ const BookReaderModal: React.FC<BookReaderModalProps> = ({ bookId, bookType, sho
                 {renderContent()}
             </Modal.Body>
             <Modal.Footer>
-                <Button className={styles.btnPrimary} onClick={onHide}>
+                <Button className={styles.btnPrimary} onClick={handleClose}>
                     Close
                 </Button>
             </Modal.Footer>

@@ -29,7 +29,6 @@ if [ ! -f "$MARKER_FILE" ]; then
   else
     ollama pull qwen3:4b
     #ollama pull exaone3.5:2.4b
-    #ollama pull rockn/DeepSeek-R1-0528-Qwen3-8B-IQ4_NL:latest
   fi
     echo "--- Models pulled successfully. ---"
     touch "$MARKER_FILE"

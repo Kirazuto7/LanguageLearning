@@ -42,11 +42,9 @@
             "pattern": "^[1-5 ]*$"
           }
         },
-        "required": ["englishTranslation", "simplified"],
-        "additionalProperties": false
+        "required": ["englishTranslation", "simplified"]
       }
     }
   },
-  "required": ["title", "vocabularies"],
-  "additionalProperties": false
+  "required": ["title", "vocabularies"]
 }

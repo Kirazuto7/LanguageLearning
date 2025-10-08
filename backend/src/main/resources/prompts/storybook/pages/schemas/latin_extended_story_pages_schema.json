@@ -41,16 +41,13 @@
                   "pattern": "^[A-Za-z0-9'() -]+$"
                 }
               },
-              "required": ["word", "translation"],
-              "additionalProperties": false
+              "required": ["word", "translation"]
             }
           }
         },
-        "required": ["englishSummary", "content", "vocabulary"],
-        "additionalProperties": false
+        "required": ["englishSummary", "content", "vocabulary"]
       }
     }
   },
-  "required": ["pages"],
-  "additionalProperties": false
+  "required": ["pages"]
 }

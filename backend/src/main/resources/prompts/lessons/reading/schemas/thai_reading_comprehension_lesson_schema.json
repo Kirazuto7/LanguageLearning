@@ -42,11 +42,9 @@
             }
           }
         },
-        "required": ["questionText", "answer", "answerChoices"],
-        "additionalProperties": false
+        "required": ["questionText", "answer", "answerChoices"]
       }
     }
   },
-  "required": ["title", "story", "questions"],
-  "additionalProperties": false
+  "required": ["title", "story", "questions"]
 }

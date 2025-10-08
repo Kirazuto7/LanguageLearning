@@ -20,6 +20,5 @@
       "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
     }
   },
-  "required": ["title", "nativeTitle", "topic"],
-  "additionalProperties": false
+  "required": ["title", "nativeTitle", "topic"]
 }

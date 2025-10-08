@@ -43,11 +43,9 @@
             "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
           }
         },
-        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"],
-        "additionalProperties": false
+        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"]
       }
     }
   },
-  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"],
-  "additionalProperties": false
+  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"]
 }

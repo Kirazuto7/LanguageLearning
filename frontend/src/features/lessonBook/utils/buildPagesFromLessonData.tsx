@@ -6,6 +6,7 @@ import { LessonPageDTO, LessonBookDTO, LessonChapterDTO } from "../../../shared/
 import PracticeLesson from "../../lessons/components/PracticeLesson";
 import ReadingComprehensionLesson from "../../lessons/components/ReadingComprehensionLesson";
 import ConjugationLesson from "../../lessons/components/ConjugationLesson";
+import {logToServer, safeToString} from "../../../shared/utils/loggingService";
 
 const getPageFromLessonType = (lessonPage: LessonPageDTO, onAllCorrect?: () => void): React.ReactElement => {
     if (!lessonPage || !lessonPage.lesson) {

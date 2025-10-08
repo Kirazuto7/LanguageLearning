@@ -15,6 +15,5 @@
       "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:\\[\\]…。「」―]+$"
     }
   },
-  "required": ["title", "nativeTitle"],
-  "additionalProperties": false
+  "required": ["title", "nativeTitle"]
 }

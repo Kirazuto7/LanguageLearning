@@ -14,7 +14,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    background-color: var(--storybook-cover-bg);
+    //background: linear-gradient(135deg, var(--book-color, #4a044e), color-mix(in srgb, var(--book-color, #4a044e) 70%, black));
     border-right: 10px solid var(--storybook-accent-color); /* binding */
     color: var(--storybook-cover-text-color);
     box-shadow: 0 0 20px var(--storybook-accent-color);
@@ -24,7 +24,7 @@
     position: relative;
     margin: 2rem auto;
     width: 900px; /* 2 * page width */
-    height: 600px; /* page height */
+    height: 550px; /* page height */
     perspective: 2000px;
 }
 

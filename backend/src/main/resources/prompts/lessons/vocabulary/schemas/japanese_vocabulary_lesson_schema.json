@@ -42,11 +42,9 @@
             "pattern": "^[a-zA-Z'-āīūēōĀĪŪĒŌ ]+$"
           }
         },
-        "required": ["englishTranslation", "hiragana"],
-        "additionalProperties": false
+        "required": ["englishTranslation", "hiragana"]
       }
     }
   },
-  "required": ["title", "vocabularies"],
-  "additionalProperties": false
+  "required": ["title", "vocabularies"]
 }
