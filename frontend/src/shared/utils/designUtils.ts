@@ -1,19 +1,25 @@
 const storyBookDesigns = [
     'design-ornate',
     'design-geometric',
-    'design-classic',
+    'design-mystical',
+    'design-emblem',
+    'design-art-deco'
 ];
 
 /**
- * Selects a design class from the palette deterministically based on a string (e.g., title).
- * @param str The string to use for design selection.
+ * Gets a consistent, deterministic design class name for a storybook based on its unique ID.
+ * @param bookId The unique ID of the book.
  * @returns A CSS class name for the book design.
  */
-export const getStoryBookDesign = (str: string): string => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+export const getStoryBookDesign = (bookId: number): string => {
+    // If there are no designs, return an empty string to prevent errors.
+    if (storyBookDesigns.length === 0) {
+        return '';
     }
-    const index = Math.abs(hash % storyBookDesigns.length);
-    return storyBookDesigns[index];
+
+    // Use the modulo operator to get a consistent index from 0 to the number of designs.
+    // This ensures the same book ID always gets the same design.
+    const designIndex = bookId % storyBookDesigns.length;
+
+    return storyBookDesigns[designIndex];
 };

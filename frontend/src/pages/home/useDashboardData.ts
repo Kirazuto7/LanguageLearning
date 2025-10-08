@@ -9,12 +9,16 @@ export const useDashboardData = () => {
         error
     } = useGetUserDashboardDataQuery();
 
-    const lessonBooks = useMemo(() => data?.lessonBooks ?? [], [data]);
-    const storyBooks = useMemo(() => data?.storyBooks ?? [], [data]);
+    const lessonBooks = useMemo(() => {
+        return (data?.lessonBooks || []).filter(book => book.pageCount > 0);
+    }, [data]);
+
+    const storyBooks = useMemo(() => {
+        return (data?.storyBooks || []).filter(book => book.pageCount > 0);
+    }, [data]);
+
     const hasData = useMemo(() => {
-        const hasLessonBooksWithContent = lessonBooks.some(book => book.pageCount > 0);
-        const hasStoryBooksWithContent = storyBooks.some(book => book.pageCount > 0);
-        return hasLessonBooksWithContent || hasStoryBooksWithContent;
+        return lessonBooks.length > 0 || storyBooks.length > 0;
     }, [lessonBooks, storyBooks])
 
     return { isLoading, isError, error, lessonBooks, storyBooks, hasData };

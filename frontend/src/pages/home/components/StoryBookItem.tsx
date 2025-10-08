@@ -17,12 +17,20 @@ const StoryBookItem: React.FC<StoryBookItemProps> = ({ book }) => {
     } as React.CSSProperties;
 
     const countryCode = getCountryCodeForLanguage(book.language);
-    const designClass = styles[getStoryBookDesign(book.title)] || '';
+    const designClass = styles[getStoryBookDesign(book.id)] || '';
 
     return(
         <div className={`${styles.book} ${designClass}`} style={bookStyle}>
             {countryCode && <Flag code={countryCode} size={32} className={styles.flag} />}
             <h4 className={styles.title}>{book.title}</h4>
+
+            <div className={styles.info}>
+                <span>{book.language}</span>
+            </div>
+
+            <div className={styles.info}>
+                <span>Difficulty: {book.difficulty}</span>
+            </div>
 
             <div className={styles.stats}>
                 <span>{book.storyCount} {book.storyCount > 1 ? 'Stories' : 'Story'}</span>

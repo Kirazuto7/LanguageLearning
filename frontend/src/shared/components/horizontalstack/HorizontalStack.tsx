@@ -1,4 +1,5 @@
 import React from 'react';
+import ScrollContainer from "react-indiana-drag-scroll";
 import styles from './horizontalstack.module.scss';
 
 interface HorizontalStackProps {
@@ -24,12 +25,12 @@ const HorizontalStack: React.FC<HorizontalStackProps> = ({ title, children, widt
     };
 
     return(
-        <div className={styles.container} style={containerStyle}>
+        <ScrollContainer className={styles.container} style={containerStyle}>
             {title && <h3 className={styles.title}>{title}</h3>}
             <div className={styles.stackContainer} style={stackStyle}>
                 {children}
             </div>
-        </div>
+        </ScrollContainer>
     );
 };
 
