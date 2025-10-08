@@ -7,8 +7,8 @@ const ProtectedRoute: React.FC = () => {
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
     if(!isAuthenticated) {
-        // Redirect unauthenticated users back to the landing lessonPage.
-        return <Navigate to="/" replace/>
+        // Redirect unauthenticated users back to the public landing page.
+        return <Navigate to="/welcome" replace/>
     }
 
     return <Outlet />;

@@ -55,7 +55,7 @@ public class  ProgressService {
     }
 
     public void sendError(String taskId, Throwable error) {
-        String errorMessage = "Chapter generation failed: " + error.getMessage();
+        String errorMessage = "Task execution failed: " + error.getMessage();
         log.error("Task {} failed with error: {}", taskId, errorMessage, error); // Log the full stack trace
         ProgressUpdateDTO update = ProgressUpdateDTO.forError(taskId, errorMessage);
         send(taskId, update);

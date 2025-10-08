@@ -1,0 +1,66 @@
+.book {
+  width: 220px;
+  height: 300px;
+  background-color: var(--book-cover-color, #2F4F4F); // Default color
+  border-radius: 8px 4px 4px 8px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  cursor: pointer;
+  flex-shrink: 0; // Prevents item from shrinking in the flex container
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  // Spine effect
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.15), transparent);
+    border-radius: 8px 0 0 8px;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  // Allow text to break if too long
+  word-break: break-word;
+}
+
+.info {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+}
+
+.stats {
+  margin-top: auto; // Pushes to the bottom
+  font-size: 0.8rem;
+  opacity: 0.8;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.flag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  object-fit: cover; // Ensures the flag image covers the circular area
+}

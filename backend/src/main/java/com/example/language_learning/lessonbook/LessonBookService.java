@@ -18,6 +18,11 @@ public class LessonBookService {
     private final LessonBookRepository lessonBookRepository;
     private final DtoMapper dtoMapper;
 
+    public LessonBookDTO getLessonBookById(Long id, User user) {
+        Optional<LessonBook> lessonBookOptional = lessonBookRepository.findDetailsById(id, user);
+        return lessonBookOptional.map(dtoMapper::toDto).orElse(null);
+    }
+
     @Transactional
     public LessonBookDTO findOrCreateBookDTO(LessonBookRequest request, User user) {
         LessonBook lessonBook = findOrCreateBook(request.language(), request.difficulty(), user);

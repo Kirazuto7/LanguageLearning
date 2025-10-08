@@ -6,7 +6,7 @@ import { LessonBookDTO, LessonBookRequest } from "../types/dto";
 export const lessonBookApiSlice = graphqlApiSlice.injectEndpoints({
     endpoints: builder => ({
 
-        // Query to fetch all of the user's lesson books
+        // Query to fetch all the user's lesson books
         getLessonBooks: builder.query<LessonBookDTO[], void>({
             query: () => ({
                 body: gql`
@@ -44,7 +44,24 @@ export const lessonBookApiSlice = graphqlApiSlice.injectEndpoints({
             providesTags: (result) => (result ? [{ type: 'Book', id: String(result.id) }] : []),
         }),
 
+        // Query to Fetch a LessonBook based on its id
+        getLessonBookById: builder.query<LessonBookDTO, number>({
+            query: (id) => ({
+                body: gql`
+                    ${lessonBookFragment}
+                    query GetLessonBookById($id: ID!) {
+                        getLessonBookById(id: $id) {
+                            ...LessonBookFragment
+                        }
+                    }
+                `,
+                variables: { id },
+            }),
+            transformResponse: (response: { getLessonBookById: LessonBookDTO }) => response.getLessonBookById,
+            providesTags: (result) => (result ? [{ type: 'Book', id: String(result.id) }]: []),
+        }),
+
     })
 });
 
-export const { useGetLessonBooksQuery, useGetLessonBookQuery } = lessonBookApiSlice;
+export const { useGetLessonBooksQuery, useGetLessonBookQuery, useGetLessonBookByIdQuery, useLazyGetLessonBookByIdQuery } = lessonBookApiSlice;

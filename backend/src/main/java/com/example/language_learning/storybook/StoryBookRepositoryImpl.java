@@ -5,6 +5,7 @@ import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.example.language_learning.storybook.shortstory.page.StoryPageType;
 import com.example.language_learning.storybook.shortstory.page.paragraph.StoryParagraph;
 import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
+import com.example.language_learning.user.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
     private final ObjectMapper objectMapper;
 
     @Override
-    public Optional<StoryBook> findStoryBookDetailsById(Long id) {
+    public Optional<StoryBook> findStoryBookDetailsById(Long id, User user) {
         return dsl.select(
             STORY_BOOK.ID,
             STORY_BOOK.TITLE,
@@ -92,6 +93,7 @@ public class StoryBookRepositoryImpl implements StoryBookRepositoryCustom {
         )
         .from(STORY_BOOK)
         .where(STORY_BOOK.ID.eq(id))
+        .and(STORY_BOOK.USER_ID.eq(user.getId()))
         .fetchOptional(r -> {
             StoryBook storyBook = new StoryBook();
             storyBook.setId(r.get(STORY_BOOK.ID));

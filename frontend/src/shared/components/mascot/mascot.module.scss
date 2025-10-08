@@ -5,8 +5,6 @@
     bottom: 24px;
     right: 24px;
     z-index: 1000;
-    max-width: 350px;
-    min-width: 300px;
     transition: transform 0.3s ease-in-out;
 
     @include theme.respond-to(laptop) {
@@ -75,7 +73,8 @@
     border-radius: 50%;
     opacity: 0;
     animation: firework-explode 0.7s ease-out;
-    box-shadow: // Firework particles
+    // Firework particles
+    box-shadow:
           0 -25px 0 0px #ffc107, 25px 0px 0 0px #ffc107, 0 25px 0 0px #ffc107, -25px 0px 0 0px #ffc107,
           18px -18px 0 0px #ff5722, 18px 18px 0 0px #ff5722, -18px 18px 0 0px #ff5722, -18px -18px 0 0px #ff5722;
   }
@@ -91,17 +90,22 @@
   }
 }
 
-.mascotContentWrapper {
+#mascotContentWrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center items horizontally within the column */
-    width: 100%; /* Take full width of mascotContainer */
+    align-items: flex-end;
+    width: 100%;
+}
+
+.visualsWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .blackboardWrapper, .characterWrapper {
-    width: 100%; /* Allow blackboard and character to take full width */
     display: flex;
-    justify-content: center; /* Center content within their wrappers */
+    justify-content: center;
 }
 
 #mascotCharacter {
@@ -113,16 +117,10 @@
     justify-content: center;
 }
 
-.inputArea {
-    display: flex;
-    flex-grow: 1;
-    gap: 10px;
-}
-
 .inputRow {
     display: flex;
     align-items: center;
-    justify-content: center; /* Center the input field now that settings is gone */
+    justify-content: flex-end; /* Push content to the right, allowing the input to expand left */
     gap: 10px;
     padding: 0 10px; /* Add some horizontal padding */
     width: 100%; /* Ensure it takes full width */
@@ -136,9 +134,7 @@
 
 
 .textInput {
-    width: 100%;
     height: 38px; /* Standard height */
-    max-width: 100%; /* Allow it to fill the container */
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ccc;

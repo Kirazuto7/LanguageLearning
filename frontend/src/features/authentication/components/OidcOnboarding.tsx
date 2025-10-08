@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { useCompleteOidcRegistrationMutation } from "../../../shared/api/userApiSlice";
+import { useCompleteOidcRegistrationMutation } from "../../../shared/api/authApiSlice";
 import { CompleteOidcRegistrationRequest } from "../../../shared/types/dto";
 import { Alert, Button, Container, Form, Spinner } from "react-bootstrap";
 import { languages, difficulties } from "../../../shared/types/options";

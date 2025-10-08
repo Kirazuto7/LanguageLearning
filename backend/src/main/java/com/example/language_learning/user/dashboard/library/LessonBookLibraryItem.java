@@ -8,5 +8,7 @@ public record LessonBookLibraryItem(
     String language,
     String difficulty,
     LocalDateTime createdAt,
-    String type
+    String type,
+    int chapterCount,
+    int pageCount
 ) implements LibraryItem {}

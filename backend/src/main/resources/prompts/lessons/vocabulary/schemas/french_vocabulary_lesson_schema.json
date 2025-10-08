@@ -11,8 +11,8 @@
     "vocabularies": {
       "type": "array",
       "description": "A list of French vocabulary words.",
-      "minItems": 10,
-      "maxItems": 15,
+      "minItems": 1,
+      "maxItems": 20,
       "items": {
         "type": "object",
         "properties": {

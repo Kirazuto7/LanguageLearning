@@ -5,7 +5,7 @@ import Blackboard from "../../../shared/components/blackboard/Blackboard";
 import Jinny from "../../../shared/components/mascot/common/Jinny";
 import { LoginRequest } from "../../../shared/types/dto";
 import { mascotGenders } from "../../../shared/types/types";
-import { useLoginMutation } from "../../../shared/api/userApiSlice";
+import { useLoginMutation } from "../../../shared/api/authApiSlice";
 
 interface LoginProps {
     onShowRegister: () => void;

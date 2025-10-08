@@ -22,6 +22,7 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -92,4 +93,11 @@
   border: 1px solid var(--glass-border-color);
   color: var(--glass-text-color);
   text-shadow: var(--glass-text-shadow);
+}
+
+.subtle-divider {
+  width: 90%;
+  height: 2px;
+  background-color: var(--glass-border-color);
+  margin: 2rem auto;
 }

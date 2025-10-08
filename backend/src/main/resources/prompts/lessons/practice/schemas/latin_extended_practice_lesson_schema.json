@@ -14,15 +14,16 @@
     },
     "questions": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 5,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
           "questionText": {
             "type": "string",
             "description": "The open-ended question in the native language.",
-            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$",
+            "maxLength": 400
           },
           "answer": {
             "type": "null",

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Language {
     //exaone - kr/jp
+    //qwen3
     JAPANESE("japanese", "qwen3", SchemaGroup.JAPANESE, VocabularySchema.JAPANESE, InstructionGroup.JAPANESE),
     KOREAN("korean", "qwen3", SchemaGroup.KOREAN, VocabularySchema.KOREAN, InstructionGroup.KOREAN),
     CHINESE("chinese", "qwen3", SchemaGroup.CHINESE, VocabularySchema.CHINESE, InstructionGroup.CHINESE),

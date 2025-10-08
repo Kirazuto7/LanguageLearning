@@ -7,7 +7,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - frontend-node-modules:/app/node_modules
     depends_on:
       backend:
         condition: service_healthy
@@ -35,8 +35,8 @@ services:
       - .env
     volumes:
       - .:/app
-      - /app/build
-      - /app/.gradle
+      - backend-build:/app/build
+      #- /app/.gradle
       - backend-gradle-cache:/root/.gradle
     working_dir: /app/backend
     depends_on: # The backend now waits for the init-db service to finish.
@@ -146,3 +146,5 @@ volumes:
   ollama-data:
   minio-storage:
   stable-diffusion-models:
+  frontend-node-modules:
+  backend-build:

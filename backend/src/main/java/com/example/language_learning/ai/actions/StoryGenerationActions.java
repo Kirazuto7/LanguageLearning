@@ -13,11 +13,9 @@ import com.example.language_learning.storybook.shortstory.ShortStory;
 import com.example.language_learning.storybook.shortstory.ShortStoryDTO;
 import com.example.language_learning.storybook.shortstory.ShortStoryMetadataDTO;
 import com.example.language_learning.storybook.shortstory.ShortStoryService;
-import com.example.language_learning.storybook.shortstory.page.StoryPage;
 import com.example.language_learning.storybook.shortstory.page.StoryPageDTO;
 import com.example.language_learning.storybook.shortstory.page.StoryPageService;
 import com.example.language_learning.storybook.shortstory.page.StoryPageType;
-import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItem;
 import com.example.language_learning.storybook.shortstory.page.vocab.StoryVocabularyItemDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +36,6 @@ public class StoryGenerationActions {
     private final ProgressService progressService;
     private final ShortStoryService shortStoryService;
     private final StoryPageService storyPageService;
-    private final DtoMapper dtoMapper;
     private final Duration shortDelay = Duration.ofSeconds(2);
     private final Duration longDelay = Duration.ofSeconds(4);
 

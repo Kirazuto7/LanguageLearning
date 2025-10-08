@@ -44,7 +44,7 @@ public class WebSocketGraphQlConfig {
     public GraphQlWebSocketHandler graphQlWebSocketHandler(WebGraphQlHandler graphQlHandler) {
         HttpMessageConverter<?> converter = new MappingJackson2HttpMessageConverter();
         Duration initTimeout = Duration.ofMinutes(1);
-        Duration keepAliveDuration = Duration.ofSeconds(30);
+        Duration keepAliveDuration = Duration.ofSeconds(15);
         return new GraphQlWebSocketHandler(graphQlHandler, converter, initTimeout, keepAliveDuration);
 
     }

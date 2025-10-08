@@ -14,7 +14,7 @@ interface BlackboardProps {
 const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
     const ref = useRef<HTMLDivElement>(null);
     const isVisible = useOnScreen(ref);
-    const { settings, updateSettings } = useSettingsManager();
+    const { settings } = useSettingsManager();
     const { speak, cancel, isSpeaking, supported } = useTextToSpeech();
     const spokenMessages = useRef(new Set<string>());
 
@@ -23,13 +23,20 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
     }, [settings?.language]);
 
     useEffect(() => {
+
+        const removeEmojis = (str: string) => {
+            // Use Unicode property escapes (\p{...}) to match all emoji characters.
+            return str.replace(/\p{Emoji}/gu, '').trim();
+        };
+
         const canSpeak = isVisible && supported && text && settings?.language && settings?.autoSpeakEnabled;
         const shouldSpeak = !spokenMessages.current.has(text) || forceSpeak;
 
         // Prevent repeated messages being voiced
         if(canSpeak && shouldSpeak) {
             cancel();
-            speak(text, settings.language, gender);
+            const speechText = removeEmojis(text);
+            speak(speechText, settings.language, gender);
             spokenMessages.current.add(text);
         }
         else {
@@ -40,15 +47,6 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
             cancel();
         };
     }, [text, isVisible, supported, settings?.autoSpeakEnabled, settings?.language, gender, speak, cancel, forceSpeak]);
-
-    const toggleMute = () => {
-        const newAutoSpeakEnabled = !(settings?.autoSpeakEnabled ?? true);
-        updateSettings({ ...settings, autoSpeakEnabled: newAutoSpeakEnabled });
-
-        if (!newAutoSpeakEnabled) {
-            cancel();
-        }
-    };
 
     return(
         <div className={styles.blackboard} ref={ref}>
@@ -124,19 +122,6 @@ const Blackboard: React.FC<BlackboardProps> = ({text, gender, forceSpeak}) => {
                     filter="url(#chalkDust)"
                 />
             </svg>
-            {supported &&
-                <button
-                    className={styles.speakButton}
-                    onClick={toggleMute}
-                    aria-label={settings?.autoSpeakEnabled ? "Mute auto-speak" : "Enable auto-speak"}
-                >
-                    {isSpeaking ?
-                        <i className="fa-solid fa-spinner fa-spin"/>
-                        :
-                        <i className={settings?.autoSpeakEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-down"}/>
-                    }
-                </button>
-            }
         </div>
     )
 }

@@ -51,10 +51,10 @@ const authSlice = createSlice({
 
         builder.addMatcher(
             (action): action is PayloadAction<UserDTO> =>
-                userApiSlice.endpoints.login.matchFulfilled(action) || // Login
-                userApiSlice.endpoints.register.matchFulfilled(action) || // Register
+                authApiSlice.endpoints.login.matchFulfilled(action) || // Login
+                authApiSlice.endpoints.register.matchFulfilled(action) || // Register
                 authApiSlice.endpoints.refreshToken.matchFulfilled(action) || // Refresh Token
-                userApiSlice.endpoints.completeOidcRegistration.matchFulfilled(action), // Complete OIDC Registration
+                authApiSlice.endpoints.completeOidcRegistration.matchFulfilled(action), // Complete OIDC Registration
             (state, { payload }) => {
                 state.user = payload;
                 localStorage.setItem('user', JSON.stringify(payload));
@@ -63,7 +63,7 @@ const authSlice = createSlice({
         
         // User initiated via api
         builder.addMatcher(
-            userApiSlice.endpoints.logout.matchFulfilled,
+            authApiSlice.endpoints.logout.matchFulfilled,
             handleUserLogout
         );
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "../../../../shared/components/mascot/mascot.module.scss";
+import storyStyles from "./shortStoryGenerationInputField.module.scss";
 import { Form } from 'react-bootstrap';
 
 export interface StoryGenerationInput {
@@ -36,12 +37,12 @@ const ShortStoryGenerationInputField: React.FC<ShortStoryGenerationInputFieldPro
     }
 
     return (
-        <form id={styles.chatForm} className={`${styles.inputArea} d-flex align-items-center`} onSubmit={handleSubmit}>
+        <form id={styles.chatForm} className={storyStyles.inputForm} onSubmit={handleSubmit}>
             <Form.Select
                 value={genre}
                 onChange={(e) => setGenre(e.target.value)}
                 disabled={disabled}
-                className={`${styles.genreSelect} me-2`}
+                className={`${storyStyles.genreSelect} me-2`}
                 aria-label="Select story genre"
             >
                 {storyGenres.map(g => <option key={g} value={g}>{g}</option>)}
@@ -50,12 +51,12 @@ const ShortStoryGenerationInputField: React.FC<ShortStoryGenerationInputFieldPro
                 type="text"
                 id={styles.userInput}
                 placeholder="Suggest a story topic..."
-                className={styles.textInput}
+                className={`${styles.textInput} ${storyStyles.storyInput}`}
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 disabled={disabled}
             />
-            <button type="submit" id={styles.sendButton} className={`${styles.sendButton} btn btn-primary`} disabled={disabled}>
+            <button type="submit" id={styles.sendButton} className={`${styles.sendButton} ${storyStyles.storyButton} btn btn-primary`} disabled={disabled}>
                 {disabled ? 'Generating...' : 'Generate'}
             </button>
         </form>

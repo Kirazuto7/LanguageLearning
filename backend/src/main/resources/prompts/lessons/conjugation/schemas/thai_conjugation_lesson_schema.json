@@ -17,8 +17,8 @@
     },
     "conjugated_words": {
       "type": "array",
-      "minItems": 4,
-      "maxItems": 6,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
@@ -39,7 +39,7 @@
           },
           "sentence_translation": {
             "type": "string",
-            "description": "The English translation of the example sentence.",
+            "description": "The English translation of the sentence.",
             "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
           }
         },

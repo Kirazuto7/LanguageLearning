@@ -40,6 +40,12 @@ public class StoryBookGraphQlController {
 
     @QueryMapping
     @PreAuthorize("isAuthenticated()")
+    public StoryBookDTO getStoryBookById(@Argument Long id, @AuthenticationPrincipal User user) {
+        return storyBookService.getStoryBookById(id, user);
+    }
+
+    @QueryMapping
+    @PreAuthorize("isAuthenticated()")
     public List<StoryBookDTO> getStoryBooks(@AuthenticationPrincipal User user) {
         return storyBookService.fetchUserStoryBooks(user);
     }
@@ -55,8 +61,9 @@ public class StoryBookGraphQlController {
     public Publisher<ProgressUpdateDTO> shortStoryGenerationProgress(@Argument String taskId, @AuthenticationPrincipal User user) {
         return progressService.getPublisher(taskId)
                 .filter(update -> taskId.equals(update.taskId()))
-                .doOnSubscribe(sub -> log.info("User {} subscribed to {}", user.getUsername(), taskId))
+                .doOnSubscribe(sub -> log.info("User {} subscribed to Short Story Generation Task: {}", user.getUsername(), taskId))
                 .takeUntil(progressUpdate -> progressUpdate.isComplete() || progressUpdate.error() != null)
-                .doFinally(signal -> log.info("User {} unsubscribed from {}", user.getUsername(), taskId));
+                .doFinally(signal -> log.debug("User {} unsubscribed from {} due to signal: {}", user.getUsername(), taskId, signal))
+                .doOnCancel(() -> log.info("Client cancelled subscription for task {}. Stream is being terminated.", taskId));
     }
 }

@@ -17,7 +17,8 @@
     },
     "exampleSentences": {
       "type": "array",
-      "minItems": 5,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {

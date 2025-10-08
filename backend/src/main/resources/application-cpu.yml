@@ -3,6 +3,6 @@ spring:
     ollama1:
       chat:
         model: qwen3:4b
-    ollama2:
-      chat:
-        model: exaone3.5:2.4b
+    #ollama2:
+      #chat:
+        #model: qwen3:4b

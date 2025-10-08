@@ -15,15 +15,16 @@
     },
     "questions": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 4,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {
           "questionText": {
             "type": "string",
             "description": "中文的理解问题。",
-            "pattern": "^[A-Za-z\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～？！，\\n]+$"
+            "pattern": "^[A-Za-z\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～？！，\\n]+$",
+            "maxLength": 400
           },
           "answer": {
             "type": "string",
@@ -32,8 +33,8 @@
           },
           "answerChoices": {
             "type": "array",
-            "minItems": 3,
-            "maxItems": 4,
+            "minItems": 2,
+            "maxItems": 10,
             "items": {
               "type": "string",
               "description": "一个可能的中文答案选项。",

@@ -3,7 +3,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import { Button } from 'react-bootstrap';
-import { useLogoutMutation } from '../../shared/api/userApiSlice';
+import { useLogoutMutation } from '../../shared/api/authApiSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {AppDispatch, RootState} from '../../app/store';
 import styles from './navbar.module.scss';

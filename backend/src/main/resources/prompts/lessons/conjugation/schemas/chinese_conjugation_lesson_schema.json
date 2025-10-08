@@ -17,8 +17,8 @@
     },
     "conjugated_words": {
       "type": "array",
-      "minItems": 4,
-      "maxItems": 6,
+      "minItems": 1,
+      "maxItems": 15,
       "items": {
         "type": "object",
         "properties": {

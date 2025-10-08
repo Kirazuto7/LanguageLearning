@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
-import { useHealthCheckQuery } from "../shared/api/userApiSlice";
+import { useHealthCheckQuery } from "../shared/api/authApiSlice";
 
 const SessionManager = () => {
     const { user } = useSelector((state: RootState) => state.auth);

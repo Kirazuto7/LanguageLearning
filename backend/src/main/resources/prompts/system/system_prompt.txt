@@ -9,6 +9,7 @@ ACCURACY IS PARAMOUNT. Do not invent or guess words or grammar rules.
 4.  Ensure all keys in the JSON object are unique and there are no duplicate fields.
 5.  Pay special attention to escaping special characters (like quotes and backslashes) within JSON string values.
 6.  Ensure your entire response is a single JSON object and is not truncated.
+7.  Do not return an empty response or an empty JSON object.
 
 ## Language-Specific Rules
 1.  If the target language is Japanese, you MUST use the Hepburn romanization system for Romaji.

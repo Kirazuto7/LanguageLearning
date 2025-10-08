@@ -1,0 +1,210 @@
+.book {
+  width: 220px;
+  height: 300px;
+  border-radius: 8px 4px 4px 8px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: hidden; // Hide parts of the design that might poke out
+
+  // Use a two-tone gradient based on the CSS variable
+  background: linear-gradient(135deg, var(--storybook-color, #4a044e), color-mix(in srgb, var(--storybook-color, #4a044e) 70%, black));
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  font-family: "Georgia", "Times New Roman", serif; // More elegant, storybook-like font
+  line-height: 1.3;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  margin-bottom: 1rem;
+  word-break: break-word;
+  position: relative; // Required for z-index
+  z-index: 2;
+}
+
+.info {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+}
+
+.stats {
+  margin-top: auto; // Pushes to the bottom
+  font-size: 0.8rem;
+  opacity: 0.9;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  position: relative; // Required for z-index
+  z-index: 2;
+}
+
+.flag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  object-fit: cover; // Ensures the flag image covers the circular area
+  z-index: 3; // Ensure flag is on top
+}
+
+/* --- Cover Designs --- */
+
+/* Base for Ornate and Geometric designs */
+.design-ornate::before,
+.design-ornate::after,
+.design-geometric::before,
+.design-geometric::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  height: 15px;
+  background-repeat: repeat-x;
+  opacity: 0.2;
+}
+
+.design-ornate::before,
+.design-geometric::before {
+  top: 15px;
+}
+
+.design-ornate::after,
+.design-geometric::after {
+  bottom: 15px;
+}
+
+/* Design 1: Ornate/Classic Filigree */
+.design-ornate::before,
+.design-ornate::after {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="15"><path d="M0 5 Q 25 15, 50 5 T 100 5" stroke="white" fill="none" stroke-width="1"/></svg>');
+}
+
+/* Design 2: Geometric Lines */
+.design-geometric::before,
+.design-geometric::after {
+  height: 1px;
+  background: white;
+}
+.design-geometric::before {
+  top: 20px;
+}
+.design-geometric::after {
+  bottom: 20px;
+}
+
+/* Design 3: Mystic Lines */
+.design-mystical {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.5;
+
+    background-image:
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M-5 100 C 40 60, 60 40, 100 -5" stroke="white" fill="none" stroke-width="2"/></svg>'),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M105 100 C 60 60, 40 40, 0 -5" stroke="white" fill="none" stroke-width="2"/></svg>'),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M-5 0 C 40 40, 60 60, 100 105" stroke="white" fill="none" stroke-width="2"/></svg>'),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M105 0 C 60 40, 40 60, 0 105" stroke="white" fill="none" stroke-width="2"/></svg>');
+
+    background-size: 80px 80px;
+    background-repeat: no-repeat;
+
+    background-position:
+      top 10px left 10px,
+      top 10px right 10px,
+      bottom 10px left 10px,
+      bottom 10px right 10px;
+  }
+
+  &::after {
+    content: none;
+  }
+}
+
+/* Design 4: Emblem */
+.design-emblem {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    z-index: 0;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    opacity: 0.1;
+    background-image: radial-gradient(circle, white 50%, transparent 70%);
+    z-index: 1;
+  }
+}
+
+/* Design 5: Art Deco Sunburst */
+.design-art-deco {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100px; // Size of the fan
+    height: 100px;
+    opacity: 0.15;
+
+    // This creates the "rays" of the fan
+    background-image: repeating-conic-gradient(
+      from -45deg,
+      white 0deg 5deg,      // A 5-degree sliver of white
+      transparent 5deg 18deg // A 13-degree gap creates the rays
+    );
+
+    // This clips the square gradient into a quarter-circle fan shape
+    -webkit-mask-image: radial-gradient(circle at 0 0, black 120px, transparent 120px);
+    mask-image: radial-gradient(circle at 0 0, black 120px, transparent 120px);
+  }
+
+  // Position the top-left corner fan
+  &::before {
+    top: -1px; // Use -1px to hide the center point of the gradient
+    left: -1px;
+  }
+
+  // Position the bottom-right corner fan and flip it
+  &::after {
+    bottom: -1px;
+    right: -1px;
+    transform: rotate(180deg);
+  }
+}

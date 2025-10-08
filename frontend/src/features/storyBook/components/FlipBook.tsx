@@ -21,7 +21,7 @@ interface FlipBookProps {
 const FlipBook: React.FC<FlipBookProps> = ({ stories, title }) => {
     const flipBookRef = useRef<PageFlipAPI | null>(null);
 
-    const pages = useMemo(() => buildPagesFromStoryData(stories), [stories])
+    const pages = useMemo(() => buildPagesFromStoryData(stories), [stories]);
 
     const handleTocNavigate = (pageIndex: number) => {
         if(flipBookRef.current) {
@@ -46,19 +46,6 @@ const FlipBook: React.FC<FlipBookProps> = ({ stories, title }) => {
             };
         });
     }, [stories]);
-
-    /*const tocEntries: TocEntry[] = stories.map( (shortStory: ShortStoryDTO, storyIndex: number) => {
-        // Calculate the starting page index for this story by summing the pages of all previous stories.
-        const navigationPageIndex = stories
-            .slice(0, storyIndex) // Get all stories before the current one
-            .reduce((acc, s) => acc + s.storyPages.length, 1);
-
-        return {
-            entryNumber: storyIndex + 1,
-            title: shortStory.title,
-            navigationPageIndex: navigationPageIndex,
-        }
-    });*/
 
     return (
         <div className={styles.bookContainer}>

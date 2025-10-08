@@ -1,10 +1,42 @@
 import {MascotName} from "./types";
 
+// --- Dashboard & Library Interfaces ---
+
+export enum LibraryItemType {
+    LESSON_BOOK = 'LESSON_BOOK',
+    STORY_BOOK = 'STORY_BOOK'
+}
+
+export interface LibraryItemDTO {
+    id: number;
+    title: string;
+    language: string;
+    difficulty: string;
+    createdAt: string; // ISO 8601 date string (YYYY-MM-DD)
+}
+
+export interface LessonBookLibraryItemDTO extends LibraryItemDTO {
+    type: LibraryItemType.LESSON_BOOK;
+    chapterCount: number;
+    pageCount: number;
+}
+
+export interface StoryBookLibraryItemDTO extends LibraryItemDTO {
+    type: LibraryItemType.STORY_BOOK;
+    storyCount: number;
+    pageCount: number;
+}
+
 export interface UserDTO {
     id: number;
     username: string;
     settings: SettingsDTO;
     lessonBookList: LessonBookDTO[];
+}
+
+export interface UserDataDTO {
+    lessonBooks: LessonBookLibraryItemDTO[];
+    storyBooks: StoryBookLibraryItemDTO[];
 }
 
 export interface SettingsDTO {

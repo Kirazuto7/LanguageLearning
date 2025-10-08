@@ -31,6 +31,7 @@ const ConjugationLesson: React.FC<ConjugationLessonProps> = ({ lesson }) => {
     };
 
     const renderText = (text: string, { as: Component = 'div' as React.ElementType, className = '' } = {}) => {
+        if (!text || text.length === 0) return <></>;
         return <Component className={className}>{parse(text)}</Component>;
     };
 

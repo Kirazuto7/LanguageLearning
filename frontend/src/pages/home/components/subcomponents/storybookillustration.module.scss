@@ -1,0 +1,122 @@
+.bookContainer {
+  position: absolute;
+  width: 80%;
+  height: 80%; /* Scale down the book's height */
+  top: 10%;    /* Re-center it vertically */
+  left: 10%;   /* Keep it centered horizontally */
+  perspective: 1000px;
+  display: flex; /* Make the container a flexbox to position covers side-by-side */
+}
+.leftPage,
+.rightPage {
+  content: '';
+  position: absolute; /* Stack on top of the layers */
+  top: 2%;
+  width: 85%; /* Make the top page significantly narrower */
+  height: 95%;
+  background-color: #fdfdfd; /* The page color */
+  transition: transform 0.5s ease-in-out;
+  z-index: 6; /* Ensure this is the highest z-index to be visible */
+  border: 0.5px solid black;
+}
+
+.leftPage {
+  right: 0; /* Align to the spine (right edge of the left cover) */
+  border-radius: 3px 0 0 3px;
+  /* Background for the left page (text only) */
+  background-image: url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(0, 0, 0, 0.06) 8.5px);
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+  background-size: 80% 10px, 75% 10px, 82% 10px, 78% 10px, 100% 10px;
+  background-position: center 20%, center 40%, center 60%, center 80%, center;
+}
+
+.rightPage {
+  left: 0; /* Align to the spine (left edge of the right cover) */
+  border-radius: 0 3px 3px 0;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 100 50' xmlns='http://www.w3.org/2000/svg'%3e%3cstyle%3e.sun %7b animation: subtle-pulse 5s infinite ease-in-out; %7d @keyframes subtle-pulse %7b 0%25, 100%25 %7b opacity: 0.6; %7d 50%25 %7b opacity: 0.8; %7d %7d%3c/style%3e%3ccircle class='sun' cx='75' cy='15' r='10' fill='%23ffc107'/%3e%3cpath d='M0 50 Q 25 20, 50 30 T 100 40 L 100 50 Z' fill='%23a3d9a5' opacity='0.6'/%3e%3c/svg%3e"),
+  url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  url("data:image/svg+xml,%3csvg width='100' height='10' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 5 Q 10 2, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' stroke='black' fill='none' stroke-width='0.5'/%3e%3c/svg%3e"),
+  repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(0, 0, 0, 0.06) 8.5px);
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+  background-size: 80% 40%, 75% 10px, 82% 10px, 78% 10px, 100% 10px;
+  background-position: center 5%, center 55%, center 70%, center 85%, center;
+}
+
+/* Add a subtle opening effect on hover */
+.bookContainer:hover .leftCover {
+  transform: rotateY(25deg);
+}
+
+.bookContainer:hover .rightCover {
+  transform: rotateY(-25deg);
+}
+
+/* The real cover elements */
+.cover {
+  position: absolute; /* Change to absolute to position within the flex container */
+  width: 50%;
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  transform-style: preserve-3d; /* Important for child transforms */
+  transition: transform 0.5s ease-in-out;
+  /* Use relative positioning to contain the absolute children */
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leftCover {
+  left: 0;
+  transform: rotateY(30deg);
+  transform-origin: right;
+}
+
+.rightCover {
+  right: 0;
+  transform: rotateY(-30deg);
+  transform-origin: left;
+}
+
+/* Styling for the layered pages effect */
+.pageLayer {
+  content: '';
+  position: absolute; /* Stack on top of the cover */
+  top: 1.5%;
+  height: 97%;
+  background-color: #f0f0f0; /* A slightly darker shade for depth */
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 0.5px solid black;
+}
+
+.pageLayer1 {
+  width: 88%;
+  z-index: 5;
+}
+
+.pageLayer2 {
+  width: 91%;
+  z-index: 4;
+}
+
+.pageLayer3 {
+  width: 94%;
+  z-index: 3;
+}
+
+.pageLayer4 {
+  width: 97%;
+  z-index: 2; /* Bottom-most page layer */
+}
+
+/* Override rotation for the layers on the left page to make them peek out from the left side */
+.leftCover .pageLayer, .leftCover .leftPage { right: 0; }
+.rightCover .pageLayer, .rightCover .rightPage { left: 0; }

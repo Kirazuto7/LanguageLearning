@@ -8,6 +8,10 @@ module.exports = function(app) {
         res.status(200).send('OK');
     });
 
+    app.use('/ws', (req, res) => {
+        res.end();
+    });
+
     app.use(
         '/api',
         createProxyMiddleware({

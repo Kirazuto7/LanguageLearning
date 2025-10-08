@@ -3,8 +3,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { selectCurrentTheme } from "../features/userSettings/settingsSlice";
 import { selectIsAuthenticated } from "../features/authentication/authSlice";
-
-const themedPaths = ['/home', '/study', '/read'];
+import { protectedPaths } from "../shared/types/options";
 
 /**
  * A component that manages the application's theme by listening to Redux state and
@@ -16,8 +15,7 @@ const themedPaths = ['/home', '/study', '/read'];
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
     useEffect(() => {
-        const isRootForAuthUser = isAuthenticated && location.pathname === '/';
-        const isThemedPage = themedPaths.some(path => location.pathname.startsWith(path)) || isRootForAuthUser;
+        const isThemedPage = isAuthenticated && protectedPaths.some(path => location.pathname.startsWith(path));
         const themeToApply = isThemedPage ? userTheme : 'default';
 
         document.body.className = `themed-body ${themeToApply}`;

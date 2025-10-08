@@ -25,10 +25,10 @@ if [ ! -f "$MARKER_FILE" ]; then
   # Pull the required models
   if [ "$AI_PROFILE" = "gpu" ]; then
     ollama pull qwen3:8b
-    ollama pull exaone3.5:7.8b
+    #ollama pull exaone3.5:7.8b
   else
     ollama pull qwen3:4b
-    ollama pull exaone3.5:2.4b
+    #ollama pull exaone3.5:2.4b
   fi
     echo "--- Models pulled successfully. ---"
     touch "$MARKER_FILE"

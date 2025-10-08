@@ -1,0 +1,18 @@
+.inputForm {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+}
+
+.storyInput {
+  flex: 1 1 auto;
+}
+
+.storyButton {
+  min-width: 110px;
+}
+
+.genreSelect {
+  min-width: 130px;
+}

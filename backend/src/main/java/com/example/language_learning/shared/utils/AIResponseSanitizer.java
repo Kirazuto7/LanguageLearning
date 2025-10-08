@@ -16,6 +16,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.json.JSONTokener;
+import org.jsonrepairj.JsonRepair;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -74,41 +75,64 @@ public class AIResponseSanitizer {
     }
 
     /**
-     * Extracts, repairs, and sanitizes a JSON string from a raw AI response.
-     * This method performs a two-step process:
-     * 1. Uses a repair library to fix common syntax errors (e.g., trailing commas, missing quotes).
-     * 2. Deserializes and re-serializes the JSON to remove any duplicate keys.
+     * The main entry point for the pre-validation cleaning of a raw AI response. This method
+     * attempts to repair the entire string to fix common syntax errors, then passes the result
+     * to the extraction pipeline. This prepares the JSON for schema validation.
      *
      * @param rawResponse The raw string response from the AI.
-     * @return A valid, de-duplicated JSON string, or "{}" if repair fails.
+     * @return A syntactically valid, de-duplicated JSON string ready for validation.
      */
-
-    public String repairAndSanitizeJson(String rawResponse) {
-        String repairedJson;
+    public String repairJson(String rawResponse) {
         try {
-            // 1. Use the library to repair the raw JSON string's syntax.
-            Object json = new JSONTokener(rawResponse).nextValue();
-            repairedJson = json.toString();
+            // 1. Use the library to repair the JSON string's syntax.
+            String repairedJson = JsonRepair.repairJson(rawResponse);
+            log.info("Successfully repaired JSON with json-repairj.");
+            return extractJson(repairedJson);
+        }
+        catch (Exception e) {
+            log.warn("json-repairj failed: {}. Proceeding with the raw response for extraction.", e.getMessage());
+            return extractJson(rawResponse);
+        }
+    }
+
+    /**
+     * The primary extraction pipeline. It attempts to extract a JSON object
+     * from the given string using a two-stage process.
+     * 1. It first uses {@link JSONTokener}, which is robust at handling surrounding text.
+     * 2. If that fails, it falls back to a manual, brace-counting extraction method.
+     * After extraction, it performs a final de-duplication pass to remove duplicate keys.
+     *
+     * @param jsonString The (potentially repaired) string to extract JSON from.
+     * @return A de-duplicated JSON string, or the raw extracted string if final parsing fails.
+     */
+    private String extractJson(String jsonString) {
+        String extractedJson;
+        try {
+            // 1. Use the library to extract the JSON string's syntax.
+            Object json = new JSONTokener(jsonString).nextValue();
+            extractedJson = json.toString();
         }
         catch (Exception e) {
             log.warn("JSON repair library failed. Falling back to legacy extraction method. Error: {}", e.getMessage());
-            return extractAndSanitizeJson(rawResponse);
+            return extractJsonFallback(jsonString);
         }
 
         try {
             // 2. Perform the de-duplication step by reading into a generic Object
             // This handles both maps and list inputs before writing it back to a string. It also implicitly removes duplicate keys.
-            Object jsonObject = objectMapper.readValue(repairedJson, new TypeReference<>() {});
+            Object jsonObject = objectMapper.readValue(extractedJson, new TypeReference<>() {});
             return objectMapper.writeValueAsString(jsonObject);
         }
         catch (Exception e) {
-            log.error("Failed to de-duplicate JSON after repair, returning repaired (but not de-duplicated) string: {}", e.getMessage());
-            return repairedJson;
+            log.error("Failed to de-duplicate JSON or parse the final extracted JSON string, Returning the raw extracted (but not de-duplicated) string: {}", e.getMessage());
+            return extractedJson;
         }
     }
 
     /**
-     * Attempts to fix a JsonNode based on a set of validation errors.
+     * Attempts to fix a JsonNode based on a set of validation errors. This is the main
+     * "hot-fix" method that applies heuristics to correct common structural and data type
+     * errors based on the schema validation feedback.
      *
      * @param rootNode The root JsonNode of the AI response.
      * @param errors   The set of validation errors from the schema validator.
@@ -425,9 +449,22 @@ public class AIResponseSanitizer {
 
         if (matcher.find()) {
             String requiredPropertyName = matcher.group(1);
-            // Correctly get the JSON Pointer path from the error location.
+            // Get the JSON Pointer path from the error location.
+            String pointer = error.getInstanceLocation().toString();
+
             // The toString() method returns a path like '#/path/to/node', so we strip the leading '#'.
-            String pointer = error.getInstanceLocation().toString().replaceFirst("^#", "");
+            if ("$".equals(pointer)) {
+                pointer = "";
+            }
+            else if (!pointer.startsWith("#/"))
+            {
+                log.warn("Cannot fix malformed key for an invalid JSON Pointer path: {}", pointer);
+                return false;
+            }
+            else {
+                pointer = pointer.replaceFirst("^#", "");
+            }
+
             JsonNode parentNode = rootNode.at(pointer);
 
             if (parentNode.isObject()) {
@@ -473,13 +510,15 @@ public class AIResponseSanitizer {
      }
 
     /**
-     * Extracts a JSON object from a raw string response that may contain conversational text.
-     * Sanitize the response string before passing it to the convertor to remove any suspicious/duplicate fields.
+     * A fallback extraction pipeline that uses a manual brace-counting method. This is called
+     * when the primary {@link JSONTokener} extraction fails. It first calls {@link #jsonExtraction(String)}
+     * to find the JSON substring, then performs a de-duplication pass.
+     *
      * @param rawResponse The raw string response from the AI.
-     * @return A string containing only the JSON object.
+     * @return A de-duplicated JSON string, or the raw extracted string if de-duplication fails.
      */
-    private String extractAndSanitizeJson(String rawResponse) {
-        String extractedJson = extractJson(rawResponse);
+    private String extractJsonFallback(String rawResponse) {
+        String extractedJson = jsonExtraction(rawResponse);
 
         try {
             // Convert the json string into a generic object and then back into a string to handle both maps and lists
@@ -492,11 +531,14 @@ public class AIResponseSanitizer {
     }
 
     /**
-     * Extracts a JSON object from a raw string response that may contain conversational text.
+     * Performs a low-level, manual extraction of a JSON object or array from a string. This method
+     * serves as a last-resort fallback. It works by finding the first '{' or '[' and then counting
+     * braces/brackets to find the corresponding closing character, ignoring characters within strings.
+     *
      * @param rawResponse The raw string response from the AI.
-     * @return A string containing only the JSON object.
+     * @return A substring containing the balanced JSON structure, or an empty object "{}" if no structure can be found.
      */
-    private String extractJson(String rawResponse) {
+    private String jsonExtraction(String rawResponse) {
         char startChar;
         char endChar;
 
