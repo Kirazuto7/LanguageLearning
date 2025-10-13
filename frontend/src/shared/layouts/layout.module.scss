@@ -3,25 +3,24 @@
 .content {
   display: flex;
   flex-direction: column;
-  // Place the content in the grid and ensure it's on top
-  grid-row: 1;
-  grid-column: 1;
-  z-index: 1;
+  flex-grow: 1; /* Allows content to fill available space */
+  z-index: 1; /* Ensures content is above the background */
 }
 
 .layoutContainer {
-  min-height: calc(100vh - 56px);
-  // Use grid to create a robust layering context
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 56px; /* Matches the default Bootstrap navbar height */
 }
 
 .backgroundCanvas {
-  grid-row: 1;
-  grid-column: 1;
-  position: relative; // Needed for the absolute positioned children
-  z-index: 0; // Ensure it's behind the content
+  position: fixed;
+  top: 56px; /* Start below the navbar */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 56px); /* Fill the remaining viewport height */
+  z-index: -1; /* Places the canvas behind all other content */
 }
 
 

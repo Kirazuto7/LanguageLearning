@@ -30,10 +30,12 @@
 }
 
 :global(.navbar).customNavbar {
-  position: relative;
+  position: fixed; /* Changed from relative to fixed */
+  width: 100%;
+  top: 0;
   z-index: 10;
-  background-image: none !important;
-  background: transparent;
+  background: var(--glass-bg); /* Apply the glass background */
+  backdrop-filter: blur(10px); /* Add blur effect for glassmorphism */
   border-bottom: 1px solid var(--glass-border-color);
   padding-top: 0.25rem; /* Reduced padding */
   padding-bottom: 0.25rem; /* Reduced padding */
