@@ -1,17 +1,11 @@
-import React, {useMemo, useRef} from 'react';
+import React from 'react';
 import styles from './flipbook.module.scss';
 import HTMLFlipBook from 'react-pageflip';
 import BehindCoverPage from './common/BehindCoverPage';
 import { ShortStoryDTO } from "../../../shared/types/dto";
-import {buildPagesFromStoryData} from "../utils/buildPagesFromStoryData";
-import TableOfContentsPage, { TocEntry } from "../../../shared/ui/book/TableOfContentsPage";
+import TableOfContentsPage from "../../../shared/ui/book/TableOfContentsPage";
 import BookPage from "../../../shared/ui/book/BookPage";
-
-interface PageFlipAPI {
-    pageFlip: () => {
-        flip: (pageIndex: number, corner?: string) => void;
-    };
-}
+import { useFlipBook, PageFlipAPI } from '../hooks/useFlipBook';
 
 interface FlipBookProps {
     stories: ShortStoryDTO[];
@@ -19,33 +13,7 @@ interface FlipBookProps {
 }
 
 const FlipBook: React.FC<FlipBookProps> = ({ stories, title }) => {
-    const flipBookRef = useRef<PageFlipAPI | null>(null);
-
-    const pages = useMemo(() => buildPagesFromStoryData(stories), [stories]);
-
-    const handleTocNavigate = (pageIndex: number) => {
-        if(flipBookRef.current) {
-            // Offset for static pages: Cover(1) + BehindCover (1) + TOC (1) = 3
-            // The pageIndex from TOC is 1-based so we substract 1 for the 0-based index in the pages array
-            flipBookRef.current.pageFlip().flip(pageIndex - 1 + 3);
-        }
-    }
-
-    const tocEntries: TocEntry[] = useMemo(() => {
-        let runningPageIndex = 1; // Start with 1 for 1-based indexing
-        return stories.map((shortStory: ShortStoryDTO, storyIndex: number) => {
-            const navigationPageIndex = runningPageIndex;
-
-            // Update the running total for the next story
-            runningPageIndex += shortStory.storyPages.length;
-
-            return {
-                entryNumber: storyIndex + 1,
-                title: shortStory.title,
-                navigationPageIndex: navigationPageIndex,
-            };
-        });
-    }, [stories]);
+    const { flipBookRef, pages, tocEntries, handleTocNavigate } = useFlipBook({ stories });
 
     return (
         <div className={styles.bookContainer}>
@@ -53,7 +21,7 @@ const FlipBook: React.FC<FlipBookProps> = ({ stories, title }) => {
 
             <HTMLFlipBook
                 key={pages.length + JSON.stringify(pages.map((p: React.ReactElement) => p.key || ''))}
-                ref={(el) => (flipBookRef.current = el as PageFlipAPI)}
+                ref={(el) => (flipBookRef.current = el as PageFlipAPI | null)}
                 width={450} height={600}
                 size="stretch"
                 minWidth={315}

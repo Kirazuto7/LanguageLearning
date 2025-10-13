@@ -86,6 +86,9 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
         text: string,
         { as: Component = 'p' as React.ElementType, className = '' } = {}
     ) => {
+        if (!text) {
+            return <></>;
+        }
         return <Component className={className}>{parse(text)}</Component>;
     };
 
@@ -108,7 +111,7 @@ const PracticeLesson: React.FC<PracticeLessonProps> = ({ lesson }) => {
                             <div className="mb-2">
                                 {renderText(question.questionText, { as: 'p', className: styles.nativeSentenceText })}
                             </div>
-                            <div className="d-flex flex-row align-items-center">
+                            <div className="d-flex flex-row align-items-center flipping-block">
                                 <input className={styles.practiceInput}
                                        type="text"
                                        placeholder={placeholderText}

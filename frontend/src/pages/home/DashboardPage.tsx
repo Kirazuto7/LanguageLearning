@@ -15,7 +15,6 @@ import LessonBookItem from "./components/LessonBookItem";
 import StoryBookItem from "./components/StoryBookItem";
 import {BookType} from "../../shared/types/types";
 import BookReaderModal from "./components/BookReaderModal";
-import {getDifficultyColor, getStoryBookDifficultyColor} from "../../shared/utils/colorUtils";
 import {LessonBookLibraryItemDTO, StoryBookLibraryItemDTO} from "../../shared/types/dto";
 import {logToServer} from "../../shared/utils/loggingService";
 
@@ -23,27 +22,14 @@ const DashboardPage: React.FC = () => {
   const user = useSelector(selectCurrentUser);
   const { isLoading, lessonBooks, storyBooks, hasData } = useDashboardData();
   const navigate = useNavigate();
-  const [selectedBook, setSelectedBook] = useState<{ id: number; type: BookType; color: string; } | null>(null);
+  const [selectedBook, setSelectedBook] = useState<{ id: number; type: BookType; } | null>(null);
 
   if (isLoading) {
     return <FullScreenLoader/>;
   }
 
   const handleSelectBook = (book: LessonBookLibraryItemDTO | StoryBookLibraryItemDTO, type: BookType) => {
-    let color;
-    switch (type) {
-        case BookType.LESSON:
-            color = getDifficultyColor(book.difficulty);
-            break;
-        case BookType.STORY:
-            color = getStoryBookDifficultyColor(book.difficulty);
-            break;
-        default:
-            color = '';
-            break;
-    }
-
-    let data = { id: book.id, type, color };
+    let data = { id: book.id, type };
     setSelectedBook(data);
     logToServer('debug', "Selected Book:", data);
   };
@@ -66,23 +52,31 @@ const DashboardPage: React.FC = () => {
                     width="100%"
                     borderRadius="8px"
                >
-                   {lessonBooks.map(book => (
-                       <LessonBookItem
-                            key={book.id + book.type}
-                            book={book}
-                            onClick={() => handleSelectBook(book, BookType.LESSON)}
-                       />
-                   ))}
+                   {lessonBooks.length > 0 ? (
+                       lessonBooks.map(book => (
+                           <LessonBookItem
+                                key={book.id + book.type}
+                                book={book}
+                                onClick={() => handleSelectBook(book, BookType.LESSON)}
+                           />
+                       ))
+                   ) : (
+                       <p className="text-center text-muted w-100">You haven't created any lesson books yet.</p>
+                   )}
                </HorizontalStack>
 
                <HorizontalStack title="My Story Books" width="100%">
-                   {storyBooks.map(book => (
-                       <StoryBookItem
-                            key={book.id + book.type}
-                            book={book}
-                            onClick={() => handleSelectBook(book, BookType.STORY)}
-                       />
-                   ))}
+                   {storyBooks.length > 0 ? (
+                       storyBooks.map(book => (
+                           <StoryBookItem
+                                key={book.id + book.type}
+                                book={book}
+                                onClick={() => handleSelectBook(book, BookType.STORY)}
+                           />
+                       ))
+                   ) : (
+                       <p className="text-center text-muted w-100">You haven't created any story books yet.</p>
+                   )}
                </HorizontalStack>
             </>
         )}
@@ -118,7 +112,6 @@ const DashboardPage: React.FC = () => {
             onHide={() => setSelectedBook(null)}
             bookId={selectedBook.id}
             bookType={selectedBook.type}
-            bookColor={selectedBook.color}
         />
     )}
 

@@ -31,6 +31,7 @@ services:
       - MINIO_URL=http://minio:9000
       - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
       - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - DDL_AUTO_MODE=${SCHEMA_MODE:-validate}
     env_file:
       - .env
     volumes:
@@ -116,8 +117,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
       # This variable controls which schema is used by the init script.
-      # Options: 'drop-create' (default) or 'update'.
-      - SCHEMA_MODE=drop-create
+      # Options: 'create-drop' (default) or 'validate'.
+      # Set the option in .env
+      - SCHEMA_MODE=${SCHEMA_MODE}
     volumes:
       - ./backend/dockerfiles/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - ./backend/src/main/resources/db/migration:/schemas

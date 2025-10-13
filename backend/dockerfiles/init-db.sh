@@ -20,14 +20,14 @@ done
 
 
 # Determine which schema file to use based on the 'SCHEMA_MODE' environment variable.
-if [ "$SCHEMA_MODE" = "update" ]; then
-    echo "INFO: SCHEMA_MODE is 'update'. Using non-destructive schema."
+if [ "$SCHEMA_MODE" = "validate" ]; then
+    echo "INFO: SCHEMA_MODE is 'validate'. Using non-destructive schema."
     SCHEMA_FILE="/schemas/prod-schema.sql"
-elif [ "$SCHEMA_MODE" = "drop-create" ]; then
-    echo "INFO: SCHEMA_MODE is 'drop-create'. Using drop-create schema."
+elif [ "$SCHEMA_MODE" = "create-drop" ]; then
+    echo "INFO: SCHEMA_MODE is 'create-drop'. Using create-drop schema."
     SCHEMA_FILE="/schemas/dev-schema.sql"
 else
-    echo "INFO: SCHEMA_MODE is not set or invalid. Defaulting to drop-create schema."
+    echo "INFO: SCHEMA_MODE is not set or invalid. Defaulting to create-drop schema."
     SCHEMA_FILE="/schemas/dev-schema.sql"
 fi
 

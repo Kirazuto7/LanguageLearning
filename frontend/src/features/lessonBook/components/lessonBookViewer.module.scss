@@ -10,17 +10,10 @@
 
 .content-area {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
-
-    @include theme.respond-to(laptop) {
-        gap: 1rem;
-    }
-
-    @include theme.respond-to(mobile) {
-        gap: 1.5rem;
-    }
+    gap: 1rem;
 }
 
 .carousel-wrapper {
@@ -80,8 +73,16 @@
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-color);
   border-radius: 1rem !important;
-  padding: 1rem 0.5rem;
+  padding: 0.5rem 1rem;
   box-shadow: var(--glass-shadow);
+  gap: 1rem;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  @include theme.respond-to(mobile) {
+    flex-wrap: wrap;
+  }
 }
 
 %pagination-button-base {

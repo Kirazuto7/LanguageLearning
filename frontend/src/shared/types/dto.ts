@@ -268,7 +268,7 @@ export interface LessonQuestionDTO {
     questionType: 'MULTIPLE_CHOICE' | 'FREE_FORM';
     questionText: string;
     answerChoices?: string[];
-    answer: string;
+    answer: string | null;
 }
 
 export interface ConjugationExampleDTO {

@@ -90,3 +90,30 @@
     transform: translateY(0);
   }
 }
+
+/*
+ * This targets the root content element of the React Bootstrap modal
+ * to make its background match the application's theme, which is
+ * defined by the --body-bg variable in App.scss.
+ */
+:global(.modal-content) {
+  background: var(--body-bg);
+
+  :global(.btn-close) {
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    -webkit-mask-image: var(--bs-btn-close-bg);
+    mask-image: var(--bs-btn-close-bg);
+    -webkit-mask-size: 100%;
+    mask-size: 100%;
+    background-color: var(--title-color);
+    width: 0.50em;
+    height: 0.50em;
+    margin-right: 0.25rem;
+  }
+
+  :global(.modal-title) {
+    color: var(--title-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}

@@ -13,7 +13,6 @@ export const LessonPaginator: React.FC<LessonPaginatorProps> = ({ pageCount, act
         const isPageActive = activePageIndex === i;
         const itemClasses = [
             styles['page-item'],
-            i !== pageCount - 1 ? 'mb-2' : null,
             isPageActive ? styles['active-page-item'] : null,
         ].filter(Boolean).join(' ');
 
@@ -25,10 +24,10 @@ export const LessonPaginator: React.FC<LessonPaginatorProps> = ({ pageCount, act
     });
 
     return (
-        <Pagination className={`${styles['page-control-container']} flex-column align-items-center align-self-center`}>
-            <Pagination.Prev className={`${styles['page-control-item']} mb-4`} onClick={() => onPageSelect(activePageIndex - 1)} disabled={activePageIndex === 0} />
+        <Pagination className={`${styles['page-control-container']} mb-4`}>
+            <Pagination.Prev className={`${styles['page-control-item']} me-4`} onClick={() => onPageSelect(activePageIndex - 1)} disabled={activePageIndex === 0} />
             {paginationItems}
-            <Pagination.Next className={`${styles['page-control-item']} mt-4`} onClick={() => onPageSelect(activePageIndex + 1)} disabled={activePageIndex === pageCount - 1} />
+            <Pagination.Next className={`${styles['page-control-item']} ms-4`} onClick={() => onPageSelect(activePageIndex + 1)} disabled={activePageIndex === pageCount - 1} />
         </Pagination>
     );
 };

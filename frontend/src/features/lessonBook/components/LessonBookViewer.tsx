@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useMemo, memo } from "react";
+import React, { memo } from "react";
 import styles from './lessonBookViewer.module.scss';
 import { Carousel } from "react-bootstrap";
-import { buildPagesForChapter } from "../utils/buildPagesFromLessonData";
 import { LessonChapterDTO } from "../../../shared/types/dto";
-import {useSwipeable} from "react-swipeable";
 import { ChapterSelector } from "./ChapterSelector";
 import { LessonPaginator } from "./LessonPaginator";
+import {useLessonBookViewer} from "../hooks/useLessonBookViewer";
 
 interface LessonBookViewerProps {
     title: string;
@@ -16,59 +15,8 @@ interface LessonBookViewerProps {
 };
 
 const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex, onAllCorrect }) => {
-    const [activePageIndex, setActivePageIndex] = useState(0);
 
-    const chapterPageOffsets = useMemo(() => {
-        const offsets: number[] = [];
-        let runningOffset = 0;
-        for (const chapter of chapters) {
-            offsets.push(runningOffset);
-            runningOffset += chapter.lessonPages?.length || 0;
-        }
-        return offsets;
-    }, [chapters]);
-
-    const currentChapter = useMemo(()=> {
-        return chapters?.[activeChapterIndex]
-    }, [chapters, activeChapterIndex]);
-
-    const chapterPages = useMemo(() => {
-        if(!currentChapter) return [];
-        const pageOffset = chapterPageOffsets[activeChapterIndex] ?? 0;
-        return buildPagesForChapter(currentChapter, activeChapterIndex, pageOffset, onAllCorrect);
-    }, [currentChapter, activeChapterIndex, chapterPageOffsets, onAllCorrect]);
-
-    useEffect(() => {
-        setActivePageIndex(0);
-    }, [activeChapterIndex]);
-
-    // Keyboard Navigation
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowRight' && activePageIndex < chapterPages.length - 1) {
-                handlePageSelect(activePageIndex + 1);
-            }
-            else if (e.key === 'ArrowLeft' && activePageIndex > 0) {
-                handlePageSelect(activePageIndex - 1);
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-
-    }, [activePageIndex, chapterPages.length]);
-
-    // Mobile Swiping Gestures
-    const swipeGestures = useSwipeable({
-        onSwipedLeft: () => activePageIndex < chapterPages.length - 1 && handlePageSelect(activePageIndex + 1),
-        onSwipedRight: () => activePageIndex > 0 && handlePageSelect(activePageIndex - 1),
-    });
-
-    const handlePageSelect = (selectedIndex: number) => {
-        setActivePageIndex(selectedIndex);
-    };
+    const { activePageIndex, chapterPages, handlePageSelect, swipeGestures } = useLessonBookViewer({ chapters, activeChapterIndex, onAllCorrect });
 
     if (!chapterPages || chapterPages.length === 0) {
         return null;
@@ -83,7 +31,8 @@ const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, ac
                 activeChapterIndex={activeChapterIndex}
                 onChapterSelect={setActiveChapterIndex}
             />
-            <div className={`${styles['content-area']} mt-4 justify-content-center`}>
+
+            <div className={`${styles['content-area']}`}>
                 <LessonPaginator
                     pageCount={chapterPages.length}
                     activePageIndex={activePageIndex}

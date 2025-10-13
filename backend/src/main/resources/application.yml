@@ -32,7 +32,7 @@ spring:
               - profile
               - email
   ai:
-    max-retries: 1
+    max-retries: 2
     # Disable auto-configuration to allow for full manual bean definition.
     model:
       chat: none

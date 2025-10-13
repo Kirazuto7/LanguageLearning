@@ -18,7 +18,7 @@ const FeedbackDisplay: React.FC<FeedbackDisplayProps> = ({ feedback, isLoading }
     }
 
     if (!feedback) {
-        return null;
+        return <></>;
     }
 
     const { isCorrect, correctedSentence , feedback: feedbackText } = feedback;

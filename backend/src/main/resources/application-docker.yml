@@ -4,4 +4,4 @@ spring:
   jpa:
     hibernate:
       # In a real production docker environment, you would likely use "validate" or "none"
-      ddl-auto: create-drop
+      ddl-auto: ${DDL_AUTO_MODE:validate}

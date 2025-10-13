@@ -19,6 +19,11 @@
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+    :global(.btn-primary) {
+      background: var(--primary-gradient-hover);
+      border-color: var(--primary-color-dark);
+    }
   }
 }
 
