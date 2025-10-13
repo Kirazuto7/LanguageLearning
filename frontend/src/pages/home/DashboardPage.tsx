@@ -37,7 +37,7 @@ const DashboardPage: React.FC = () => {
   return (
   <>
     <Container fluid className="d-flex flex-column align-items-center flex-grow-1 py-5">
-      <div className="glass-container" style={{ width: '90vw', maxWidth: '1600px' }}>
+      <div className={`glass-container ${selectedBook ? styles.hidden : ''}`} style={{ width: '90vw', maxWidth: '1600px' }}>
         <h1 className="mb-4 text-center">Welcome {user ? `, ${user.username}` : 'Guest'}!</h1>
         <p className="text-center">Here are your most recent books. Select one to continue your language journey.</p>
 
