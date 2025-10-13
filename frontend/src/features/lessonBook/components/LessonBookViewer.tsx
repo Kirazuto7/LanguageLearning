@@ -25,7 +25,10 @@ const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, ac
     return(
         <div className={"p-3 mb-5"}>
 
-            <h2 className={`text-center mb-3 ${styles.title}`}>{title}</h2>
+            <div className={`${styles.titleContainer} mt-2`}>
+                <h2 className={`mb-3 ${styles.title}`}>{title}</h2>
+            </div>
+
             <ChapterSelector
                 chapters={chapters}
                 activeChapterIndex={activeChapterIndex}
