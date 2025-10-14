@@ -47,6 +47,7 @@ const LessonBookPage: React.FC<StudyBookPageProps> = () => {
                         activeChapterIndex={activeChapterIndex}
                         setActiveChapterIndex={setActiveChapterIndex}
                         onAllCorrect={handleAllCorrect}
+                        isGenerating={isGenerating}
                     />
                     <Container className="mt-4">
                         { generationError && <Alert variant="danger" className="mt-2">{generationError}</Alert>}

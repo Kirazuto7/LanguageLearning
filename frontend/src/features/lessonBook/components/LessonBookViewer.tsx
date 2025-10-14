@@ -5,6 +5,7 @@ import { LessonChapterDTO } from "../../../shared/types/dto";
 import { ChapterSelector } from "./ChapterSelector";
 import { LessonPaginator } from "./LessonPaginator";
 import {useLessonBookViewer} from "../hooks/useLessonBookViewer";
+import ChapterGenerationDisplay from "./ChapterGenerationDisplay";
 
 interface LessonBookViewerProps {
     title: string;
@@ -12,14 +13,15 @@ interface LessonBookViewerProps {
     activeChapterIndex: number;
     setActiveChapterIndex: (index: number) => void;
     onAllCorrect?: () => void;
+    isGenerating?: boolean;
 };
 
-const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex, onAllCorrect }) => {
+const LessonBookViewer: React.FC<LessonBookViewerProps> = ({ title, chapters, activeChapterIndex, setActiveChapterIndex, onAllCorrect, isGenerating }) => {
 
     const { activePageIndex, chapterPages, handlePageSelect, swipeGestures } = useLessonBookViewer({ chapters, activeChapterIndex, onAllCorrect });
 
     if (!chapterPages || chapterPages.length === 0) {
-        return null;
+        return isGenerating ? <ChapterGenerationDisplay/> : null;
     }
 
     return(

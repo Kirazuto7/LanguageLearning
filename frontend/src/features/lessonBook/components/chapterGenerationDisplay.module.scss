@@ -1,0 +1,28 @@
+.generationContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  min-height: 400px;
+}
+
+.mainText {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.subText {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.largeSpinner {
+  width: 4rem;
+  height: 4rem;
+}
