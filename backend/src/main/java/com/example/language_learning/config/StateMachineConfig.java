@@ -25,6 +25,7 @@ public class StateMachineConfig {
                         .addState(ChapterGenerationState.CONJUGATION_LESSON.class, actions::handleConjugationGeneration)
                         .addState(ChapterGenerationState.PRACTICE_LESSON.class, actions::handlePracticeGeneration)
                         .addState(ChapterGenerationState.READING_LESSON.class, actions::handleReadingGeneration)
+                        .addState(ChapterGenerationState.PERSIST_PAGES.class, actions::handlePersistPages)
                         .build();
         return new StateMachineFactory<>(actionMap, ChapterGenerationState.INITIAL);
     }

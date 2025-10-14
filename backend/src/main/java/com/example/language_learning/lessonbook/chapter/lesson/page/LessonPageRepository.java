@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LessonPageRepository extends JpaRepository<LessonPage, Long> {
+public interface LessonPageRepository extends JpaRepository<LessonPage, Long>, LessonPageRepositoryCustom {
 }
 

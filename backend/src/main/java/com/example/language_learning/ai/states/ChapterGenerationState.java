@@ -17,11 +17,13 @@ public sealed interface ChapterGenerationState {
     record CONJUGATION_LESSON(VocabularyLessonDTO vocabularyDto) implements ChapterGenerationState {}
     record PRACTICE_LESSON(VocabularyLessonDTO vocabularyDto, LessonDTO specificLesson) implements ChapterGenerationState {}
     record READING_LESSON(VocabularyLessonDTO vocabularyDto, LessonDTO specificLesson) implements ChapterGenerationState {}
+    record PERSIST_PAGES() implements ChapterGenerationState {}
     record COMPLETED() implements ChapterGenerationState, TerminalState {}
     record FAILED(String reason) implements ChapterGenerationState, TerminalState {}
 
     static ChapterGenerationState INITIAL = new INITIAL();
     static ChapterGenerationState METADATA = new METADATA();
+    static ChapterGenerationState PERSIST_PAGES = new PERSIST_PAGES();
     static ChapterGenerationState COMPLETED = new COMPLETED();
 
     public static ChapterGenerationState VOCABULARY_LESSON(ChapterMetadataDTO metadataDto) {

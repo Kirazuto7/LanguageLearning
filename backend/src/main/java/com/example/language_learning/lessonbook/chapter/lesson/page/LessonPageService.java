@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,4 +37,23 @@ public class LessonPageService {
        return lessonPageRepository.save(lessonPage);
     }
 
+    @Transactional
+    public void batchCreateAndPersistPages(LessonChapter lessonChapter, List<Lesson> lessons) {
+        LessonChapter managedLessonChapter = lessonChapterRepository.findByIdWithPages(lessonChapter.getId())
+                .orElseThrow(() -> new RuntimeException("Chapter not found during page creation: " + lessonChapter.getId()));
+
+        List<LessonPage> lessonPages = lessons.stream()
+                .map(lesson -> {
+                    LessonPage lessonPage = LessonPage.builder()
+                            .lesson(lesson)
+                            .lessonChapter(managedLessonChapter)
+                            .build();
+                    if (lesson != null) {
+                        lesson.setLessonPage(lessonPage);
+                    }
+                    return lessonPage;
+                })
+                .collect(Collectors.toList());
+        lessonPageRepository.batchInsertPages(managedLessonChapter, lessonPages);
+    }
 }
