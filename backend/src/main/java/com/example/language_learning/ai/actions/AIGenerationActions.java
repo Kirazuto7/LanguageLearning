@@ -2,6 +2,7 @@ package com.example.language_learning.ai.actions;
 
 import com.example.language_learning.ai.config.model.AIPrompt;
 import com.example.language_learning.ai.enums.PromptType;
+import com.example.language_learning.shared.services.FuriganaService;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
 import com.example.language_learning.shared.utils.AIResponseSanitizer;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AIGenerationActions {
     private final AIResponseSanitizer sanitizer;
+    private final FuriganaService furiganaService;
     private final ObjectMapper objectMapper;
     private final JsonSchemaFactory jsonSchemaFactory;
 
@@ -57,6 +59,12 @@ public class AIGenerationActions {
         try { // First, try to parse the JSON
             JsonNode responseNode = objectMapper.readTree(jsonString);
             // If parsing succeeds, proceed to schema validation
+
+            // Dynamically apply pre-validation sanitization for specific prompt types
+            if (promptType == PromptType.VOCABULARY_LESSON && "japanese".equalsIgnoreCase((String) context.params().get("language"))) {
+                responseNode = furiganaService.sanitizeJapaneseVocabularyNode(responseNode);
+            }
+
             JsonSchema schema = jsonSchemaFactory.getSchema(context.aiPrompt().schema());
             Set<ValidationMessage> errors = schema.validate(responseNode);
 
@@ -122,7 +130,7 @@ public class AIGenerationActions {
     }
 
     public Mono<AIGenerationState> handleRetry(AIGenerationState fromState, AIGenerationContext context) {
-        if (context.attemptCounter().get() >= context.maxRetries()) {
+        if (context.attemptCounter().get() - 1 >= context.maxRetries()) {
             PromptType promptType = (PromptType) context.params().get("promptType");
             String reason = String.format("AI response validation failed after %d retries for prompt type: %s.", context.maxRetries(), promptType);
             return Mono.just(new AIGenerationState.FAILED(reason, null));
@@ -148,6 +156,9 @@ public class AIGenerationActions {
     private String buildUserMessage(AIPrompt aiPrompt, Map<String, Object> params) {
         String instructionContent = renderPrompt(aiPrompt.instruction(), params);
 
+        JsonNode schemaNode = aiPrompt.schema();
+        String schemaContent = (schemaNode != null) ? schemaNode.toPrettyString() : "{}";
+
         // Check if this is a retry attempt and add specific feedback
         if (params.containsKey("validationFeedback")) {
             StringBuilder messageBuilder = new StringBuilder();
@@ -159,13 +170,14 @@ public class AIGenerationActions {
                         .append("\n```");
             }
             messageBuilder.append("\n\nPlease review your original instructions, the errors, and the invalid JSON, then provide a new, complete, and valid JSON object. Do not include any extra text or explanations outside of the JSON object itself.");
-            messageBuilder.append("\n\n--- Original Instructions ---\n").append(instructionContent);
+            messageBuilder.append("\n\n--- Original Instructions & Schema ---\n").append(instructionContent);
+            messageBuilder.append("\n\n## JSON Schema\nYour output MUST conform to the following JSON schema:\n```json\n")
+                    .append(schemaContent)
+                    .append("\n```");
             return messageBuilder.toString();
         }
 
         // For the initial request, send instructions AND schema.
-        JsonNode schemaNode = aiPrompt.schema();
-        String schemaContent = (schemaNode != null) ? schemaNode.toPrettyString() : "{}";
         return instructionContent +
                 "\n\n## JSON Schema\nYour output MUST conform to the following JSON schema:\n```json\n" +
                 schemaContent + "\n```";

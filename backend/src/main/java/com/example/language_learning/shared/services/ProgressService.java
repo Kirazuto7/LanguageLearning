@@ -63,7 +63,7 @@ public class  ProgressService {
         // When the task errors, signal all listeners and remove the sink.
         Sinks.Many<ProgressUpdateDTO> sink = taskSinks.remove(taskId);
         if (sink != null) {
-            sink.tryEmitComplete();
+            sink.tryEmitError(error);
         }
     }
 

@@ -3,7 +3,13 @@ package com.example.language_learning.shared.services;
 import com.atilika.kuromoji.ipadic.Token;
 import com.atilika.kuromoji.ipadic.Tokenizer;
 import com.example.language_learning.ai.dtos.details.AIJapaneseVocabularyItemDTO;
+import com.example.language_learning.shared.exceptions.JsonNodeProcessingException;
 import com.example.language_learning.shared.word.dtos.JapaneseWordDetailsDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +20,14 @@ import java.util.regex.Pattern;
 public class FuriganaService {
 
     private final Tokenizer tokenizer;
+    private final ObjectMapper objectMapper;
     private static final Pattern KANJI_PATTERN = Pattern.compile(".*\\p{sc=Han}.*");
     private static final Pattern HIRAGANA_PATTERN = Pattern.compile("^[\\p{sc=Hiragana}ー]+$");
     private static final Pattern KATAKANA_PATTERN = Pattern.compile("^[\\p{sc=Katakana}ー]+$");
 
-    public FuriganaService(Tokenizer tokenizer) {
+    public FuriganaService(Tokenizer tokenizer, ObjectMapper objectMapper) {
         this.tokenizer = tokenizer;
+        this.objectMapper = objectMapper;
     }
 
     public String addFurigana(String text) {
@@ -41,6 +49,43 @@ public class FuriganaService {
             }
         }
         return result.toString();
+    }
+
+    /**
+     * A pre-validation sanitizer for Japanese vocabulary JSON. It iterates through vocabulary items,
+     * uses the tokenizer to fix inconsistencies (like romaji in hiragana fields), and returns a
+     * cleaned JsonNode ready for schema validation.
+     *
+     * @param rootNode The raw, parsed JsonNode from the AI.
+     * @return A new, cleaned JsonNode.
+     */
+    public JsonNode sanitizeJapaneseVocabularyNode(JsonNode rootNode) {
+        if (!rootNode.has("vocabularies") || !rootNode.get("vocabularies").isArray()) {
+            return rootNode;
+        }
+
+        ArrayNode vocabulariesNode = (ArrayNode) rootNode.get("vocabularies");
+        ArrayNode sanitizedVocabularies = objectMapper.createArrayNode();
+
+        for (JsonNode vocabNode : vocabulariesNode) {
+            try {
+                AIJapaneseVocabularyItemDTO aiWord = objectMapper.treeToValue(vocabNode, AIJapaneseVocabularyItemDTO.class);
+                JapaneseWordDetailsDTO correctedDetails = verifyAndMapJapaneseWord(aiWord);
+
+                // Reconstruct the node to match the flat schema structure, preserving the englishTranslation
+                ObjectNode sanitizedNode = objectMapper.valueToTree(correctedDetails);
+                if (vocabNode.has("englishTranslation")) {
+                    sanitizedNode.put("englishTranslation", vocabNode.get("englishTranslation").asText());
+                }
+
+                sanitizedVocabularies.add(sanitizedNode);
+            } catch (JsonProcessingException e) {
+                throw new JsonNodeProcessingException("Failed to process vocabulary node during sanitization", e);
+            }
+        }
+
+        ((ObjectNode) rootNode).set("vocabularies", sanitizedVocabularies);
+        return rootNode;
     }
 
     /**
