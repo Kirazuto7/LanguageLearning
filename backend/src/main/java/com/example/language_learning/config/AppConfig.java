@@ -7,11 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.optimaize.langdetect.LanguageDetector;
-import com.optimaize.langdetect.LanguageDetectorBuilder;
-import com.optimaize.langdetect.ngram.NgramExtractors;
-import com.optimaize.langdetect.profiles.LanguageProfile;
-import com.optimaize.langdetect.profiles.LanguageProfileReader;
+
+import com.github.pemistahl.lingua.api.LanguageDetector;
+import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -87,14 +85,6 @@ public class AppConfig {
 
     @Bean
     public LanguageDetector languageDetector() {
-        try{
-            List<LanguageProfile> languageProfiles = new LanguageProfileReader().readAllBuiltIn();
-            return LanguageDetectorBuilder.create(NgramExtractors.standard())
-                    .withProfiles(languageProfiles)
-                    .build();
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Failed to initialize language detector", e);
-        }
+        return LanguageDetectorBuilder.fromAllLanguages().build();
     }
 }

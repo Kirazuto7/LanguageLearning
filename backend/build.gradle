@@ -96,7 +96,7 @@ dependencies {
     implementation 'org.apache.lucene:lucene-analysis-nori:10.3.0'
     implementation 'org.apache.lucene:lucene-analysis-smartcn:10.3.0'
     implementation 'org.apache.lucene:lucene-analysis-icu:10.3.0'
-    implementation 'com.optimaize.languagedetector:language-detector:0.6'
+    implementation 'com.github.pemistahl:lingua:1.2.2'
 
     // Other Dependencies
     implementation 'com.atilika.kuromoji:kuromoji-ipadic:0.9.0' // (Furigana generation)

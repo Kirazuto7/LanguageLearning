@@ -3,9 +3,9 @@ package com.example.language_learning.ai.services;
 
 import com.example.language_learning.ai.dtos.moderation.ModerationRequest;
 import com.example.language_learning.ai.dtos.moderation.ModerationResponse;
+import com.github.pemistahl.lingua.api.Language;
+import com.github.pemistahl.lingua.api.LanguageDetector;
 import com.modernmt.text.profanity.ProfanityFilter;
-import com.optimaize.langdetect.LanguageDetector;
-import com.optimaize.langdetect.i18n.LdLocale;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
 import io.github.resilience4j.reactor.retry.RetryOperator;
@@ -57,9 +57,14 @@ public class ContentModerationService {
                 .transformDeferred(RetryOperator.of(moderationApiRetry))
                 .doOnError(e -> log.error("Failed to call OpenAI Moderation API", e))
                 .onErrorResume(e ->  {
-                    String langCode = languageDetector.detect(text)
-                            .transform(LdLocale::getLanguage)
-                            .or("en");
+                    Language detectedLanguage = this.languageDetector.detectLanguageOf(text);
+                    String langCode;
+                    if (detectedLanguage != Language.UNKNOWN) {
+                        langCode = detectedLanguage.getIsoCode639_1().name().toLowerCase();
+                    }
+                    else {
+                        langCode = "en";
+                    }
                     return Mono.fromCallable(() -> this.profanityFilter.test(langCode, text));
                 });
     }
