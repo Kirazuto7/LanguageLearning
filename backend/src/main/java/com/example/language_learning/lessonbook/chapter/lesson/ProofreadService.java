@@ -35,6 +35,7 @@ public class ProofreadService {
                         .param("question", originalQuestionText)
                         .param("sentence", request.userSentence())
                         .param("difficulty", request.difficulty())
+                        .withModeration(true)
                         .build();
 
                 return aiEngine.generate(aiRequest);

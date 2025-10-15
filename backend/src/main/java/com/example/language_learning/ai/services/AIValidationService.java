@@ -1,4 +1,4 @@
-package com.example.language_learning.ai;
+package com.example.language_learning.ai.services;
 
 import com.example.language_learning.ai.dtos.embedding.ScoredChoice;
 import com.example.language_learning.ai.embedding.EmbeddingService;

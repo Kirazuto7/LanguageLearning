@@ -12,5 +12,7 @@ public record AIGenerationContext (
     AIPrompt aiPrompt,
     JavaType apiDtoType,
     int maxRetries,
-    AtomicInteger attemptCounter
+    AtomicInteger attemptCounter,
+    boolean withModeration,
+    String language
 ) {}

@@ -133,7 +133,9 @@ public class AIEngine {
             aiPrompt,
             aiResponseType,
             maxRetries,
-            new AtomicInteger(1)
+            new AtomicInteger(1),
+            request.isWithModeration(),
+            language
         );
 
         Mono<T_AI> apiResponseMono = aiGenerationStateMachineFactory.createInstance()

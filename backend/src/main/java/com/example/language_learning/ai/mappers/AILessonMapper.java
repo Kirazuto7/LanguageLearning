@@ -1,13 +1,12 @@
 package com.example.language_learning.ai.mappers;
 
-import com.example.language_learning.ai.AIValidationService;
+import com.example.language_learning.ai.services.AIValidationService;
 import com.example.language_learning.ai.dtos.lessonbook.*;
 import com.example.language_learning.lessonbook.chapter.ChapterMetadataDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonConjugationExampleDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.question.LessonQuestionDTO;
 import com.example.language_learning.lessonbook.chapter.lesson.page.sentence.LessonSentenceDTO;
 import com.example.language_learning.shared.enums.QuestionType;
-import com.example.language_learning.shared.word.dtos.*;
 import com.example.language_learning.lessonbook.chapter.lesson.dtos.*;
 import com.example.language_learning.shared.services.FuriganaService;
 import com.example.language_learning.shared.utils.AIResponseSanitizer;

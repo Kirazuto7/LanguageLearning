@@ -71,6 +71,7 @@ public class StoryGenerationActions {
                     .param("topic", context.getShortStory().getTopic())
                     .param("genre", context.getRequest().genre())
                     .param("difficulty", context.getRequest().difficulty())
+                    .withModeration(true)
                     .build();
 
             ShortStoryMetadataDTO metadata = aiEngine.generate(aiRequest).block();

@@ -20,6 +20,7 @@ public class TranslationService {
                 .language(request.sourceLanguage())
                 .param("textToTranslate", request.textToTranslate())
                 .param("sourceLanguage", request.sourceLanguage())
+                .withModeration(true)
                 .build();
         
         return aiEngine.generate(aiRequest);

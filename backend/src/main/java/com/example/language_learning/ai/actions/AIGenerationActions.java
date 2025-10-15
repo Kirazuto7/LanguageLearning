@@ -2,6 +2,7 @@ package com.example.language_learning.ai.actions;
 
 import com.example.language_learning.ai.config.model.AIPrompt;
 import com.example.language_learning.ai.enums.PromptType;
+import com.example.language_learning.ai.services.ContentModerationService;
 import com.example.language_learning.shared.services.FuriganaService;
 import com.example.language_learning.ai.contexts.AIGenerationContext;
 import com.example.language_learning.ai.states.AIGenerationState;
@@ -28,10 +29,37 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class AIGenerationActions {
+    private final ContentModerationService moderationService;
     private final AIResponseSanitizer sanitizer;
     private final FuriganaService furiganaService;
     private final ObjectMapper objectMapper;
     private final JsonSchemaFactory jsonSchemaFactory;
+
+    public Mono<AIGenerationState> handleModeration(AIGenerationState fromState, AIGenerationContext context) {
+        if (!context.withModeration()) {
+            log.debug("Moderation not requested for this AI request. Skipping...");
+            return Mono.just(AIGenerationState.GENERATION);
+        }
+
+        String textToModerate = getTextToModerate(context.params());
+        log.debug("Entering handleModeration to check user message for safety.");
+
+        if (textToModerate == null || textToModerate.isBlank()) {
+            log.debug("Text to moderate not found...skipping moderation check.");
+            return Mono.just(AIGenerationState.GENERATION);
+        }
+
+        return moderationService.isContentFlagged(textToModerate)
+                .flatMap(isFlagged -> {
+                    if (Boolean.TRUE.equals(isFlagged)) {
+                        log.warn("Content moderation failed for the provided text: '{}'.", textToModerate);
+                        String reason = "The provided text does not meet our safety guidelines.";
+                        return Mono.just(AIGenerationState.FAILED(reason, null));
+                    }
+                    log.info("Content moderation passed.");
+                    return Mono.just(AIGenerationState.GENERATION);
+                });
+    }
 
     public Mono<AIGenerationState> handleGeneration(AIGenerationState fromState, AIGenerationContext context) {
         int attempt = context.attemptCounter().get();
@@ -61,7 +89,7 @@ public class AIGenerationActions {
             // If parsing succeeds, proceed to schema validation
 
             // Dynamically apply pre-validation sanitization for specific prompt types
-            if (promptType == PromptType.VOCABULARY_LESSON && "japanese".equalsIgnoreCase((String) context.params().get("language"))) {
+            if (promptType == PromptType.VOCABULARY_LESSON && "japanese".equalsIgnoreCase(context.language())) {
                 responseNode = furiganaService.sanitizeJapaneseVocabularyNode(responseNode);
             }
 
@@ -181,5 +209,16 @@ public class AIGenerationActions {
         return instructionContent +
                 "\n\n## JSON Schema\nYour output MUST conform to the following JSON schema:\n```json\n" +
                 schemaContent + "\n```";
+    }
+
+    private String getTextToModerate(Map<String, Object> params) {
+        PromptType promptType = (PromptType) params.get("promptType");
+        return switch (promptType) {
+            case STORY_METADATA, LESSON_METADATA -> (String) params.get("topic");
+            case PROOFREAD -> (String) params.get("sentence");
+            case TRANSLATE -> (String) params.get("textToTranslate");
+            // If a new prompt type needs moderation, add its case here.
+            default -> null;
+        };
     }
 }

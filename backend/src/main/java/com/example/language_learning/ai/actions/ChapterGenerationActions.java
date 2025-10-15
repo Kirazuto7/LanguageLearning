@@ -79,6 +79,7 @@ public class ChapterGenerationActions {
                     .language(context.getRequest().language())
                     .param("topic", context.getRequest().topic())
                     .param("difficulty", context.getRequest().difficulty())
+                    .withModeration(true)
                     .build();
 
             ChapterMetadataDTO metadata = aiEngine.generate(aiRequest).block();

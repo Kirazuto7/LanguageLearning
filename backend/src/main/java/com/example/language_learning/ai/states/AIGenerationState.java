@@ -7,6 +7,7 @@ import com.example.language_learning.shared.utils.ReactiveStateMachine.ReactiveT
 import java.util.Set;
 
 public sealed interface AIGenerationState {
+    record MODERATION() implements AIGenerationState {}
     record GENERATION() implements AIGenerationState {}
     record VALIDATION(String rawResponse) implements AIGenerationState {}
     record SANITIZING(JsonNode responseNode, Set<ValidationMessage> errors) implements AIGenerationState {}
@@ -16,6 +17,8 @@ public sealed interface AIGenerationState {
 
     static AIGenerationState GENERATION = new GENERATION();
     static AIGenerationState RETRYING = new RETRYING();
+
+    static AIGenerationState MODERATION = new MODERATION();
 
     public static AIGenerationState VALIDATION(String rawResponse) {
         return new VALIDATION(rawResponse);

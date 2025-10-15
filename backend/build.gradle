@@ -54,6 +54,7 @@ dependencies {
 
     // AI Dependencies
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+	implementation 'org.springframework.ai:spring-ai-openai'
 
 	// Text Embedding Dependencies
 	implementation "ai.djl:api:0.34.0"
@@ -95,6 +96,7 @@ dependencies {
     implementation 'org.apache.lucene:lucene-analysis-nori:10.3.0'
     implementation 'org.apache.lucene:lucene-analysis-smartcn:10.3.0'
     implementation 'org.apache.lucene:lucene-analysis-icu:10.3.0'
+    implementation 'com.optimaize.languagedetector:language-detector:0.6'
 
     // Other Dependencies
     implementation 'com.atilika.kuromoji:kuromoji-ipadic:0.9.0' // (Furigana generation)
@@ -103,6 +105,12 @@ dependencies {
     implementation 'com.networknt:json-schema-validator:1.5.8'
     implementation 'org.json:json:20250517'
     implementation 'io.github.du00cs:json-repairj:0.50.0'
+    implementation 'io.github.resilience4j:resilience4j-ratelimiter:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-reactor:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-core:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-retry:2.3.0'
+    implementation 'com.modernmt.text:profanity-filter:1.0.1'
 
     // Cloud / Storage Dependencies
     implementation 'software.amazon.awssdk:s3:2.34.0'

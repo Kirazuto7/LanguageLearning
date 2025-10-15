@@ -33,6 +33,8 @@ spring:
               - email
   ai:
     max-retries: 2
+    openai:
+      api-key: ${OPENAI_API_KEY}
     # Disable auto-configuration to allow for full manual bean definition.
     model:
       chat: none

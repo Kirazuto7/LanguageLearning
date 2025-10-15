@@ -15,11 +15,12 @@ public class ReactiveStateMachineConfig {
     @Bean
     ReactiveStateMachineFactory<AIGenerationState, AIGenerationContext> aiGenerationStateMachineFactory(AIGenerationActions actions) {
         var actionMap = new ReactiveStateMachine.GraphBuilder<AIGenerationState, AIGenerationContext>()
+                .addState(AIGenerationState.MODERATION.class, actions::handleModeration)
                 .addState(AIGenerationState.GENERATION.class, actions::handleGeneration)
                 .addState(AIGenerationState.VALIDATION.class, actions::handleValidation)
                 .addState(AIGenerationState.SANITIZING.class, actions::handleSanitization)
                 .addState(AIGenerationState.RETRYING.class, actions::handleRetry)
                 .build();
-        return new ReactiveStateMachineFactory<>(actionMap, AIGenerationState.GENERATION);
+        return new ReactiveStateMachineFactory<>(actionMap, AIGenerationState.MODERATION);
     }
 }

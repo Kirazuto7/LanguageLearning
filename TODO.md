@@ -61,11 +61,24 @@ A roadmap for building out the LanguageLearning application into a comprehensive
         - [x] Made WebSocket client resilient to disconnections to ensure subscriptions persist across tab closures.
         - [x] Fixed backend `ProgressService` to prevent premature subscription closure.
 
+- [ ] **Fix WebSocket Error Propagation**
+    - [ ] **Problem:** When a backend generation task fails (e.g., due to moderation or AI errors), the WebSocket stream closes with a "complete" signal instead of an "error" signal. The client is not being notified of the failure.
+    - [ ] **Investigation:** The `ProgressService.sendError` method might be sending the wrong termination signal (`tryEmitComplete()` instead of `tryEmitError()`), or another part of the reactive stream is catching the error and completing gracefully.
+
 - [ ] **Secure AI Interaction**
-    - [ ] Add frontend validation (e.g., `maxLength`) to all user input fields that are sent to the AI.
-    - [ ] Add backend validation for length and content of all user input.
-    - [ ] Engineer all AI prompts to be "jailbreak resistant" by clearly separating system instructions from user input and adding explicit negative constraints.
-    - [ ] Implement a self-validation step in prompts where the AI first checks if the user input is valid before proceeding.
+    - [ ] **Refactor Moderation Workflow to Prevent Rate-Limiting**
+        - [ ] **Problem:** The moderation check is incorrectly placed in the low-level `AIEngine` state machine, causing it to run for every internal AI call and trigger API rate limits.
+        - [ ] **Solution:** Move the moderation logic to the higher-level `ChapterGeneration` state machine. This ensures the user's topic is checked only **once** at the start of the job.
+    - [x] **Implement Content Moderation Gatekeeper (Initial Setup)**
+        - [x] Integrated the OpenAI Moderation API.
+        - [x] Implemented a "fail-safe" strategy to block content if the moderation API fails.
+        - [x] Differentiated between system errors (for refunds) and safety violations.
+    - [x] **Improve AI Generation Resilience**
+        - [x] Corrected the retry logic to ensure `max-retries` works as intended (e.g., 1 initial attempt + N retries).
+        - [x] Made the retry prompt more robust by always including the JSON schema, increasing the success rate of subsequent attempts.
+    - [ ] Add frontend validation (e.g., `maxLength`) to all user input fields.
+    - [ ] Add further backend validation for length and content of all user input.
+    - [ ] Engineer all AI prompts to be more "jailbreak resistant" by clearly separating system instructions from user input and adding explicit negative constraints.
 
 - [ ] **User Authentication & Onboarding**
     - [x] Build frontend Login page.
@@ -99,12 +112,12 @@ A roadmap for building out the LanguageLearning application into a comprehensive
 
 ---
 
-### Tier 2: Enhancing the Learning Experience
+### Tier 2: Enhancing the Learning Experience & Resilience
 
-- [ ] **Structural Validation of AI-Generated Word Details**
-    - [ ] **Description:** Extend the `NlpService` to perform structural validation on the `WordDetails` DTOs returned by the AI.
-    - [ ] **Goal:** Ensure linguistic data (e.g., Japanese `hiragana` readings, German `gender`) is correct before being saved.
-    - [ ] **Implementation:** Start with Japanese, using the `JapaneseAnalyzer` (Kuromoji) to verify that the `hiragana` reading matches the `kanji` form.
+- [x] **Structural Validation of AI-Generated Word Details**
+    - [x] **Description:** Extended the `FuriganaService` to perform pre-validation sanitization on Japanese vocabulary.
+    - [x] **Goal:** Ensure linguistic data is correct before being saved.
+    - [x] **Implementation:** The service now intercepts the raw AI response, uses the Kuromoji tokenizer to fix inconsistencies (e.g., romaji in a hiragana field), and reconstructs a valid JSON object before the schema validation runs.
 
 - [ ] **Implement Offline Dictionary for Single Word Translation**
     - [ ] **Description:** Create a `DictionaryService` to provide fast, offline, low-cost translations for single words, replacing the AI\'s translation for `Word` entities.
