@@ -10,6 +10,7 @@ import { persistor, store } from './app/store';
 import { subscribeToBroadcast } from "./app/broadcastMiddleware";
 import { Provider } from 'react-redux';
 import { PersistGate } from "redux-persist/integration/react";
+import { AlertProvider } from "./shared/contexts/AlertContext";
 import ChunkLoadErrorBoundary from "./app/ChunkLoadErrorBoundary";
 
 subscribeToBroadcast(store);
@@ -30,9 +31,11 @@ root.render(
         <ChunkLoadErrorBoundary>
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <Provider store={store}>
-                    <PersistGate loading={null} persistor={persistor}>
-                        <App />
-                    </PersistGate>
+                    <AlertProvider>
+                        <PersistGate loading={null} persistor={persistor}>
+                            <App />
+                        </PersistGate>
+                    </AlertProvider>
                 </Provider>
             </BrowserRouter>
         </ChunkLoadErrorBoundary>

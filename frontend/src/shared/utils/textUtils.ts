@@ -1,3 +1,5 @@
+import Filter from 'leo-profanity';
+
 /**
  * Extracts the phonetic reading from a string that may contain HTML ruby tags.
  * This is used to prepare Japanese text for Text-to-Speech services.
@@ -18,4 +20,14 @@ export const getPhoneticText = (text: string): string => {
  */
 export const formatText = (text: string): string => {
     return text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+};
+
+/**
+ * Checks if a given text contains profanity using a local, English-based filter.
+ * @param text The input string to check.
+ * @returns True if profanity is detected, otherwise false.
+ */
+export const isTextProfane = (text: string): boolean => {
+    // By default, leo-profanity uses its English dictionary.
+    return Filter.check(text);
 };

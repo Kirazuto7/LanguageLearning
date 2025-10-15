@@ -1,0 +1,10 @@
+.alertContainer {
+  position: fixed;
+  top: 70px; /* Positioned below the fixed navbar */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050; /* High z-index to appear above other content */
+  min-width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+}

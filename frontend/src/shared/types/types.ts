@@ -29,6 +29,12 @@ export enum BookType {
     STORY = 'story'
 }
 
+export enum AlertLevel {
+    INFO = 'info',
+    WARN = 'warn',
+    ERROR = 'error'
+}
+
 export enum ActionCardDesign {
     LESSON = 'lesson',
     STORY = 'story'
