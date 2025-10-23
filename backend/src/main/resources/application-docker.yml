@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+  jpa:
+    hibernate:
+      # In a real production docker environment, you would likely use "validate" or "none"
+      #ddl-auto: ${DDL_AUTO_MODE:validate}
+      ddl-auto: validate

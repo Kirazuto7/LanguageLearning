@@ -1,0 +1,189 @@
+.bookContainer {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book {
+  position: absolute;
+  width: 102px; /* Make the cover slightly wider */
+  height: 140px;
+  left: -1px; /* Center the wider cover */
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-in-out;
+
+  /* This is the front cover */
+  &::before { /* This will now be the front face of the book */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 15px; /* Book thickness */
+    background: var(--book-color);
+    transform-origin: top;
+    transform: rotateX(-90deg);
+  }
+
+  /* This is the pages */
+  &::after {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    content: '';
+    position: absolute;
+    top: 0;
+    /* Inset the pages to be narrower than the cover */
+    left: 1px;
+    width: calc(100% - 2px); 
+    height: 15px; /* Book thickness */
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2.2px, /* Darker lines */
+        rgba(0, 0, 0, 0.15) 2.7px /* Darker lines */
+      ),
+      linear-gradient(to right, #e0e0e0, #ffffff);
+    transform-origin: top;
+    transform: rotateX(-90deg) translateZ(140px); /* Position at the far edge */
+  }
+}
+
+.bookSpine {
+  position: absolute;
+  top: 0;
+  /* Inset the spine to match the pages */
+  left: 1px;
+  width: 15px; /* Book thickness */
+  height: 100%;
+  background: var(--book-color);
+  transform-origin: left;
+  transform: rotateY(90deg);
+}
+
+.bookBottom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 101%;
+  height: 103%;
+  background: var(--book-color);
+  /*
+    This transform moves the bottom cover down by the book's thickness (15px)
+    and rotates it to be parallel with the top cover.
+  */
+  transform: translateZ(-15px);
+}
+
+.book1 {
+  --book-color: #4a6b52; /* Dark Green */
+  background: var(--book-color);
+  transform: rotateX(60deg) rotateZ(-10deg) translateY(30px) translateX(25px) translateZ(-15px);
+  width: 105px;
+  height: 145px;
+}
+
+.book2 {
+  --book-color: #a37a74; /* Muted Red */
+  background: var(--book-color);
+  transform: rotateX(60deg) rotateZ(-10deg) translateY(15px) translateX(40px) translateZ(1px);
+}
+
+.book3 {
+  --book-color: #6c7a89; /* Slate Blue */
+  background: var(--book-color);
+  transform: rotateX(60deg) rotateZ(-10deg) translateY(0px) translateX(30px) translateZ(18px);
+  width: 95px;
+  height: 135px;
+}
+
+.bookContainer:hover .book1 { transform: rotateX(60deg) rotateZ(-10deg) translateY(30px) translateX(25px) translateZ(-10px); }
+.bookContainer:hover .book2 { transform: rotateX(60deg) rotateZ(-10deg) translateY(15px) translateX(40px) translateZ(5px); }
+.bookContainer:hover .book3 { transform: rotateX(60deg) rotateZ(-10deg) translateY(0px) translateX(30px) translateZ(20px); }
+
+/* Graduation Cap */
+.cap {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  transform-style: preserve-3d;
+  transform: rotateX(60deg) rotateZ(-10deg) translateY(-30px) translateX(-15px) translateZ(20px);
+  transition: transform 0.5s ease-in-out;
+}
+
+.bookContainer:hover .cap {
+  transform: rotateX(60deg) rotateZ(-10deg) translateY(-30px) translateX(-10px) translateZ(25px);
+}
+
+.capTop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #2c3e50;
+  /* This is the flat square top of the cap */
+  transform: translateZ(5px); /* Lifts the top to reveal the base */
+  transform-style: preserve-3d; /* Allows tassel to be positioned in 3D space */
+  border-radius: 2px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #e67e22;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.capBase {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  top: 50%;
+  left: 50%;
+  /* This transform makes the base parallel with the capTop */
+  transform: translate(-50%, 20%);
+  background: #2c3e50; /* This is the top surface of the base */
+  border-radius: 50%;
+  /* This box-shadow creates a visible, 8px thick "wall" underneath the base's top surface */
+  box-shadow: 0 0 0 5px #22303f;
+}
+
+.tassel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 10px;
+  transform-origin: top left; 
+  /* This transform originates from the center and hangs the tassel down */
+  transform: rotateZ(30deg) rotateX(90deg) translateY(0px);
+}
+
+.tasselString {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #e67e22;
+}
+
+.tasselEnd {
+  position: absolute;
+  right: -5px;
+  top: -7px;
+  width: 15px;
+  height: 20px;
+  background: #e67e22;
+  border-radius: 50%;
+}

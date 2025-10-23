@@ -1,0 +1,46 @@
+FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+
+LABEL maintainer="JS <kirazuto7@gmail.com>"
+LABEL description="Custom Docker image for AUTOMATIC1111's Stable Diffusion WebUI"
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    wget \
+    curl \
+    python3.10-venv \
+    python3-pip \
+    libgl1 \
+    libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set up the application directory
+WORKDIR /app
+
+# Clone the AUTOMATIC1111 repository
+RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git .
+
+# Download the Stable Diffusion model checkpoint
+ARG CHECKPOINT_URL=https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
+RUN mkdir -p  /app/models/Stable-diffusion && wget -O /app/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors "${CHECKPOINT_URL}"
+
+# --- "Bake" the dependencies into the image ---
+# 1. Create the python virtual environment.
+RUN python3 -m venv /app/venv
+
+# 2. Run launch.py in a special mode that installs all dependencies and then exits.
+# This "primes" the environment so that subsequent runs are fast.
+# This is the main pre-installation step that happens only ONCE during image build.
+RUN . /app/venv/bin/activate && python launch.py --skip-torch-cuda-test --exit
+
+EXPOSE 7860
+
+# Set default command-line args
+ENV CLI_ARGS="--api --listen --port 7860 --xformers --enable-insecure-extension-access --nowebui"
+
+# The CMD will now be much faster. It just activates the pre-built environment
+# and starts the server, skipping all installation steps.
+CMD ["/bin/bash", "-c", ". /app/venv/bin/activate && python launch.py ${CLI_ARGS}"]

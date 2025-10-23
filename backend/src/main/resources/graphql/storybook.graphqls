@@ -1,0 +1,90 @@
+type StoryBook implements Book {
+    id: ID!
+    title: String!
+    difficulty: String!
+    language: String!
+    createdAt: LocalDateTime!
+    shortStories: [ShortStory!]!
+}
+
+type ShortStory implements Chapter {
+    id: ID!
+    title: String!
+    nativeTitle: String!
+    genre: String
+    storyPages: [StoryPage!]!
+}
+
+
+enum StoryPageType {
+    CONTENT
+    VOCABULARY
+}
+
+type StoryContentPage implements Page {
+    id: ID!
+    type: StoryPageType!
+    englishSummary: String
+    imageUrl: String
+    paragraphs: [StoryParagraph!]!
+    vocabulary: [StoryVocabularyItem!]!
+}
+
+type StoryVocabularyPage implements Page {
+    id: ID!
+    type: StoryPageType!
+    englishSummary: String
+    vocabulary: [StoryVocabularyItem!]!
+}
+
+union StoryPage = StoryContentPage | StoryVocabularyPage
+
+type StoryParagraph {
+    id: ID!
+    paragraphNumber: Int!
+    content: String!
+    wordsToHighlight: [String!]!
+}
+
+type StoryVocabularyItem {
+    id: ID!
+    word: String!
+    stem: String!
+    translation: String
+}
+
+# --- Inputs & Responses for Mutations ---
+
+input ShortStoryGenerationRequestInput {
+    language: String!
+    difficulty: String!
+    topic: String
+    genre: String
+}
+
+type StoryGenerationResponse {
+    taskId: ID!
+    shortStory: ShortStory! # Returns the initial shell
+}
+
+input StoryBookRequestInput {
+    language: String!
+    difficulty: String!
+}
+
+# --- Queries, Mutations, & Subscriptions ---
+
+extend type Query {
+    getStoryBooks: [StoryBook]!
+    getStoryBook(request: StoryBookRequestInput!): StoryBook
+    getStoryBookById(id: ID!): StoryBook
+}
+
+extend type Mutation {
+    generateShortStory(request: ShortStoryGenerationRequestInput!): StoryGenerationResponse
+    deleteStoryBook(id: ID!): Boolean
+}
+
+extend type Subscription {
+    shortStoryGenerationProgress(taskId: ID!): ProgressUpdate
+}

@@ -1,0 +1,29 @@
+type LessonChapter implements Chapter {
+    id: ID!
+    title: String!
+    nativeTitle: String!
+    lessonPages: [LessonPage!]!
+}
+
+input ChapterGenerationRequestInput {
+    language: String!
+    difficulty: String!
+    topic: String!
+}
+
+type GenerationResponse {
+    taskId: ID!
+    lessonChapter: LessonChapter!
+}
+
+extend type Query {
+    getChapterById(id: ID!): LessonChapter
+}
+
+extend type Mutation {
+    generateChapter(request: ChapterGenerationRequestInput!): GenerationResponse
+}
+
+extend type Subscription {
+    chapterGenerationProgress(taskId: ID!): ProgressUpdate
+}

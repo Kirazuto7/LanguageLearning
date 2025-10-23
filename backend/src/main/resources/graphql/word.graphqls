@@ -1,0 +1,63 @@
+type KoreanWordDetails {
+    hangul: String!
+    hanja: String
+    romaja: String
+}
+
+type JapaneseWordDetails {
+    kanji: String
+    hiragana: String!
+    katakana: String
+    romaji: String
+}
+
+type ChineseWordDetails {
+    simplified: String!
+    traditional: String
+    pinyin: String
+    toneNumber: String
+}
+
+type ThaiWordDetails {
+    thaiScript: String!
+    romanization: String
+    tonePattern: String
+}
+
+type ItalianWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+}
+
+type SpanishWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+}
+
+type FrenchWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+}
+
+type GermanWordDetails {
+    lemma: String!
+    gender: String
+    pluralForm: String
+    separablePrefix: String
+}
+
+union WordDetails = JapaneseWordDetails | KoreanWordDetails | ChineseWordDetails | ThaiWordDetails | ItalianWordDetails | SpanishWordDetails | FrenchWordDetails | GermanWordDetails
+
+type Word {
+    id: ID!
+    englishTranslation: String!
+    language: String!
+    details: WordDetails!
+}
+
+extend type Query {
+    getWord(id: ID!): Word
+}

@@ -1,0 +1,46 @@
+.container {
+  margin-bottom: 2rem;
+  border: 1px solid var(--glass-border-color);
+  position: relative; // Needed to position the fade overlay
+}
+
+// Fade effect to indicate more content
+.container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60px; // The width of the fade effect
+  pointer-events: none; // Allows clicking/scrolling through the fade
+
+  background: var(--body-bg);
+
+  // A mask is used to create the fade effect on the overlay.
+  -webkit-mask-image: -webkit-linear-gradient(to right, transparent, black);
+  mask-image: linear-gradient(to right, transparent, black);
+}
+
+.title {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.stackContainer {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  padding: 0.5rem 1rem 1.5rem 1rem;
+  gap: 1.5rem;
+
+  // For smooth scrolling on touch devices
+  -webkit-overflow-scrolling: touch;
+
+  // Hide the scrollbar
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

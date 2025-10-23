@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JapaneseReadingComprehensionLesson",
+  "description": "A schema for a Japanese reading comprehension lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the reading lesson in English."
+    },
+    "story": {
+      "type": "string",
+      "description": "日本語の短い物語。",
+      "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "読解問題の質問を日本語で。",
+            "pattern": "^[A-Za-z\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:()/\\[\\]…。「」“”\\n、]+$",
+            "maxLength": 400
+          },
+          "answer": {
+            "type": "string",
+            "description": "物語から抜き出した日本語の正解。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
+          },
+          "answerChoices": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 10,
+            "items": {
+              "type": "string",
+              "description": "選択肢の日本語の回答。",
+              "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
+            }
+          }
+        },
+        "required": ["questionText", "answer", "answerChoices"]
+      }
+    }
+  },
+  "required": ["title", "story", "questions"]
+}

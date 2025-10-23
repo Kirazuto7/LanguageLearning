@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ThaiPracticeLesson",
+  "description": "A schema for a Thai practice lesson with open-ended questions.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the practice section in English."
+    },
+    "instructions": {
+      "type": "string",
+      "description": "A brief explanation of what the user should do."
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "The open-ended question in Thai.",
+            "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200B0-9 ,.?!'\"-;:()/\\[\\]…ฯๆ\\n]+$",
+            "maxLength": 400
+          },
+          "answer": {
+            "type": "null",
+            "description": "This must always be null."
+          },
+          "options": {
+            "type": "array",
+            "description": "This must always be an empty array.",
+            "maxItems": 0
+          }
+        },
+        "required": ["questionText"]
+      }
+    }
+  },
+  "required": ["title", "instructions", "questions"]
+}

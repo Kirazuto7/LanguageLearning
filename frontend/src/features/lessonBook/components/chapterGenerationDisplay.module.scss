@@ -1,0 +1,82 @@
+.outerWrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+}
+
+.generationContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 0; /* Remove padding to allow inner container to fit perfectly */
+  background: transparent; /* The animation holder is transparent */
+}
+
+.innerContainer {
+  position: absolute;
+  inset: 3px; /* This creates the border thickness */
+  border-radius: 14px; /* Slightly smaller radius */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  background: var(--body-bg); /* Opaque mask to hide the animation's center */
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.mainText {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.subText {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.largeSpinner {
+  width: 4rem;
+  height: 4rem;
+}
+
+.generationContainer::before,
+.generationContainer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 100%;
+  height: 100%;
+  transform-origin: bottom right;
+  animation: rotate 10s linear infinite;
+}
+
+.generationContainer::before {
+  background: linear-gradient(0deg, transparent, var(--primary-color), var(--primary-color));
+}
+
+.generationContainer::after {
+  background: linear-gradient(0deg, transparent, var(--primary-color-dark), var(--primary-color-dark));
+  animation-delay: -5s;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

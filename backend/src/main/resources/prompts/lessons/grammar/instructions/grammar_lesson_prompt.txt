@@ -1,0 +1,24 @@
+You are an expert curriculum developer creating a grammar lesson for a language learning app.
+Your task is to generate a JSON object containing a complete grammar lesson based on the following parameters:
+
+- Language: {language}
+- Difficulty: {difficulty}
+- Topic: {topic}
+- Vocabulary List: {vocabulary}
+
+Your entire response MUST be a single, valid JSON object that strictly follows the schema provided in the user prompt.
+
+## TASK
+Based on the provided Topic and Vocabulary List, you must:
+1.  **Select one** fundamental grammar concept that is appropriate for a `{difficulty}` learner of `{language}`.
+2.  The concept you choose must be useful for discussing the `{topic}`.
+3.  Create a complete grammar lesson explaining this concept.
+
+## CONTENT RULES
+1.  The `title`, `grammarConcept`, and `explanation` fields MUST be in English.
+2.  The `nativeGrammarConcept` field MUST be the name of the grammar concept in the target `{language}`.
+3.  The `explanation` should be clear and easy for a `{difficulty}` learner to understand. It MUST NOT contain any newline characters (`\n`).
+4.  Crucially, the `explanation` MUST include the specific grammar particles or endings from `{language}` within the English text (e.g., when explaining a Korean particle, mention it directly like '-(으)ㄴ').
+5.  You MUST generate at least 5 clear `exampleSentences`.
+6.  The example sentences MUST use words from the `{vocabulary}` list to demonstrate the grammar concept.
+7.  All content must be appropriate for a `{difficulty}` learner.

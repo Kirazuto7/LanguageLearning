@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ThaiStoryPages",
+  "description": "A schema for a complete Thai short story, divided into pages with content and vocabulary.",
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "description": "A list of pages that make up the story.",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishSummary": {
+            "type": "string",
+            "description": "A concise, one-sentence summary of the page's content in English.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+          },
+          "content": {
+            "type": "string",
+            "description": "เนื้อหาทั้งหมดสำหรับหน้าในภาษาไทย โดยมีย่อหน้าคั่นด้วยอักขระขึ้นบรรทัดใหม่",
+            "pattern": "^[\\u0E00-\\u0E7F0-9 ,.?!'\"-;:_\\n\\[\\]…―\\u200B]+$"
+          },
+          "vocabulary": {
+            "type": "array",
+            "description": "A list of key vocabulary words from the page.",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string",
+                  "description": "คำศัพท์ในภาษาไทย",
+                  "pattern": "^[\\u0E00-\\u0E7F \\u200B]+$"
+                },
+                "translation": {
+                  "type": "string",
+                  "description": "The English translation of the word.",
+                  "pattern": "^[A-Za-z0-9'() -]+$"
+                }
+              },
+              "required": ["word", "translation"]
+            }
+          }
+        },
+        "required": ["englishSummary", "content", "vocabulary"]
+      }
+    }
+  },
+  "required": ["pages"]
+}

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource ="org/springframework/boot/logging/logback/base.xml"/>
+
+    <springProperty scope="context" name="LOGS_PATH" source="app.logging.path" defaultValue="./logs"/>
+    <timestamp key="RUN_TIMESTAMP" datePattern="yyyy-MM-dd_HH-mm-ss" timeReference="America/New_York"/>
+
+    <!-- Override the default console log pattern to put the message on a new line -->
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%n%msg%n"/>
+
+    <!-- Appender for the main application log -->
+    <appender name="FILE_APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/application.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for GraphQL specific logs -->
+    <appender name="FILE_GRAPHQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/graphql.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/graphql.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for AI Service specific logs -->
+    <appender name="FILE_AI" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/ai.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/ai.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for Job Queue Service specific logs -->
+    <appender name="FILE_JOBS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/jobs.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/jobs.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for Spring Security specific logs -->
+    <appender name="FILE_SECURITY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/security.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/security.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Appender for Client-Side specific logs -->
+    <appender name="FILE_CLIENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_PATH}/${RUN_TIMESTAMP}/client.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${RUN_TIMESTAMP}/archived/client.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Configuration for the 'dev' profile -->
+    <springProfile name="dev">
+        <!-- AI Subsystem Logger -->
+        <logger name="com.example.language_learning.ai" level="INFO" additivity="false">
+            <appender-ref ref="FILE_AI"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- Sanitizer Logger -->
+        <logger name="com.example.language_learning.mappers.util" level="INFO" additivity="false">
+            <appender-ref ref="FILE_AI"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- Job Queue Service Logger -->
+        <logger name="com.example.language_learning.shared.services.JobQueueService" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JOBS"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- State Machine Logger -->
+        <logger name="com.example.language_learning.shared.utils.StateMachine" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JOBS"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- GraphQL Logger -->
+        <logger name="org.springframework.graphql" level="DEBUG" additivity="false">
+            <appender-ref ref="FILE_GRAPHQL"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- GraphQL Exception Logger -->
+        <logger name="com.example.language_learning.config.GraphQlExceptionConfig" level="ERROR" additivity="false">
+            <appender-ref ref="FILE_GRAPHQL"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- Security Logger -->
+        <logger name="org.springframework.security" level="INFO" additivity="false">
+            <appender-ref ref="FILE_SECURITY"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- Client-Side Logger -->
+        <logger name="com.example.language_learning.shared.controllers.ClientLoggingController" level="INFO" additivity="false">
+            <appender-ref ref="FILE_CLIENT"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <!-- Root logger for everything else in 'dev' profile -->
+        <root level="INFO">
+            <appender-ref ref="FILE_APP"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

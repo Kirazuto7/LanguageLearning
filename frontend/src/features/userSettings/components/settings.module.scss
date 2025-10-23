@@ -1,0 +1,76 @@
+.settingsContainer {
+  position: relative;
+}
+
+.settingsButton {
+  background: none;
+  border: none;
+  color: var(--navbar-text-color);
+  font-size: 1.5rem;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--navbar-text-hover-color);
+    background-color: transparent !important;
+  }
+
+  &:focus, &:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+}
+
+.settingsPanel {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  z-index: 1050;
+  padding-top: 0.5rem;
+  width: 300px;
+}
+
+.settingsCard {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--glass-text-color);
+  border-radius: 0.75rem;
+  box-shadow: var(--glass-shadow);
+
+  .card-header {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--glass-border-color);
+    font-weight: bold;
+    color: var(--glass-text-color);
+  }
+
+  .form-label {
+    color: var(--glass-text-color);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.navLinkContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  padding: 0.25rem 0;
+
+  i {
+    font-size: 1.25rem; /* Match other nav icons */
+    margin-bottom: 0.1rem;
+  }
+
+  span {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+}

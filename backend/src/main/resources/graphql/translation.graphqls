@@ -1,0 +1,13 @@
+input TranslationRequest {
+    textToTranslate: String!
+    sourceLanguage: String!
+}
+
+type TranslationResponse {
+    translatedText: String!
+}
+
+extend type Mutation {
+    """Translates a given piece of text into English."""
+    translateText(request: TranslationRequest!): TranslationResponse!
+}

@@ -1,0 +1,10 @@
+union ProgressData = LessonPage | StoryContentPage | StoryVocabularyPage
+
+type ProgressUpdate {
+    taskId: ID!
+    progress: Int!
+    message: String!
+    data: ProgressData
+    isError: Boolean!
+    isComplete: Boolean!
+}

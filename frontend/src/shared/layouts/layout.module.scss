@@ -1,0 +1,64 @@
+@import '../assets/theme';
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allows content to fill available space */
+  z-index: 1; /* Ensures content is above the background */
+}
+
+.layoutContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 56px; /* Matches the default Bootstrap navbar height */
+}
+
+.backgroundCanvas {
+  position: fixed;
+  top: 56px; /* Start below the navbar */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 56px); /* Fill the remaining viewport height */
+  z-index: -1; /* Places the canvas behind all other content */
+}
+
+
+:global(body.themed-body) {
+  position: relative;
+  overflow-x: hidden;
+  transition: background 0.5s ease;
+  background: var(--body-bg);
+}
+
+:global(body.themed-body.default) {
+  @include generate-theme(map-get($themes, default));
+}
+
+:global(body.themed-body.light) {
+  @include generate-theme(map-get($themes, light));
+}
+
+:global(body.themed-body.sunset) {
+  @include generate-theme(map-get($themes, sunset));
+}
+
+:global(body.themed-body.nebula) {
+  @include generate-theme(map-get($themes, nebula));
+}
+
+:global(body.themed-body.cafe) {
+  @include generate-theme(map-get($themes, cafe));
+}
+
+:global(body.themed-body.hanok) {
+  @include generate-theme(map-get($themes, hanok));
+}
+
+:global(body.themed-body.fuji) {
+  @include generate-theme(map-get($themes, fuji));
+}
+
+:global(body.themed-body.school) {
+  @include generate-theme(map-get($themes, school));
+}

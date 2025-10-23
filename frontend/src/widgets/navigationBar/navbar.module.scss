@@ -1,0 +1,77 @@
+.icon-container {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  border-radius: 0.5rem;
+  padding: 0.25rem; /* Smaller padding */
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(var(--primary-color-rgb), 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.4);
+  }
+}
+
+.icon {
+  color: var(--primary-color);
+}
+
+.brand-name {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+}
+
+:global(.navbar).customNavbar {
+  position: fixed; /* Changed from relative to fixed */
+  width: 100%;
+  top: 0;
+  z-index: 10;
+  background: var(--glass-bg); /* Apply the glass background */
+  backdrop-filter: blur(10px); /* Add blur effect for glassmorphism */
+  border-bottom: 1px solid var(--glass-border-color);
+  padding-top: 0.25rem; /* Reduced padding */
+  padding-bottom: 0.25rem; /* Reduced padding */
+
+  :global(.navbar-brand),
+  :global(.nav-link) {
+    color: var(--navbar-text-color);
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    font-size: 0.9rem; /* Slightly smaller font */
+  }
+
+  :global(a.navbar-brand:hover),
+  :global(.nav-link:hover) {
+    color: var(--navbar-text-hover-color) !important;
+    transform: translateY(-2px);
+  }
+
+  // Style the logout button to match the theme
+  :global(.btn-outline) {
+    color: var(--navbar-text-color);
+    border-color: var(--navbar-text-color);
+  }
+  :global(.btn-outline:hover) {
+    color: var(--text-color-dark);
+    background-color: var(--navbar-text-hover-color);
+    border-color: var(--navbar-text-hover-color);
+  }
+
+  :global(.btn-sm) {
+    padding: 0.2rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  :global(.navbar-toggler) {
+    border-color: rgba(var(--primary-color-rgb), 0.5);
+  }
+
+  --bs-emphasis-color-rgb: var(--primary-color-rgb);
+}

@@ -1,0 +1,73 @@
+enum LessonType {
+    VOCABULARY,
+    GRAMMAR,
+    CONJUGATION,
+    PRACTICE,
+    READING_COMPREHENSION
+}
+
+interface Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+}
+
+type VocabularyLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    vocabularies: [Word!]!
+}
+
+type GrammarLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    grammarConcept: String!
+    explanation: String!
+    exampleLessonSentences: [LessonSentence!]!
+}
+
+type ConjugationLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    conjugationRuleName: String!
+    explanation: String!
+    conjugatedWords: [ConjugationExample!]!
+}
+
+type PracticeLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    instructions: String!
+    lessonQuestions: [LessonQuestion!]!
+}
+
+type ReadingComprehensionLesson implements Lesson {
+    id: ID!
+    type: LessonType!
+    title: String!
+    story: String!
+    lessonQuestions: [LessonQuestion!]!
+}
+
+# Practice Lesson Proofread Mutation
+
+input PracticeLessonCheckRequestInput {
+    questionId: ID!
+    userSentence: String!
+    language: String!
+    difficulty: String!
+}
+
+type PracticeLessonCheckResponse {
+    isCorrect: Boolean!
+    feedback: String
+    correctedSentence: String
+}
+
+extend type Mutation {
+    proofreadPracticeSentence(request: PracticeLessonCheckRequestInput!): PracticeLessonCheckResponse
+}

@@ -1,0 +1,16 @@
+.navLinkContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px; /* Reduced width */
+    padding: 0.1rem 0; /* Reduced padding */
+}
+
+.navLinkContent i {
+    font-size: 1.25rem; /* Smaller icon */
+}
+
+.navLinkContent span {
+    font-size: 0.75rem; /* Smaller text */
+    font-weight: 500;
+}

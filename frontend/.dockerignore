@@ -1,0 +1,12 @@
+# Ignore dependencies, as they are installed inside the container
+node_modules
+
+# Ignore build output
+build
+
+# Ignore logs
+npm-debug.log*
+
+# Ignore git history and local environment files
+.git
+.env*

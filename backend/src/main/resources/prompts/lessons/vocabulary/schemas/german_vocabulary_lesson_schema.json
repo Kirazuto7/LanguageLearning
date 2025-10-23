@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GermanVocabularyLesson",
+  "description": "A schema for a German vocabulary lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the vocabulary lesson in English."
+    },
+    "vocabularies": {
+      "type": "array",
+      "description": "A list of German vocabulary words.",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishTranslation": {
+            "type": "string",
+            "description": "The English translation of the word.",
+            "pattern": "^[A-Za-z0-9'() -]+$"
+          },
+          "lemma": {
+            "type": "string",
+            "description": "The base form (lemma) of the word in German.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]+$"
+          },
+          "gender": {
+            "type": ["string", "null"],
+            "description": "The grammatical gender. MUST be one of 'der' (masculine), 'die' (feminine), or 'das' (neuter).",
+            "pattern": "^(der|die|das)$"
+          },
+          "pluralForm": {
+            "type": ["string", "null"],
+            "description": "The plural form of the word, if applicable.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]*$"
+          },
+          "separablePrefix": {
+            "type": ["string", "null"],
+            "description": "The separable prefix for verbs, if applicable.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]*$"
+          }
+        },
+        "required": ["englishTranslation", "lemma"]
+      }
+    }
+  },
+  "required": ["title", "vocabularies"]
+}

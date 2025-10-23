@@ -1,0 +1,140 @@
+@use '../../assets/theme' as theme;
+
+.active-page {
+    width: 100%;
+    height: 100%;
+    background: var(--paper-bg);
+    border: 2px solid var(--paper-border-color);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    @include theme.respond-to(tablet) {
+        padding-bottom: 5vmax;
+    }
+}
+
+.left-active-page {
+    border-radius: 0 4px 4px 0;
+    border-right: none;
+    box-shadow: var(--primary-glow);
+}
+
+.right-active-page {
+    border-radius: 4px 0 0 4px;
+    border-left: none;
+    box-shadow: var(--primary-glow);
+}
+
+.page-content {
+    padding: 40px;
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+    line-height: 1.6;
+    color: var(--text-color-dark);
+}
+
+.active-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+    repeating-linear-gradient(
+    transparent,
+    transparent 23px,
+    var(--paper-line-color) 23px,
+    var(--paper-line-color) 25px
+    );
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.left-active-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 60px;
+    bottom: 0;
+    width: 1px;
+    background: var(--paper-margin-line-color); /* This is the vertical red line on school paper */
+    opacity: 0.6;
+}
+
+.page-content h1 {
+    margin-bottom: 20px;
+    color: var(--subtitle-color);
+    text-align: center;
+}
+
+.page-content h2 {
+    margin: 15px 0 10px 0;
+    color: var(--subtitle-color);
+}
+
+.page-content p {
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+.page-content ul, .page-content ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.page-content li {
+    margin-bottom: 5px;
+}
+
+.page-number {
+    position: absolute;
+    bottom: 20px;
+    color: var(--text-color-muted);
+}
+
+.left-active-page .page-number {
+    left: 40px;
+}
+
+.right-active-page .page-number {
+    right: 40px;
+}
+
+.toc-entry {
+    display: flex;
+    align-items: baseline;
+    text-decoration: none; /* This is a link, but we want it to look like plain text */
+    color: var(--text-color-dark); /* Inherit text color from theme */
+}
+
+.toc-dots {
+    flex: 1;
+    border-bottom: 2px dotted var(--primary-color);
+    margin: 0 0.5rem;
+}
+
+.toc-page-number {
+    margin-left: auto;
+    padding-left: 0.5rem;
+    background-color: var(--paper-bg);
+}
+
+.behind-cover-wrapper {
+    background-color: var(--storybook-cover-bg);
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 20px var(--storybook-accent-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.behind-cover-paper {
+    background-color: var(--paper-bg);
+    width: 98%;
+    height: 95%;
+}

@@ -1,0 +1,64 @@
+.cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: var(--storybook-cover-bg);
+    border-left: 10px solid var(--storybook-accent-color); /* binding */
+    color: var(--storybook-cover-text-color);
+    box-shadow: 0 0 20px var(--storybook-accent-color);
+}
+
+.backcover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: var(--storybook-cover-bg);
+    border-right: 10px solid var(--storybook-accent-color); /* binding */
+    color: var(--storybook-cover-text-color);
+    box-shadow: 0 0 20px var(--storybook-accent-color);
+}
+
+.bookContainer {
+    position: relative;
+    margin: 2rem auto;
+    width: 900px; /* 2 * page width */
+    height: 600px; /* page height */
+    perspective: 2000px;
+}
+
+.bookContainer::before {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 10%;
+    right: 10%;
+    height: 30px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.bookBinding {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    background: linear-gradient(to bottom, #8B4513 0%, #654321 20%, #4a2c1a 50%, #654321 80%, #8B4513 100%);
+    transform: translateX(-50%);
+    z-index: 15;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3), inset 1px 0 2px rgba(255,255,255,0.1), inset -1px 0 2px rgba(0,0,0,0.2);
+    pointer-events: none;
+}
+
+.book-title {
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--storybook-title-color);
+    margin-bottom: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Georgia', serif;
+    line-height: 1.2;
+}

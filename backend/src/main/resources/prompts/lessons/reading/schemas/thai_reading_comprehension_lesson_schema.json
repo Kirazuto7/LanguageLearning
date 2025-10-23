@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ThaiReadingComprehensionLesson",
+  "description": "A schema for a Thai reading comprehension lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the reading lesson in English."
+    },
+    "story": {
+      "type": "string",
+      "description": "A short story in Thai.",
+      "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "The comprehension question in Thai.",
+            "pattern": "^[A-Za-z\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:()/\\[\\]…\\n]+$",
+            "maxLength": 400
+          },
+          "answer": {
+            "type": "string",
+            "description": "The correct answer in Thai, extracted from the story.",
+            "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
+          },
+          "answerChoices": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 10,
+            "items": {
+              "type": "string",
+              "description": "A possible answer choice in Thai.",
+              "pattern": "^[\\u0E00-\\u0E7F \\u200Bฯๆ0-9 ,.?!'\"-;:/\\[\\]…\\n]+$"
+            }
+          }
+        },
+        "required": ["questionText", "answer", "answerChoices"]
+      }
+    }
+  },
+  "required": ["title", "story", "questions"]
+}

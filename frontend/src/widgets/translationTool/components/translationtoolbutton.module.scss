@@ -1,0 +1,49 @@
+@use "../../../shared/assets/theme" as theme;
+
+.floatingTranslateButton {
+  position: fixed;
+  top: 5.5rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  border: none;
+  color: var(--text-color-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; // Override default bootstrap button padding
+  z-index: 1050;
+  transition: all 0.3s ease-in-out;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  :global(.bi) {
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover, &:focus {
+    background: var(--primary-gradient-hover);
+    box-shadow: var(--button-shadow-hover);
+    transform: translateY(-3px) scale(1.05);
+    color: var(--text-color-light);
+  }
+
+  @include theme.respond-to(mobile) {
+    width: 50px;
+    height: 50px;
+    top: 5rem;
+    right: 1rem;
+
+    :global(.bi) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

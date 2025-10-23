@@ -1,0 +1,132 @@
+# ===================================================================
+# General
+# ===================================================================
+# Environment variables - ignores .env, .env.local, .env.production etc.
+.env
+.env.*
+# It's a good practice to track an example file
+!/.env.example
+
+# GCP specific
+.gcp
+
+# Log files
+/backend/logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+hs_err_pid*
+
+# ===================================================================
+# IDE & OS Files
+# ===================================================================
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VSCode
+.vs/
+.vscode/
+*.code-workspace
+
+# Eclipse
+.classpath
+.project
+.settings/
+*.class
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ===================================================================
+# Build Artifacts, Dependencies & Compiled Output
+# ===================================================================
+
+# Gradle
+.gradle/
+build/
+bin/
+
+# jOOQ - Prevent accidentally committing generated code to the source tree
+/backend/src/main/java/com/example/language_learning/generated/
+
+# Maven
+/backend/.mvn/
+target/
+
+# Node
+node_modules/
+.pnp
+.pnp.*
+coverage/
+
+# Compiled Java output
+*.jar
+*.war
+*.ear
+
+# ===================================================================
+# Python
+# ===================================================================
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+dist/
+*.egg-info/
+*.egg
+
+# IPython Notebook
+.ipynb_checkpoints
+
+# Pytest
+.pytest_cache/
+.tox/
+
+# Pip
+pip-log.txt
+pip-cache/
+
+# ===================================================================
+# Docker
+# ===================================================================
+# Ignore custom Dockerfiles that are not part of the core project
+/backend/dockerfiles/DockerfileAider
+/backend/dockerfiles/old
+docker-compose.aider.yml
+
+# ===================================================================
+# Aider
+# ===================================================================
+# Ignore Aider's cache and history files
+.aider.chat.history.md
+.aider.input.history
+.aider.tags.cache.v4
+
+# ===================================================================
+# AI Models
+# ===================================================================
+# Ignore large LoRA model files, but keep the README.md
+loras/*
+!loras/README.md
+!loras/styles.csv
+
+# Wiktionary data
+/wiktionary/
+
+# Other
+business_model.md

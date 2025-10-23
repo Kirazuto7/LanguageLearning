@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChineseStoryPages",
+  "description": "A schema for a complete Chinese short story, divided into pages with content and vocabulary.",
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "description": "A list of pages that make up the story.",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishSummary": {
+            "type": "string",
+            "description": "A concise, one-sentence summary of the page's content in English.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+          },
+          "content": {
+            "type": "string",
+            "description": "页面的中文内容。段落由换行符分隔。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F0-9 ,.?!'\"-;:_\\n\\[\\]…。「」“”‘’《》【】、：；—·～？！―]+$"
+          },
+          "vocabulary": {
+            "type": "array",
+            "description": "A list of key vocabulary words from the page.",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string",
+                  "description": "简体中文字符。",
+                  "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F· ]*$"
+                },
+                "translation": {
+                  "type": "string",
+                  "description": "The English translation of the word.",
+                  "pattern": "^[A-Za-z0-9'() -]+$"
+                }
+              },
+              "required": ["word", "translation"]
+            }
+          }
+        },
+        "required": ["englishSummary", "content", "vocabulary"]
+      }
+    }
+  },
+  "required": ["pages"]
+}

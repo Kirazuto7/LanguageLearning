@@ -1,0 +1,221 @@
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(-200px);
+  }
+  to {
+    transform: translateX(105vw);
+  }
+}
+
+@keyframes branch-sway {
+  0%, 100% {
+    transform: rotate(15deg); /* A bit more initial rotation */
+  }
+  50% {
+    transform: rotate(16.5deg); /* A more subtle sway */
+  }
+}
+
+@keyframes branch-sway-2 {
+  0%, 100% {
+    transform: rotate(-5deg) scaleX(-1);
+  }
+  50% {
+    transform: rotate(-3.5deg) scaleX(-1);
+  }
+}
+
+.fujiContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%);
+}
+
+.fujiMountain {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120vw; /* A bit narrower to appear more distant */
+  height: 50vh; /* Shorter to appear more distant */
+
+  /* The Mountain Body*/
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #3a3f58;
+    /* A narrower, taller polygon for a more distant mountain with a less wide peak */
+    clip-path: polygon(47% 35%, 53% 35%, 100% 100%, 0% 100%);
+    z-index: 1;
+  }
+
+  /* The Snow Cap */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 35%; /* Position it on the new flat top */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25%; /* A bit wider to cover more surface area */
+    height: 40%; /* A bit taller to extend further down the slopes */
+    background: #ffffff;
+    /* A wider, more flowing shape with an irregular bottom edge for a more natural look */
+    clip-path: polygon(20% 0%, 80% 0%, 100% 30%, 90% 80%, 75% 60%, 60% 90%, 50% 70%, 40% 90%, 25% 60%, 10% 80%, 0% 30%);
+    z-index: 2;
+  }
+}
+
+%cloud-base {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 100px;
+  opacity: 0.6;
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: 0;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background: #ffffff;
+    border-radius: 100px;
+  }
+
+  &::after {
+    width: 100px;
+    height: 100px;
+    top: -50px;
+    left: 50px;
+  }
+
+  &::before {
+    width: 150px;
+    height: 150px;
+    top: -90px;
+    right: 40px;
+  }
+}
+
+.cloud1 {
+  @extend %cloud-base;
+  width: 250px;
+  height: 80px;
+  top: 15%;
+  animation: drift 75s linear infinite 5s;
+}
+
+.cloud2 {
+  @extend %cloud-base;
+  width: 300px;
+  height: 100px;
+  top: 25%; animation: drift 90s linear infinite 15s;
+}
+
+.cloud3 {
+  @extend %cloud-base;
+  width: 200px;
+  height: 70px;
+  top: 35%;
+  animation: drift 80s linear infinite;
+}
+
+%cherry-branch-base {
+  position: absolute;
+  /* A much more detailed SVG with a thicker main branch, secondary branches, and more flower clusters */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cdefs%3E%3CradialGradient id='flower' cx='0.5' cy='0.5' r='0.5'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='70%25' stop-color='%23ffc0cb'/%3E%3Cstop offset='100%25' stop-color='%23ffb6c1'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg stroke='%235d4037' stroke-width='6' fill='none' stroke-linecap='round'%3E%3Cpath d='M10,300 C 70,220 90,160 140,110'/%3E%3Cpath d='M140,110 C 190,60 240,30 270,20'/%3E%3C/g%3E%3Cg stroke='%235d4037' stroke-width='4' fill='none' stroke-linecap='round'%3E%3Cpath d='M140,110 C 120,130 110,160 100,190'/%3E%3Cpath d='M140,110 C 160,120 180,140 190,170'/%3E%3Cpath d='M210,45 C 200,65 190,80 180,100'/%3E%3Cpath d='M80,250 C 90,230 110,210 130,190'/%3E%3C/g%3E%3Cg stroke='%235d4037' stroke-width='2' fill='none' stroke-linecap='round'%3E%3Cpath d='M100,190 C 90,200 80,210 75,220'/%3E%3Cpath d='M190,170 C 200,180 210,190 215,200'/%3E%3Cpath d='M270,20 C 260,30 250,40 245,50'/%3E%3C/g%3E%3Cg fill='url(%23flower)'%3E%3C!-- Existing clusters --%3E%3Ccircle cx='75' cy='220' r='6'/%3E%3Ccircle cx='80' cy='225' r='4'/%3E%3Ccircle cx='70' cy='223' r='5'/%3E%3Ccircle cx='78' cy='218' r='5'/%3E%3Ccircle cx='72' cy='215' r='4'/%3E%3Ccircle cx='83' cy='220' r='5'/%3E%3Ccircle cx='215' cy='200' r='7'/%3E%3Ccircle cx='223' cy='198' r='5'/%3E%3Ccircle cx='210' cy='205' r='6'/%3E%3Ccircle cx='218' cy='208' r='4'/%3E%3Ccircle cx='212' cy='195' r='5'/%3E%3Ccircle cx='218' cy='195' r='6'/%3E%3Ccircle cx='225' cy='202' r='4'/%3E%3Ccircle cx='245' cy='50' r='8'/%3E%3Ccircle cx='250' cy='55' r='6'/%3E%3Ccircle cx='240' cy='53' r='7'/%3E%3Ccircle cx='248' cy='48' r='5'/%3E%3Ccircle cx='255' cy='50' r='4'/%3E%3Ccircle cx='242' cy='45' r='5'/%3E%3Ccircle cx='252' cy='48' r='6'/%3E%3Ccircle cx='180' cy='100' r='5'/%3E%3Ccircle cx='185' cy='105' r='4'/%3E%3Ccircle cx='175' cy='103' r='5'/%3E%3Ccircle cx='178' cy='98' r='6'/%3E%3Ccircle cx='172' cy='95' r='4'/%3E%3Ccircle cx='188' cy='100' r='5'/%3E%3Ccircle cx='140' cy='110' r='6'/%3E%3Ccircle cx='145' cy='105' r='5'/%3E%3Ccircle cx='135' cy='108' r='5'/%3E%3Ccircle cx='142' cy='115' r='4'/%3E%3Ccircle cx='148' cy='112' r='4'/%3E%3Ccircle cx='138' cy='103' r='6'/%3E%3Ccircle cx='130' cy='190' r='5'/%3E%3Ccircle cx='135' cy='185' r='4'/%3E%3Ccircle cx='125' cy='188' r='6'/%3E%3Ccircle cx='128' cy='195' r='4'/%3E%3Ccircle cx='138' cy='190' r='5'/%3E%3Ccircle cx='190' cy='170' r='6'/%3E%3Ccircle cx='195' cy='165' r='5'/%3E%3Ccircle cx='185' cy='173' r='4'/%3E%3Ccircle cx='188' cy='165' r='5'/%3E%3Ccircle cx='198' cy='172' r='4'/%3E%3C!-- New clusters --%3E%3Ccircle cx='55' cy='255' r='5'/%3E%3Ccircle cx='60' cy='260' r='4'/%3E%3Ccircle cx='50' cy='265' r='6'/%3E%3Ccircle cx='95' cy='155' r='5'/%3E%3Ccircle cx='100' cy='160' r='4'/%3E%3Ccircle cx='90' cy='165' r='6'/%3E%3Ccircle cx='205' cy='125' r='5'/%3E%3Ccircle cx='210' cy='130' r='4'/%3E%3Ccircle cx='200' cy='135' r='6'/%3E%3Ccircle cx='265' cy='35' r='5'/%3E%3Ccircle cx='270' cy='40' r='4'/%3E%3Ccircle cx='260' cy='45' r='6'/%3E%3C!-- Even More Clusters --%3E%3Ccircle cx='40' cy='260' r='6'/%3E%3Ccircle cx='45' cy='255' r='4'/%3E%3Ccircle cx='35' cy='263' r='5'/%3E%3Ccircle cx='98' cy='150' r='5'/%3E%3Ccircle cx='92' cy='158' r='4'/%3E%3Ccircle cx='170' cy='150' r='5'/%3E%3Ccircle cx='175' cy='145' r='4'/%3E%3Ccircle cx='165' cy='153' r='6'/%3E%3Ccircle cx='200' cy='60' r='6'/%3E%3Ccircle cx='205' cy='65' r='4'/%3E%3Ccircle cx='195' cy='63' r='5'/%3E%3Ccircle cx='160' cy='80' r='5'/%3E%3Ccircle cx='155' cy='85' r='4'/%3E%3Ccircle cx='165' cy='83' r='6'/%3E%3Ccircle cx='115' cy='240' r='5'/%3E%3Ccircle cx='120' cy='235' r='4'/%3E%3Ccircle cx='110' cy='243' r='6'/%3E%3C!-- MORE MORE MORE --%3E%3Ccircle cx='110' cy='140' r='5'/%3E%3Ccircle cx='115' cy='135' r='4'/%3E%3Ccircle cx='105' cy='143' r='6'/%3E%3Ccircle cx='115' cy='170' r='6'/%3E%3Ccircle cx='120' cy='175' r='4'/%3E%3Ccircle cx='110' cy='173' r='5'/%3E%3Ccircle cx='220' cy='40' r='5'/%3E%3Ccircle cx='225' cy='35' r='4'/%3E%3Ccircle cx='215' cy='43' r='6'/%3E%3Ccircle cx='230' cy='80' r='5'/%3E%3Ccircle cx='235' cy='75' r='4'/%3E%3Ccircle cx='225' cy='83' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.cherryBranch1 {
+  @extend %cherry-branch-base;
+  top: 0; /* Positioned at the top to be fully visible */
+  left: -150px;
+  width: 700px;
+  height: 600px;
+  animation: branch-sway 15s ease-in-out infinite;
+}
+
+.cherryBranch2 {
+  @extend %cherry-branch-base;
+  top: 0; /* Positioned at the top to be fully visible */
+  left: -130px; /* Tucked slightly behind the main branch */
+  width: 500px;
+  height: 400px;
+  animation: branch-sway-2 18s ease-in-out infinite;
+  z-index: 9; /* Place it behind the main branch */
+}
+
+.petalContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.petal {
+  position: absolute;
+  top: -10%;
+  width: 10px;
+  height: 10px;
+  background: #ffc0cb;
+  border-radius: 1px 50%;
+  opacity: 0;
+  animation: fall 10s linear infinite;
+
+  &:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 15s; }
+  &:nth-child(2) { left: 20%; animation-delay: -5s; animation-duration: 10s; }
+  &:nth-child(3) { left: 30%; animation-delay: -3s; animation-duration: 20s; }
+  &:nth-child(4) { left: 40%; animation-delay: -8s; animation-duration: 12s; }
+  &:nth-child(5) { left: 50%; animation-delay: -1s; animation-duration: 18s; }
+  &:nth-child(6) { left: 60%; animation-delay: -6s; animation-duration: 14s; }
+  &:nth-child(7) { left: 70%; animation-delay: -2s; animation-duration: 11s; }
+  &:nth-child(8) { left: 80%; animation-delay: -7s; animation-duration: 16s; }
+  &:nth-child(9) { left: 90%; animation-delay: -4s; animation-duration: 9s; }
+  &:nth-child(10) { left: 15%; animation-delay: -9s; animation-duration: 13s; }
+  &:nth-child(11) { left: 25%; animation-delay: -1.5s; animation-duration: 17s; }
+  &:nth-child(12) { left: 35%; animation-delay: -4.5s; animation-duration: 11.5s; }
+  &:nth-child(13) { left: 45%; animation-delay: -6.5s; animation-duration: 14.5s; }
+  &:nth-child(14) { left: 55%; animation-delay: -0.5s; animation-duration: 19s; }
+  &:nth-child(15) { left: 65%; animation-delay: -2.5s; animation-duration: 10.5s; }
+  /* Add more petals for a denser effect */
+  &:nth-child(16) { left: 5%; animation-delay: -10s; animation-duration: 14s; width: 8px; height: 8px; }
+  &:nth-child(17) { left: 15%; animation-delay: -12s; animation-duration: 18s; }
+  &:nth-child(18) { left: 25%; animation-delay: -14s; animation-duration: 11s; width: 11px; height: 11px; }
+  &:nth-child(19) { left: 35%; animation-delay: -11s; animation-duration: 19s; }
+  &:nth-child(20) { left: 45%; animation-delay: -13s; animation-duration: 13s; width: 9px; height: 9px; }
+  &:nth-child(21) { left: 55%; animation-delay: -15s; animation-duration: 17s; }
+  &:nth-child(22) { left: 65%; animation-delay: -10.5s; animation-duration: 12.5s; width: 12px; height: 12px; }
+  &:nth-child(23) { left: 75%; animation-delay: -12.5s; animation-duration: 16.5s; }
+  &:nth-child(24) { left: 85%; animation-delay: -14.5s; animation-duration: 9.5s; width: 8px; height: 8px; }
+  &:nth-child(25) { left: 95%; animation-delay: -11.5s; animation-duration: 15.5s; }
+  &:nth-child(26) { left: 8%; animation-delay: -13.5s; animation-duration: 18.5s; width: 11px; height: 11px; }
+  &:nth-child(27) { left: 18%; animation-delay: -15.5s; animation-duration: 10.5s; }
+  &:nth-child(28) { left: 28%; animation-delay: -10.2s; animation-duration: 14.2s; width: 9px; height: 9px; }
+  &:nth-child(29) { left: 38%; animation-delay: -12.2s; animation-duration: 16.2s; }
+  &:nth-child(30) { left: 48%; animation-delay: -14.2s; animation-duration: 11.2s; width: 12px; height: 12px; }
+}

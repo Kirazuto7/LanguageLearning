@@ -1,0 +1,23 @@
+type LessonBook implements Book {
+    id: ID!
+    title: String!
+    difficulty: String!
+    language: String!
+    createdAt: LocalDateTime!
+    lessonChapters: [LessonChapter]!
+}
+
+input LessonBookRequestInput {
+    language: String!
+    difficulty: String!
+}
+
+extend type Query {
+    getLessonBooks: [LessonBook]!
+    getLessonBook(request: LessonBookRequestInput!): LessonBook
+    getLessonBookById(id: ID!): LessonBook
+}
+
+extend type Mutation {
+    deleteLessonBook(id: ID!): Boolean
+}

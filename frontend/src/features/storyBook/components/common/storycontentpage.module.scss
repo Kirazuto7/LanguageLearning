@@ -1,0 +1,41 @@
+.highlighted {
+  background-color: #fff3cd;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.contentWrapper {
+  position: relative;
+  padding-top: 2.5rem; // Make space for the button
+}
+
+.copyButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+
+  // Make it a theme-aware "ghost" button
+  background: transparent;
+  border: none;
+  color: var(--primary-color);
+
+  &:hover {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+  }
+}
+
+.speakButton {
+  position: absolute;
+  top: 0;
+  right: 2.5rem;
+  z-index: 10;
+
+  background: transparent;
+  border: none;
+  color: var(--primary-color);
+
+  &:hover {
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+  }
+}

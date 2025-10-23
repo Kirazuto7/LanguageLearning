@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JapaneseConjugationLesson",
+  "description": "A schema for a Japanese conjugation lesson.",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string", "description": "The title of the lesson in English." },
+    "conjugation_rule_name": {
+      "type": "string",
+      "description": "The name of the conjugation rule in English.",
+      "pattern": "^[A-Za-z\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:()/\\[\\]…。「」\\-]+$"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "A clear explanation of the conjugation rule, allowing both English and Japanese characters.",
+      "pattern": "^[A-Za-z\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:()*\\-/\\[\\]…。「」\\n]+$"
+    },
+    "conjugated_words": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "infinitive": {
+            "type": "string",
+            "description": "単語の辞書形（未活用の基本形）を日本語で (例: 食べる, 歩く)。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]+$"
+          },
+          "conjugated_form": {
+            "type": "string",
+            "description": "活用後の単語を日本語で (例: 食べます, 歩きます)。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]+$"
+          },
+          "example_sentence": {
+            "type": "string",
+            "description": "活用形を使った完全な例文を日本語で。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:/\\[\\]…。「」“”\\n、]+$"
+          },
+          "sentence_translation": {
+            "type": "string",
+            "description": "The English translation of the example sentence.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
+          }
+        },
+        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"]
+      }
+    }
+  },
+  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"]
+}

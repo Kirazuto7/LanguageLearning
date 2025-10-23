@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanPracticeLesson",
+  "description": "A schema for a Korean practice lesson with open-ended questions.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the practice section in English."
+    },
+    "instructions": {
+      "type": "string",
+      "description": "A brief explanation of what the user should do."
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "한국어로 된 자유 형식 질문입니다.",
+            "pattern": "^[A-Za-z\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$",
+            "maxLength": 400
+          },
+          "answer": {
+            "type": "null",
+            "description": "This must always be null."
+          },
+          "options": {
+            "type": "array",
+            "description": "This must always be an empty array.",
+            "maxItems": 0
+          }
+        },
+        "required": ["questionText"]
+      }
+    }
+  },
+  "required": ["title", "instructions", "questions"]
+}

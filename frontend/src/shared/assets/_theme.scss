@@ -1,0 +1,419 @@
+// =============================================================================
+// # THEME VARIABLES
+// This file centralizes all theme definitions. Each theme is a map containing
+// the style properties pertaining to the theme.
+// =============================================================================
+
+@use "sass:map";
+@use "sass:color";
+
+$themes: (
+  default: (
+    // Palette
+    primary-color: #6b7280,
+    primary-color-dark: #4b5563,
+    primary-color-darker: #374151,
+    text-color-light: #ffffff,
+    navbar-text-color: #374151,
+    navbar-text-hover-color: #111827,
+    title-color: #111827,
+    text-color-dark: #1f2937,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #6b7280 0%, #4b5563 100%),
+    primary-gradient-hover: linear-gradient(135deg, #4b5563 0%, #374151 100%),
+
+    // Backgrounds
+    body-bg: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%),
+
+    // Components
+    glass-bg: rgba(255, 255, 255, 0.7),
+    glass-border-color: rgba(229, 231, 235, 0.9),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+    glass-text-color: #1f2937, // Dark text for light glass
+    glass-text-shadow: none,
+    button-shadow-hover: 0 8px 25px rgba(107, 114, 128, 0.3),
+    pagination-shadow: 0 8px 20px rgba(107, 114, 128, 0.3),
+
+    storybook-cover-bg: #374151,
+    storybook-accent-color: #6b7280,
+    storybook-cover-text-color: #ffffff,
+    storybook-title-color: #ffffff
+  ),
+
+  light: (
+      // Palette
+      primary-color: #3b82f6,
+      primary-color-dark: #2563eb,
+      primary-color-darker: #1d4ed8,
+      text-color-light: #ffffff,
+      navbar-text-color: #3b82f6,
+      navbar-text-hover-color: #1f2937,
+      title-color: #1f2937, // Dark title for light theme
+      text-color-dark: #1f2937,
+
+      // Gradients
+      primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%),
+      primary-gradient-hover: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%),
+
+      // Backgrounds
+      body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%),
+
+      // Components
+      glass-bg: rgba(255, 255, 255, 0.6),
+      glass-border-color: rgba(255, 255, 255, 0.8),
+      glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+      glass-text-color: #1f2937, // Dark text for light glass
+      glass-text-shadow: none,
+      button-shadow-hover: 0 8px 25px rgba(59, 130, 246, 0.3),
+      pagination-shadow: 0 8px 20px rgba(59, 130, 246, 0.3),
+
+      storybook-cover-bg: #1d4ed8,
+      storybook-accent-color: #3b82f6,
+      storybook-cover-text-color: #ffffff,
+      storybook-title-color: #ffffff
+  ),
+
+  sunset: (
+    // Palette
+    primary-color: #f97316,
+    primary-color-dark: #ea580c,
+    primary-color-darker: #c2410c,
+    accent-color: #fcd34d,
+    text-color-light: #ffffff,
+    text-color-dark: #431407,
+    navbar-text-color: #ffffff,
+    title-color: #ffffff,
+    navbar-text-hover-color: #fcd34d,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%),
+    primary-gradient-hover: linear-gradient(135deg, #ea580c 0%, #c2410c 100%),
+
+    // Backgrounds
+    body-bg: radial-gradient(ellipse at 85% 25%, #fcd34d 0%, #f97316 25%, #701a75 60%, #4a044e 100%),
+
+    // Components
+    glass-bg: rgba(67, 20, 7, 0.25),
+    glass-border-color: rgba(253, 186, 116, 0.4),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.2),
+    glass-text-color: #ffffff, // Light text for dark glass
+    glass-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
+    button-shadow-hover: 0 8px 25px rgba(249, 115, 22, 0.4),
+    pagination-shadow: 0 8px 20px rgba(249, 115, 22, 0.3),
+
+    storybook-cover-bg: #4a044e,
+    storybook-accent-color: #f97316,
+    storybook-cover-text-color: #ffffff,
+    storybook-title-color: #ffffff
+  ),
+  nebula: (
+    // Palette
+    primary-color: #a855f7,
+    primary-color-dark: #9333ea,
+    primary-color-darker: #7e22ce,
+    text-color-light: #ffffff,
+    navbar-text-color: #d8b4fe,
+    navbar-text-hover-color: #ffffff,
+    title-color: #ffffff,
+    text-color-dark: #1e1b4b,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #a855f7 0%, #9333ea 100%),
+    primary-gradient-hover: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%),
+
+    // Backgrounds
+    body-bg: #0c0a1e,
+
+    // Components
+    glass-bg: rgba(28, 25, 63, 0.25),
+    glass-border-color: rgba(168, 85, 247, 0.3),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.2),
+    glass-text-color: #ffffff, // Light text for dark glass
+    glass-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
+    button-shadow-hover: 0 8px 25px rgba(168, 85, 247, 0.3),
+    pagination-shadow: 0 8px 20px rgba(168, 85, 247, 0.3),
+
+    storybook-cover-bg: #1e1b4b,
+    storybook-accent-color: #a855f7,
+    storybook-cover-text-color: #d8b4fe,
+    storybook-title-color: #ffffff
+  ),
+  cafe: (
+    // Palette
+    primary-color: #4d7c0f, // A warm, earthy green
+    primary-color-dark: #3f6212,
+    primary-color-darker: #365314,
+    text-color-light: #ffffff,
+    navbar-text-color: #365314, // Dark green for readability
+    navbar-text-hover-color: #65a30d,
+    title-color: #365314,
+    text-color-dark: #1c1917,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #65a30d 0%, #4d7c0f 100%),
+    primary-gradient-hover: linear-gradient(135deg, #4d7c0f 0%, #3f6212 100%),
+
+    // Backgrounds
+    body-bg: #fefce8, // A very light, warm beige
+
+    // Components
+    glass-bg: rgba(255, 255, 255, 0.7),
+    glass-border-color: rgba(220, 220, 220, 0.9),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+    glass-text-color: #1c1917, // Dark text for light glass
+    glass-text-shadow: none,
+    button-shadow-hover: 0 8px 25px rgba(101, 163, 13, 0.3),
+    pagination-shadow: 0 8px 20px rgba(101, 163, 13, 0.3),
+
+    storybook-cover-bg: #365314,
+    storybook-accent-color: #4d7c0f,
+    storybook-cover-text-color: #fefce8,
+    storybook-title-color: #ffffff
+  ),
+  hanok: (
+    // Palette
+    primary-color: #8B4513, // SaddleBrown
+    primary-color-dark: #5D4037,
+    primary-color-darker: #3E2723,
+    text-color-light: #ffffff,
+    navbar-text-color: #5D4037,
+    navbar-text-hover-color: #3E2723,
+    title-color: #3E2723,
+    text-color-dark: #3E2723,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #8B4513 0%, #5D4037 100%),
+    primary-gradient-hover: linear-gradient(135deg, #5D4037 0%, #3E2723 100%),
+
+    // Backgrounds
+    body-bg: #fdf6e3, // A warm, paper-like background
+
+    // Components
+    glass-bg: rgba(255, 255, 255, 0.6),
+    glass-border-color: rgba(210, 180, 140, 0.8),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+    glass-text-color: #3E2723,
+    glass-text-shadow: none,
+    button-shadow-hover: 0 8px 25px rgba(139, 69, 19, 0.3),
+    pagination-shadow: 0 8px 20px rgba(139, 69, 19, 0.3),
+
+    storybook-cover-bg: #3E2723,
+    storybook-accent-color: #8B4513,
+    storybook-cover-text-color: #fdf6e3,
+    storybook-title-color: #ffffff
+  ),
+  fuji: (
+    // Palette
+    primary-color: #4682B4, // SteelBlue
+    primary-color-dark: #4169E1,
+    primary-color-darker: #00008B,
+    text-color-light: #ffffff,
+    navbar-text-color: #00008B,
+    navbar-text-hover-color: #4169E1,
+    title-color: #00008B,
+    text-color-dark: #00008B,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #4682B4 0%, #4169E1 100%),
+    primary-gradient-hover: linear-gradient(135deg, #4169E1 0%, #00008B 100%),
+
+    // Backgrounds
+    body-bg: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%), // Misty morning
+
+    // Components
+    glass-bg: rgba(255, 255, 255, 0.7),
+    glass-border-color: rgba(200, 210, 220, 0.9),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+    glass-text-color: #00008B,
+    glass-text-shadow: none,
+    button-shadow-hover: 0 8px 25px rgba(70, 130, 180, 0.3),
+    pagination-shadow: 0 8px 20px rgba(70, 130, 180, 0.3),
+
+    storybook-cover-bg: #00008B,
+    storybook-accent-color: #4682B4,
+    storybook-cover-text-color: #eef1f5,
+    storybook-title-color: #ffffff
+  ),
+  school: (
+    // Palette
+    primary-color: #FFD700, // Gold
+    primary-color-dark: #FFC700,
+    primary-color-darker: #FFB700,
+    text-color-light: #ffffff,
+    navbar-text-color: #ffffff,
+    navbar-text-hover-color: #FFD700,
+    title-color: #ffffff,
+    text-color-dark: #1f2937,
+
+    // Gradients
+    primary-gradient: linear-gradient(135deg, #FFD700 0%, #FFC700 100%),
+    primary-gradient-hover: linear-gradient(135deg, #FFC700 0%, #FFB700 100%),
+
+    // Backgrounds
+    body-bg: #2F4F4F, // DarkSlateGray, like a chalkboard
+
+    // Components
+    glass-bg: rgba(0, 0, 0, 0.2),
+    glass-border-color: rgba(255, 255, 255, 0.2),
+    glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.2),
+    glass-text-color: #ffffff,
+    glass-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5),
+    button-shadow-hover: 0 8px 25px rgba(255, 215, 0, 0.3),
+    pagination-shadow: 0 8px 20px rgba(255, 215, 0, 0.3),
+
+    storybook-cover-bg: #2F4F4F,
+    storybook-accent-color: #FFD700,
+    storybook-cover-text-color: #ffffff,
+    storybook-title-color: #ffffff
+  )
+);
+
+// Map containing the variable values of styles for each theme.
+@mixin generate-theme($theme-map) {
+  // Palette
+  --primary-color: #{map.get($theme-map, primary-color)};
+  --primary-color-rgb: #{red(map.get($theme-map, primary-color))}, #{green(map.get($theme-map, primary-color))}, #{blue(map.get($theme-map, primary-color))};
+  --primary-color-dark: #{map.get($theme-map, primary-color-dark)};
+  --primary-color-darker: #{map.get($theme-map, primary-color-darker)};
+  --text-color-light: #{map.get($theme-map, text-color-light)};
+  --text-color-dark: #{map.get($theme-map, text-color-dark)};
+  --navbar-text-color: #{map.get($theme-map, navbar-text-color)};
+  --title-color: #{map.get($theme-map, title-color)};
+  --navbar-text-hover-color: #{map.get($theme-map, navbar-text-hover-color)};
+
+  // Gradients
+  --primary-gradient: #{map.get($theme-map, primary-gradient)};
+  --primary-gradient-hover: #{map.get($theme-map, primary-gradient-hover)};
+
+  // Backgrounds
+  --body-bg: #{map.get($theme-map, body-bg)};
+
+  // Components
+  --glass-bg: #{map.get($theme-map, glass-bg)};
+  --glass-border-color: #{map.get($theme-map, glass-border-color)};
+  --glass-shadow: #{map.get($theme-map, glass-shadow)};
+  --glass-text-color: #{map.get($theme-map, glass-text-color)};
+  --glass-text-shadow: #{map.get($theme-map, glass-text-shadow)};
+  --button-shadow-hover: #{map.get($theme-map, button-shadow-hover)};
+  --pagination-shadow: #{map.get($theme-map, pagination-shadow)};
+
+  // Book/Paper specific styles
+  --paper-bg: #{'#ffffff'};
+  --paper-border-color: #{'#d0d0c0'};
+  --paper-line-color: #{'#e6e6fa'};
+  --paper-margin-line-color: #{'#ffb3b3'};
+  --subtitle-color: #{'#4a2c1a'};
+  --text-color-muted: #{'#666666'};
+  --primary-glow: 0 0 20px #{map-get($theme-map, primary-color)};
+
+  // Storybook specific styles
+  --storybook-cover-bg: #{map-get($theme-map, storybook-cover-bg)};
+  --storybook-accent-color: #{map-get($theme-map, storybook-accent-color)};
+  --storybook-cover-text-color: #{map-get($theme-map, storybook-cover-text-color)};
+  --storybook-title-color: #{map-get($theme-map, storybook-title-color)};
+}
+
+// =============================================================================
+ // # BREAKPOINTS & RESPONSIVE MIXIN
+ // Centralized breakpoints for consistent media queries across the application.
+ // =============================================================================
+
+ $breakpoints: (
+    desktop: 1600px,
+    laptop: 1440px,
+    tablet: 1024px,
+    mobile: 768px
+ );
+
+ @mixin respond-to($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media (max-width: #{map.get($breakpoints, $breakpoint)}) {
+            @content;
+        }
+    } @else {
+        @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints map.";
+    }
+ }
+
+@mixin respond-to-min($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media (min-width: #{map.get($breakpoints, $breakpoint)}) {
+            @content;
+        }
+    } @else {
+        @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints map."
+    }
+}
+
+// =============================================================================
+// # RESPONSIVE TYPOGRAPHY
+// Centralized font sizes for consistency and responsiveness.
+// =============================================================================
+
+$typography: (
+  // Base (desktop-first) sizes and weights
+  base: (
+    display: (size: 28px, weight: 600, line-height: 1.3),
+    h1:      (size: 24px, weight: 700, line-height: 1.3),
+    h2:      (size: 20px, weight: 600, line-height: 1.4),
+    h3:      (size: 18px, weight: 600, line-height: 1.4),
+    h4:      (size: 17px, weight: 600, line-height: 1.5),
+    h5:      (size: 16px, weight: 600, line-height: 1.5),
+    h6:      (size: 15px, weight: 600, line-height: 1.5),
+    p:       (size: 16px, weight: 400, line-height: 1.6),
+    lead:    (size: 18px, weight: 400, line-height: 1.6),
+    small:   (size: 12px, weight: 400, line-height: 1.5),
+    subtle:  (size: 14px, weight: 400, line-height: 1.5),
+    button:  (size: 16px, weight: 500, line-height: 1.5),
+    a:       (size: 16px, weight: 500, line-height: 1.5)
+  ),
+  // Responsive overrides (only size needs to be specified)
+  laptop: (
+    display: (size: 26px),
+    h1:      (size: 22px),
+    h2:      (size: 18px),
+    h3:      (size: 17px),
+    h4:      (size: 16px),
+    p:       (size: 15px),
+    lead:    (size: 17px)
+  ),
+  tablet: (
+    display: (size: 24px),
+    h1:      (size: 20px),
+    h2:      (size: 17px),
+    h3:      (size: 16px),
+    p:       (size: 14px),
+    lead:    (size: 16px)
+  )
+);
+
+@mixin apply-responsive-typography {
+  @each $breakpoint, $size-map in $typography {
+    @if $breakpoint == base {
+      @each $tag, $properties in $size-map {
+        $selector: "#{$tag}, .#{$tag}";
+        @if $tag == button {
+          $selector: "#{$tag}, .#{$tag}, .btn";
+        }
+        #{$selector} {
+          font-size: map.get($properties, size);
+          font-weight: map.get($properties, weight);
+          line-height: map.get($properties, line-height);
+        }
+      }
+    } @else {
+      @include respond-to($breakpoint) {
+        @each $tag, $properties in $size-map {
+          $selector: "#{$tag}, .#{$tag}";
+          @if $tag == button {
+            $selector: "#{$tag}, .#{$tag}, .btn";
+          }
+          #{$selector} {
+            font-size: map.get($properties, size);
+          }
+        }
+      }
+    }
+  }
+}

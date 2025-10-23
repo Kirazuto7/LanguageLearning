@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChineseVocabularyLesson",
+  "description": "A schema for a Chinese vocabulary lesson component.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the vocabulary lesson in English."
+    },
+    "vocabularies": {
+      "type": "array",
+      "description": "A list of vocabulary words related to the topic.",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishTranslation": {
+            "type": "string",
+            "description": "The English translation of the word.",
+            "pattern": "^[A-Za-z0-9'() -]+$"
+          },
+          "simplified": {
+            "type": "string",
+            "description": "简体中文字符。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F· ]*$"
+          },
+          "traditional": {
+            "type": ["string", "null"],
+            "description": "繁体中文字符（如果不同）。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u2E80-\\u2EFF\\u2F00-\\u2FDF\\u3000-\\u303F\\u31C0-\\u31EF\\u3200-\\u32FF\\u3300-\\u33FF\\uFE30-\\uFE4F· ]*$"
+          },
+          "pinyin": {
+            "type": "string",
+            "description": "The Pinyin romanization of the word.",
+            "pattern": "^[a-zA-ZüÜāáǎàēéěèīíǐìōóǒòūúǔù -]+$"
+          },
+          "toneNumber": {
+            "type": ["string", "null"],
+            "description": "The tone numbers for the Pinyin (e.g., 'ma1').",
+            "pattern": "^[1-5 ]*$"
+          }
+        },
+        "required": ["englishTranslation", "simplified"]
+      }
+    }
+  },
+  "required": ["title", "vocabularies"]
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JapaneseStoryPages",
+  "description": "A schema for a complete Japanese short story, divided into pages with content and vocabulary.",
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "description": "A list of pages that make up the story.",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishSummary": {
+            "type": "string",
+            "description": "A concise, one-sentence summary of the page's content in English.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+          },
+          "content": {
+            "type": "string",
+            "description": "ページの日本語での内容。段落は改行で区切られます。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:\\n\\[\\]…。「」―]+$"
+          },
+          "vocabulary": {
+            "type": "array",
+            "description": "A list of key vocabulary words from the page.",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string",
+                  "description": "日本語での単語。",
+                  "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]+$"
+                },
+                "translation": {
+                  "type": "string",
+                  "description": "The English translation of the word.",
+                  "pattern": "^[A-Za-z0-9'() -]+$"
+                }
+              },
+              "required": ["word", "translation"]
+            }
+          }
+        },
+        "required": ["englishSummary", "content", "vocabulary"]
+      }
+    }
+  },
+  "required": ["pages"]
+}

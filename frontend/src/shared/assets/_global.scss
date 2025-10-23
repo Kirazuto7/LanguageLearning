@@ -1,0 +1,34 @@
+@use 'theme' as theme;
+
+:root {
+  /* Global, non-theme-dependent difficulty colors */
+  --book-cover-color: #2F4F4F; /* Fallback */
+  --difficulty-beginner: #4a6b52; /* Green */
+  --difficulty-pre-intermediate: #5b86a9; /* Blue */
+  --difficulty-intermediate: #a98e5b; /* Gold */
+  --difficulty-advanced: #a37a74; /* Red */
+
+  /* Storybook difficulty colors */
+  --storybook-difficulty-beginner: #044a4e; /* Dark Teal */
+  --storybook-difficulty-pre-intermediate: #04244e; /* Dark Blue */
+  --storybook-difficulty-intermediate: #4e2404; /* Dark Brown */
+  --storybook-difficulty-advanced: #4a044e; /* Dark Purple */
+}
+
+@include theme.apply-responsive-typography;
+
+body {
+    font-size: map-get(theme.$typography, base, p, size);
+
+    @include theme.respond-to(laptop) {
+        font-size: map-get(theme.$typography, laptop, p, size);
+    }
+
+    @include theme.respond-to(tablet) {
+        font-size: map-get(theme.$typography, tablet, p, size);
+    }
+
+    @include theme.respond-to(mobile) {
+        font-size: map-get(theme.$typography, tablet, p, size); // Use tablet size for mobile body text
+    }
+}

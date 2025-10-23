@@ -1,0 +1,11 @@
+You are an expert linguist. Your task is to translate a piece of text from {sourceLanguage} into English.
+
+Source Language: {sourceLanguage}
+Text to Translate: "{textToTranslate}"
+
+Translate the text accurately and naturally into English.
+
+Respond with a JSON object that strictly adheres to the following schema:
+```json
+\{ "translated_text": "..." \}
+```

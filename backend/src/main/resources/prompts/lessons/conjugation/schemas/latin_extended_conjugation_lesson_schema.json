@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LatinExtendedConjugationLesson",
+  "description": "A schema for a conjugation lesson in a Latin-based language.",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string", "description": "The title of the lesson in English." },
+    "conjugation_rule_name": {
+      "type": "string",
+      "description": "The name of the conjugation rule in English.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()/\\[\\]…\\-]+$"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "A clear explanation of the conjugation rule, allowing both English and the native language's characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()*\\-/\\[\\]…\\n]+$"
+    },
+    "conjugated_words": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "infinitive": {
+            "type": "string",
+            "description": "The dictionary form (unconjugated base form) of the word in the native language.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+          },
+          "conjugated_form": {
+            "type": "string",
+            "description": "The word after conjugation in the native language (e.g., walks, ate).",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+          },
+          "example_sentence": {
+            "type": "string",
+            "description": "A full sentence in the native language using the conjugated form.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$"
+          },
+          "sentence_translation": {
+            "type": "string",
+            "description": "The English translation of the example sentence.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
+          }
+        },
+        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"]
+      }
+    }
+  },
+  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"]
+}

@@ -1,0 +1,119 @@
+.cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: var(--storybook-cover-bg);
+    border-left: 10px solid var(--storybook-accent-color); /* binding */
+    color: var(--storybook-cover-text-color);
+    box-shadow: 0 0 20px var(--storybook-accent-color);
+}
+
+.backcover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    //background: linear-gradient(135deg, var(--book-color, #4a044e), color-mix(in srgb, var(--book-color, #4a044e) 70%, black));
+    border-right: 10px solid var(--storybook-accent-color); /* binding */
+    color: var(--storybook-cover-text-color);
+    box-shadow: 0 0 20px var(--storybook-accent-color);
+}
+
+.bookContainer {
+    position: relative;
+    margin: 2rem auto;
+    width: 900px; /* 2 * page width */
+    height: 550px; /* page height */
+    perspective: 2000px;
+}
+
+.bookContainer::before {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 10%;
+    right: 10%;
+    height: 30px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.bookBinding {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    background: linear-gradient(to bottom, #8B4513 0%, #654321 20%, #4a2c1a 50%, #654321 80%, #8B4513 100%);
+    transform: translateX(-50%);
+    z-index: 15;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3), inset 1px 0 2px rgba(255,255,255,0.1), inset -1px 0 2px rgba(0,0,0,0.2);
+    pointer-events: none;
+}
+
+.book-title {
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--storybook-title-color);
+    margin-bottom: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Georgia', serif;
+    line-height: 1.2;
+}
+
+.btnPrimary {
+  // Core theme styles from your custom button
+  background: var(--primary-gradient);
+  border: none;
+  color: var(--text-color-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  // Standard button properties
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.375rem; // Standard Bootstrap border-radius
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+
+  // Hover and focus states
+  &:hover,
+  &:focus {
+    background: var(--primary-gradient-hover);
+    box-shadow: var(--button-shadow-hover);
+    transform: translateY(-2px);
+    color: var(--text-color-light); // Ensure text color stays light
+  }
+
+  // Ensure compatibility with React-Bootstrap Button component
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/*
+ * This targets the root content element of the React Bootstrap modal
+ * to make its background match the application's theme, which is
+ * defined by the --body-bg variable in App.scss.
+ */
+:global(.modal-content) {
+  background: rgba(255, 255, 255, 0.5);
+
+  :global(.btn-close) {
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    -webkit-mask-image: var(--bs-btn-close-bg);
+    mask-image: var(--bs-btn-close-bg);
+    -webkit-mask-size: 100%;
+    mask-size: 100%;
+    background-color: var(--title-color);
+    width: 0.50em;
+    height: 0.50em;
+    margin-right: 0.25rem;
+  }
+
+  :global(.modal-title) {
+    color: var(--title-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}

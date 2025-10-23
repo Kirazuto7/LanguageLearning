@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChineseConjugationLesson",
+  "description": "A schema for a Chinese conjugation lesson.",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string", "description": "The title of the lesson in English." },
+    "conjugation_rule_name": {
+      "type": "string",
+      "description": "The name of the conjugation rule in English.",
+      "pattern": "^[A-Za-z\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！，\\-]+$"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "A clear explanation of the conjugation rule, allowing both English and Chinese characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…。「」“”‘’《》【】、：；—·～（）？！，\\n]+$"
+    },
+    "conjugated_words": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "infinitive": {
+            "type": "string",
+            "description": "单词的词典形式（未变化的原始形式） (例如: 走, 吃)。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF]+$"
+          },
+          "conjugated_form": {
+            "type": "string",
+            "description": "活用后的中文单词 (例如: 走了, 吃了)。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF]+$"
+          },
+          "example_sentence": {
+            "type": "string",
+            "description": "使用活用形词的完整中文句子。",
+            "pattern": "^[\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF0-9 ,.?!'\"-;:/\\[\\]…。「」“”‘’《》【】、：；—·～？！，\\n]+$"
+          },
+          "sentence_translation": {
+            "type": "string",
+            "description": "The English translation of the example sentence.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
+          }
+        },
+        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"]
+      }
+    }
+  },
+  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"]
+}

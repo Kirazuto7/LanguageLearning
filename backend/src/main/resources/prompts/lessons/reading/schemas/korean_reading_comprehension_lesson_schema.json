@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanReadingComprehensionLesson",
+  "description": "A schema for a Korean reading comprehension lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the reading lesson in English."
+    },
+    "story": {
+      "type": "string",
+      "description": "한국어로 된 짧은 이야기입니다.",
+      "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:*\\-/\\[\\]…“”‘’·\\n]+$"
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "한국어로 된 이해력 질문입니다.",
+            "pattern": "^[A-Za-z\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$",
+            "maxLength": 400
+          },
+          "answer": {
+            "type": "string",
+            "description": "이야기에서 발췌한 한국어 정답입니다.",
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:*\\-/\\[\\]…“”‘’·\\n]+$"
+          },
+          "answerChoices": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 10,
+            "items": {
+              "type": "string",
+              "description": "가능한 한국어 답변 선택지입니다.",
+              "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:*\\-/\\[\\]…“”‘’·\\n]+$"
+            }
+          }
+        },
+        "required": ["questionText", "answer", "answerChoices"]
+      }
+    }
+  },
+  "required": ["title", "story", "questions"]
+}

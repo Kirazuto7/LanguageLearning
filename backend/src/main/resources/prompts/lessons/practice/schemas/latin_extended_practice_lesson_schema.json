@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LatinExtendedPracticeLesson",
+  "description": "A schema for a practice lesson in a Latin-based language with open-ended questions.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the practice section in English."
+    },
+    "instructions": {
+      "type": "string",
+      "description": "A brief explanation of what the user should do."
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "questionText": {
+            "type": "string",
+            "description": "The open-ended question in the native language.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F0-9 ,.?!'\"-;:()¿¡*\\-/\\[\\]…\\n]+$",
+            "maxLength": 400
+          },
+          "answer": {
+            "type": "null",
+            "description": "This must always be null."
+          },
+          "options": {
+            "type": "array",
+            "description": "This must always be an empty array.",
+            "maxItems": 0
+          }
+        },
+        "required": ["questionText"]
+      }
+    }
+  },
+  "required": ["title", "instructions", "questions"]
+}

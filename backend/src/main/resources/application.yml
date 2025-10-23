@@ -1,0 +1,147 @@
+spring:
+  application:
+    name: language-learning
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    # This is now configured for local development, connecting to the mapped port.
+    url: jdbc:postgresql://localhost:5433/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  mvc:
+    async:
+      request-timeout: -1
+  devtools:
+    restart:
+      exclude: logs/**
+  graphql:
+    path: /graphql
+    websocket:
+      path: /graphql
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+  ai:
+    max-retries: 2
+    openai:
+      api-key: ${OPENAI_API_KEY}
+    # Disable auto-configuration to allow for full manual bean definition.
+    model:
+      chat: none
+      embedding: none
+    ollama1:
+      base-url: ${SPRING_AI_OLLAMA_BASE_URL}
+      chat:
+        options:
+          format: json
+          num-ctx: 8192
+          num-predict: 8192
+          temperature: 0.5
+
+    #ollama2:
+      #base-url: ${SPRING_AI_OLLAMA_BASE_URL}
+      #chat:
+        #options:
+          #format: json
+          #num-ctx: 8192
+          #num-predict: 8192
+          #temperature: 0.5
+    stablediffusion:
+      base-url: ${SPRING_AI_IMAGE_BASE_URL}
+      image:
+        options:
+          model: v1-5-pruned-emaonly.safetensors
+          width: 512
+          height: 512
+          steps: 20
+          batchSize: 1
+          negative-prompt: "blurry, ugly, deformed, disfigured, poor details, bad anatomy, bad eyes, 3d render, photo, realistic, text, watermark"
+          cfg-scale: 7.0
+          sampler-name: "Euler a"
+          styles:
+            - "ghibli style"
+            - "<lora:ghibli_style:0.7>"
+            - "beautiful"
+            - "detailed"
+            - "animated"
+app:
+  job-queue:
+    workers: 5
+  reactive-job-queue:
+    workers: 10
+  logging:
+    path: ./logs
+    max-run-history: 5
+
+logging:
+  level:
+    org.springframework.security: INFO
+    # This warning is expected because we define a custom AuthenticationProvider. Set to ERROR to hide it.
+    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
+    org.springframework.graphql: INFO
+    org.springframework.web: INFO
+    org.springframework.beans.factory: INFO
+    org.springframework.web.socket: INFO
+    #org.springframework.boot.actuate.health: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+application:
+  security:
+    jwt:
+      secret-key: "pdbhjA+O1PBFGHMIpW9KYnA1cNsNePgh4zaCn5EpMkA="
+      # Access token expiration: 15 mins
+      expiration: 900000
+      # Refresh token expiration: 7 days
+      refresh-token-expiration: 604800000 
+    public-paths:
+      - "/api/users/register"
+      - "/api/users/login"
+      - "/api/users/complete-oidc-registration"
+      - "/login/oauth2/**"
+      - "/api/users/refresh"
+      - "/api/logs/client"
+      - "/api/users/logout"
+      - "/error"
+      - "/graphql"
+      - "/graphiql"
+      # Paths for serving the bundled React frontend
+      - "/"
+      - "/index.html"
+      - "/favicon.ico"
+      - "/manifest.json"
+      - "/static/**"
+      - "/logo*.png"
+
+# ===============================================
+# DJL CONFIGURATION
+# ===============================================
+djl:
+  embedding:
+    enabled: false
+    model-url: "djl://ai.djl.huggingface.pytorch/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    similarity-threshold: 0.7
+
+# ===============================================
+# MINIO CONFIGURATION
+# ===============================================
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: storybook-images # Default bucket name for story images
+  public-url: http://localhost:9000

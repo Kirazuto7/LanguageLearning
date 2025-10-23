@@ -1,0 +1,246 @@
+import nu.studer.gradle.jooq.JooqEdition
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.8'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id "nu.studer.jooq" version "9.0"
+}
+
+// Load environment variables from .env file for local development
+def envFile = new File("$projectDir/../.env")
+def envVars = [:]
+if (envFile.exists()) {
+    envFile.eachLine { line ->
+        def parts = line.split('=', 2)
+        if (parts.length == 2) {
+            envVars[parts[0]] = parts[1]
+        }
+    }
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+// Explicitly set the main class for the Spring Boot application
+springBoot {
+    mainClass = 'com.example.language_learning.LanguageLearningApplication'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencyManagement {
+	imports {
+        // Manages the Spring AI BOM dependencies
+		mavenBom "org.springframework.ai:spring-ai-bom:1.0.0"
+	}
+}
+
+dependencies {
+    // Spring-boot Dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-web:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-graphql:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.5.6'
+    implementation 'com.graphql-java:graphql-java-extended-scalars:22.0'
+
+    // AI Dependencies
+	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+	implementation 'org.springframework.ai:spring-ai-openai'
+
+	// Text Embedding Dependencies
+	implementation "ai.djl:api:0.34.0"
+	implementation "ai.djl:model-zoo:0.34.0"
+	implementation "ai.djl.huggingface:tokenizers:0.34.0"
+	runtimeOnly "ai.djl.pytorch:pytorch-engine:0.34.0"
+	runtimeOnly "ai.djl.pytorch:pytorch-jni:2.7.1-0.34.0"
+
+    // Database Dependencies
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:2.20.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq:3.5.6'
+	implementation 'org.postgresql:postgresql:42.7.8'
+	jooqGenerator 'org.postgresql:postgresql:42.7.8'
+
+    // Security Dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:3.5.6'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // Mapping Dependencies
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+    // Lombok Dependencies
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    testCompileOnly 'org.projectlombok:lombok:1.18.32'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // NLP Dependencies
+    implementation 'org.apache.lucene:lucene-core:10.3.0'
+    implementation 'org.apache.lucene:lucene-analysis-common:10.3.0'
+    implementation 'org.apache.lucene:lucene-analysis-kuromoji:10.3.0'
+    implementation 'org.apache.lucene:lucene-analysis-nori:10.3.0'
+    implementation 'org.apache.lucene:lucene-analysis-smartcn:10.3.0'
+    implementation 'org.apache.lucene:lucene-analysis-icu:10.3.0'
+    implementation 'com.github.pemistahl:lingua:1.2.2'
+
+    // Other Dependencies
+    implementation 'com.atilika.kuromoji:kuromoji-ipadic:0.9.0' // (Furigana generation)
+    implementation 'com.github.houbb:opencc4j:1.14.0'
+    implementation 'org.apache.commons:commons-text:1.14.0'
+    implementation 'com.networknt:json-schema-validator:1.5.8'
+    implementation 'org.json:json:20250517'
+    implementation 'io.github.du00cs:json-repairj:0.50.0'
+    implementation 'io.github.resilience4j:resilience4j-ratelimiter:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-reactor:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-core:2.3.0'
+    implementation 'io.github.resilience4j:resilience4j-retry:2.3.0'
+    implementation 'com.modernmt.text:profanity-filter:1.0.1'
+
+    // Cloud / Storage Dependencies
+    implementation 'software.amazon.awssdk:s3:2.34.0'
+
+	// DevTools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:3.5.6'
+
+	// =======================================
+	// TEST DEPENDENCIES
+	// =======================================
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:postgresql'
+}
+
+jar {
+        archiveFileName = 'languagelearning.jar'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
+jooq {
+    version = dependencyManagement.importedProperties['jooq.version']
+    edition = JooqEdition.OSS
+    configurations {
+        main {
+            generationTool {
+                logging = 'WARN'
+
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    if (project.hasProperty('docker')) {
+                        // Docker build: Use environment variables provided by Docker Compose
+                        url = "jdbc:postgresql://postgres:5432/${System.getenv('POSTGRES_DB')}"
+                        user = System.getenv('POSTGRES_USER')
+                        password = System.getenv('POSTGRES_PASSWORD')
+                    } else {
+                        // Local IDE build: Use values from the .env file
+                        url = "jdbc:postgresql://localhost:5433/${envVars['POSTGRES_DB']}"
+                        user = envVars['POSTGRES_USER']
+                        password = envVars['POSTGRES_PASSWORD']
+                    }
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                    }
+                    generate {
+                        pojos = true
+                        daos = true
+                    }
+                    target {
+                        packageName = 'com.example.language_learning.generated.jooq'
+                        directory = "${buildDir}/generated-sources/jooq"
+                    }
+                    strategy {
+                        matchers {
+                            tables {
+                                // Rule for tables ending in 'ies', e.g., short_stories -> ShortStory
+                                table {
+                                    expression = '^(.*)ies$'
+                                    tableClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1y'
+                                    }
+                                    tableIdentifier {
+                                        transform = 'UPPER'
+                                        expression = '$1y'
+                                    }
+                                    recordClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1y_RECORD'
+                                    }
+                                }
+                                // Rule for tables ending in 's', e.g., story_pages -> StoryPage
+                                table {
+                                    expression = '^(.*)s$'
+                                    tableClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1'
+                                    }
+                                    tableIdentifier {
+                                        transform = 'UPPER'
+                                        expression = '$1'
+                                    }
+                                    recordClass {
+                                        transform = 'PASCAL'
+                                        expression = '$1_RECORD'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "${buildDir}/generated-sources/jooq"
+        }
+    }
+}
+
+tasks.named('bootRun', org.springframework.boot.gradle.tasks.run.BootRun) {
+    if (project.hasProperty('docker')) {
+        // In Docker, variables are passed by docker-compose
+    }
+    else {
+        // For local runs, load variables from the .env file
+        environment 'SPRING_DATASOURCE_URL', "jdbc:postgresql://localhost:5433/${envVars['POSTGRES_DB']}"
+        environment 'SPRING_DATASOURCE_USERNAME', envVars['POSTGRES_USER']
+        environment 'SPRING_DATASOURCE_PASSWORD', envVars['POSTGRES_PASSWORD']
+    }
+}
+
+// Establish the correct, linear build order
+tasks.named('compileJava') {
+    dependsOn(tasks.named('generateJooq'))
+}
+

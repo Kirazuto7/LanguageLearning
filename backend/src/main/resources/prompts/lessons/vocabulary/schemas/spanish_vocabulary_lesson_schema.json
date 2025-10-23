@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SpanishVocabularyLesson",
+  "description": "A schema for a Spanish vocabulary lesson.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the vocabulary lesson in English."
+    },
+    "vocabularies": {
+      "type": "array",
+      "description": "A list of Spanish vocabulary words.",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishTranslation": {
+            "type": "string",
+            "description": "The English translation of the word.",
+            "pattern": "^[A-Za-z0-9'() -]+$"
+          },
+          "lemma": {
+            "type": "string",
+            "description": "The base form (lemma) of the word in Spanish.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]+$"
+          },
+          "gender": {
+            "type": ["string", "null"],
+            "description": "The grammatical gender (e.g., 'masculine', 'feminine'), if applicable.",
+            "pattern": "^(masculine|feminine)$"
+          },
+          "pluralForm": {
+            "type": ["string", "null"],
+            "description": "The plural form of the word, if applicable.",
+            "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F' -]*$"
+          }
+        },
+        "required": ["englishTranslation", "lemma"]
+      }
+    }
+  },
+  "required": ["title", "vocabularies"]
+}

@@ -1,0 +1,14 @@
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  justify-items: center; /* Center items within their grid cells */
+  max-width: 1140px; /* A standard container width to prevent excessive stretching */
+  margin: 0 auto; /* Center the grid container itself */
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}

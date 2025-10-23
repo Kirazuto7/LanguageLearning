@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JapaneseVocabularyLesson",
+  "description": "A schema for a Japanese vocabulary lesson, including kanji, hiragana, katakana, and romaji.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the vocabulary lesson in English."
+    },
+    "vocabularies": {
+      "type": "array",
+      "description": "A list of Japanese vocabulary words related to the topic.",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "properties": {
+          "englishTranslation": {
+            "type": "string",
+            "description": "The English translation of the word.",
+            "pattern": "^[A-Za-z0-9'() -]+$"
+          },
+          "kanji": {
+            "type": ["string", "null"],
+            "description": "漢字での単語。該当しない場合はnullです。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]*$"
+          },
+          "hiragana": {
+            "type": "string",
+            "description": "ひらがなでの単語または読み方。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]*$"
+          },
+          "katakana": {
+            "type": ["string", "null"],
+            "description": "カタカナでの単語または読み方。該当しない場合はnullです。",
+            "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC]*$"
+          },
+          "romaji": {
+            "type": ["string", "null"],
+            "description": "The romaji (romanized) spelling of the word.",
+            "pattern": "^[a-zA-Z'-āīūēōĀĪŪĒŌ ]+$"
+          }
+        },
+        "required": ["englishTranslation", "hiragana"]
+      }
+    }
+  },
+  "required": ["title", "vocabularies"]
+}

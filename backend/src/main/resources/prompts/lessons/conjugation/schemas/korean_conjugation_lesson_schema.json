@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanConjugationLesson",
+  "description": "A schema for a Korean conjugation lesson.",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string", "description": "The title of the lesson in English." },
+    "conjugation_rule_name": {
+      "type": "string",
+      "description": "The name of the conjugation rule in English.",
+      "pattern": "^[A-Za-z\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()/\\[\\]…“”‘’·\\-]+$"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "A clear explanation of the conjugation rule, allowing both English and Korean characters.",
+      "pattern": "^[A-Za-z\\u00C0-\\u00FF\\u0100-\\u017F\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\u4E00-\\u9FFF0-9 ,.?!'\"-;:()*\\-/\\[\\]…“”‘’·\\n]+$"
+    },
+    "conjugated_words": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "items": {
+        "type": "object",
+        "properties": {
+          "infinitive": {
+            "type": "string",
+            "description": "단어의 사전형(활용되지 않은 기본형)을 한국어로 (예: 먹다, 걷다).",
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF ]+$"
+          },
+          "conjugated_form": {
+            "type": "string",
+            "description": "활용 후의 한국어 단어입니다 (예: 먹어요, 걸어요).",
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF ]+$"
+          },
+          "example_sentence": {
+            "type": "string",
+            "description": "활용된 형태를 사용한 완전한 한국어 문장입니다.",
+            "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:*\\-/\\[\\]…“”‘’·\\n]+$"
+          },
+          "sentence_translation": {
+            "type": "string",
+            "description": "The English translation of the example sentence.",
+            "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…\\n]+$"
+          }
+        },
+        "required": ["infinitive", "conjugated_form", "example_sentence", "sentence_translation"]
+      }
+    }
+  },
+  "required": ["title", "conjugation_rule_name", "explanation", "conjugated_words"]
+}

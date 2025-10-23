@@ -1,0 +1,19 @@
+       {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JapaneseChapterMetadata",
+  "description": "A schema for a Japanese chapter's title and its native language translation.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The creative and engaging chapter title in English.",
+      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+    },
+    "nativeTitle": {
+      "type": "string",
+      "description": "タイトルの正確な日本語訳。",
+      "pattern": "^[\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF\\u3400-\\u4DBF\\uF900-\\uFAFF\\u3005\\u30FC0-9 ,.?!'\"-;:\\[\\]…。「」―]+$"
+    }
+  },
+  "required": ["title", "nativeTitle"]
+}

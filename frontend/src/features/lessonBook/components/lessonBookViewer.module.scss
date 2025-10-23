@@ -1,0 +1,156 @@
+@use '../../../shared/assets/theme' as theme;
+
+/*
+ * Custom styles for the LessonBook carousel.
+ */
+
+.titleContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background: var(--glass-bg);
+  border-radius: 0.75rem;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(10px);
+  color: var(--glass-text-color);
+  text-shadow: var(--glass-shadow);
+  text-align: center;
+
+}
+
+.content-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.carousel-wrapper {
+  height: 100%;
+  width: 100%;
+  max-width: 950px;
+
+  @include theme.respond-to(laptop) {
+    max-width: 750px;
+  }
+
+  @include theme.respond-to(tablet) {
+    max-width: 680px;
+  }
+
+  @include theme.respond-to(mobile) {
+    max-width: 100%;
+    width: 90vw;
+  }
+}
+
+.studybook-carousel {
+    height: 80vh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(255,255,255, 1);
+
+  :global(.carousel-inner) {
+    height: 100%;
+    border-radius: 8px;
+  }
+}
+
+.lessonChapter-select {
+    max-width: 450px;
+    min-width: 400px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem !important; /* Override bootstrap default */
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0,0,0, 0.1);
+
+    @include theme.respond-to(mobile) {
+        min-width: unset;
+        width: 100%;
+    }
+}
+
+
+.page-control-container {
+  display: flex;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-color);
+  border-radius: 1rem !important;
+  padding: 0.5rem 1rem;
+  box-shadow: var(--glass-shadow);
+  gap: 1rem;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  @include theme.respond-to(mobile) {
+    flex-wrap: wrap;
+  }
+}
+
+%pagination-button-base {
+    border-radius: 50% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    color: var(--primary-color);
+    box-shadow: var(--pagination-shadow);
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+
+.page-item {
+  :global(.page-link) {
+    @extend %pagination-button-base;
+    width: 2.3rem;
+    height: 2.3rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  }
+}
+
+.page-control-item {
+  :global(.page-link) {
+    @extend %pagination-button-base;
+    width: 2rem;
+    height: 2rem;
+
+    &:not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  }
+}
+
+.active-page-item {
+  :global(.page-link) {
+    transform: translateY(-2px);
+    box-shadow: var(--button-shadow-hover);
+    background: var(--primary-gradient);
+    color: var(--text-color-light);
+    border-color: var(--primary-color);
+
+    &:hover {
+      background: var(--primary-gradient-hover);
+    }
+  }
+}
+
+.pageText {
+  color: var(--glass-text-color);
+}

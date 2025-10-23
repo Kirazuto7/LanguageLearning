@@ -1,0 +1,18 @@
+# Set default behavior to normalize all text files to LF in the repository
+* text=auto eol=lf
+
+# Explicitly declare text files you want to always be normalized
+*.html text
+*.css text
+*.js text
+*.jsx text
+*.json text
+*.yml text
+*.yaml text
+*.md text
+*.java text
+*.properties text
+*.gradle text
+
+# Declare files that will always have CRLF line endings on checkout (for Windows)
+*.bat text eol=crlf

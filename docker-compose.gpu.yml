@@ -1,0 +1,153 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/dockerfiles/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SPRING_AI_OLLAMA_BASE_URL=${SPRING_AI_OLLAMA_BASE_URL}
+      - SPRING_AI_IMAGE_BASE_URL=${SPRING_AI_IMAGE_BASE_URL}
+      - SPRING_PROFILES_ACTIVE=dev,gpu,docker
+      - MINIO_URL=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - DDL_AUTO_MODE=${SCHEMA_MODE:-validate}
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - backend-build:/app/build
+      #- /app/.gradle
+      - backend-gradle-cache:/root/.gradle
+    working_dir: /app/backend
+    depends_on: # The backend now waits for the init-db service to finish.
+      init-db:
+        condition: service_completed_successfully
+      minio:
+        condition: service_healthy
+    healthcheck:
+      # This check requires curl to be installed in the backend container.
+      # It polls the Spring Boot Actuator health endpoint.
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10m
+
+  ai:
+    build:
+      context: ./backend/dockerfiles
+      dockerfile: DockerfileAI
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - AI_PROFILE=gpu
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices: [ { capabilities: [ gpu ] } ]
+    volumes:
+      - ollama-data:/root/.ollama
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    env_file: .env # Only basic PG variables are needed now.
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env
+    volumes:
+      - minio-storage:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  image-api:
+    image: kirazuto7/language-learning-image-api:v2
+    ports:
+      - "7860:7860"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    deploy:
+      resources:
+        reservations:
+          devices: [{ capabilities: [gpu] }]
+    volumes:
+      - stable-diffusion-models:/app/models/Stable-diffusion
+      - ./loras:/app/models/Lora
+    healthcheck:
+      # We check the /docs endpoint for a 200 OK response.
+      test: ["CMD", "curl", "-f", "http://localhost:7860/docs"]
+      interval: 1h
+      timeout: 10s
+      retries: 5
+      start_period: 2m
+
+  init-db: # This service now handles ALL database schema initialization.
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      # This variable controls which schema is used by the init script.
+      # Options: 'create-drop' (default) or 'validate'.
+      # Set the option in .env
+      - SCHEMA_MODE=${SCHEMA_MODE}
+    volumes:
+      - ./backend/dockerfiles/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./backend/src/main/resources/db/migration:/schemas
+    # This command executes the init script.
+    command: ["/docker-entrypoint-initdb.d/init-db.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  backend-gradle-cache:
+  postgres-data:
+  ollama-data:
+  minio-storage:
+  stable-diffusion-models:
+  frontend-node-modules:
+  backend-build:

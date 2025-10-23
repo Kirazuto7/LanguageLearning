@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KoreanChapterMetadata",
+  "description": "A schema for a Korean chapter's title and its native language translation.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The creative and engaging chapter title in English.",
+      "pattern": "^[A-Za-z0-9 ,.?!'\"-;:()\\[\\]…]+$"
+    },
+    "nativeTitle": {
+      "type": "string",
+      "description": "제목의 정확한 한국어 번역.",
+      "pattern": "^[\\uAC00-\\uD7A3\\u1100-\\u11FF\\u3130-\\u318F\\uA960-\\uA97F\\uD7B0-\\uD7FF\\u4E00-\\u9FFF0-9 ,.?!'\"-;:…“”‘’·―]+$"
+    }
+  },
+  "required": ["title", "nativeTitle"]
+}
