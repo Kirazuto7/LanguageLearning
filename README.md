@@ -1,4 +1,6 @@
-# LanguageLearning
+# WayWord (formerly LanguageLearning)
+
+Note: The source code is the early version of this project containing the initial design and implementation that is available for public viewing.
 
 An AI-powered language learning application designed to generate dynamic, personalized lessons. This project leverages large language models to create chapters, vocabulary, grammar explanations, and interactive exercises on demand.
 
